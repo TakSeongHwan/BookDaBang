@@ -5,10 +5,8 @@
 	<title>Home</title>
 </head>
 <body>
-<h1>
-	Hello world!  
-</h1>
-
+<jsp:include page="projectHeader.jsp"></jsp:include>
 <P>  The time on the server is ${serverTime}. </P>
+<jsp:include page="projectFooter.jsp"></jsp:include>
 </body>
 </html>
