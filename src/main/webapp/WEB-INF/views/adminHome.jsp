@@ -6,11 +6,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>adminHome</title>
 </head>
 <body>
-	<jsp:include page="userHeader.jsp"></jsp:include>
-		<div> 확인 : The time on the server is ${serverTime}. </div>
-	<jsp:include page="userFooter.jsp"></jsp:include>
+	<jsp:include page="managerHeader.jsp"></jsp:include>
+		<div>여기에 내용</div>
+	<jsp:include page="managerFooter.jsp"></jsp:include>
 </body>
 </html>

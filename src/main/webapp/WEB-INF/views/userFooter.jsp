@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="resources/vendors/owl-carousel/owl.theme.default.min.css">
 <link rel="stylesheet" href="resources/vendors/owl-carousel/owl.carousel.min.css">
 <link rel="stylesheet" href="resources/css/style.css">
-<title>Insert title here</title>
+<title>userFooter</title>
 </head>
 <body>
 	<!--================ Start footer Area  =================-->	
@@ -106,7 +106,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 		</div>
 	</footer>
 	<!--================ End footer Area  =================-->
-	<script src="resource/vendors/jquery/jquery-3.2.1.min.js"></script>
+  <script src="resource/vendors/jquery/jquery-3.2.1.min.js"></script>
   <script src="resource/vendors/bootstrap/bootstrap.bundle.min.js"></script>
   <script src="resource/vendors/skrollr.min.js"></script>
   <script src="resource/vendors/owl-carousel/owl.carousel.min.js"></script>
