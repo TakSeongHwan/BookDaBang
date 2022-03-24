@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	<!-- Root Context: defines shared resources visible to all other web components -->
+
+	<!-- mysql dataSource 객체 설정 -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"
+			value="com.mysql.cj.jdbc.Driver"></property>
+		<property name="url"
+			value="jdbc:mysql://gootac6.cafe24.com:3306/gootac6?serverTimezone=Asia/Seoul&amp;useSSL=false"></property>
+		<property name="username" value="gootac6"></property>
+		<property name="password" value="gootac66!@"></property>
+	</bean>
+	<!-- Mybatis를 위한 sqlSessionFactory 객체 설정 -->
+	<!-- sqlSessionFactory 객체에 mybatis 환경파일과 매퍼파일의 위치 설정 -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="configLocation"
+			value="classpath:/mybatis-config.xml"></property>
+		<property name="mapperLocations"
+			value="classpath:mappers/**/*Mapper.xml">
+		</property>
+	</bean>
+	
+	<!-- Mybatis와 Spring을 연계하기 위한 sqlSession객체 설정 -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate"
+		destroy-method="clearCache">
+		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"></constructor-arg>
+	</bean>
+	
+	<!-- 트랜잭션 처리를 위한 TransactionManagaer 객체 설정  -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 트랜잭션 처리 또한 어노테이션으로 설정 할 수 있도록 함 -->
+	<tx:annotation-driven/>
+	
+	<context:component-scan base-package="com.bookdabang.*.persistence"></context:component-scan>
+	<context:component-scan base-package="com.bookdabang.*.service"></context:component-scan>
+</beans>
