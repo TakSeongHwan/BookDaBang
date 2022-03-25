@@ -1,4 +1,4 @@
-package com.bookdabang.common.controller;
+package com.bookdabang.tsh.controller;
 
 import java.text.DateFormat;
 import java.util.Date;
