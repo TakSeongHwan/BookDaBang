@@ -51,12 +51,12 @@
 						<div class="single-footer-widget instafeed">
 							<h4 class="footer_title">Gallery</h4>
 							<ul class="list instafeed d-flex flex-wrap">
-								<li><img src="img/gallery/r1.jpg" alt=""></li>
-								<li><img src="img/gallery/r2.jpg" alt=""></li>
-								<li><img src="img/gallery/r3.jpg" alt=""></li>
-								<li><img src="img/gallery/r5.jpg" alt=""></li>
-								<li><img src="img/gallery/r7.jpg" alt=""></li>
-								<li><img src="img/gallery/r8.jpg" alt=""></li>
+								<li><img src="resources/img/gallery/r1.jpg" alt=""></li>
+								<li><img src="resources/img/gallery/r2.jpg" alt=""></li>
+								<li><img src="resources/img/gallery/r3.jpg" alt=""></li>
+								<li><img src="resources/img/gallery/r5.jpg" alt=""></li>
+								<li><img src="resources/img/gallery/r7.jpg" alt=""></li>
+								<li><img src="resources/img/gallery/r8.jpg" alt=""></li>
 							</ul>
 						</div>
 					</div>
@@ -93,7 +93,7 @@
 				</div>
 			</div>
 		</div>
-
+		
 		<div class="footer-bottom">
 			<div class="container">
 				<div class="row d-flex">
@@ -106,13 +106,13 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 		</div>
 	</footer>
 	<!--================ End footer Area  =================-->
-  <script src="resource/vendors/jquery/jquery-3.2.1.min.js"></script>
-  <script src="resource/vendors/bootstrap/bootstrap.bundle.min.js"></script>
-  <script src="resource/vendors/skrollr.min.js"></script>
-  <script src="resource/vendors/owl-carousel/owl.carousel.min.js"></script>
-  <script src="resource/vendors/nice-select/jquery.nice-select.min.js"></script>
-  <script src="resource/vendors/jquery.ajaxchimp.min.js"></script>
-  <script src="resource/vendors/mail-script.js"></script>
-  <script src="resource/js/main.js"></script>
+  <script src="resources/vendors/jquery/jquery-3.2.1.min.js"></script>
+  <script src="resources/vendors/bootstrap/bootstrap.bundle.min.js"></script>
+  <script src="resources/vendors/skrollr.min.js"></script>
+  <script src="resources/vendors/owl-carousel/owl.carousel.min.js"></script>
+  <script src="resources/vendors/nice-select/jquery.nice-select.min.js"></script>
+  <script src="resources/vendors/jquery.ajaxchimp.min.js"></script>
+  <script src="resources/vendors/mail-script.js"></script>
+  <script src="resources/js/main.js"></script>
 </body>
 </html>
