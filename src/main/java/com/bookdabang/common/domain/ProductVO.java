@@ -2,7 +2,7 @@ package com.bookdabang.common.domain;
 
 import java.sql.Timestamp;
 
-public class Product {
+public class ProductVO {
 	private String title;
 	private String author;
 	private String price;
@@ -27,11 +27,11 @@ public class Product {
 	private String isbn;
 	private String isbn13;
 
-	public Product() {
+	public ProductVO() {
 
 	}
 
-	public Product(String title, String author, String price, String sell_price, String publisher, String description,
+	public ProductVO(String title, String author, String price, String sell_price, String publisher, String description,
 			Timestamp pub_date, int stock, Timestamp rg_date, Timestamp end_date, Timestamp update_date,
 			String display_status, int read_count, String sales_status, int sales_count, String cover,
 			String detail_description, String index, String inside_book, String author_introduce,

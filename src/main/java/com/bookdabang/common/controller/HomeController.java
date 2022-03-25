@@ -36,4 +36,11 @@ public class HomeController {
 		return "home";
 	}
 
+	
+	@RequestMapping(value="admin", method=RequestMethod.GET)
+	public String exam2() {
+		System.out.println("admin이 호출됨....");
+		return "adminHome";
+	}
+
 }
