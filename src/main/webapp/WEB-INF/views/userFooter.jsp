@@ -19,7 +19,6 @@
 <title>userFooter</title>
 </head>
 <body>
-<<<<<<< HEAD
    <!--================ Start footer Area  =================-->   
    <footer class="footer">
       <div class="footer-area">
@@ -109,7 +108,6 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
       </div>
    </footer>
    <!--================ End footer Area  =================-->
-=======
 	<!--================ Start footer Area  =================-->	
 	<footer class="footer">
 		<div class="footer-area">
@@ -199,7 +197,6 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 		</div>
 	</footer>
 	<!--================ End footer Area  =================-->
->>>>>>> master
   <script src="${contextPath}/resources/vendors/jquery/jquery-3.2.1.min.js"></script>
   <script src="${contextPath}/resources/vendors/bootstrap/bootstrap.bundle.min.js"></script>
   <script src="${contextPath}/resources/vendors/skrollr.min.js"></script>

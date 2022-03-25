@@ -19,7 +19,6 @@
 <link rel="stylesheet" href="${contextPath}/resources/assets/vendor/fonts/boxicons.css" />
 <!-- Core CSS -->
 <link rel="stylesheet" href="${contextPath}/resources/assets/vendor/css/core.css"
-<<<<<<< HEAD
    class="template-customizer-core-css" />
 <link rel="stylesheet" href="${contextPath}/resources/assets/vendor/css/theme-default.css"
    class="template-customizer-theme-css" />
@@ -29,7 +28,6 @@
    href="${contextPath}/resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 <link rel="stylesheet"
    href="${contextPath}/resources/assets/vendor/libs/apex-charts/apex-charts.css" />
-=======
 	class="template-customizer-core-css" />
 <link rel="stylesheet" href="${contextPath}/resources/assets/vendor/css/theme-default.css"
 	class="template-customizer-theme-css" />
@@ -39,7 +37,6 @@
 	href="${contextPath}/resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 <link rel="stylesheet"
 	href="${contextPath}/resources/assets/vendor/libs/apex-charts/apex-charts.css" />
->>>>>>> master
 <!-- Page CSS -->
 <!-- Helpers -->
 <script src="${contextPath}/resources/assets/vendor/js/helpers.js"></script>

@@ -19,7 +19,6 @@
 <link rel="stylesheet" href="${contextPath}/resources/assets/vendor/fonts/boxicons.css" />
 <!-- Core CSS -->
 <link rel="stylesheet" href="${contextPath}/resources/assets/vendor/css/core.css"
-<<<<<<< HEAD
    class="template-customizer-core-css" />
 <link rel="stylesheet" href="${contextPath}/resources/assets/vendor/css/theme-default.css"
    class="template-customizer-theme-css" />
@@ -29,7 +28,6 @@
    href="${contextPath}/resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 <link rel="stylesheet"
    href="${contextPath}/resources/assets/vendor/libs/apex-charts/apex-charts.css" />
-=======
 	class="template-customizer-core-css" />
 <link rel="stylesheet" href="${contextPath}/resources/assets/vendor/css/theme-default.css"
 	class="template-customizer-theme-css" />
@@ -39,7 +37,6 @@
 	href="${contextPath}/resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 <link rel="stylesheet"
 	href="${contextPath}/resources/assets/vendor/libs/apex-charts/apex-charts.css" />
->>>>>>> master
 <!-- Page CSS -->
 <!-- Helpers -->
 <script src="${contextPath}/resources/assets/vendor/js/helpers.js"></script>
@@ -48,7 +45,6 @@
 <script src="${contextPath}/resources/assets/js/config.js"></script>
 <title>managerHearder</title>
 </head>
-<<<<<<< HEAD
 <body>   
    <div class="layout-wrapper layout-content-navbar">
       <div class="layout-container" style="width: auto; display: inline-block">
@@ -77,7 +73,6 @@
                         <g id="g-app-brand" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                        <g id="Brand-Logo" transform="translate(-27.000000, -15.000000)">
                          <g id="Icon" transform="translate(27.000000, 15.000000)">
-=======
 <body>	
 	<div class="layout-wrapper layout-content-navbar">
 		<div class="layout-container" style="width: auto; display: inline-block">
@@ -106,7 +101,6 @@
                   		<g id="g-app-brand" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                     	<g id="Brand-Logo" transform="translate(-27.000000, -15.000000)">
                       	<g id="Icon" transform="translate(27.000000, 15.000000)">
->>>>>>> master
                         <g id="Mask" transform="translate(0.000000, 8.000000)">
                         <mask id="mask-2" fill="white">
                             <use xlink:href="#path-1"></use>
