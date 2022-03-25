@@ -6,13 +6,13 @@ public class AttachFileVO {
 	private int freeboardNo; 
 	private int reviewNo; 
 	private int productNo; 
-	private int originF‎ile; 
+	private int originFile; 
 	private String thumbnailFile; 
 	private String notImageFile;
 	
 	public AttachFileVO() {}
 
-	public AttachFileVO(int attachFileNo, int noticeNo, int freeboardNo, int reviewNo, int productNo, int originF‎ile,
+	public AttachFileVO(int attachFileNo, int noticeNo, int freeboardNo, int reviewNo, int productNo, int originFile,
 			String thumbnailFile, String notImageFile) {
 		super();
 		this.attachFileNo = attachFileNo;
@@ -20,7 +20,7 @@ public class AttachFileVO {
 		this.freeboardNo = freeboardNo;
 		this.reviewNo = reviewNo;
 		this.productNo = productNo;
-		this.originF‎ile = originF‎ile;
+		this.originFile = originFile;
 		this.thumbnailFile = thumbnailFile;
 		this.notImageFile = notImageFile;
 	}
@@ -65,12 +65,12 @@ public class AttachFileVO {
 		this.productNo = productNo;
 	}
 
-	public int getOriginF‎ile() {
-		return originF‎ile;
+	public int getOriginFile() {
+		return originFile;
 	}
 
-	public void setOriginF‎ile(int originF‎ile) {
-		this.originF‎ile = originF‎ile;
+	public void setOriginFile(int originFile) {
+		this.originFile = originFile;
 	}
 
 	public String getThumbnailFile() {
@@ -92,7 +92,7 @@ public class AttachFileVO {
 	@Override
 	public String toString() {
 		return "AttachFile [attachFileNo=" + attachFileNo + ", noticeNo=" + noticeNo + ", freeboardNo=" + freeboardNo
-				+ ", reviewNo=" + reviewNo + ", productNo=" + productNo + ", originF‎ile=" + originF‎ile
+				+ ", reviewNo=" + reviewNo + ", productNo=" + productNo + ", originFile=" + originFile
 				+ ", thumbnailFile=" + thumbnailFile + ", notImageFile=" + notImageFile + "]";
 	}
 	
