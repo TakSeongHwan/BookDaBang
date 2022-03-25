@@ -28,15 +28,6 @@
    href="${contextPath}/resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 <link rel="stylesheet"
    href="${contextPath}/resources/assets/vendor/libs/apex-charts/apex-charts.css" />
-	class="template-customizer-core-css" />
-<link rel="stylesheet" href="${contextPath}/resources/assets/vendor/css/theme-default.css"
-	class="template-customizer-theme-css" />
-<link rel="stylesheet" href="${contextPath}/resources/assets/css/demo.css" />
-<!-- Vendors CSS -->
-<link rel="stylesheet"
-	href="${contextPath}/resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
-<link rel="stylesheet"
-	href="${contextPath}/resources/assets/vendor/libs/apex-charts/apex-charts.css" />
 <!-- Page CSS -->
 <!-- Helpers -->
 <script src="${contextPath}/resources/assets/vendor/js/helpers.js"></script>
