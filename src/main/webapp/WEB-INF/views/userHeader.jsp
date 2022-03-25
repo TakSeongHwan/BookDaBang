@@ -14,6 +14,11 @@
 <link rel="stylesheet" href="resources/vendors/owl-carousel/owl.theme.default.min.css">
 <link rel="stylesheet" href="resources/vendors/owl-carousel/owl.carousel.min.css">
 <link rel="stylesheet" href="resources/css/style.css">
+
+<!-- W3School -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  
 <title>userHeader</title>
 </head>
 <body>
