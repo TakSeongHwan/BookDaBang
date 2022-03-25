@@ -2,7 +2,7 @@ package com.bookdabang.common.domain;
 
 import java.sql.Timestamp;
 
-public class TestVO {
+public class MemberVO {
 	private String userId;
 	private String userPwd; 
 	private String nickName; 
@@ -15,9 +15,8 @@ public class TestVO {
 	private Timestamp lastLogin;
 	private String isDraw;
 	private String userName;
-	public TestVO() {}
-	
-	public TestVO(String userId, String userPwd, String nickName, String userEmail, String isAdmin, String gender,
+	public MemberVO() {}
+	public MemberVO(String userId, String userPwd, String nickName, String userEmail, String isAdmin, String gender,
 			Timestamp birth, String phoneNum, Timestamp memberWhen, Timestamp lastLogin, String isDraw,
 			String userName) {
 		super();

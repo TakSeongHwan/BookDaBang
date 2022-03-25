@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
-import com.bookdabang.common.domain.TestVO;
+import com.bookdabang.common.domain.MemberVO;
 
 @Repository
 public class TestDAO {
@@ -17,7 +17,7 @@ public class TestDAO {
 
 	private String ns = "com.bookdabang.mapper.TestMapper";
 
-	public List<TestVO> getMember() {
+	public List<MemberVO> getMember() {
 		return ses.selectList(ns + ".getMember");
 	}
 }
