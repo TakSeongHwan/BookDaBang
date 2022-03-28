@@ -32,4 +32,10 @@ public class CartServiceImpl implements CartService {
 		return dao.deleteCart(cartNo);
 	}
 
+	@Override
+	public int insertCart(CartVO cart) throws Exception {
+		// TODO Auto-generated method stub
+		return dao.insertCart(cart);
+	}
+
 }

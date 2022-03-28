@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookdabang.mapper.OrderMapper">
+
+	<!-- 유저ID or orderNo와 비밀번호로 select -->
+	<select id="selectOrder" resultType="ProdOrder">
+		select * from prodOrder
+		<choose>
+			<when test="userId != null">
+				where userId = #{userId}
+			</when>
+			<otherwise>
+				where orderNo = #{orderNo} and orderPwd = #{orderPwd}
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 관리자가 전체 order select -->
+	<select id="selectAllOrder" resultType="ProdOrder">
+		select * from prodOrder limit #{startNum},#{postPerPage}
+	</select>
+	
+	<!-- 관리자가 orderNo로 update -->
+	<update id="updateOrder">
+		update prodOrder set orderState_code = #{orderState_code}, releaseDate = #{releaseDate}, confirm=#{confirm} where orderNo = #{orderNo} 
+	</update>
+	
+	
+	
+	<!-- prodOrder insert -->
+	<insert id="">
+		insert into prodOrder(userId,productNo,productQtt,orderState_code,addressNo,price,orderPwd)
+		values(#{userId},#{productNo},#{productQtt},#{orderState_code},#{addressNo},#{price},#{orderPwd})
+	</insert>
+	
+	
+</mapper>

@@ -50,4 +50,14 @@ public class CartController {
 		}
 		return result;
 	}
+	
+	public ResponseEntity<String> insertCart(CartVO cart) throws Exception{
+		ResponseEntity<String> result = null;
+		if(service.insertCart(cart)==1) {
+			result = new ResponseEntity<String>("success",HttpStatus.OK);
+		}else {
+			result = new ResponseEntity<String>("fail",HttpStatus.BAD_REQUEST);
+		}
+		return result;
+	}
 }

@@ -33,5 +33,10 @@ public class CartDAOImpl implements CartDAO {
 	public int deleteCart(int cartNo) throws Exception {
 		return ses.delete(ns+".deleteCart",cartNo);
 	}
+
+	@Override
+	public int insertCart(CartVO cart) throws Exception {
+		return ses.insert(ns+".insertCart", cart);
+	}
 	
 }

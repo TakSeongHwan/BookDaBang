@@ -19,4 +19,9 @@
 		delete from cart where cartNo = #{cartNo}
 	</delete>
 	
+	<!-- 장바구니 insert -->
+	<insert id="insertCart">
+		insert into cart(userId,ipaddr,productNo,productQtt) values(#{userId},#{ipaddr},#{productNo},#{productQtt})
+	</insert>
+	
 </mapper>
