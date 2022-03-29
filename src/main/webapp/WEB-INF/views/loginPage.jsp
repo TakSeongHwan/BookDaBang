@@ -6,9 +6,12 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
-<script></script>
+<script>
+location.href="/ljs/";
+</script>
 <body>
-${ userId}
-${ pwd}
+
+
+
 </body>
 </html>

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class BoardController {
 	
-	@RequestMapping(value = "/memberinfo", method = RequestMethod.GET)
+	@RequestMapping(value = "customerservice", method = RequestMethod.GET)
 	public void home() {
 				
 	}

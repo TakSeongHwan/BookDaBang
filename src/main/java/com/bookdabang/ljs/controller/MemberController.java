@@ -40,7 +40,7 @@ public class MemberController {
 	}
 	
 	@RequestMapping(value = "/loginPage", method = RequestMethod.POST)
-	public void loginPage(HttpServletRequest request, HttpServletResponse response, LoginDTO dto) {
+	public void loginPage(LoginDTO dto, Model model, HttpSession ses) {
 				System.out.println("여기까지 왔나?" + dto.toString());
 				
 				MemberVO loginMember = null;
@@ -54,13 +54,17 @@ public class MemberController {
 					if (loginMember != null) {
 					
 						System.out.println("로그인한 멤버 정보" + loginMember.toString());
-						System.out.println("로그인 성공");
-						response.sendRedirect("/ljs/");
+						
+						
 					} else {
 						
 						System.out.println("로그인 실패");
 						
 					}
+					
+					model.addAttribute("loginMember", loginMember);
+					ses.setAttribute("loginMember", loginMember);
+					System.out.println(ses.toString());
 					
 				} catch (Exception e) {
 					System.out.println("로그인 실패");
@@ -69,6 +73,11 @@ public class MemberController {
 				
 				//model.addAttribute("loginMember", loginMember);
 				
+				
+	}
+	
+	@RequestMapping(value = "mypage/memberinfo", method = RequestMethod.GET)
+	public void memberinfo() {
 				
 	}
 	
