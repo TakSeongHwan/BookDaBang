@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookdabang.mapper.AddressMapper">
+	<!-- 주소 select -->
+	<select id="selectAllAddress" resultType="AddressVO">
+		select * from address where userId = #{userId}
+	</select>
+	
+	<!-- 주소 insert -->
+	<insert id="insertAddress">
+		insert into address(userId,recipient,postalcode,mainAddress,remainaddress,phonenumber,deliverymessage) 
+		values(#{userId},#{recipient},#{postalcode},#{mainAddress},#{remainaddress},#{phonenumber},#{deliverymessage})
+	</insert>
+	
+	<!-- 주소 변경 -->
+	<update id="updateAddress">
+		update address set 
+		recipient = #{recipient}, postalcode = #{postalcode},mainAddress = #{mainAddress},remainaddress = #{remainaddress}, phonenumber = #{phonenumber},deliverymessage = #{deliverymessage}
+		where address_no = #{address_no}
+	</update>
+	
+	<!-- 주소 삭제 -->
+	<delete id="deleteAddress">
+		delete from address where address_no = #{address_no}
+	</delete>
+
+</mapper>

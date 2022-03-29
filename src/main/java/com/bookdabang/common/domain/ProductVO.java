@@ -2,12 +2,18 @@ package com.bookdabang.common.domain;
 
 import java.sql.Timestamp;
 
+<<<<<<< HEAD:src/main/java/com/bookdabang/common/domain/ProductVO.java
 public class ProductVO {
+=======
+public class Product {
+	private int product_no;
+>>>>>>> f7fa3cbc1d888dec2bb9f7feb457eaedfb389f0f:src/main/java/com/bookdabang/common/domain/Product.java
 	private String title;
 	private String author;
 	private String price;
 	private String sell_price;
 	private String publisher;
+	private int category_code;
 	private String description;
 	private Timestamp pub_date;
 	private int stock;
@@ -31,17 +37,26 @@ public class ProductVO {
 
 	}
 
+<<<<<<< HEAD:src/main/java/com/bookdabang/common/domain/ProductVO.java
 	public ProductVO(String title, String author, String price, String sell_price, String publisher, String description,
 			Timestamp pub_date, int stock, Timestamp rg_date, Timestamp end_date, Timestamp update_date,
 			String display_status, int read_count, String sales_status, int sales_count, String cover,
 			String detail_description, String index, String inside_book, String author_introduce,
+=======
+	public Product(int product_no, String title, String author, String price, String sell_price, String publisher,
+			int category_code, String description, Timestamp pub_date, int stock, Timestamp rg_date, Timestamp end_date,
+			Timestamp update_date, String display_status, int read_count, String sales_status, int sales_count,
+			String cover, String detail_description, String index, String inside_book, String author_introduce,
+>>>>>>> f7fa3cbc1d888dec2bb9f7feb457eaedfb389f0f:src/main/java/com/bookdabang/common/domain/Product.java
 			String pisOffdiscription, String isbn, String isbn13) {
 		super();
+		this.product_no = product_no;
 		this.title = title;
 		this.author = author;
 		this.price = price;
 		this.sell_price = sell_price;
 		this.publisher = publisher;
+		this.category_code = category_code;
 		this.description = description;
 		this.pub_date = pub_date;
 		this.stock = stock;
@@ -60,6 +75,14 @@ public class ProductVO {
 		this.pisOffdiscription = pisOffdiscription;
 		this.isbn = isbn;
 		this.isbn13 = isbn13;
+	}
+
+	public int getProduct_no() {
+		return product_no;
+	}
+
+	public void setProduct_no(int product_no) {
+		this.product_no = product_no;
 	}
 
 	public String getTitle() {
@@ -100,6 +123,14 @@ public class ProductVO {
 
 	public void setPublisher(String publisher) {
 		this.publisher = publisher;
+	}
+
+	public int getCategory_code() {
+		return category_code;
+	}
+
+	public void setCategory_code(int category_code) {
+		this.category_code = category_code;
 	}
 
 	public String getDescription() {
@@ -248,13 +279,15 @@ public class ProductVO {
 
 	@Override
 	public String toString() {
-		return "Product [title=" + title + ", author=" + author + ", price=" + price + ", sell_price=" + sell_price
-				+ ", publisher=" + publisher + ", description=" + description + ", pub_date=" + pub_date + ", stock="
-				+ stock + ", rg_date=" + rg_date + ", end_date=" + end_date + ", update_date=" + update_date
-				+ ", display_status=" + display_status + ", read_count=" + read_count + ", sales_status=" + sales_status
-				+ ", sales_count=" + sales_count + ", cover=" + cover + ", detail_description=" + detail_description
-				+ ", index=" + index + ", inside_book=" + inside_book + ", author_introduce=" + author_introduce
-				+ ", pisOffdiscription=" + pisOffdiscription + ", isbn=" + isbn + ", isbn13=" + isbn13 + "]";
+		return "Product [product_no=" + product_no + ", title=" + title + ", author=" + author + ", price=" + price
+				+ ", sell_price=" + sell_price + ", publisher=" + publisher + ", category_code=" + category_code
+				+ ", description=" + description + ", pub_date=" + pub_date + ", stock=" + stock + ", rg_date="
+				+ rg_date + ", end_date=" + end_date + ", update_date=" + update_date + ", display_status="
+				+ display_status + ", read_count=" + read_count + ", sales_status=" + sales_status + ", sales_count="
+				+ sales_count + ", cover=" + cover + ", detail_description=" + detail_description + ", index=" + index
+				+ ", inside_book=" + inside_book + ", author_introduce=" + author_introduce + ", pisOffdiscription="
+				+ pisOffdiscription + ", isbn=" + isbn + ", isbn13=" + isbn13 + "]";
 	}
+
 
 }

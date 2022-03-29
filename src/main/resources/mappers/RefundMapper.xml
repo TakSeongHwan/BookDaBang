@@ -38,9 +38,4 @@
 		update refund set productPhoto = #{productPhoto}, comment = #{comment} where refundNo = #{refundNo}
 	</update>
 	
-	<!-- 운영자가 refund 테이블 update -->
-	<update id="updateRefundByAdmin">
-		update refund set isRefund = #{isRefund}, refundProcessdate = now(), refundReason = #{refundReason};
-	</update>
-
 </mapper>

@@ -3,20 +3,33 @@ package com.bookdabang.tsh.controller;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.bookdabang.common.domain.ProdOrder;
+import com.bookdabang.tsh.domain.OrderDTO;
 import com.bookdabang.tsh.service.OrderService;
 
 @Controller
-@RequestMapping("/order")
+@RequestMapping("/order/*")
 public class OrderController {
 
 	@Inject
 	private OrderService service;
 	
-	@RequestMapping(value="/userOrder",method = RequestMethod.POST)
-	public void main() {
-		
+	@RequestMapping(value="/getOrder",method = RequestMethod.POST)
+	public void selectOrder(OrderDTO odto, Model model) throws Exception {
+		service.selectOrder(odto);
+	}
+	
+	@RequestMapping(value="/insertOrder",method = RequestMethod.POST)
+	public void insertOrder(ProdOrder order) throws Exception {
+		service.insertOrder(order);
+	}
+	
+	@RequestMapping(value="/confirmOrder",method = RequestMethod.POST)
+	public void confirmOrder(int orderNo) throws Exception {
+		service.updateOrderCofirm(orderNo);
 	}
 }

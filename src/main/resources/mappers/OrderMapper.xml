@@ -24,17 +24,21 @@
 	</select>
 	
 	<!-- 관리자가 orderNo로 update -->
-	<update id="updateOrder">
-		update prodOrder set orderState_code = #{orderState_code}, releaseDate = #{releaseDate}, confirm=#{confirm} where orderNo = #{orderNo} 
+	<update id="updateAdminOrder">
+		update prodOrder set orderState_code = #{orderState_code}, releaseDate = #{releaseDate} where orderNo = #{orderNo} 
 	</update>
 	
 	
 	
 	<!-- prodOrder insert -->
-	<insert id="">
+	<insert id="insertOrder">
 		insert into prodOrder(userId,productNo,productQtt,orderState_code,addressNo,price,orderPwd)
 		values(#{userId},#{productNo},#{productQtt},#{orderState_code},#{addressNo},#{price},#{orderPwd})
 	</insert>
 	
+	<!-- Order confirm update -->
+	<update id="updateOrderCofirm">
+		update prodOrder set confirm= 'Y' where orderNo = #{orderNo} 
+	</update>
 	
 </mapper>

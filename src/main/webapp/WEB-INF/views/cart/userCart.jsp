@@ -5,13 +5,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>Aroma Shop - Cart</title>
-
 <script type="text/javascript">
 console.log("${cart}");
+$(function() {
+	alert("!");
+})
 
 function modiQtt(){
 	let url = "updateCart";
@@ -19,7 +23,7 @@ function modiQtt(){
 	$.ajax({
 		url : url,
 		data : {
-			cartNo : 7,
+			cartNo : 11,
 			productQtt : productQtt
 		},
 		type : "post",

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.CartVO;
 import com.bookdabang.tsh.domain.CartProdQttDTO;
+import com.bookdabang.tsh.domain.CartSelectDTO;
 
 
 @Repository
@@ -20,13 +21,18 @@ public class CartDAOImpl implements CartDAO {
 	private String ns = "com.bookdabang.mapper.CartMapper";
 
 	@Override
-	public List<CartVO> getCartByUserId(String userId) throws Exception {
-		return ses.selectList(ns+".getCartByUserId", userId);
+	public List<CartVO> getAllCart(CartSelectDTO dto) throws Exception {
+		return ses.selectList(ns+".getAllCart", dto);
 	}
 	
 	@Override
 	public int updateCart(CartProdQttDTO dto) throws Exception{
 		return ses.update(ns+".updateCartProdQtt", dto);
+	}
+	
+	@Override
+	public int updateCartUserId(CartSelectDTO dto) throws Exception {
+		return ses.update(ns+".updateCartUserId", dto);
 	}
 
 	@Override
@@ -38,5 +44,7 @@ public class CartDAOImpl implements CartDAO {
 	public int insertCart(CartVO cart) throws Exception {
 		return ses.insert(ns+".insertCart", cart);
 	}
+
+	
 	
 }

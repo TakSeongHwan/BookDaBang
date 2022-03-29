@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.bookdabang.common.domain.CartVO;
 import com.bookdabang.tsh.domain.CartProdQttDTO;
+import com.bookdabang.tsh.domain.CartSelectDTO;
 import com.bookdabang.tsh.persistence.CartDAO;
 
 @Service
@@ -17,9 +18,9 @@ public class CartServiceImpl implements CartService {
 	private CartDAO dao;
 	
 	@Override
-	public List<CartVO> getCartByUserId(String userId) throws Exception {
+	public List<CartVO> getAllCart(CartSelectDTO dto) throws Exception {
 		// TODO Auto-generated method stub
-		return dao.getCartByUserId(userId);
+		return dao.getAllCart(dto);
 	}
 
 	@Override
@@ -36,6 +37,11 @@ public class CartServiceImpl implements CartService {
 	public int insertCart(CartVO cart) throws Exception {
 		// TODO Auto-generated method stub
 		return dao.insertCart(cart);
+	}
+
+	@Override
+	public int updateCartUserId(CartSelectDTO dto) throws Exception {
+		return dao.updateCartUserId(dto);
 	}
 
 }

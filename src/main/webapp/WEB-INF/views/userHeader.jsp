@@ -74,7 +74,7 @@
 
             <ul class="nav-shop">
               <li class="nav-item"><button><i class="ti-search"></i></button></li>
-              <li class="nav-item"><form action="cart/userCart" method="post"><input type="hidden" name="userId" value="cat"><button type="submit"><i class="ti-shopping-cart"></i><span class="nav-shop__circle">3</span></button></form></li>
+              <li class="nav-item"><form action="${contextPath }/cart/userCart" method="get"><input type="hidden" name="userId" value="cat"><button type="submit"><i class="ti-shopping-cart"></i><span class="nav-shop__circle">3</span></button></form></li>
               <li class="nav-item"><a class="button button-header" href="#">Buy Now</a></li>
             </ul>
           </div>

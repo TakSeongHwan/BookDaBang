@@ -1,7 +1,7 @@
 package com.bookdabang.tsh.domain;
 
 public class CartProdQttDTO {
-	private int cartNo;  
+	private int cartNo;
 	private int productQtt;
 	public CartProdQttDTO() {
 		super();
@@ -18,6 +18,7 @@ public class CartProdQttDTO {
 	public void setCartNo(int cartNo) {
 		this.cartNo = cartNo;
 	}
+	
 	public int getProductQtt() {
 		return productQtt;
 	}
