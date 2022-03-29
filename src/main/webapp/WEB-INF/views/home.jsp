@@ -10,7 +10,7 @@
 </head>
 <body>
 	<jsp:include page="userHeader.jsp"></jsp:include>
-		<div> <button type="button" class="btn">Basic</button>
+		<div> <button type="button" class="btn">${loginMember.userId}</button>
 <button type="button" class="btn btn-primary">Primary</button>
 <button type="button" class="btn btn-secondary">Secondary</button>
 <button type="button" class="btn btn-success">Success</button>
