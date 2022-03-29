@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<c:set var="contextPath" value="<%=request.getContextPath() %>"></c:set>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt"%>
+<c:set var="contextPath" value="<%=request.getContextPath()%>"></c:set>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,52 +13,84 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>Aroma Shop - Cart</title>
 <script type="text/javascript">
-console.log("${cart}");
-$(function() {
-	alert("!");
-})
-
-function modiQtt(){
-	let url = "updateCart";
-	let productQtt = $("#modi1").val();
-	$.ajax({
-		url : url,
-		data : {
-			cartNo : 11,
-			productQtt : productQtt
-		},
-		type : "post",
-		success : function(data) {
-			if (data == "success") {
-				alert("성공");
-			} else {
-				alsrt("실패");
-			}
-		}
-	});
-}
-function delCart(){
-	let url = "deleteCart";
-	$.ajax({
-		url : url,
-		data :{
-			cartNo : 7
-		},
-		type : "post",
-		success : function(data){
-			console.log(data);
-			if(data=="success"){
-				alert("성공");
-			}
-		}
+	console.log("${cartLst}");
+	$(function() {
+		cartInfo();
 	})
-}
+	
+	function cartInfo(){
+		$.ajax({
+			url : "/cart/cartInfo",
+			type : "GET",
+			success : function(data) {
+				console.log(data);
+				let output = "";
+				let sum = 0;
+				$.each(data, function(i, e) {
+					output +='<tr><td><div class="media"><div class="d-flex"><img src="'+e.cover+'" style="width: 150px"></div><div class="media-body"><input type="hidden" id= "cartNo'+i+'" value="'+e.cartNo+'" /><p>'+e.title+'</p></div></div></td><td><h5 id = "sell'+i+'">'+e.sell_price+'원</h5></td><td><div class="product_count"><input type="text" name="qty" id="prductQtt'+i+'"maxlength="12" value="'+e.productQtt+'" title="Quantity:"class="input-text qty"><button onclick="addQtt('+i+');"class="increase items-count" type="button"><i class="lnr lnr-chevron-up">+</i></button><button onclick="subQtt('+i+');"class="reduced items-count" type="button"><i class="lnr lnr-chevron-down">-</i></button></div></td><td><h5 id="total'+i+'">'+parseInt(e.sell_price)*parseInt(e.productQtt)+'원</h5></td></tr>';
+					sum += parseInt(e.sell_price)*parseInt(e.productQtt);
+				})
+				output += '<tr><td></td><td></td><td><h5>Subtotal</h5></td><td><h5 id="subtotal">'+sum+'원</h5></td></tr><tr class="out_button_area"><td class="d-none-l"></td><td class=""></td><td></td><td><div class="checkout_btn_inner d-flex" style="float: right"><a class="gray_btn" href="#">계속하기</a> <a class="primary-btn ml-2" href="/order/checkOut">결제하기</a></div></td></tr>';
+				$("#output").append(output);
+			}
+		})
+	}
+	
+	function addQtt(obj){
+		let qtt = $("#prductQtt"+obj);
+		qtt.val(parseInt(qtt.val())+1);
+		modiQtt(obj);
+	}
+	function subQtt(obj){
+		let qtt = $("#prductQtt"+obj);
+		if(qtt.val()>1){
+			qtt.val(parseInt(qtt.val())-1);	
+			modiQtt(obj)
+		}else{
+			alert("0개 이하로 줄일 수 없습니다.");
+		}
+	}
+
+	function modiQtt(obj) {
+		let url = "updateCart";
+		let productQtt = $("#prductQtt"+obj).val();
+		let cartNo = $("#cartNo"+obj).val();
+		$.ajax({
+			url : url,
+			data : {
+				cartNo : cartNo,
+				productQtt : productQtt
+			},
+			type : "post",
+			success : function(data) {
+				if (data == "success") {
+					$("#total"+obj).text(parseInt($("#sell"+obj).text())*productQtt+"원");
+				} else {
+					alert("실패");
+				}
+			}
+		});
+	}
+	function delCart(obj) {
+		let url = "deleteCart";
+		$.ajax({
+			url : url,
+			data : {
+				cartNo : 7
+			},
+			type : "post",
+			success : function(data) {
+				console.log(data);
+				if (data == "success") {
+					alert("성공");
+				}
+			}
+		})
+	}
 </script>
 </head>
 <body>
 	<jsp:include page="../userHeader.jsp"></jsp:include><!-- ================ start banner area ================= -->
-	<input id=modi1 type="number" value="1" onchange="modiQtt()">
-	<button onclick="delCart();">삭제</button>
 	<section class="blog-banner-area" id="category">
 		<div class="container h-100">
 			<div class="blog-banner">
@@ -89,131 +122,7 @@ function delCart(){
 								<th scope="col">Total</th>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
-								<td>
-									<div class="media">
-										<div class="d-flex">
-											<img src="${contextPath }/resources/img/cart/cart1.png" alt="">
-										</div>
-										<div class="media-body">
-											<p>Minimalistic shop for multipurpose use</p>
-										</div>
-									</div>
-								</td>
-								<td>
-									<h5>$360.00</h5>
-								</td>
-								<td>
-									<div class="product_count">
-										<input type="text" name="qty" id="sst" maxlength="12"
-											value="1" title="Quantity:" class="input-text qty">
-										<button
-											onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-											class="increase items-count" type="button">
-											<i class="lnr lnr-chevron-up"></i>
-										</button>
-										<button
-											onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-											class="reduced items-count" type="button">
-											<i class="lnr lnr-chevron-down"></i>
-										</button>
-									</div>
-								</td>
-								<td>
-									<h5>$720.00</h5>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<div class="media">
-										<div class="d-flex">
-											<img src="${contextPath }/resources/img/cart/cart2.png" alt="">
-										</div>
-										<div class="media-body">
-											<p>Minimalistic shop for multipurpose use</p>
-										</div>
-									</div>
-								</td>
-								<td>
-									<h5>$360.00</h5>
-								</td>
-								<td>
-									<div class="product_count">
-										<input type="text" name="qty" id="sst" maxlength="12"
-											value="1" title="Quantity:" class="input-text qty">
-										<button
-											onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-											class="increase items-count" type="button">
-											<i class="lnr lnr-chevron-up"></i>
-										</button>
-										<button
-											onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-											class="reduced items-count" type="button">
-											<i class="lnr lnr-chevron-down"></i>
-										</button>
-									</div>
-								</td>
-								<td>
-									<h5>$720.00</h5>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<div class="media">
-										<div class="d-flex">
-											<img src="${contextPath }/resources/img/cart/cart3.png" alt="">
-										</div>
-										<div class="media-body">
-											<p>Minimalistic shop for multipurpose use</p>
-										</div>
-									</div>
-								</td>
-								<td>
-									<h5>$360.00</h5>
-								</td>
-								<td>
-									<div class="product_count">
-										<input type="text" name="qty" id="sst" maxlength="12"
-											value="1" title="Quantity:" class="input-text qty">
-										<button
-											onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-											class="increase items-count" type="button">
-											<i class="lnr lnr-chevron-up"></i>
-										</button>
-										<button
-											onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-											class="reduced items-count" type="button">
-											<i class="lnr lnr-chevron-down"></i>
-										</button>
-									</div>
-								</td>
-								<td>
-									<h5>$720.00</h5>
-								</td>
-							</tr>
-							
-							<tr>
-								<td></td>
-								<td></td>
-								<td>
-									<h5>Subtotal</h5>
-								</td>
-								<td>
-									<h5>$2160.00</h5>
-								</td>
-							</tr>
-							<tr class="out_button_area">
-								<td class="d-none-l"></td>
-								<td class=""></td>
-								<td></td>
-								<td>
-									<div class="checkout_btn_inner d-flex" style="float: right">
-										<a class="gray_btn" href="#">계속하기</a> <a
-											class="primary-btn ml-2" href="#">결제하기</a>
-									</div>
-								</td>
-							</tr>
+						<tbody id="output">
 						</tbody>
 					</table>
 				</div>

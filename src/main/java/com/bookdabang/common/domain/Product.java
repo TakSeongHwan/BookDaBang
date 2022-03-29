@@ -2,16 +2,12 @@ package com.bookdabang.common.domain;
 
 import java.sql.Timestamp;
 
-<<<<<<< HEAD:src/main/java/com/bookdabang/common/domain/ProductVO.java
-public class ProductVO {
-=======
 public class Product {
 	private int product_no;
->>>>>>> f7fa3cbc1d888dec2bb9f7feb457eaedfb389f0f:src/main/java/com/bookdabang/common/domain/Product.java
 	private String title;
 	private String author;
 	private String price;
-	private String sell_price;
+	private int sell_price;
 	private String publisher;
 	private int category_code;
 	private String description;
@@ -32,22 +28,17 @@ public class Product {
 	private String pisOffdiscription;
 	private String isbn;
 	private String isbn13;
+	
 
-	public ProductVO() {
-
+	public Product() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
-<<<<<<< HEAD:src/main/java/com/bookdabang/common/domain/ProductVO.java
-	public ProductVO(String title, String author, String price, String sell_price, String publisher, String description,
-			Timestamp pub_date, int stock, Timestamp rg_date, Timestamp end_date, Timestamp update_date,
-			String display_status, int read_count, String sales_status, int sales_count, String cover,
-			String detail_description, String index, String inside_book, String author_introduce,
-=======
-	public Product(int product_no, String title, String author, String price, String sell_price, String publisher,
+	public Product(int product_no, String title, String author, String price, int sell_price, String publisher,
 			int category_code, String description, Timestamp pub_date, int stock, Timestamp rg_date, Timestamp end_date,
 			Timestamp update_date, String display_status, int read_count, String sales_status, int sales_count,
 			String cover, String detail_description, String index, String inside_book, String author_introduce,
->>>>>>> f7fa3cbc1d888dec2bb9f7feb457eaedfb389f0f:src/main/java/com/bookdabang/common/domain/Product.java
 			String pisOffdiscription, String isbn, String isbn13) {
 		super();
 		this.product_no = product_no;
@@ -109,11 +100,11 @@ public class Product {
 		this.price = price;
 	}
 
-	public String getSell_price() {
+	public int getSell_price() {
 		return sell_price;
 	}
 
-	public void setSell_price(String sell_price) {
+	public void setSell_price(int sell_price) {
 		this.sell_price = sell_price;
 	}
 

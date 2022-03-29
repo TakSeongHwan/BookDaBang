@@ -1,7 +1,11 @@
 package com.bookdabang.tsh.controller; 
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -20,8 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bookdabang.common.domain.CartVO;
 import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.Product;
+import com.bookdabang.kmj.service.ProductService;
 import com.bookdabang.tsh.domain.CartProdQttDTO;
 import com.bookdabang.tsh.domain.CartSelectDTO;
+import com.bookdabang.tsh.domain.CartViewDTO;
 import com.bookdabang.tsh.service.CartService;
 
 
@@ -30,11 +37,19 @@ import com.bookdabang.tsh.service.CartService;
 public class CartController {
 	
 	@Inject
-	public CartService service;
+	public CartService cService;
+	@Inject
+	public ProductService pService;
 	
 	@RequestMapping(value="/userCart",method = RequestMethod.GET)
-	public void getCartById(Model model,HttpSession ses) throws Exception{
+	public void getCart() throws Exception{
+
+	}
+	
+	@RequestMapping(value="/cartInfo",method = RequestMethod.GET)
+	public ResponseEntity<List<CartViewDTO>> getCartById(HttpSession ses) throws Exception{
 		CartSelectDTO dto = new CartSelectDTO();
+		ResponseEntity<List<CartViewDTO>> result = null;
 		MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember"); 
 		String userId = null;
 		String ipaddr = null;
@@ -45,16 +60,22 @@ public class CartController {
 		}
 		dto.setUserId(userId);
 		dto.setIpaddr(ipaddr);
-		List<CartVO> cartLst = service.getAllCart(dto);
-		System.out.println("getCartById : "+cartLst);
-		model.addAttribute("cart",cartLst);
+		List<CartVO> cartLst = cService.getAllCart(dto);
+		List<CartViewDTO> cartView = new ArrayList<CartViewDTO>(); 
+		for(CartVO cart : cartLst) {
+			Product product =  pService.readProduct(cart.getProductNo());
+			CartViewDTO cv = new CartViewDTO(product.getProduct_no(), cart.getCartNo(), product.getTitle(),product.getCover(), product.getSell_price(), cart.getProductQtt());
+			cartView.add(cv);
+		}
+		result = new ResponseEntity<List<CartViewDTO>>(cartView,HttpStatus.OK);
+		return result;
 	}
 	
 	@RequestMapping(value="/updateCart",method = RequestMethod.POST)
 	public ResponseEntity<String> updateCart(CartProdQttDTO dto) throws Exception {
 		ResponseEntity<String> result = null;
 		System.out.println("updateCart 실행" );
-		if(service.updateCart(dto)==1) {
+		if(cService.updateCart(dto)==1) {
 			result = new ResponseEntity<String>("success",HttpStatus.OK);
 		}else {
 			result = new ResponseEntity<String>("fail",HttpStatus.BAD_REQUEST);
@@ -66,7 +87,7 @@ public class CartController {
 	@RequestMapping(value="/deleteCart", method = RequestMethod.POST)
 	public ResponseEntity<String> deleteCart(@PathVariable("rno") int cartNo) throws Exception{
 		ResponseEntity<String> result = null;
-		if(service.deleteCart(cartNo)==1) {
+		if(cService.deleteCart(cartNo)==1) {
 			result = new ResponseEntity<String>("success",HttpStatus.OK);
 		}else {
 			result = new ResponseEntity<String>("fail",HttpStatus.BAD_REQUEST);
@@ -77,7 +98,7 @@ public class CartController {
 	@RequestMapping(value="/insertCart", method = RequestMethod.POST)
 	public ResponseEntity<String> insertCart(CartVO cart) throws Exception{
 		ResponseEntity<String> result = null;
-		if(service.insertCart(cart)==1) {
+		if(cService.insertCart(cart)==1) {
 			result = new ResponseEntity<String>("success",HttpStatus.OK);
 		}else {
 			result = new ResponseEntity<String>("fail",HttpStatus.BAD_REQUEST);

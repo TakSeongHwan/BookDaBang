@@ -18,6 +18,11 @@ public class OrderController {
 	@Inject
 	private OrderService service;
 	
+	@RequestMapping(value = "/checkOut")
+	public void checkout() {
+		
+	}
+	
 	@RequestMapping(value="/getOrder",method = RequestMethod.POST)
 	public void selectOrder(OrderDTO odto, Model model) throws Exception {
 		service.selectOrder(odto);
