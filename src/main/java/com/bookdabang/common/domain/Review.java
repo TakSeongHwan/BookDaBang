@@ -7,7 +7,7 @@ public class Review {
 	private String title; 
 	private String writer; 
 	private Timestamp writedate; 
-	private Timestamp content; 
+	private String content; 
 	private int grade; 
 	private int recommendNum; 
 	private int productNo;
@@ -15,7 +15,7 @@ public class Review {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public Review(int reviewNo, String title, String writer, Timestamp writedate, Timestamp content, int grade,
+	public Review(int reviewNo, String title, String writer, Timestamp writedate, String content, int grade,
 			int recommendNum, int productNo) {
 		super();
 		this.reviewNo = reviewNo;
@@ -51,10 +51,10 @@ public class Review {
 	public void setWritedate(Timestamp writedate) {
 		this.writedate = writedate;
 	}
-	public Timestamp getContent() {
+	public String getContent() {
 		return content;
 	}
-	public void setContent(Timestamp content) {
+	public void setContent(String content) {
 		this.content = content;
 	}
 	public int getGrade() {

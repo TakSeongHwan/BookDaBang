@@ -10,4 +10,7 @@ public interface ProductDAO {
 	
 	// 한 상품 가져오는 메서드
 	public Product selectProduct (int prodNo) throws Exception;
+	
+	// Top 상품 가져오는 메서드
+	public List<Product> selectTopProducts (int category) throws Exception;
 }

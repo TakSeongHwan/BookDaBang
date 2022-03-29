@@ -27,4 +27,10 @@ public class ProductServiceImpl implements ProductService {
 		return product;
 	}
 
+	@Override
+	public List<Product> readTopProducts(int category) throws Exception {
+		List<Product> lst = dao.selectTopProducts(category);
+		return lst;
+	}
+
 }

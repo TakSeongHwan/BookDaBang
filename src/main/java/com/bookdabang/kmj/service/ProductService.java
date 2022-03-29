@@ -10,4 +10,7 @@ public interface ProductService {
 	
 	// 상품 상세정보
 	public Product readProduct (int prodNo) throws Exception;
+	
+	// Top 상품 리스트
+	public List<Product> readTopProducts (int category) throws Exception;
 }

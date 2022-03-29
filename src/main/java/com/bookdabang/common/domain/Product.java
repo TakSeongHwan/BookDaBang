@@ -9,6 +9,7 @@ public class Product {
 	private String price;
 	private String sell_price;
 	private String publisher;
+	private int category_code;
 	private String description;
 	private Timestamp pub_date;
 	private int stock;
@@ -33,7 +34,7 @@ public class Product {
 	}
 
 	public Product(int product_no, String title, String author, String price, String sell_price, String publisher,
-			String description, Timestamp pub_date, int stock, Timestamp rg_date, Timestamp end_date,
+			int category_code, String description, Timestamp pub_date, int stock, Timestamp rg_date, Timestamp end_date,
 			Timestamp update_date, String display_status, int read_count, String sales_status, int sales_count,
 			String cover, String detail_description, String index, String inside_book, String author_introduce,
 			String pisOffdiscription, String isbn, String isbn13) {
@@ -44,6 +45,7 @@ public class Product {
 		this.price = price;
 		this.sell_price = sell_price;
 		this.publisher = publisher;
+		this.category_code = category_code;
 		this.description = description;
 		this.pub_date = pub_date;
 		this.stock = stock;
@@ -110,6 +112,14 @@ public class Product {
 
 	public void setPublisher(String publisher) {
 		this.publisher = publisher;
+	}
+
+	public int getCategory_code() {
+		return category_code;
+	}
+
+	public void setCategory_code(int category_code) {
+		this.category_code = category_code;
 	}
 
 	public String getDescription() {
@@ -259,13 +269,13 @@ public class Product {
 	@Override
 	public String toString() {
 		return "Product [product_no=" + product_no + ", title=" + title + ", author=" + author + ", price=" + price
-				+ ", sell_price=" + sell_price + ", publisher=" + publisher + ", description=" + description
-				+ ", pub_date=" + pub_date + ", stock=" + stock + ", rg_date=" + rg_date + ", end_date=" + end_date
-				+ ", update_date=" + update_date + ", display_status=" + display_status + ", read_count=" + read_count
-				+ ", sales_status=" + sales_status + ", sales_count=" + sales_count + ", cover=" + cover
-				+ ", detail_description=" + detail_description + ", index=" + index + ", inside_book=" + inside_book
-				+ ", author_introduce=" + author_introduce + ", pisOffdiscription=" + pisOffdiscription + ", isbn="
-				+ isbn + ", isbn13=" + isbn13 + "]";
+				+ ", sell_price=" + sell_price + ", publisher=" + publisher + ", category_code=" + category_code
+				+ ", description=" + description + ", pub_date=" + pub_date + ", stock=" + stock + ", rg_date="
+				+ rg_date + ", end_date=" + end_date + ", update_date=" + update_date + ", display_status="
+				+ display_status + ", read_count=" + read_count + ", sales_status=" + sales_status + ", sales_count="
+				+ sales_count + ", cover=" + cover + ", detail_description=" + detail_description + ", index=" + index
+				+ ", inside_book=" + inside_book + ", author_introduce=" + author_introduce + ", pisOffdiscription="
+				+ pisOffdiscription + ", isbn=" + isbn + ", isbn13=" + isbn13 + "]";
 	}
 
 

@@ -13,4 +13,9 @@
 	<select id="selectProduct" resultType="Product">
 		select*from product where product_no = #{prodNo}
 	</select>
+	
+	<select id="selectTopProducts" resultType="Product">
+		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' and
+		category_code = #{category} order by sales_count desc limit 10
+	</select>
 </mapper>

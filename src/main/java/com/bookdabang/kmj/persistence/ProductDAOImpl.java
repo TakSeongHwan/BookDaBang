@@ -27,4 +27,9 @@ public class ProductDAOImpl implements ProductDAO {
 		return ses.selectOne(ns + ".selectProduct", prodNo);
 	}
 
+	@Override
+	public List<Product> selectTopProducts(int category) throws Exception {
+		return ses.selectList(ns + ".selectTopProducts", category);
+	}
+
 }

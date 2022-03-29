@@ -182,7 +182,7 @@
 												<h4 class="card-product__title">
 													<a href="${contextPath}/product/detail?no=${product.product_no}">${product.title}</a>
 												</h4>
-												<p class="card-product__price">${product.sell_price}</p>
+												<p class="card-product__price">${product.sell_price}원</p>
 											</div>
 										</div>
 									</div>
