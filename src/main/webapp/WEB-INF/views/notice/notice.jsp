@@ -47,9 +47,8 @@ function showContent(obj){
      </c:forEach>
     </tbody>
   </table>
-  <a class="reply-btn" href="/notice/insertNotice">Apply</a>
-  <a class="reply-btn" href="#">Buy Now</a>
-   <a class="reply-btn" href="#">Buy Now</a>
+  <a class="button" href="/notice/viewNoticeWrite">글쓰기</a>
+
 </div>
 
 	<jsp:include page="../userFooter.jsp"></jsp:include>

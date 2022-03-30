@@ -6,9 +6,21 @@
 
 <mapper namespace="com.bookdabang.mapper.NoticeMapper">
 	<select id="getEntireNotice" resultType="Notice">
-		select * from notice order by no desc
+		select * from notice
+		order by no desc
 	</select>
 	<select id="readNotice" resultType="Notice">
-	select * from notice where no = #{no}
+		select * from notice where no
+		= #{no}
 	</select>
+	<select id="getMaxNo" resultType="int">
+		select max(no) from notice
+	</select>
+	<insert id="insertNotice">
+		insert into notice(no, title, writer, content, image)
+		values(#{no},#{title},#{writer},#{content},#{image})
+	</insert>
+	<insert id="insertAttachFile">
+insert into attachfile(noticeNo, originFile, thumbnailFile, notImageFile) values(#{noticeNo}, #{originF‎ile}, #{thumbnailFile}, #{notImageFile})
+</insert>
 </mapper>

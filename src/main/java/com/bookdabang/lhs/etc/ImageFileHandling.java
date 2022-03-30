@@ -8,19 +8,26 @@ import org.springframework.util.FileCopyUtils;
 
 public class ImageFileHandling {
 
-	public String fileRenaming(String orgFileName) throws IOException {
-		
-		UUID uuid = UUID.randomUUID();
-		String newFileName = uuid.toString() + "_" + orgFileName;
-		
-		return newFileName;
-		
-		
-	}	
-	public void fileUploading(String newFileName, String upPath, byte[] file) throws IOException {
-		File target = new File(upPath + File.separator, newFileName);
-		FileCopyUtils.copy(file,target);//파일 저장
+	public void fileUploading(String orgFileName, String upPath, byte[] file) throws IOException {
+		File target = new File(upPath + File.separator, orgFileName);
+		FileCopyUtils.copy(file,target);
 	}
 
-
+	public boolean fileDelete(String upPath,String targetFile) {
+		boolean result = false;
+		
+		System.out.println(upPath+targetFile);
+		
+		File delFile = new File(upPath+targetFile.replace("/", File.separator));
+		if(delFile.delete()) {
+			result = true;
+		}else {
+			result = false;
+		}
+		
+		
+		
+		return result;
+		
+	}
 }
