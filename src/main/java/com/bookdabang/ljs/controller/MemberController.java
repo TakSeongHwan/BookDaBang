@@ -54,8 +54,6 @@ public class MemberController {
 					if (loginMember != null) {
 					
 						System.out.println("로그인한 멤버 정보" + loginMember.toString());
-						
-						
 					} else {
 						
 						System.out.println("로그인 실패");

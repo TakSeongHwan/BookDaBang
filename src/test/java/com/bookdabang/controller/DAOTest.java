@@ -20,7 +20,7 @@ public class DAOTest {
 
 	@Test
 	public void getMember() throws Exception {
-		System.out.println(dao.getCartByUserId("cow")); 
+
 	}
 
 }

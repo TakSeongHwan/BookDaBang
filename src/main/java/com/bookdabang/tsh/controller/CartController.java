@@ -32,8 +32,8 @@ import com.bookdabang.tsh.domain.CartViewDTO;
 import com.bookdabang.tsh.service.CartService;
 
 
-@Controller
-@RequestMapping("/cart/*")
+@RestController
+@RequestMapping("/userCart/*")
 public class CartController {
 	
 	@Inject
@@ -41,13 +41,9 @@ public class CartController {
 	@Inject
 	public ProductService pService;
 	
-	@RequestMapping(value="/userCart",method = RequestMethod.GET)
-	public void getCart() throws Exception{
-
-	}
 	
-	@RequestMapping(value="/cartInfo",method = RequestMethod.GET)
-	public ResponseEntity<List<CartViewDTO>> getCartById(HttpSession ses) throws Exception{
+	@RequestMapping(value="/all",method = RequestMethod.GET)
+	public ResponseEntity<List<CartViewDTO>> getCartById(HttpSession ses){
 		CartSelectDTO dto = new CartSelectDTO();
 		ResponseEntity<List<CartViewDTO>> result = null;
 		MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember"); 
@@ -60,48 +56,68 @@ public class CartController {
 		}
 		dto.setUserId(userId);
 		dto.setIpaddr(ipaddr);
-		List<CartVO> cartLst = cService.getAllCart(dto);
-		List<CartViewDTO> cartView = new ArrayList<CartViewDTO>(); 
-		for(CartVO cart : cartLst) {
-			Product product =  pService.readProduct(cart.getProductNo());
-			CartViewDTO cv = new CartViewDTO(product.getProduct_no(), cart.getCartNo(), product.getTitle(),product.getCover(), product.getSell_price(), cart.getProductQtt());
-			cartView.add(cv);
+		List<CartVO> cartLst;
+		try {
+			cartLst = cService.getAllCart(dto);
+			List<CartViewDTO> cartView = new ArrayList<CartViewDTO>(); 
+			for(CartVO cart : cartLst) {
+				Product product =  pService.readProduct(cart.getProductNo());
+				CartViewDTO cv = new CartViewDTO(product.getProduct_no(), cart.getCartNo(), product.getTitle(),product.getCover(), product.getSell_price(), cart.getProductQtt());
+				cartView.add(cv);
+			}
+			result = new ResponseEntity<List<CartViewDTO>>(cartView,HttpStatus.OK);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		result = new ResponseEntity<List<CartViewDTO>>(cartView,HttpStatus.OK);
+		
+		
 		return result;
 	}
 	
-	@RequestMapping(value="/updateCart",method = RequestMethod.POST)
-	public ResponseEntity<String> updateCart(CartProdQttDTO dto) throws Exception {
+	@RequestMapping(value="/{cartNo}",method = RequestMethod.PUT)
+	public ResponseEntity<String> updateCart(@RequestBody CartProdQttDTO dto) {
 		ResponseEntity<String> result = null;
 		System.out.println("updateCart 실행" );
-		if(cService.updateCart(dto)==1) {
-			result = new ResponseEntity<String>("success",HttpStatus.OK);
-		}else {
-			result = new ResponseEntity<String>("fail",HttpStatus.BAD_REQUEST);
+		try {
+			if(cService.updateCart(dto)==1) {
+				result = new ResponseEntity<String>("success",HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		return result;
 	}
 	
 	
-	@RequestMapping(value="/deleteCart", method = RequestMethod.POST)
-	public ResponseEntity<String> deleteCart(@PathVariable("rno") int cartNo) throws Exception{
+	@RequestMapping(value="/{cartNo}", method = RequestMethod.DELETE)
+	public ResponseEntity<String> deleteCart(@PathVariable("rno") int cartNo){
 		ResponseEntity<String> result = null;
-		if(cService.deleteCart(cartNo)==1) {
-			result = new ResponseEntity<String>("success",HttpStatus.OK);
-		}else {
-			result = new ResponseEntity<String>("fail",HttpStatus.BAD_REQUEST);
+		try {
+			if(cService.deleteCart(cartNo)==1) {
+				result = new ResponseEntity<String>("success",HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		return result;
 	}
 	
-	@RequestMapping(value="/insertCart", method = RequestMethod.POST)
-	public ResponseEntity<String> insertCart(CartVO cart) throws Exception{
+	@RequestMapping(value="/addCart", method = RequestMethod.POST)
+	public ResponseEntity<String> insertCart(@RequestBody CartVO cart){
 		ResponseEntity<String> result = null;
-		if(cService.insertCart(cart)==1) {
-			result = new ResponseEntity<String>("success",HttpStatus.OK);
-		}else {
-			result = new ResponseEntity<String>("fail",HttpStatus.BAD_REQUEST);
+		try {
+			if(cService.insertCart(cart)==1) {
+				result = new ResponseEntity<String>("success",HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		return result;
 	}

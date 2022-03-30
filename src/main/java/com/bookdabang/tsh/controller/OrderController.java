@@ -29,8 +29,9 @@ public class OrderController {
 	}
 	
 	@RequestMapping(value="/insertOrder",method = RequestMethod.POST)
-	public void insertOrder(ProdOrder order) throws Exception {
+	public String insertOrder(ProdOrder order) throws Exception {
 		service.insertOrder(order);
+		return "redirect:/";
 	}
 	
 	@RequestMapping(value="/confirmOrder",method = RequestMethod.POST)

@@ -29,7 +29,6 @@
 	</update>
 	
 	
-	
 	<!-- prodOrder insert -->
 	<insert id="insertOrder">
 		insert into prodOrder(userId,productNo,productQtt,orderState_code,addressNo,price,orderPwd)
