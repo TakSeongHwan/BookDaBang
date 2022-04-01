@@ -4,7 +4,6 @@ public class PagingInfo {
 
 	private int postPerPage = 3; // 1페이지당 보여 줄 글의 개수
 	private int pageCntPerBlock = 2; // 1개의 블럭에 보여줄 페이지 수
-
 	private int totalPage; // 전체 페이지 수
 	private int totalPostCnt; // 전체 글의 개수
 
