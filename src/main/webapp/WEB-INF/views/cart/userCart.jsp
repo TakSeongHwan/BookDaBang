@@ -16,44 +16,112 @@
 	$(function() {
 		cartInfo();
 	})
-	
-	function cartInfo(){
-		$.ajax({
-			url : "/userCart/all",
-			type : "GET",
-			success : function(data) {
-				console.log(data);
-				let output = "";
-				let sum = 0;
-				$.each(data, function(i, e) {
-					output +='<tr><td><div class="media"><div class="d-flex"><img src="'+e.cover+'" style="width: 150px"></div><div class="media-body"><input type="hidden" id= "cartNo'+i+'" value="'+e.cartNo+'" /><p>'+e.title+'</p></div></div></td><td><h5 id = "sell'+i+'">'+e.sell_price.toLocaleString()+'원</h5></td><td><div class="product_count"><input type="text" name="qty" id="prductQtt'+i+'"maxlength="12" value="'+e.productQtt+'" title="Quantity:"class="input-text qty"><button onclick="addQtt('+i+');"class="increase items-count" type="button"><i class="lnr lnr-chevron-up">+</i></button><button onclick="subQtt('+i+');"class="reduced items-count" type="button"><i class="lnr lnr-chevron-down">-</i></button></div></td><td><h5 id="total'+i+'" class ="total">'+(parseInt(e.sell_price)*parseInt(e.productQtt)).toLocaleString()+'원</h5></td></tr>';
-					sum += parseInt(e.sell_price)*parseInt(e.productQtt);
-				})
-				output += '<tr><td></td><td></td><td><h5>Subtotal</h5></td><td><h5 id="subtotal">'+sum.toLocaleString()+'원</h5></td></tr><tr class="out_button_area"><td class="d-none-l"></td><td class=""></td><td></td><td><div class="checkout_btn_inner d-flex" style="float: right"><a class="gray_btn" href="#">계속하기</a> <a class="primary-btn ml-2" href="/order/checkOut">결제하기</a></div></td></tr>';
-				$("#output").append(output);
-			}
-		})
+
+	function allCk() {
+		let checked = $("#allCk").is(":checked");
+		if (checked) {
+			$("input:checkbox").prop("checked", true);
+		} else {
+			$("input:checkbox").prop("checked", false);
+		}
+		chk();
 	}
-	
-	function addQtt(obj){
-		let qtt = $("#prductQtt"+obj);
-		qtt.val(parseInt(qtt.val())+1);
+
+	function payOrder() {
+		let chkbox = $(".chkbox");
+		let cartsNo = "";
+		let chk = false;
+		for (let a = 0; a < chkbox.length; a++) {
+			if ($(chkbox[a]).is(":checked")) {
+				cartsNo += $(chkbox[a]).val() + ",";
+				chk = true;
+			}
+		}
+		if (chk) {
+			cartsNo = cartsNo.substr(0, cartsNo.length-1);
+			location.href="/order/checkOut?cartsNo="+cartsNo;
+		} else {
+			alert("주문하실 책을 선택하세요.")
+		}
+	}
+
+	function chk() {
+		let subTotal = 0;
+		let chkbox = $(".chkbox");
+		for (let a = 0; a < chkbox.length; a++) {
+			if ($(chkbox[a]).is(":checked")) {
+				let total = parseInt($("#total" + $(chkbox[a]).val()).text()
+						.replace(",", "").replace("원", ""));
+				subTotal += total;
+			}
+		}
+		$("#subtotal").text(subTotal.toLocaleString() + "원");
+	}
+
+	function cartInfo() {
+		$
+				.ajax({
+					url : "/userCart/all",
+					type : "GET",
+					success : function(data) {
+						console.log(data);
+						let output = "";
+						let sum = 0;
+						$
+								.each(
+										data,
+										function(i, e) {
+											output += '<tr><td><input type="checkbox" class="chkbox" onclick="chk();" name="checkCart" value = '
+													+ e.cartNo
+													+ ' checked /><div class="media"><div class="d-flex"><img src="'+e.cover+'" style="width: 150px"></div><div class="media-body"><input type="hidden" id= "cartNo'+e.cartNo+'" value="'+e.cartNo+'" /><p>'
+													+ e.title
+													+ '</p></div></div></td><td><h5 id = "sell'+e.cartNo+'">'
+													+ e.sell_price
+															.toLocaleString()
+													+ '원</h5></td><td><div class="product_count"><input type="hidden" id="stock'+e.cartNo+'" value="'+e.stock+'"/><input type="text" name="qty" id="prductQtt'+e.cartNo+'"maxlength="12" value="'+e.productQtt+'" title="Quantity:"class="input-text qty" disabled><button onclick="addQtt('
+													+ e.cartNo
+													+ ');"class="increase items-count" type="button"><i class="lnr lnr-chevron-up">+</i></button><button onclick="subQtt('
+													+ e.cartNo
+													+ ');"class="reduced items-count" type="button"><i class="lnr lnr-chevron-down">-</i></button></div></td><td><h5 id="total'+e.cartNo+'" class ="total">'
+													+ (parseInt(e.sell_price) * parseInt(e.productQtt))
+															.toLocaleString()
+													+ '원</h5></td></tr>';
+											sum += parseInt(e.sell_price)
+													* parseInt(e.productQtt);
+										})
+						output += '<tr><td></td><td></td><td><h5>Subtotal</h5></td><td><h5 id="subtotal">'
+								+ sum.toLocaleString()
+								+ '원</h5></td></tr><tr class="out_button_area"><td class="d-none-l"></td><td class=""></td><td></td><td><div class="checkout_btn_inner d-flex" style="float: right"><a class="gray_btn" href="#">계속하기</a> <a class="primary-btn ml-2" onclick="payOrder();" href="javascript:void(0)">결제하기</a></div></td></tr>';
+						$("#output").append(output);
+					}
+				})
+	}
+
+	function addQtt(obj) {
+		let qtt = $("#prductQtt" + obj);
+		let stock = parseInt($("#stock"+obj).val());
+		if(stock<=parseInt(qtt.val())){
+			alert("재고가 부족합니다.");
+			qtt.val(parseInt(stock));
+		}else{
+			qtt.val(parseInt(qtt.val()) + 1);	
+		}
 		modiQtt(obj);
 	}
-	function subQtt(obj){
-		let qtt = $("#prductQtt"+obj);
-		if(qtt.val()>1){
-			qtt.val(parseInt(qtt.val())-1);	
+	function subQtt(obj) {
+		let qtt = $("#prductQtt" + obj);
+		if (qtt.val() > 1) {
+			qtt.val(parseInt(qtt.val()) - 1);
 			modiQtt(obj);
-		}else{
+		} else {
 			alert("0개 이하로 줄일 수 없습니다.");
 		}
 	}
 
 	function modiQtt(obj) {
-		let productQtt = $("#prductQtt"+obj).val();
-		let cartNo = $("#cartNo"+obj).val();
-		let url = "/userCart/"+cartNo;
+		let productQtt = $("#prductQtt" + obj).val();
+		let cartNo = $("#cartNo" + obj).val();
+		let url = "/userCart/" + cartNo;
 		let sendData = JSON.stringify({
 			cartNo : cartNo,
 			productQtt : productQtt
@@ -69,13 +137,13 @@
 			},
 			success : function(data) {
 				if (data == "success") {
-					$("#total"+obj).text((parseInt($("#sell"+obj).text().replace(",", ""))*productQtt).toLocaleString()+"원");
-					let a = $(".total").text().replaceAll(",","").split("원");
-					let sum = 0;
-					for(let i = 0 ; i < a.length-1; i++){
-						sum += parseInt(a[i]);
-					}
-					$("#subtotal").text(sum.toLocaleString()+"원");
+					$("#total" + obj)
+							.text(
+									(parseInt($("#sell" + obj).text().replace(
+											",", "")) * productQtt)
+											.toLocaleString()
+											+ "원");
+					chk();
 				} else {
 					alert("실패");
 				}
@@ -106,7 +174,7 @@
 		<div class="container h-100">
 			<div class="blog-banner">
 				<div class="text-center">
-					<h1>Shopping Cart </h1>
+					<h1>Shopping Cart</h1>
 					<nav aria-label="breadcrumb" class="banner-breadcrumb">
 						<ol class="breadcrumb">
 							<li class="breadcrumb-item"><a href="#">Home</a></li>
@@ -127,7 +195,8 @@
 					<table class="table">
 						<thead>
 							<tr>
-								<th scope="col">Product</th>
+								<th scope="col"><input type="checkbox" id="allCk"
+									onclick="allCk();" /> Product</th>
 								<th scope="col">Price</th>
 								<th scope="col">Quantity</th>
 								<th scope="col">Total</th>

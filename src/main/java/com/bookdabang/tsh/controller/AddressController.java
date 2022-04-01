@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,14 +26,21 @@ public class AddressController {
 	@RequestMapping(value = "/all",method = RequestMethod.GET)
 	public ResponseEntity<AddressVO> getAddress(HttpSession ses){
 		MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember"); 
-		ResponseEntity<AddressVO> result = null;
+		ResponseEntity<AddressVO> result = new ResponseEntity<>(null,HttpStatus.OK);;
 		AddressVO addr =null; 
 		if(loginMember != null) {
 			try {
 				addr = service.selectUserAddress(loginMember.getUserId());
 				if(addr != null) {
-					result = new ResponseEntity<AddressVO>(addr,HttpStatus.OK);
+					if(addr.getPostalcode().length()>1) {
+						result = new ResponseEntity<AddressVO>(addr,HttpStatus.OK);
+					}else {
+						result = new ResponseEntity<>(null,HttpStatus.OK);
+					}
+				}else {
+					result = new ResponseEntity<>(null,HttpStatus.OK);
 				}
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -41,34 +49,6 @@ public class AddressController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/{addressNo}",method = RequestMethod.PUT)
-	public ResponseEntity<String> updateAddress(@RequestBody AddressVO address) {
-		ResponseEntity<String> result = null;
-		System.out.println(address);
-		try {
-			if(service.updateAddress(address)==1) {
-				result = new ResponseEntity<String>("success",HttpStatus.OK);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-		return result;
-	}
 	
-	@RequestMapping(value = "", method = RequestMethod.POST)
-	public ResponseEntity<String> insertAddress(@RequestBody AddressVO address){
-		ResponseEntity<String> result = null;
-		try {
-			if(service.insertAddress(address)==1) {
-				result = new ResponseEntity<String>("success",HttpStatus.OK);
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-		return result;
-	}
 
 }

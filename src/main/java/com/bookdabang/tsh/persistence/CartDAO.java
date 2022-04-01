@@ -10,6 +10,8 @@ public interface CartDAO {
 
 	// 유저아이디로 장바구니 얻어오기
 	public List<CartVO> getAllCart(CartSelectDTO dto) throws Exception;
+	
+	public CartVO selectCartByNo(int cartNo) throws Exception;
 
 	public int updateCart(CartProdQttDTO dto) throws Exception;
 	
@@ -18,4 +20,7 @@ public interface CartDAO {
 	public int deleteCart(int cartNo) throws Exception;
 	
 	public int insertCart(CartVO cart) throws Exception;
+
+	public int countCart(CartSelectDTO dto) throws Exception;
+
 }

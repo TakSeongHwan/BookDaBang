@@ -30,7 +30,8 @@
 <script
 	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-	let addressNo = "";
+	let addressNo = 0;
+	let cartsNo = "";
 	function proceedToPay() {
 		let addr = $("#address");
 		console.log($("#first").val())
@@ -39,20 +40,27 @@
 		console.log($("#f-option6").prop("checked"))
 		console.log(telValidator($("#phoneNumber").val()));
 		if ($("#first").val().length > 0 && address.value != "") {
-			if(telValidator($("#phoneNumber").val())){
-				if($("#f-option5").prop("checked") && $("#f-option6").prop("checked"))	{
-					if (addressNo.length < 1) {
-						insertAddress();
+			if (telValidator($("#phoneNumber").val())) {
+				if ($("#f-option5").prop("checked")
+						&& $("#f-option6").prop("checked")) {
+					if ("${loginMember.userId}".length < 1) {
+						console.log($("#orderPwd").val())
+						if ($("#orderPwd").val() == "") {
+							alert("주문 비밀번호를 입력해주세요")
+							return;
+						} else {
+							insertOrder();
+						}
 					} else {
-						updateAddress();
+						insertOrder();
 					}
-				}else{
+				} else {
 					alert("필수 동의를 해주세요");
 				}
-			}else{
+			} else {
 				alert("전화번호를 확인해주세요")
 			}
-		}else{
+		} else {
 			alert("주소와 이름을 확인해주세요");
 		}
 	}
@@ -62,92 +70,88 @@
 		}
 		return false;
 	}
-	function insertAddress() {
-		let sendData = JSON.stringify({
-			recipient : $("#first").val(),
-			postalcode : $("#postcode").val(),
-			mainAddress : $("#address").val(),
-			remainaddress : $("#detailAddress").val(),
-			phonenumber : $("#phoneNumber").val(),
-			deliverymessage : $("#message").val()
-		});
-		console.log(sendData);
-		$.ajax({
-			url : "/address/",
-			type : "POST",
-			data : sendData,
-			contentType : "application/json",
-			success : function(data) {
-				if (data == 'success') {
-
-				}
-			}
-		})
-	}
-	function updateAddress(){
-		console.log(addressNo);
-		let sendData = JSON.stringify({
-			address_no : addressNo,
-			recipient : $("#first").val(),
-			postalcode : $("#postcode").val(),
-			mainAddress : $("#address").val(),
-			remainaddress : $("#detailAddress").val(),
-			phonenumber : $("#phoneNumber").val(),
-			deliverymessage: $("#message").val()
-		});
-		console.log(sendData);
-		$.ajax({
-			url : "/address/"+addressNo,
-			type : "PUT",
-			data : sendData,
-			headers : {
-				"X-HTTP-Method-Override" : "POST"
-			},
-			contentType : "application/json",
-			success : function(data) {
-				if (data == 'success') {
-					console.log("update성공");
-				}
-			}
-		})
-	}
 	$(function() {
 		cartInfo();
 		getAddress();
-	})
+		showOrderPwd();
+	});
+
+	function showOrderPwd() {
+		if ("${loginMember.userId}".length < 1) {
+			let output = '<input type="password" class="form-control" id="orderPwd"placeholder="주문 비밀번호를 입력하세요">'
+			$("#pwdDiv").append(output);
+		}
+	}
+
+	function insertOrder() {
+		let orderPwd = $("#orderPwd").val();
+		let form = document.getElementById("addressForm");
+		let formData = document.createElement("input");
+		if (orderPwd == undefined) {
+			orderPwd = null;
+		}
+		formData.setAttribute("type", 'hidden');
+		formData.setAttribute("name", "orderPwd");
+		formData.setAttribute("value", orderPwd);
+
+		if ("${loginMember.userId}".length > 1) {
+			let formData1 = document.createElement("input");
+			formData.setAttribute("type", 'hidden');
+			formData.setAttribute("name", "userId");
+			formData.setAttribute("value", "${loginMember.userId}");
+			form.appendChild(formData1);
+		}
+
+		let formData2 = document.createElement("input");
+		formData2.setAttribute("type", 'hidden');
+		formData2.setAttribute("name", "addressNo");
+		formData2.setAttribute("value", addressNo);
+
+		let formData3 = document.createElement("input");
+		formData3.setAttribute("type", 'hidden');
+		formData3.setAttribute("name", "cartsNo");
+		formData3.setAttribute("value", cartsNo);
+
+		form.appendChild(formData);
+		form.appendChild(formData2);
+		form.appendChild(formData3);
+		document.body.appendChild(form);
+		form.submit();
+	}
 
 	function getAddress() {
 		$.ajax({
 			url : "/address/all",
 			type : "GET",
 			success : function(data) {
+				console.log(data);
 				parseAddress(data);
-			},error: function(data) {
-				if("${loginMember.userId}".length<1){
-					let output = '<input type="password" class="form-control" id="orderPwd"placeholder="주문 비밀번호를 입력하세요">'
-					$("#pwdDiv").append(output);
-				}
-				
+			},
+			error : function(data) {
 			}
 		})
 
 	}
 
 	function parseAddress(data) {
-		console.log(data);
-		addressNo = data.address_no;
-		$("#first").val(data.recipient);
-		$("#postcode").val(data.postalcode);
-		$("#address").val(data.mainAddress);
-		$("#detailAddress").val(data.remainaddress);
-		$("#phoneNumber").val(data.phonenumber)
-		$("#message").text(data.deliverymessage);
+		if (data != "") {
+			addressNo = data.address_no;
+			$("#first").val(data.recipient);
+			$("#postcode").val(data.postalcode);
+			$("#address").val(data.mainAddress);
+			$("#detailAddress").val(data.remainaddress);
+			$("#phoneNumber").val(data.phonenumber)
+			$("#message").val(data.deliverymessage);
+		}
 	}
 
 	function cartInfo() {
+		let param = location.href.split("?")[1];
+		console.log(param);
 		$.ajax({
 			url : "/userCart/all",
 			type : "GET",
+			data : param,
 			success : function(data) {
 				parseOrderInfo(data);
 			}
@@ -163,6 +167,8 @@
 						data,
 						function(i, e) {
 							console.log(e);
+							cartsNo += e.cartNo + ",";
+							console.log(cartsNo);
 							output += '<li><div style="float:left; width:150px; height:25px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">'
 									+ e.title
 									+ '</div><span class="middle" style="margin-left:30px; width:30px; display:inline-block;">x'
@@ -186,36 +192,13 @@
 				// 각 주소의 노출 규칙에 따라 주소를 조합한다.
 				// 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
 				var addr = ''; // 주소 변수
-				var extraAddr = ''; // 참고항목 변수
+				
 
 				//사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
 				if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
 					addr = data.roadAddress;
 				} else { // 사용자가 지번 주소를 선택했을 경우(J)
 					addr = data.jibunAddress;
-				}
-
-				// 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
-				if (data.userSelectedType === 'R') {
-					// 법정동명이 있을 경우 추가한다. (법정리는 제외)
-					// 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
-					if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
-						extraAddr += data.bname;
-					}
-					// 건물명이 있고, 공동주택일 경우 추가한다.
-					if (data.buildingName !== '' && data.apartment === 'Y') {
-						extraAddr += (extraAddr !== '' ? ', '
-								+ data.buildingName : data.buildingName);
-					}
-					// 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-					if (extraAddr !== '') {
-						extraAddr = ' (' + extraAddr + ')';
-					}
-					// 조합된 참고항목을 해당 필드에 넣는다.
-					document.getElementById("extraAddress").value = extraAddr;
-
-				} else {
-					document.getElementById("extraAddress").value = '';
 				}
 
 				// 우편번호와 주소 정보를 해당 필드에 넣는다.
@@ -257,38 +240,33 @@
 				<div class="row">
 					<div class="col-lg-8">
 						<h3>Billing Details</h3>
-						<form class="row contact_form" action="#" method="post"
-							novalidate="novalidate">
+						<form id="addressForm" class="row contact_form"
+							action="/order/insertOrder" method="post" novalidate="novalidate">
 							<div class="col-md-12 form-group p_star">
-								<input type="text" class="form-control" id="first" name="name"
-									placeholder="이름을 입력하세요">
+								<input type="text" class="form-control" id="first"
+									name="recipient" placeholder="이름을 입력하세요">
 							</div>
 							<div class="col-md-12 form-group p_star">
 								<input type="text" id="postcode" class="form-control"
-									placeholder="우편번호" onclick="daumPostcode();">
+									name="postalcode" placeholder="우편번호" onclick="daumPostcode();">
 							</div>
 							<div class="col-md-12 form-group p_star">
-								<input type="text" class="form-control" id="address" disabled
-									placeholder="">
+								<input type="text" class="form-control" id="address"
+									name="mainAddress" placeholder="">
 							</div>
 							<div class="col-md-12 form-group p_star">
 								<input type="text" class="form-control" id="detailAddress"
-									placeholder="상세주소">
-							</div>
-
-							<div class="col-md-12 form-group p_star">
-								<input type="text" class="form-control" id="extraAddress"
-									placeholder="참고항목">
+									name="remainaddress" placeholder="상세주소">
 							</div>
 
 							<div class="col-md-12 form-group p_star">
 								<input type="text" class="form-control" id="phoneNumber"
-									placeholder="010-1234-5678">
+									name="phonenumber" placeholder="010-1234-5678">
 							</div>
 
-							<div class="col-md-12 form-group mb-0">
-								<textarea class="form-control" name="message" id="message"
-									rows="1" placeholder="배송 요청사항"></textarea>
+							<div class="col-md-12 form-group p_star">
+								<input type="text" class="form-control" name="deliverymessage"
+									id="message" placeholder="배송 요청사항">
 							</div>
 							<div class="col-md-12 form-group p_star" id="pwdDiv"></div>
 						</form>
@@ -348,4 +326,5 @@
 	<script src="${contextPath}/resources/vendors/mail-script.js"></script>
 	<script src="${contextPath}/resources/js/main.js"></script>
 </body>
-</html>;
+</html>
+;

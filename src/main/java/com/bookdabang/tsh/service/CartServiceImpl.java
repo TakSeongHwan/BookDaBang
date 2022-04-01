@@ -1,5 +1,6 @@
 package com.bookdabang.tsh.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -43,5 +44,23 @@ public class CartServiceImpl implements CartService {
 	public int updateCartUserId(CartSelectDTO dto) throws Exception {
 		return dao.updateCartUserId(dto);
 	}
+
+	@Override
+	public List<CartVO> selectCartByNo(List<Integer> cartNo) throws Exception {
+		
+		List<CartVO> result = new ArrayList<CartVO>();
+		System.out.println(cartNo);
+		for(int cart : cartNo) {
+			result.add(dao.selectCartByNo(cart));
+		}
+
+		return result;
+	}
+
+	@Override
+	public int countCart(CartSelectDTO dto) throws Exception {
+		return dao.countCart(dto);
+	}
+
 
 }

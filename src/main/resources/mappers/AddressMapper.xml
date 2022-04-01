@@ -6,7 +6,7 @@
 <mapper namespace="com.bookdabang.mapper.AddressMapper">
 	<!-- 주소 select -->
 	<select id="selectUserAddress" resultType="AddressVO">
-		select * from address where userId = #{userId}
+		select * from address where userId = #{userId} order by address_no desc limit 0, 1
 	</select>
 	
 	<!-- 주소 insert -->

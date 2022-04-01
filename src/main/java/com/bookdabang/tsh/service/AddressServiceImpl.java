@@ -19,15 +19,11 @@ public class AddressServiceImpl implements AddressService{
 		return dao.selectUserAddress(userId);
 	}
 
-	@Override
-	public int insertAddress(AddressVO address) throws Exception {
-		return dao.insertAddress(address);
-	}
 
 	@Override
-	public int updateAddress(AddressVO address) throws Exception {
+	public int nextAddressNo() throws Exception {
 		// TODO Auto-generated method stub
-		return dao.updateAddress(address);
+		return dao.nextAddressNo();
 	}
 
 

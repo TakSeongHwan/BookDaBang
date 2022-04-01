@@ -1,5 +1,4 @@
-package com.bookdabang.tsh.controller; 
-
+package com.bookdabang.tsh.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,58 +30,93 @@ import com.bookdabang.tsh.domain.CartSelectDTO;
 import com.bookdabang.tsh.domain.CartViewDTO;
 import com.bookdabang.tsh.service.CartService;
 
-
 @RestController
 @RequestMapping("/userCart/*")
 public class CartController {
-	
+
 	@Inject
 	public CartService cService;
 	@Inject
 	public ProductService pService;
 	
-	
-	@RequestMapping(value="/all",method = RequestMethod.GET)
-	public ResponseEntity<List<CartViewDTO>> getCartById(HttpSession ses){
+	@RequestMapping(value="/count", method = RequestMethod.GET)
+	public ResponseEntity<Integer> countCart(HttpSession ses){
+		ResponseEntity<Integer> result = null;
 		CartSelectDTO dto = new CartSelectDTO();
-		ResponseEntity<List<CartViewDTO>> result = null;
-		MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember"); 
+		MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember");
 		String userId = null;
 		String ipaddr = null;
-		if(loginMember!=null) {
+		if (loginMember != null) {
 			userId = loginMember.getUserId();
-		}else {
+		} else {
 			ipaddr = "211.197.18.247";
 		}
 		dto.setUserId(userId);
 		dto.setIpaddr(ipaddr);
-		List<CartVO> cartLst;
 		try {
-			cartLst = cService.getAllCart(dto);
-			List<CartViewDTO> cartView = new ArrayList<CartViewDTO>(); 
-			for(CartVO cart : cartLst) {
-				Product product =  pService.readProduct(cart.getProductNo());
-				CartViewDTO cv = new CartViewDTO(product.getProduct_no(), cart.getCartNo(), product.getTitle(),product.getCover(), product.getSell_price(), cart.getProductQtt());
+			int cntCart = cService.countCart(dto);
+			result = new ResponseEntity<Integer>(cntCart,HttpStatus.OK);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = new ResponseEntity<Integer>(HttpStatus.BAD_REQUEST);
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/all", method = RequestMethod.GET)
+	public ResponseEntity<List<CartViewDTO>> getCartById(HttpSession ses, String cartsNo) throws Exception {
+		ResponseEntity<List<CartViewDTO>> result = null;
+		try {
+			System.out.println(cartsNo);
+			List<CartVO> cartLst = null;
+			if (cartsNo == null) {
+				CartSelectDTO dto = new CartSelectDTO();
+
+				MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember");
+				String userId = null;
+				String ipaddr = null;
+				if (loginMember != null) {
+					userId = loginMember.getUserId();
+				} else {
+					ipaddr = "211.197.18.247";
+				}
+				dto.setUserId(userId);
+				dto.setIpaddr(ipaddr);
+				cartLst = cService.getAllCart(dto);
+
+			} else {
+				String[] cNos = cartsNo.split(",");
+				List<Integer> cartNo = new ArrayList<Integer>();
+				for (String no : cNos) {
+					cartNo.add(Integer.parseInt(no));
+				}
+				cartLst = cService.selectCartByNo(cartNo);
+			}
+			List<CartViewDTO> cartView = new ArrayList<CartViewDTO>();
+			for (CartVO cart : cartLst) {
+				Product product = pService.readProduct(cart.getProductNo());
+				CartViewDTO cv = new CartViewDTO(product.getProduct_no(), cart.getCartNo(), product.getTitle(),
+						product.getCover(), product.getSell_price(), cart.getProductQtt(),product.getStock());
 				cartView.add(cv);
 			}
-			result = new ResponseEntity<List<CartViewDTO>>(cartView,HttpStatus.OK);
+			result = new ResponseEntity<List<CartViewDTO>>(cartView, HttpStatus.OK);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		
-		
+
 		return result;
 	}
-	
-	@RequestMapping(value="/{cartNo}",method = RequestMethod.PUT)
+
+	@RequestMapping(value = "/{cartNo}", method = RequestMethod.PUT)
 	public ResponseEntity<String> updateCart(@RequestBody CartProdQttDTO dto) {
 		ResponseEntity<String> result = null;
-		System.out.println("updateCart 실행" );
+		System.out.println("updateCart 실행");
 		try {
-			if(cService.updateCart(dto)==1) {
-				result = new ResponseEntity<String>("success",HttpStatus.OK);
+			if (cService.updateCart(dto) == 1) {
+				result = new ResponseEntity<String>("success", HttpStatus.OK);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -90,14 +124,13 @@ public class CartController {
 		}
 		return result;
 	}
-	
-	
-	@RequestMapping(value="/{cartNo}", method = RequestMethod.DELETE)
-	public ResponseEntity<String> deleteCart(@PathVariable("rno") int cartNo){
+
+	@RequestMapping(value = "/{cartNo}", method = RequestMethod.DELETE)
+	public ResponseEntity<String> deleteCart(@PathVariable("rno") int cartNo) {
 		ResponseEntity<String> result = null;
 		try {
-			if(cService.deleteCart(cartNo)==1) {
-				result = new ResponseEntity<String>("success",HttpStatus.OK);
+			if (cService.deleteCart(cartNo) == 1) {
+				result = new ResponseEntity<String>("success", HttpStatus.OK);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -106,13 +139,13 @@ public class CartController {
 		}
 		return result;
 	}
-	
-	@RequestMapping(value="/addCart", method = RequestMethod.POST)
-	public ResponseEntity<String> insertCart(@RequestBody CartVO cart){
+
+	@RequestMapping(value = "/addCart", method = RequestMethod.POST)
+	public ResponseEntity<String> insertCart(@RequestBody CartVO cart) {
 		ResponseEntity<String> result = null;
 		try {
-			if(cService.insertCart(cart)==1) {
-				result = new ResponseEntity<String>("success",HttpStatus.OK);
+			if (cService.insertCart(cart) == 1) {
+				result = new ResponseEntity<String>("success", HttpStatus.OK);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

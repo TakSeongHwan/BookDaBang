@@ -13,7 +13,7 @@
 				where userId = #{userId}
 			</when>
 			<otherwise>
-				where orderNo = #{orderNo} and orderPwd = #{orderPwd}
+				where orderBundle = #{orderBundle} and orderPwd = #{orderPwd}
 			</otherwise>
 		</choose>
 	</select>
@@ -31,8 +31,8 @@
 	
 	<!-- prodOrder insert -->
 	<insert id="insertOrder">
-		insert into prodOrder(userId,productNo,productQtt,orderState_code,addressNo,price,orderPwd)
-		values(#{userId},#{productNo},#{productQtt},#{orderState_code},#{addressNo},#{price},#{orderPwd})
+		insert into prodOrder(userId,productNo,productQtt,orderState_code,addressNo,price,orderPwd,orderBundle)
+		values(#{userId},#{productNo},#{productQtt},1,#{addressNo},#{price},sha1(md5(#{orderPwd})),#{orderBundle})
 	</insert>
 	
 	<!-- Order confirm update -->

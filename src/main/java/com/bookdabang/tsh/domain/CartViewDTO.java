@@ -7,11 +7,13 @@ public class CartViewDTO {
 	private String cover;
 	private int sell_price;
 	private int productQtt;
+	private int stock;
 	public CartViewDTO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public CartViewDTO(int product_no, int cartNo, String title, String cover, int sell_price, int productQtt) {
+	public CartViewDTO(int product_no, int cartNo, String title, String cover, int sell_price, int productQtt,
+			int stock) {
 		super();
 		this.product_no = product_no;
 		this.cartNo = cartNo;
@@ -19,6 +21,7 @@ public class CartViewDTO {
 		this.cover = cover;
 		this.sell_price = sell_price;
 		this.productQtt = productQtt;
+		this.stock = stock;
 	}
 	public int getProduct_no() {
 		return product_no;
@@ -56,10 +59,16 @@ public class CartViewDTO {
 	public void setProductQtt(int productQtt) {
 		this.productQtt = productQtt;
 	}
+	public int getStock() {
+		return stock;
+	}
+	public void setStock(int stock) {
+		this.stock = stock;
+	}
 	@Override
 	public String toString() {
 		return "CartViewDTO [product_no=" + product_no + ", cartNo=" + cartNo + ", title=" + title + ", cover=" + cover
-				+ ", sell_price=" + sell_price + ", productQtt=" + productQtt + "]";
+				+ ", sell_price=" + sell_price + ", productQtt=" + productQtt + ", stock=" + stock + "]";
 	}
 	
 	

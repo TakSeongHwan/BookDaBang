@@ -15,7 +15,7 @@ public class OrderDAOImpl implements OrderDAO {
 	@Inject
 	private SqlSession ses;
 	
-	private String ns = "com.bookdabang.mapper.CartMapper";
+	private String ns = "com.bookdabang.mapper.OrderMapper";
 
 	@Override
 	public List<ProdOrder> selectOrder(OrderDTO odto) throws Exception {

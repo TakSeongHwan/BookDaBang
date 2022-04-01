@@ -16,12 +16,26 @@
 <link rel="stylesheet" href="${contextPath}/resources/vendors/owl-carousel/owl.theme.default.min.css">
 <link rel="stylesheet" href="${contextPath}/resources/vendors/owl-carousel/owl.carousel.min.css">
 <link rel="stylesheet" href="${contextPath}/resources/css/style.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <!-- W3SCHOOL -->
  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <title>userHeader</title>
+<script type="text/javascript">
+$(function() {
+	$.ajax({
+		url: "/userCart/count",
+		type: "GET",
+		success: function(data){
+			console.log(data);
+			$("#cntCart").text(data);
+		}
+	})
+})
+</script>
 </head>
 <body>
    <!--================ Start Header Menu Area =================-->
@@ -63,7 +77,7 @@
                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">Pages</a>
                    <ul class="dropdown-menu">
-                        <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath }/login.html">Login</a></li>
                         <li class="nav-item"><a class="nav-link" href="register.html">Register</a></li>
                         <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>
                    </ul>
@@ -74,8 +88,8 @@
 
             <ul class="nav-shop">
               <li class="nav-item"><button><i class="ti-search"></i></button></li>
-              <li class="nav-item"><form action="${contextPath }/cart/userCart" method="get"><button type="submit"><i class="ti-shopping-cart"></i><span class="nav-shop__circle">3</span></button></form></li>
-              <li class="nav-item"><a class="button button-header" href="#">Buy Now</a></li>
+              <li class="nav-item"><form action="${contextPath }/cart/userCart" method="get"><button type="submit"><i class="ti-shopping-cart"></i><span class="nav-shop__circle" id ="cntCart"></span></button></form></li>
+              <li class="nav-item"><a class="button button-header" href="/order/checkOut">Buy Now</a></li>
             </ul>
           </div>
         </div>
