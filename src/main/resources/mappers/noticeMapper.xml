@@ -21,6 +21,24 @@
 		values(#{no},#{title},#{writer},#{content},#{image})
 	</insert>
 	<insert id="insertAttachFile">
-insert into attachfile(noticeNo, originFile, thumbnailFile, notImageFile) values(#{noticeNo}, #{originF‎ile}, #{thumbnailFile}, #{notImageFile})
-</insert>
+		insert into attachfile(noticeNo, originFile,
+		thumbnailFile, notImageFile)
+		values(#{noticeNo}, #{originF‎ile},
+		#{thumbnailFile}, #{notImageFile})
+	</insert>
+	<select id="getAttachFile" resultType="AttachFileVO">
+		select * from attachfile
+		where noticeNo=#{noticeNo}
+	</select>
+	<delete id="deleteNotice">
+		delete from notice where no=#{no}
+	</delete>
+	<insert id="insertReply">
+		insert into
+		notice_reply(boardNo,replyer,replyContent)
+		values(#{boardNo},#{replyer},#{replyContent})
+	</insert>
+	<select id="getReplyNotice" resultType="NoticeReply">
+		select * from notice_reply where boardNo = #{boardNo}
+	</select>
 </mapper>

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.AttachFileVO;
 import com.bookdabang.common.domain.Notice;
+import com.bookdabang.common.domain.NoticeReply;
 
 @Repository
 public class NoticeDAOImpl implements NoticeDAO {
@@ -20,25 +21,25 @@ public class NoticeDAOImpl implements NoticeDAO {
 	private static String ns = "com.bookdabang.mapper.NoticeMapper";
 
 	@Override
-	public List<Notice> entireNotice() {
+	public List<Notice> entireNotice() throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectList(ns + ".getEntireNotice");
 	}
 
 	@Override
-	public Notice getContentByNo(int no) {
+	public Notice getContentByNo(int no) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectOne(ns+ ".readNotice",no);
 	}
 
 	@Override
-	public int getNoticeNo() {
+	public int getNoticeNo() throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectOne(ns + ".getMaxNo");
 	}
 
 	@Override
-	public int insertNotice(Notice n) {
+	public int insertNotice(Notice n) throws Exception {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("no", n.getNo());
 		map.put("title", n.getTitle());
@@ -50,7 +51,7 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 	@Override
-	public int insertAttachFile(AttachFileVO file, int no) {
+	public int insertAttachFile(AttachFileVO file, int no) throws Exception {
 		
 		Map<String,Object> map = new HashMap<String, Object>();
 			map.put("noticeNo", no);
@@ -62,6 +63,30 @@ public class NoticeDAOImpl implements NoticeDAO {
 	
 
 		return ses.insert(ns+".insertAttachFile", map);
+	}
+
+	@Override
+	public List<AttachFileVO> getAttachFile(int noticeNo) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns+".getAttachFile",noticeNo);
+	}
+
+	@Override
+	public int deleteNotice(int no) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.delete(ns+".deleteNotice",no);
+	}
+
+	@Override
+	public int insertReply(NoticeReply reply) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.insert(ns+".insertReply",reply);
+	}
+
+	@Override
+	public List<NoticeReply> getAllReply(int boardNo) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns+".getReplyNotice",boardNo);
 	}
 	
 }

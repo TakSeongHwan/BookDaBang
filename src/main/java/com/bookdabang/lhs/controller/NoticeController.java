@@ -41,7 +41,12 @@ public class NoticeController {
 	@RequestMapping("listAll")
 	public String notice(Model m) {
 		List<Notice> notice = new ArrayList<Notice>();
-		notice = service.entireNotice();
+		try {
+			notice = service.entireNotice();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		m.addAttribute("notice", notice);
 		return "notice/notice";
 	}
@@ -49,8 +54,21 @@ public class NoticeController {
 	@RequestMapping("viewContent")
 	public void showNoticeContent(Model m, @RequestParam("no") int no) {
 		System.out.println(no);
-		Notice content = service.getContentByNo(no);
+		Notice content = null;
+		List<AttachFileVO> af = null;
+		try {
+			content = service.getContentByNo(no);
+			af = service.getAttachFile(no);
+			if(af.size()<1) {
+				af = null;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println(content);
+		
+		m.addAttribute("attachFile", af);
 		m.addAttribute("content", content);
 	}
 
@@ -64,21 +82,50 @@ public class NoticeController {
 	public String insertNotice(Notice n, RedirectAttributes rttr) {
 		
 	
-		int no = service.getNoticeNo() + 1;
-		
-		n.setNo(no);
-		
-		if(service.insertNotice(n) == 1) {
+		int no = 0;
+		try {
+			no = service.getNoticeNo() + 1;
+			n.setNo(no);
 			
-			for(AttachFileVO af : this.fileList) {
-				service.insertAttachFile(af, no);
+			if(service.insertNotice(n) == 1) {
+				
+				for(AttachFileVO af : this.fileList) {
+					service.insertAttachFile(af, no);
+				}
+				rttr.addFlashAttribute("result", "success");
 			}
-			rttr.addFlashAttribute("result", "success");
-		}else {
+			
+				
 		
+		} catch (Exception e) {
 			rttr.addFlashAttribute("result", "fail");
+			e.printStackTrace();
 		}
 		
+		
+		
+		return "redirect:/notice/listAll";
+	}
+	
+	
+	@RequestMapping(value="updateNotice", method=RequestMethod.POST)
+	public void updateNotice() {
+		
+	}
+	
+	@RequestMapping("deleteNotice")
+	public String deleteNotice(@RequestParam int no, RedirectAttributes rttr) {
+		System.out.println("삭제할 게시물"+no);
+		int result = 0;
+		try {
+			result = service.deleteNotice(no);
+			if(result == 1) {
+				rttr.addFlashAttribute("result", "success");
+			}
+		} catch (Exception e) {
+			rttr.addFlashAttribute("result", "fail");
+			e.printStackTrace();
+		}
 		return "redirect:/notice/listAll";
 	}
 

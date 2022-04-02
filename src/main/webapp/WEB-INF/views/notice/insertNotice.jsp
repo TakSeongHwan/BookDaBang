@@ -14,8 +14,7 @@ $(document).ready(function(){
 		
 		let url = "/notice/imageHandling";
 		let upfile = this.files[0];
-		let flag = false;
-		fileName = upfile.name;
+		let fileName = upfile.name;
 		
 		let imgExt = ["jpg","gif","jpeg","png","jfif"];
 		let fileExt = fileName.split(".")[1];
@@ -27,8 +26,7 @@ $(document).ready(function(){
 				imgCheck = true;
 				let formData = new FormData();
 				formData.append("imageFile",upfile);
-				flag = true;
-				
+			
 				$.ajax({
        				url : url, 
        				dataType : "text", 
@@ -56,7 +54,7 @@ $(document).ready(function(){
 				
 			}
 		}
-		if(!flag){
+		if(!imgCheck){
 			alert("이미지 파일만 업로드 가능합니다!");
 		}
 		 
@@ -183,8 +181,11 @@ function writeCancle(){
 }
 </script>
 <style>
-.imageFileAdd{
-z-index:2000;
+#imageFileAdd{
+z-index:20000;
+}
+#attachFileAdd{
+z-index:20000;
 }
 </style>
 </head>
