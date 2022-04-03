@@ -54,4 +54,12 @@ public class ProductDAOImpl implements ProductDAO {
 		return ses.selectList(ns + ".conditionProdView", param);
 	}
 
+
+
+	@Override
+	public ProductVO selectProdView(String isbn) throws Exception {
+		
+		return ses.selectOne(ns + ".selectProdView", isbn);
+	}
+
 }

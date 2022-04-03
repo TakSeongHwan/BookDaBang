@@ -11,7 +11,7 @@
 <script>
 	let pageNo = 1;
 	let JsonSearchCriteria = "";
-
+	let checkAry = [];
 	let SearchCriteria = {
 		searchWord : "",
 		category_code : "",
@@ -78,6 +78,78 @@
 				$("#all_status").prop("checked", false);
 			}
 		});
+
+		$("#batchUpdate").on("click", function() {
+			checkAry = [];
+			for (let i = 0; i < 10; i++) {
+				if ($(".prodCheck").eq(i).is(":checked")) {
+					checkAry.push($(".prodCheck").eq(i).attr("id"));
+					console.log(checkAry[i]);
+				}
+
+			}
+
+			prodselectview(checkAry);
+
+		});
+
+		let thistag = "";
+		let thisval = "";
+		$(document)
+				.on(
+						"dblclick",
+						".updatePrice",
+						function() {
+							thistag = $(this);
+							thisval = $(this).text();
+							console.log(thistag, thisval);
+							let input = '<input type="text" id="a" style= "width :60px" value="'
+									+ $(this).text() + '">'
+							$(this).html(input);
+
+							$(document).on(
+									"blur",
+									"#a",
+									function() {
+										if ($(this).val() == thisval
+												|| $(this).val() == "") {
+											console.log($(this).val());
+											thistag.html(thisval);
+										} else if ($(this).val() != thisval) {
+											thistag.html($("#a").val());
+											thistag.css("color", "orange");
+										}
+
+									});
+
+						});
+
+		$(document).on("click", "#updateReset", function() {
+			prodselectview(checkAry);
+		});
+
+	}
+
+	function prodselectview(checkAry) {
+		$("#selectProdView").empty();
+		let contextPath = ${contextPath}
+		$("#selectProdView").html('<div style="position : absolute; left : 50%; top :50%; transform : translate(-50%, -50%)"><img src="/resources/img/etc/loading.gif" style="width : 100px" ></div>');
+		let url = "/prodRest/up";
+		
+		$.ajax({
+			url : url,
+			dataType : "json",
+			type : "post",
+			data : {
+				checkBoxs : checkAry
+			},
+			success : function(data) {
+				console.log(data);
+
+				selectProdView(data);
+			}
+
+		});
 	}
 
 	function search() {
@@ -101,6 +173,8 @@
 	}
 
 	function searchProduct(sc, pno) {
+		
+		$("#productView").html('<div style="position : absolute; left : 50%; top :50%; transform : translate(-50%, -50%)"><img src="/resources/img/etc/loading.gif" style ="width : 150px"></div>');
 		pageNo = pno;
 		console.log(pageNo);
 		console.log(sc);
@@ -140,7 +214,7 @@
 				.each(
 						data.product,
 						function(i, e) {
-							output += '<tr><td> <input class="form-check-input prodCheck"  type="checkbox" value="sales" /></td>';
+							output += '<tr><td> <input class="form-check-input prodCheck"  type="checkbox" id="'+e.isbn+'" /></td>';
 							output += '<td>' + e.isbn + '</td>';
 							output += '<td><img src ="' + e.cover + '" width="50" /></td>';
 							output += '<td>' + e.title + '</td>';
@@ -235,6 +309,42 @@
 		$("#productView").append(output);
 
 	}
+
+	function selectProdView(data) {
+		$("#selectProdView").empty();
+		let output = "";
+		$
+				.each(
+						data,
+						function(i, e) {
+							output += '<tr><td> <input class="form-check-input prodCheck"  type="checkbox" id="'+e.isbn+'" /></td>';
+							output += '<td>' + e.isbn + '</td>';
+							output += '<td><img src ="' + e.cover + '" width="50" /></td>';
+							output += '<td>' + e.title + '</td>';
+							output += '<td><div class="updatePrice">' + e.price
+									+ '</div></td>'
+							output += '<td><div class="updatePrice">' + e.stock
+									+ '</div></td>'
+							if (e.display_status == "yes") {
+								displayStatus = '<span class="badge bg-label-primary">진열</span>';
+							} else {
+								displayStatus = '<span class="badge bg-label-warning">진열안함</span>';
+							}
+							output += '<td>' + displayStatus + '</td>';
+							if (e.sales_status == "sale") {
+								salesStatus = '<span class="badge bg-label-primary">판매중</span>';
+							} else if (e.sales_status == "soldOut") {
+								salesStatus = '<span class="badge bg-label-danger">품절</span>';
+							} else {
+								salesStatus = '<span class="badge bg-label-warning">판매안함</span>';
+							}
+							output += '<td>' + salesStatus + '</td></tr>';
+							output += '</tr>';
+						});
+
+		$("#selectProdView").append(output);
+
+	}
 </script>
 <style>
 .container {
@@ -287,7 +397,6 @@ th {
 	width: 350px;
 }
 
-
 .rgDateSearch>label {
 	margin-top: 3px;
 	display: block
@@ -335,8 +444,8 @@ th {
 
 #searchTable {
 	border: 1px solid #fff;
-	background-color:  #fff;
-	margin-top : 20px;
+	background-color: #fff;
+	margin-top: 20px;
 }
 </style>
 </head>
@@ -344,7 +453,8 @@ th {
 	<jsp:include page="../managerHeader.jsp"></jsp:include>
 	<div class="container">
 		<h4 class="fw-bold py-3 mb-4">
-			<span class="text-muted fw-light" style="line-height: 80px">상품 관리 /</span> 상품 조회
+			<span class="text-muted fw-light" style="line-height: 80px">상품
+				관리 /</span> 상품 조회
 		</h4>
 	</div>
 	<div class="searchContainer">
@@ -393,7 +503,7 @@ th {
 						class="form-control" id="endUpDate" name="username"
 						placeholder="검색할 내용을 입력하세요" autofocus style="margin-left: 10px" />
 				</div>
-				
+
 				<div class="upDateDateSearch">
 					<label for="rgDate" class="form-label">마감 날짜</label> <input
 						type="date" class="form-control" id="startUpdate" name="username"
@@ -408,8 +518,8 @@ th {
 
 						<table class="table" id="searchTable">
 							<tr>
-								<td style="border-right: 1px solid #ccc"><label class="form-check-label" for="defaultCheck3">
-										전체 </label></td>
+								<td style="border-right: 1px solid #ccc"><label
+									class="form-check-label" for="defaultCheck3"> 전체 </label></td>
 								<td><input class="form-check-input" id="all_status"
 									type="checkbox" value="sale" id="defaultCheck3" checked /></td>
 							</tr>
@@ -454,9 +564,9 @@ th {
 
 
 
-		<div style="width: 1200px; margin: 0 auto; margin-top: 25px; clear :both">
-			<button type="button" class="btn btn-primary" 
-				onclick="search();">검색</button>
+		<div
+			style="width: 1200px; margin: 0 auto; margin-top: 25px; clear: both">
+			<button type="button" class="btn btn-primary" onclick="search();">검색</button>
 		</div>
 
 
@@ -470,9 +580,9 @@ th {
 		<h4 class="card-header">상품 조회</h4>
 		<div>
 			<button type="button" class="btn rounded-pill btn-outline-primary"
-				style="float: left; margin-left: 15px">일괄 업데이트</button>
-			<button type="button" class="btn rounded-pill btn-outline-primary"
-				style="float: left; margin-left: 15px">일괄 삭제</button>
+				style="float: left; margin-left: 15px" data-bs-toggle="modal"
+				data-bs-target="#myModal" id="batchUpdate">일괄 업데이트 / 삭제</button>
+
 			<button type="button" class="btn rounded-pill btn-outline-primary"
 				style="float: left; margin-left: 10px"
 				onclick="location.href='${contextPath}/prodManager/addProduct'">상품
@@ -512,12 +622,66 @@ th {
 					</tr>
 				</thead>
 				<tbody class="table-border-bottom-0" id="productView">
-
 				</tbody>
 			</table>
 		</div>
 
 		<div class="demo-inline-spacing" id="pagingZone"></div>
+
+
+		<!-- The Modal -->
+		<div class="modal" id="myModal">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<h4 class="fw-bold py-3 mb-4">
+							<span class="text-muted fw-light">일괄 수정 /</span> 삭제
+						</h4>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+
+					<!-- Modal body -->
+					<div class="modal-body">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>모두체크 <input class="form-check-input" type="checkbox"
+										id="allcheck" /></th>
+									<th>상품번호</th>
+									<th>이미지</th>
+									<th>상품명</th>
+									<th>판매가 /할인가</th>
+									<th>재고
+									<th>진열 상태</th>
+									<th>판매 상태</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody class="table-border-bottom-0" id="selectProdView">
+							
+							</tbody>
+						</table>
+					</div>
+
+					<!-- Modal footer -->
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" id="updateReset">리셋</button>
+						<button type="button" class="btn btn-primary" id="updateprod">상품
+							수정</button>
+						<button type="button" class="btn btn-danger" id="delProd"  data-bs-toggle="modal" data-bs-target="#Modal">상품
+							삭제</button>
+						<button type="button" class="btn btn-primary"
+							data-bs-dismiss="modal">닫기 X</button>
+					</div>
+						
+					
+				</div>
+			</div>
+		</div>
+
+
 
 
 		<jsp:include page="../managerFooter.jsp"></jsp:include>

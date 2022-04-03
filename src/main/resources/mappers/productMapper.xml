@@ -142,10 +142,10 @@
 
 		</if>
 		limit #{startNum}, #{postPerPage}
-
-
-
-
+	</select>
+	
+	<select id="selectProdView" resultType="productVO">
+		select * from product where isbn = #{isbn}
 	</select>
 
 

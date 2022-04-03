@@ -1,5 +1,6 @@
 package com.bookdabang.cyh.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -11,10 +12,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.cyh.domain.SearchCriteria;
-
 import com.bookdabang.cyh.service.ProductService;
 
 @RestController
@@ -29,8 +31,6 @@ public class ProdRest {
 			@PathVariable("pageno") int pageno) {
 		ResponseEntity<Map<String, Object>> result = null;
 
-		System.out.println(pageno);
-		System.out.println(sc.toString());
 		Map<String, Object> map;
 		try {
 			map = service.conditionProdView(sc, pageno);
@@ -40,6 +40,21 @@ public class ProdRest {
 		}
 
 		return result;
+	}
+	
+	@RequestMapping(value = "/up", method = RequestMethod.POST)
+	public ResponseEntity<List<ProductVO>> updateListView(Model model, @RequestParam(value="checkBoxs[]")List<String> checkProd) {
+		System.out.println("!!");
+		ResponseEntity<List<ProductVO>> result = null;
+		try {
+			List<ProductVO> lst =service.selectProdView(checkProd);
+			result = new ResponseEntity<List<ProductVO>>(lst, HttpStatus.OK);
+		} catch (Exception e) {
+			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
+		return result;
+		
 	}
 
 }

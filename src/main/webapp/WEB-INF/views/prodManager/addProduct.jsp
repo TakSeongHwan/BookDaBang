@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -11,6 +12,25 @@
 		$("#applyDiscount").on("click", function() {
 			$("#applyDiscount").hide();
 			$("#discount").css("display", "inline-block");
+			
+		});
+		
+		$("#isbn").blur(function(){
+			let isbn = $("#isbn").val();
+			let url = "/prodRest/all/" + pageNo;
+
+			$.ajax({
+				url : url,
+				dataType : "json",
+				type : "post",
+				data : sc,
+				success : function(data) {
+					console.log(data)
+					searchView(data);
+				}
+
+			});
+
 		});
 	}
 </script>
@@ -33,7 +53,7 @@
 							<div class="mb-3">
 								<label for="floatingInput" class="form-label"
 									style="display: block">상품번호 / ISBN</label> <input type="text"
-									class="form-control" id="defaultFormControlInput"
+									class="form-control" id="isbn"
 									placeholder="ISBN(상품번호)을 입력해주세요"
 									aria-describedby="defaultFormControlHelp" />
 							</div>
@@ -52,8 +72,7 @@
 									style="width: 500px; display: inline-block;" />
 								<button type="button" class="btn btn-outline-primary"
 									id="applyDiscount">할인 적용</button>
-									<input type="text"
-									class="form-control" id="discount"
+								<input type="text" class="form-control" id="discount"
 									placeholder="10%" aria-describedby="defaultFormControlHelp"
 									style="width: 80px; display: none;" />
 							</div>
@@ -127,8 +146,14 @@
 						<h5 class="card-header">책 정보</h5>
 						<div class="card-body">
 							<label class="form-label">카테고리 설정</label> <select id="category"
-								class="select2 form-select" style="width: 200px"></select> <small
-								class="text-light fw-semibold" style="margin-top: 10px">간략
+								class="select2 form-select" style="width: 200px">
+								<option selected disabled hidden>카테고리 검색</option>
+
+								<c:forEach var="CategoryVO" items="${category}">
+									<option value="${CategoryVO.category_code}">
+										<c:out value="${CategoryVO.category_name}" /></option>
+								</c:forEach>
+							</select> <small class="text-light fw-semibold" style="margin-top: 10px">간략
 								설명 (1000자 이하)</small>
 							<div class="mb-3">
 								<div>

@@ -1,5 +1,6 @@
 package com.bookdabang.cyh.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,17 @@ public class ProductServiceImpl implements ProductService {
 		
 	}
 	
+	@Override
+	public List<ProductVO> selectProdView(List<String> checkProd) throws Exception {
+		
+		List<ProductVO> prodLst = new ArrayList<ProductVO>();
+		for(String prodNo : checkProd) {
+			prodLst.add(pdao.selectProdView(prodNo));
+		}
+		
+		return prodLst;
+	}
+	
 	private PagingInfo pagingProcess(int pageNo, SearchCriteria sc) throws Exception {
 		PagingInfo pi = new PagingInfo();
 		pi.setPostPerPage(10);
@@ -46,17 +58,17 @@ public class ProductServiceImpl implements ProductService {
 		
 		
 		pi.setTotalPostCnt(totalPostCnt);
-		//전체 페이지 수
+		//�쟾泥� �럹�씠吏� �닔
 		pi.setTotalPage(pi.getTotalPostCnt());
-		// 현재 페이제에서 출력 시작할 글번호
+		// �쁽�옱 �럹�씠�젣�뿉�꽌 異쒕젰 �떆�옉�븷 湲�踰덊샇
 		pi.setStartNum(pageNo);
-		// 전체 페이징 블럭
+		// �쟾泥� �럹�씠吏� 釉붾윮
 		pi.setTotalPagingBlock(pi.getTotalPage());
-		//현재 페이지 블럭
+		//�쁽�옱 �럹�씠吏� 釉붾윮
 		pi.setCurrentPagingBlock(pageNo);
-		//현재 페이지에서의 시작 페이징 블럭
+		//�쁽�옱 �럹�씠吏��뿉�꽌�쓽 �떆�옉 �럹�씠吏� 釉붾윮
 		pi.setStartNoOfCurPagingBlock(pi.getCurrentPagingBlock());
-		//현재 페이지에서의 끝 페이징 블럭
+		//�쁽�옱 �럹�씠吏��뿉�꽌�쓽 �걹 �럹�씠吏� 釉붾윮
 		pi.setEndNoOfCurPagingBlock(pi.getStartNoOfCurPagingBlock());
 		
 		System.out.println(pi.toString());
@@ -64,6 +76,12 @@ public class ProductServiceImpl implements ProductService {
 		return pi;
 		
 	}
+
+
+
+	
+	
+	
 	
 	
 	

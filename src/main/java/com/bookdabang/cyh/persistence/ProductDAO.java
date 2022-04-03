@@ -12,6 +12,7 @@ public interface ProductDAO {
 	public List<CategoryVO> getCategory() throws Exception;
 	public int conditionProdCnt(SearchCriteria sc) throws Exception;
 	public List<ProductVO> conditionProdView(SearchCriteria sc, PagingInfo pi) throws Exception;
+	public ProductVO selectProdView(String prodNo) throws Exception;
 	
 
 }
