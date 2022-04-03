@@ -25,4 +25,6 @@ public interface NoticeService {
 	public int insertReply(NoticeReply reply) throws Exception;
 
 	public List<NoticeReply> getAllReply(int boardNo) throws Exception;
+
+	
 }

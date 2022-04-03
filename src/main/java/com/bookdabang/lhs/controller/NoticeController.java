@@ -2,6 +2,7 @@ package com.bookdabang.lhs.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -25,7 +26,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bookdabang.common.domain.AttachFileVO;
 import com.bookdabang.common.domain.Notice;
+import com.bookdabang.common.domain.VisitorIPCheck;
+import com.bookdabang.common.etc.IPCheck;
 import com.bookdabang.common.etc.UploadFileProcess;
+import com.bookdabang.common.service.IPCheckService;
 import com.bookdabang.lhs.etc.ImageFileHandling;
 import com.bookdabang.lhs.service.NoticeService;
 
@@ -35,6 +39,9 @@ public class NoticeController {
 
 	@Inject
 	NoticeService service;
+	
+	@Inject
+	IPCheckService ipService;
 
 	private List<AttachFileVO> fileList = new ArrayList<AttachFileVO>();
 
@@ -52,16 +59,43 @@ public class NoticeController {
 	}
 
 	@RequestMapping("viewContent")
+	@Transactional
 	public void showNoticeContent(Model m, @RequestParam("no") int no) {
 		System.out.println(no);
 		Notice content = null;
 		List<AttachFileVO> af = null;
+		String ipaddr = null;
 		try {
+			ipaddr = IPCheck.getIPAddr();
+			System.out.println(ipaddr);
+			Timestamp lastAccessTime = ipService.checkMaxAccessDate(ipaddr);
+		
+			System.out.println(lastAccessTime);
+			if(lastAccessTime != null) {
+				
+				long lastAccessDate = lastAccessTime.getTime();
+				long currTime = System.currentTimeMillis();
+				
+				if(currTime - lastAccessDate > 1000 * 60) {//테스트중이라 1분
+					if(ipService.insertAccessDate(ipaddr) == 1) {
+						System.out.println("조회수를 올려요");
+					}
+				}else {
+					System.out.println("조회수 안올려요");
+				}
+			}else {
+				if(ipService.insertAccessDate(ipaddr) == 1) {
+					System.out.println("조회수를 올려려요");
+				}
+				
+			}
+			
 			content = service.getContentByNo(no);
 			af = service.getAttachFile(no);
 			if(af.size()<1) {
 				af = null;
 			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
