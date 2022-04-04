@@ -40,7 +40,7 @@
 		update cart set productQtt=#{productQtt} where cartNo=#{cartNo}
 	</update>
 	<!-- 비로그인 유저 로그인 했을때 장바구니 userId로 변경 -->
-	<update id="updateCartUserId">
+	<update id="loginCart">
 		update cart set userId = #{userId}, ipaddr = null where ipaddr = #{ipaddr} 
 	</update>
 	

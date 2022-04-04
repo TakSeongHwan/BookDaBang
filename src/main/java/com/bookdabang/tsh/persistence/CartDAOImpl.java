@@ -55,6 +55,12 @@ public class CartDAOImpl implements CartDAO {
 	public int countCart(CartSelectDTO dto) throws Exception {
 		return ses.selectOne(ns+".countCart",dto);
 	}
+
+	@Override
+	public int loginCart(CartSelectDTO dto) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.update(ns+".loginCart", dto);
+	}
 	
 	
 }

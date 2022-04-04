@@ -22,5 +22,6 @@ public interface CartDAO {
 	public int insertCart(CartVO cart) throws Exception;
 
 	public int countCart(CartSelectDTO dto) throws Exception;
-
+	
+	public int loginCart(CartSelectDTO dto) throws Exception;
 }

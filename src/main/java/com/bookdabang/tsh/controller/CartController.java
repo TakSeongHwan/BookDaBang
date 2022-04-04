@@ -154,4 +154,32 @@ public class CartController {
 		}
 		return result;
 	}
+	
+	@RequestMapping(value = "/loginCart", method = RequestMethod.POST)
+	public ResponseEntity<String> loginCart(HttpSession ses){
+		ResponseEntity<String> result = null;
+
+		MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember");
+		String userId = null;
+		String ipaddr = null;
+		if (loginMember != null) {
+			userId = loginMember.getUserId();
+			ipaddr = "211.197.18.247";
+			CartSelectDTO dto = new CartSelectDTO(userId, ipaddr);
+			try {
+				if(cService.loginCart(dto)== 0) {
+					result = new ResponseEntity<String>("success",HttpStatus.OK);
+				}else {
+					result = new ResponseEntity<String>("false",HttpStatus.OK);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				result = new ResponseEntity<String>("fail",HttpStatus.BAD_REQUEST);
+			}
+		} else {
+			result = new ResponseEntity<String>("false",HttpStatus.OK);
+		}
+		return result;
+	}
 }

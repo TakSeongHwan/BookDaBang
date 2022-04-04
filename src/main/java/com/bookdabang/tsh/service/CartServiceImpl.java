@@ -62,5 +62,10 @@ public class CartServiceImpl implements CartService {
 		return dao.countCart(dto);
 	}
 
+	@Override
+	public int loginCart(CartSelectDTO dto) throws Exception {
+		return dao.loginCart(dto);
+	}
+
 
 }
