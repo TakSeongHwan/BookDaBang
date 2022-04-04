@@ -1,5 +1,6 @@
 package com.bookdabang.lhs.persistence;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +87,72 @@ public class NoticeDAOImpl implements NoticeDAO {
 	@Override
 	public List<NoticeReply> getAllReply(int boardNo) throws Exception {
 		// TODO Auto-generated method stub
-		return ses.selectList(ns+".getReplyNotice",boardNo);
+		return ses.selectList(ns+".getReply",boardNo);
 	}
-	
+
+	@Override
+	public int viewCountIncrese(int no) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.update(ns+".viewCountIncrese", no);
+	}
+
+	@Override
+	public Timestamp pageViewCheck(String ipaddr, int noticeNo) throws Exception {
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("ip_address", ipaddr);
+		map.put("noticeNo",noticeNo);
+		return ses.selectOne(ns+".pageViewCheck",map);
+	}
+
+	@Override
+	public int insertAccessDate(String ipaddr, int no) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("ip_address", ipaddr);
+		map.put("noticeNo",no);
+		return ses.insert(ns+".insertAccessDate",map);
+	}
+
+	@Override
+	public int deleteReply(int replyNo) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.delete(ns+".deleteReply",replyNo);
+	}
+
+	@Override
+	public int replyCountIncrese(int no) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.update(ns+".replyCountIncrese",no);
+	}
+
+	@Override
+	public NoticeReply getBoardNoByReplyNo(int no) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns+".getReplyInfoByReplyNo",no);
+	}
+
+	@Override
+	public int replyCountDecrease(int no) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.update(ns+".replyCountDecrease",no);
+	}
+
+	@Override
+	public int updateReply(NoticeReply nr) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("boardNo", nr.getBoardNo());
+		map.put("replyNo", nr.getReplyNo());
+		map.put("replyer", nr.getReplyer());
+		map.put("replyContent", nr.getReplyContent());
+		
+		return ses.update(ns+".updateReply",map);
+	}
+
+	@Override
+	public int getMaxReplyNo() throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns+".getMaxReplyNo");
+	}
+
+
 }

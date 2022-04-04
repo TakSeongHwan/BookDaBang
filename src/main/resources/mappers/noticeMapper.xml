@@ -35,10 +35,37 @@
 	</delete>
 	<insert id="insertReply">
 		insert into
-		notice_reply(boardNo,replyer,replyContent)
-		values(#{boardNo},#{replyer},#{replyContent})
+		notice_reply(boardNo,replyer,replyContent, ref, step, refOrder)
+		values(#{boardNo},#{replyer},#{replyContent}, #{ref}, #{step}, #{refOrder})
 	</insert>
-	<select id="getReplyNotice" resultType="NoticeReply">
-		select * from notice_reply where boardNo = #{boardNo}
+	<select id="getReply" resultType="NoticeReply">
+		select * from notice_reply where boardNo = #{boardNo} order by ref desc, step asc, refOrder desc
+	</select>
+	<select id="pageViewCheck" resultType="java.sql.Timestamp">
+		select max(accessDate) from pageview where ip_address = #{ip_address} and noticeNo = #{noticeNo}
+	</select>
+	<update id="viewCountIncrese">
+	update notice set viewCount = viewCount+1 where no = #{no}
+	</update>
+	<insert id="insertAccessDate">
+	insert into pageview(ip_address, noticeNo) values(#{ip_address}, #{noticeNo})
+	</insert>
+	<delete id="deleteReply">
+	delete from notice_reply where replyNo = #{replyNo}
+	</delete>
+	<update id="replyCountIncrese">
+	update notice set reply = reply+1 where no = #{no}
+	</update>
+	<select id="getReplyInfoByReplyNo" resultType="NoticeReply">
+	select * from notice_reply where replyNo = #{replyNo}
+	</select>
+	<update id="replyCountDecrease">
+	update notice set reply = reply-1 where no = #{no}
+	</update>
+	<update id="updateReply">
+	update notice_reply set replyContent = #{replyContent}, replyDate = now() where replyNo = #{replyNo} and replyer = #{replyer}
+	</update>
+	<select id="getMaxReplyNo" resultType="int">
+	select max(replyNo) from notice_reply
 	</select>
 </mapper>

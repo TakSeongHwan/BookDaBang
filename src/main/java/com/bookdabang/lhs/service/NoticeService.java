@@ -1,5 +1,6 @@
 package com.bookdabang.lhs.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import com.bookdabang.common.domain.AttachFileVO;
@@ -25,6 +26,25 @@ public interface NoticeService {
 	public int insertReply(NoticeReply reply) throws Exception;
 
 	public List<NoticeReply> getAllReply(int boardNo) throws Exception;
+
+	public int viewCountIncrese(int no) throws Exception;
+	
+	public Timestamp pageViewCheck(String ipaddr, int noticeNo) throws Exception;
+
+	public int insertAccessDate(String ipaddr, int no) throws Exception;
+
+	public int deleteReply(int replyNo) throws Exception;
+
+	public int replyCountIncrese(int boardNo) throws Exception;
+
+	public NoticeReply getBoardNoByReplyNo(int replyNo) throws Exception;
+
+	public int replyCountDecrease(int no) throws Exception;
+
+	public int updateReply(NoticeReply nr) throws Exception;
+
+	public int getMaxReplyNo() throws Exception;
+
 
 	
 }

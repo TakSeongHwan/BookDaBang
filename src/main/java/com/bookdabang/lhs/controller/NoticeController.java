@@ -11,6 +11,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,15 +61,15 @@ public class NoticeController {
 
 	@RequestMapping("viewContent")
 	@Transactional
-	public void showNoticeContent(Model m, @RequestParam("no") int no) {
+	public void showNoticeContent(Model m, @RequestParam("no") int no, HttpServletRequest request) {
 		System.out.println(no);
 		Notice content = null;
 		List<AttachFileVO> af = null;
 		String ipaddr = null;
 		try {
-			ipaddr = IPCheck.getIPAddr();
-			System.out.println(ipaddr);
-			Timestamp lastAccessTime = ipService.checkMaxAccessDate(ipaddr);
+			ipaddr = IPCheck.getIPAddr(request);
+			//System.out.println("세션에 넣어둔 ip가 잘 저장되어있나? "+request.getSession().getAttribute("ipAddr"));
+			Timestamp lastAccessTime = service.pageViewCheck(ipaddr, no);
 		
 			System.out.println(lastAccessTime);
 			if(lastAccessTime != null) {
@@ -76,16 +77,14 @@ public class NoticeController {
 				long lastAccessDate = lastAccessTime.getTime();
 				long currTime = System.currentTimeMillis();
 				
-				if(currTime - lastAccessDate > 1000 * 60) {//테스트중이라 1분
-					if(ipService.insertAccessDate(ipaddr) == 1) {
-						System.out.println("조회수를 올려요");
+				if(currTime - lastAccessDate > 1000 * 60*60*24) {//테스트중이라 1분
+					if(service.insertAccessDate(ipaddr, no) == 1) {
+						service.viewCountIncrese(no);
 					}
-				}else {
-					System.out.println("조회수 안올려요");
 				}
 			}else {
-				if(ipService.insertAccessDate(ipaddr) == 1) {
-					System.out.println("조회수를 올려려요");
+				if(service.insertAccessDate(ipaddr, no) == 1) {
+					service.viewCountIncrese(no);
 				}
 				
 			}

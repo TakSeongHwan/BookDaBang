@@ -1,5 +1,6 @@
 package com.bookdabang.lhs.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -68,4 +69,60 @@ public class NoticeServiceImpl implements NoticeService {
 		// TODO Auto-generated method stub
 		return noticeDAO.getAllReply(boardNo);
 	}
+
+	@Override
+	public int viewCountIncrese(int no) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.viewCountIncrese(no);
+	}
+
+	@Override
+	public Timestamp pageViewCheck(String ipaddr, int noticeNo) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.pageViewCheck(ipaddr, noticeNo);
+	}
+
+	@Override
+	public int insertAccessDate(String ipaddr, int no) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.insertAccessDate(ipaddr,no);
+	}
+
+	@Override
+	public int deleteReply(int replyNo) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.deleteReply(replyNo);
+	}
+
+	@Override
+	public int replyCountIncrese(int boardNo) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.replyCountIncrese(boardNo);
+	}
+
+	@Override
+	public NoticeReply getBoardNoByReplyNo(int replyNo) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.getBoardNoByReplyNo(replyNo);
+	}
+
+	@Override
+	public int replyCountDecrease(int no) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.replyCountDecrease(no);
+	}
+
+	@Override
+	public int updateReply(NoticeReply nr) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.updateReply(nr);
+	}
+
+	@Override
+	public int getMaxReplyNo() throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.getMaxReplyNo();
+	}
+
+	
 }

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-	   <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,161 +10,323 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <script>
-let attachCount = 0;
-
-$(document).ready(function(){
-	showAllReply();
-	$("#imageFile").change(function(){
-		let upfile = this.files[0];
-		let fileName = upfile.name;
-		
-		let imgExt = ["jpg","gif","jpeg","png","jfif"];
-		let fileExt = fileName.split(".")[1];
-		let imgCheck = false;
+	let attachCount = 0;
 	
-		for(let i in imgExt){
-			if(fileExt == imgExt[i]){
-				console.log("이미지파일");
-				imgCheck = true;
-				formData.append("imageFile",upfile);
-				
+	$(document).ready(function() {
+
+		showAllReply();
+
+		$("#imageFile").change(function() {
+			let upfile = this.files[0];
+			let fileName = upfile.name;
+
+			let imgExt = [ "jpg", "gif", "jpeg", "png", "jfif" ];
+			let fileExt = fileName.split(".")[1];
+			let imgCheck = false;
+
+			for ( let i in imgExt) {
+				if (fileExt == imgExt[i]) {
+					console.log("이미지파일");
+					imgCheck = true;
+					formData.append("imageFile", upfile);
+
+				}
 			}
-		}
-		if(!imgCheck){
-			alert("이미지 파일만 업로드 가능합니다!");
-		}
-	});
-	
-$("#attachFile").change(function(){
-	
-	let upfile = this.files[0];
-	console.log(upfile);
-	
-		formData.append("upfile"+attachCount, upfile);
-		attachCount++;
+			if (!imgCheck) {
+				alert("이미지 파일만 업로드 가능합니다!");
+			}
+		});
 
-		 
-	});
-	
-	
-});
+		$("#attachFile").change(function() {
 
-function delFile(data){
-	
-	
-}
-function delAttachFile(thumbnailFile,notImageFile,originFile,attachFileNo){
-	console.log(thumbnailFile+","+notImageFile+","+originFile+","+attachFileNo);
-	
-	
-	
-}
-function modifyAttachFile(){
-//파일들을 아작스로 바로 보내지 말고, 따로 값을 hidden에 정리해둔 다음 전송버튼이 눌리면 그때 보내자. 
-}
-function writeCancle(){
-	
-		
-}
+			let upfile = this.files[0];
+			console.log(upfile);
+
+			formData.append("upfile" + attachCount, upfile);
+			attachCount++;
+
+		});
+
+	});
+
+	function delFile(data) {
+
+	}
+	function delAttachFile(thumbnailFile, notImageFile, originFile,
+			attachFileNo) {
+		console.log(thumbnailFile + "," + notImageFile + "," + originFile + ","
+				+ attachFileNo);
+
+	}
+	function modifyAttachFile() {
+		//파일들을 아작스로 바로 보내지 말고, 따로 값을 hidden에 정리해둔 다음 전송버튼이 눌리면 그때 보내자. 
+	}
+	function writeCancle() {
+
+	}
 	function modifyNotice() {
 		$("#modiModal").show(200);
 
 	}
-	function closeModal(){
+	function closeModal() {
 		$("#modiModal").hide(0);
 	}
-	function showAlert(){
-		
+	function showAlert() {
+
 		$("#delAlert").show(200);
 	}
-	function addreply(){
-		let reply=$("#reply").val();
+	function addreply() {
+		let reply = $("#reply").val();
 		console.log(reply);
-		let writer="cat"//세션아이디값 받아다쓸거
+		let writer = "cat"//세션아이디값 받아다쓸거
 		let no = "${content.no}"
-		
+
 		let sendData = JSON.stringify({
-			boardNo : no, replyer : writer, replyContent : reply
+			boardNo : no,
+			replyer : writer,
+			replyContent : reply
 		});
-		
-		let url="/noticeReply/addReply";
+
+		let url = "/noticeReply/addReply";
 		$.ajax({
-				url : url, 
-				dataType : "JSON", 
-				type : "POST",
-				data : sendData,
-				contentType : "application/json;charset=UTF-8",
-				success : function(data) { 
-					console.log(data);
-					
-					
-				}, error: function(e){
-					console.log(e.responseText);
-					
+			url : url,
+			dataType : "text",
+			type : "POST",
+			data : sendData,
+			headers : {
+				"content-type" : "application/json",
+				"x-HTTP-Method-Override" : "POST"
+			},
+			success : function(data) {
+				console.log("갱신이 왜 안되지?");
+				if (data == "success") {
+					console.log("갱신이 왜 안되지?");
+					showAllReply();//현재 글의 모든 댓글을 가져와 화면에 출력
+				} else if (data == "fail") {
+					alert("댓글 등록 실패!");
 				}
-			});
-	}
-	function showAllReply(){
-		
-		let boardNo = "${content.no}"
-		let url="/noticeReply/all/"+boardNo;
-		$.ajax({
-			url : url, 
-			dataType : "JSON", 
-			type : "GET",
-			success : function(data) { 
-				console.log(data);
-				if(data != null){
-					parseData(data);
-				}
-				
-			}, error: function(e){
+
+			},
+			error : function(e) {
 				console.log(e.responseText);
-				
+
 			}
 		});
 	}
-	function openReply(){
-		$("#replyArea").css({"display":"block"});
+	function showAllReply() {
+
+		let boardNo = "${content.no}"
+		let url = "/noticeReply/all/" + boardNo;
+		$.ajax({
+			url : url,
+			dataType : "JSON",
+			type : "GET",
+			success : function(data) {
+				console.log(data);
+				replyList = data;
+				if (data != null) {
+					parseData(data);
+
+				}
+
+			}
+		});
 	}
-	function parseData(data){
+
+	function parseData(data) {
 		$("#viewAllReply").empty();
 		let output = '<div class="list-group" style="border:10px;">'
-			$.each(data, function(i,e){
-				output += '<div class="list-group-item list-group-item-action replyItems" id="div'+e.replyNo+'">';
-				output += '<div><div id="rep'+e.replyNo+'">'+e.replyer+'</div>';
-				output += '<div> 댓글 내용 : '+ e.replyContent+'</div>';	
-				output += '<div> 작성 일자 '+ formatDate(e.replyDate) + '</div>';	
-				output += '<div style="float:right; margin-right:10px;">' + "<img src='/resources/images/correct.png' width='20px' onclick='showReplyModify("+e.replyNo+");'/>";
-				output += "<img src='/resources/images/delete.png' width='20px' onclick='showReplyDelete("+e.replyNo+");'/>";
-				output += '</div>';
-	  			output += '</div></div>';
-			});
-		  
-		  
-			output += '</div>'
-		
+		$
+				.each(
+						data,
+						function(i, e) {
+							output += '<div class="list-group-item list-group-item-action replyItems" id="div'+e.replyNo+'">';
+							
+							output += '<div>';
+							if(e.step > 0){
+								for(let count = 0; count < e.step; count++){
+									output+= '<img src="/resources/img/reply.png" width="20px"/>'
+								}
+									
+								
+							}
+							output += '<div id="rep'+e.replyNo+'">'
+									+ e.replyer + '</div>';
+							output += '<div> 댓글 내용 : ' + e.replyContent
+									+ '</div>';
+							output += '<div> 작성 일자 ' + formatDate(e.replyDate)
+									+ '</div>';
+							output += '<div style="float:right; margin-right:10px;">'
+									+ "<img src='/resources/img/addrereply.png' width='20px' style='margin-right:5px;' onclick='showRereplyModal("
+									+ e.replyNo + ");'/>";
+							output += "<img src='/resources/img/correct.png' width='20px' style='margin-right:5px;' onclick='showReplyModify("
+									+ e.replyNo + ");'/>";
+							output += "<img src='/resources/img/delete.png' width='20px' onclick='showReplyDelete("
+									+ e.replyNo + ");'/>";
+							output += '</div>';
+							output += '</div></div>';
+						});
+
+		output += '</div>'
+
 		$("#viewAllReply").append(output);
+
 	}
-	function formatDate(date){
+	function showReplyDelete(replyNo) {
+		let output = '<div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-body">댓글을 삭제하시겠습니까?</div>';
+		output += '<div class="modal-footer"><button type="button" class="btn btn-danger" onclick="deleteReply('
+				+ replyNo
+				+ ');">삭제</button><button type="button" class="btn btn-primary" onclick="closeModal();">닫기</button></div></div></div>'
+		$("#deleteModal").html(output);
+
+		$("#deleteModal").show(200);
+
+	}
+	function showReplyModify(replyNo) {
+		let output = '<div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-body">댓글 내용 수정 : <input type="text" id="replyContent"name="content"/></div>';
+		output += '<div class="modal-footer"><button type="button" class="btn btn-danger" onclick="modiReply('
+				+ replyNo
+				+ ');">수정</button><button type="button" class="btn btn-primary" onclick="closeModiModal();">닫기</button></div></div></div>'
+		$("#modiModal").html(output);
+
+		$("#modiModal").show(200);
+
+	}
+	function deleteReply(replyNo) {
+		let url = "/noticeReply/" + replyNo;
+		$.ajax({
+			url : url,
+			dataType : "text",
+			type : "DELETE",
+			headers : {
+				"content-type" : "application/json",
+				"x-HTTP-Method-Override" : "POST"
+			},
+			success : function(data) {
+				console.log(data);
+				$("#deleteModal").hide();
+				showAllReply();
+
+			}
+		});
+
+	}
+	function modiReply(replyNo) {
+		let url = "/noticeReply/" + replyNo;
+		let content = $("#replyContent").val();
+		let boardNo = $
+		{
+			content.no
+		}
+		console.log(content);
+		let sendData = JSON.stringify({
+			replyNo : replyNo,
+			replyContent : content,
+			replyer : "cat",//로그인한 유저 아이디값 받아오기
+			boardNo : boardNo
+
+		});
+		$.ajax({
+			url : url,
+			dataType : "text",
+			data : sendData,
+			type : "PUT",
+			headers : {
+				"content-type" : "application/json",
+				"x-HTTP-Method-Override" : "POST"
+			},
+			success : function(data) {
+				if (data == "success") {
+					console.log(data);
+					$("#modiModal").hide();
+					showAllReply();
+				} else if (data == "fail") {
+					alert("댓글 수정에 실패하였습니다.")
+				}
+
+			}
+		});
+	}
+	function closeModiModal() {
+		$("#modiModal").hide();
+	}
+	function closeModal() {
+		$("#deleteModal").hide();
+	}
+	function formatDate(date) {
 
 		let diff = new Date() - date;
-		let diffs = diff/1000;
-		if( diffs < 60 * 5){
+		let diffs = diff / 1000;
+		if (diffs < 60 * 5) {
 			return '<span class="badge bg-warning text-dark rounded-pill">방금 전</span>';
 		}
-		let diffm = diffs/60;
-		if(diffm < 60){
-			return '<span class="badge bg-warning text-dark rounded-pill">'+Math.floor(diffm)+'분 전</span>';
+		let diffm = diffs / 60;
+		if (diffm < 60) {
+			return '<span class="badge bg-warning text-dark rounded-pill">'
+					+ Math.floor(diffm) + '분 전</span>';
 		}
-		return '<span class="badge bg-info text-dark rounded-pill">'+new Date(date).toLocaleString()+'</span>';
+		return '<span class="badge bg-info text-dark rounded-pill">'
+				+ new Date(date).toLocaleString() + '</span>';
+	}
+	function showRereplyModal(replyNo) {
+		let output = '<div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-body">대댓글 입력 : <input type="text" id="rereplyContent" name="replyContent"/><input type="hidden" id ="rereplyer" name="replyer" value="cat"/></div>';
+		output += '<div class="modal-footer"><button type="button" class="btn btn-danger" onclick="insertRereply('
+				+ replyNo+ ');">입력</button><button type="button" class="btn btn-primary" onclick="closRereplyModal();">닫기</button></div></div></div>'
+		//댓글단사람은 로그인한 유저 아이디값 받아와서 채워주기
+		$("#rereplyModal").html(output);
+
+		$("#rereplyModal").show(200);
+
+	}
+	function closRereplyModal(){
+		$("#rereplyModal").hide();
+	}
+	function insertRereply(replyNo){
+		
+		let url = "/noticeReply/rereply";
+		
+		let replyer = $("#rereplyer").val();
+		let replyContent = $("#rereplyContent").val();
+		let boardNo = ${content.no}
+		
+		let sendData = JSON.stringify({
+			replyNo : replyNo,
+			replyContent : replyContent,
+			replyer : replyer,//로그인한 유저 아이디값 받아오기
+			ref : replyNo,
+			boardNo : boardNo
+		});
+		
+		
+		$.ajax({
+			url : url,
+			dataType : "text",
+			data : sendData,
+			type : "POST",
+			headers : {
+				"content-type" : "application/json",
+				"x-HTTP-Method-Override" : "POST"
+			},
+			success : function(data) {
+				if (data == "success") {
+					console.log(data);
+					$("#rereplyModal").hide();
+					showAllReply();
+				} else if (data == "fail") {
+					alert("대댓글 등록에 실패하였습니다.")
+				}
+
+			}
+		});
+		
 	}
 </script>
 
 <style>
-#modiModal{
-z-index:auto;
+#modiModal {
+	z-index: auto;
 }
+
 .infoArea {
 	background-color: #000000;
 	min-height: 50px;
@@ -206,7 +368,6 @@ z-index:auto;
 <body>
 	<jsp:include page="../userHeader.jsp"></jsp:include>
 	<div class="container mt-3 contentContainer">
-		${content }
 		<div class="contentContainer">
 			<h3 class="titleArea mt-4 p-5 txtColorW">${content.title }</h3>
 			<div class="infoArea">
@@ -222,35 +383,48 @@ z-index:auto;
 				<div style="margin: 0px 2px 10px 2px">${content.content }</div>
 			</div>
 			<div class="attachFileArea">
-				<div>${attachFile }</div>
+				<c:if test="${attachFile != null }">
+					<c:forEach var="attachFile" items="${attachFile}">
+						<c:choose>
+							<c:when test="${attachFile.notImageFile == null }">
+								<img
+									src='/resources/uploads/attachFile${attachFile.thumbnailFile }'
+									style="width: 100px; height: 100px; overflow: auto; margin: 10px" />
+							</c:when>
+							<c:otherwise>
+								<a
+									href='/resources/uploads/attachFile${attachFile.notImageFile }'>첨부파일</a>
+							</c:otherwise>
+						</c:choose>
+					</c:forEach>
+				</c:if>
 			</div>
-			
-			<div id="viewAllReply"></div>
-			<a class="button reply-btn" href="javascript:void(0)"
-		onclick="openReply();">댓글열기</a>
-			
-			
-			<div id="replyArea" style="display: none;">
-			
+
+
+
+
+
+			<div id="replyArea">
+				<div id="viewAllReply"></div>
 				<div class="input-group mb-3 input-group-lg">
-					  <input type="text" class="form-control" id="reply" name="reply" placeholder="댓글달기">
+					<input type="text" class="form-control" id="reply" name="reply"
+						placeholder="댓글달기"> <a class="button reply-btn"
+						href="javascript:void(0)" onclick="addreply();">댓글달기</a>
 				</div>
-				<a class="button reply-btn" href="javascript:void(0)"
-			onclick="addreply();">댓글달기</a>
-				
+
+
 			</div>
 
 		</div>
+
+		<a class="button reply-btn" href="/notice/listAll">목록으로</a> <a
+			class="button reply-btn" href="javascript:void(0)"
+			onclick="modifyNotice();">수정</a> <a class="button reply-btn"
+			href="javascript:void(0)" onclick="showAlert();">삭제</a> <a
+			class="button reply-btn" href="javascript:void(0)"
+			onclick="history.back();">뒤로가기</a>
+
 	</div>
-	<a class="button reply-btn" href="/notice/listAll">목록으로</a>
-	<a class="button reply-btn" href="javascript:void(0)"
-		onclick="modifyNotice();">수정</a>
-		<a class="button reply-btn" href="javascript:void(0)"
-		onclick="showAlert();">삭제</a>
-	<a class="button reply-btn" href="javascript:void(0)"
-		onclick="history.back();">뒤로가기</a>
-
-
 
 
 
@@ -263,11 +437,12 @@ z-index:auto;
 				<!-- Modal body -->
 				<div class="modal-body">
 					<form action="" method="POST" enctype="multipart/form-data">
-						<input type="hidden" name="no" id="no" value="${content.no}"/>
-					
+						<input type="hidden" name="no" id="no" value="${content.no}" />
+
 						<div class="mb-3 mt-3">
-							<label for="title" class="form-label">글 제목 : </label> 
-							<input type="text" class="form-control" name="title" value="${content.title }">
+							<label for="title" class="form-label">글 제목 : </label> <input
+								type="text" class="form-control" name="title"
+								value="${content.title }">
 						</div>
 						<div class="mb-3 mt-3">
 							<label for="writer" class="form-label">작성자 : </label> <input
@@ -280,67 +455,77 @@ z-index:auto;
 								name="content">${content.content }</textarea>
 						</div>
 						<div class="mb-3 mt-3">
-							<div id="imgOutput"><img src='/resources/uploads/noticeBoardImg/${content.image }' style='width:100px; height:100px; overflow: auto; margin:10px'/>
-							<button type='button' onclick='delFile("${content.image }");'>x</button></div>
+							<div id="imgOutput">
+								<img src='/resources/uploads/noticeBoardImg/${content.image }'
+									style='width: 100px; height: 100px; overflow: auto; margin: 10px' />
+								<button type='button' onclick='delFile("${content.image }");'>x</button>
 							</div>
+						</div>
 						<c:if test="${attachFile != null }">
 							<c:forEach var="attachFile" items="${attachFile}">
 								<c:choose>
 									<c:when test="${attachFile.notImageFile == null }">
-									<div id="${attachFile.originFile }"><img src='/resources/uploads/attachFile${attachFile.thumbnailFile }' style="width:100px; height:100px; overflow: auto; margin:10px" />
-									<button type='button' onclick='delAttachFile("${attachFile.thumbnailFile}","${attachFile.notImageFile }","${attachFile.originFile }","${attachFile.attachFileNo }");'>x</button></div>
+										<div id="${attachFile.originFile }">
+											<img
+												src='/resources/uploads/attachFile${attachFile.thumbnailFile }'
+												style="width: 100px; height: 100px; overflow: auto; margin: 10px" />
+											<button type='button'
+												onclick='delAttachFile("${attachFile.thumbnailFile}","${attachFile.notImageFile }","${attachFile.originFile }","${attachFile.attachFileNo }");'>x</button>
+										</div>
 									</c:when>
 									<c:otherwise>
-									<div id="${attachFile.originFile }"><a href='/resources/uploads/attachFile${attachFile.notImageFile }'>첨부파일</a>"
-									<button type='button' onclick='delAttachFile("${attachFile.thumbnailFile }","${attachFile.notImageFile }","${attachFile.originFile }","${attachFile.attachFileNo }");'>x</button></div>
+										<div id="${attachFile.originFile }">
+											<a
+												href='/resources/uploads/attachFile${attachFile.notImageFile }'>첨부파일</a>"
+											<button type='button'
+												onclick='delAttachFile("${attachFile.thumbnailFile }","${attachFile.notImageFile }","${attachFile.originFile }","${attachFile.attachFileNo }");'>x</button>
+										</div>
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
 						</c:if>
-						
-						<input type="hidden" name="image" id="image"/>
-						</div>
-						<div class="mb-3 mt-3" id="attachFileDiv">
-							<div id="attachOutput"></div>
-						</div>
 
-
-						<button type="button" class="btn btn-primary"
-							data-bs-toggle="modal" data-bs-target="#imageFileAdd">
-							이미지 파일 등록</button>
-						<button type="button" class="btn btn-primary"
-							data-bs-toggle="modal" data-bs-target="#attachFileAdd">
-							첨부 파일 등록</button>
-
-						<button type="submit" class="btn btn-success" id="submitBtn">저장</button>
-						<button type="button" class="btn btn-danger"
-							onclick="writeCancle();">취소</button>
-						
-					</form>
+						<input type="hidden" name="image" id="image" />
+				</div>
+				<div class="mb-3 mt-3" id="attachFileDiv">
+					<div id="attachOutput"></div>
 				</div>
 
-				<!-- Modal footer -->
-				<div class="modal-footer">
-					<button type="button" class="btn btn-danger" onclick="closeModal();">Close</button>
-				</div>
 
+				<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+					data-bs-target="#imageFileAdd">이미지 파일 등록</button>
+				<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+					data-bs-target="#attachFileAdd">첨부 파일 등록</button>
+
+				<button type="submit" class="btn btn-success" id="submitBtn">저장</button>
+				<button type="button" class="btn btn-danger"
+					onclick="writeCancle();">취소</button>
+
+				</form>
 			</div>
+
+			<!-- Modal footer -->
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" onclick="closeModal();">Close</button>
+			</div>
+
 		</div>
 	</div>
+	</div>
 
-<div class="modal" id="imageFileAdd">
+	<div class="modal" id="imageFileAdd">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 
 				<!-- Modal Header -->
 				<div class="modal-header">
 					<h4 class="modal-title">이미지 등록</h4>
-		
+
 				</div>
-				
+
 				<!-- Modal body -->
 				<div class="modal-body">
-				
+
 
 					<label for="file"></label> <input type="file" class="form-control"
 						id="imageFile" name="upfile">
@@ -350,7 +535,8 @@ z-index:auto;
 				<!-- Modal footer -->
 				<div class="modal-footer">
 
-					<button type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">완료</button>
+					<button type="button" class="btn btn-danger"
+						data-bs-dismiss="modal" aria-label="Close">완료</button>
 				</div>
 
 			</div>
@@ -362,14 +548,14 @@ z-index:auto;
 
 				<!-- Modal Header -->
 				<div class="modal-header">
-				
+
 					<h4 class="modal-title">첨부파일 등록</h4>
-				
+
 				</div>
-				
+
 				<!-- Modal body -->
 				<div class="modal-body">
-						
+
 					<label for="file"></label> <input type="file" class="form-control"
 						id="attachFile" name="attachFile">
 
@@ -378,31 +564,35 @@ z-index:auto;
 				<!-- Modal footer -->
 				<div class="modal-footer">
 
-					<button type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">완료</button>
+					<button type="button" class="btn btn-danger"
+						data-bs-dismiss="modal" aria-label="Close">완료</button>
 				</div>
 
 			</div>
 		</div>
 	</div>
-<div class="modal" id="delAlert">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
+	<div class="modal" id="delAlert">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
 
-      <!-- Modal body -->
-      <div class="modal-body">
-        ${content.no }번 공지사항을 삭제하시겠습니까?
-      </div>
+				<!-- Modal body -->
+				<div class="modal-body">${content.no }번공지사항을 삭제하시겠습니까?</div>
 
-      <!-- Modal footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" onclick="location.href='/notice/deleteNotice?no=${content.no}'" >삭제</button>
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">닫기</button>
-      </div>
+				<!-- Modal footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger"
+						onclick="location.href='/notice/deleteNotice?no=${content.no}'">삭제</button>
+					<button type="button" class="btn btn-primary"
+						data-bs-dismiss="modal">닫기</button>
+				</div>
 
-    </div>
-  </div>
-</div>
+			</div>
+		</div>
+	</div>
 
+	<div class="modal" id="deleteModal"></div>
+	<div class="modal" id="modiModal"></div>
+	<div class="modal" id="rereplyModal"></div>
 	<jsp:include page="../userFooter.jsp"></jsp:include>
 </body>
 </html>
