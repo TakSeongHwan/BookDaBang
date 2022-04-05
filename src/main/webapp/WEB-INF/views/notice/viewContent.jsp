@@ -140,7 +140,7 @@
 				.each(
 						data,
 						function(i, e) {
-							output += '<div class="single-comment justify-content-between d-flex replyItems" id="div'+e.replyNo+'">';
+							output += '<div class="single-comment justify-content-between replyItems" id="div'+e.replyNo+'">';
 							
 							output += '<div>';
 							if(e.step > 0){
@@ -364,6 +364,10 @@ margin-bottom: 20px;
 	margin: 10px;
 	float: right;
 }
+
+#replyInputArea{
+margin: 10px 0px;
+}
 </style>
 </head>
 <body>
@@ -407,21 +411,21 @@ margin-bottom: 20px;
 
 		</div>
 
-	<div>
+		<div id="replyContainer">
 			<div id="replyArea">
 				<div id="viewAllReply"></div>
 			</div>
-			<div >
-			<div style="display: inline-block; width: 70%;">
-			<input type="text" class="form-control" id="reply" name="reply"
-						placeholder="댓글달기"> 
-			</div>
-					
-						<a class="button button-header"
+			<div id="replyInputArea">
+					<div style="display: inline-block; width: 75%;">
+						<input type="text" class="form-control" id="reply" name="reply"
+							placeholder="댓글을 입력하세요">
+					</div>
+
+					<a class="button button-header"
 						href="javascript:void(0)" onclick="addreply();">댓글달기</a>
-				</div>
-</div>
+			</div>
 		</div>
+	</div>
 
 		<a class="button button-header" href="/notice/listAll">목록으로</a> <a
 			class="button button-header" href="javascript:void(0)"

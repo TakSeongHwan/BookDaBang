@@ -5,11 +5,11 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bookdabang.mapper.NoticeMapper">
-	<select id="getEntireNotice" resultType="Notice">
+	<select id="getEntireNotice" resultType="NoticeVO">
 		select * from notice
 		order by no desc
 	</select>
-	<select id="readNotice" resultType="Notice">
+	<select id="readNotice" resultType="NoticeVO">
 		select * from notice where no
 		= #{no}
 	</select>
@@ -38,7 +38,7 @@
 		notice_reply(boardNo,replyer,replyContent, ref, step, refOrder)
 		values(#{boardNo},#{replyer},#{replyContent}, #{ref}, #{step}, #{refOrder})
 	</insert>
-	<select id="getReply" resultType="NoticeReply">
+	<select id="getReply" resultType="NoticeReplyVO">
 		select * from notice_reply where boardNo = #{boardNo} order by ref desc, step asc, refOrder desc
 	</select>
 	<select id="pageViewCheck" resultType="java.sql.Timestamp">
@@ -56,7 +56,7 @@
 	<update id="replyCountIncrese">
 	update notice set reply = reply+1 where no = #{no}
 	</update>
-	<select id="getReplyInfoByReplyNo" resultType="NoticeReply">
+	<select id="getReplyInfoByReplyNo" resultType="NoticeReplyVO">
 	select * from notice_reply where replyNo = #{replyNo}
 	</select>
 	<update id="replyCountDecrease">

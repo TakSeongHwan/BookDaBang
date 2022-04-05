@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bookdabang.common.domain.AttachFileVO;
-import com.bookdabang.common.domain.Notice;
+import com.bookdabang.common.domain.NoticeVO;
 import com.bookdabang.common.domain.VisitorIPCheck;
 import com.bookdabang.common.etc.IPCheck;
 import com.bookdabang.common.service.IPCheckService;
@@ -48,7 +48,7 @@ public class NoticeController {
 
 	@RequestMapping("listAll")
 	public String notice(Model m) {
-		List<Notice> notice = new ArrayList<Notice>();
+		List<NoticeVO> notice = new ArrayList<NoticeVO>();
 		try {
 			notice = service.entireNotice();
 		} catch (Exception e) {
@@ -63,7 +63,7 @@ public class NoticeController {
 	@Transactional
 	public void showNoticeContent(Model m, @RequestParam("no") int no, HttpServletRequest request) {
 		System.out.println(no);
-		Notice content = null;
+		NoticeVO content = null;
 		List<AttachFileVO> af = null;
 		String ipaddr = null;
 		try {
@@ -116,7 +116,7 @@ public class NoticeController {
 	}
 
 	@RequestMapping(value = "insertNotice", method = RequestMethod.POST)
-	public String insertNotice(Notice n, RedirectAttributes rttr) {
+	public String insertNotice(NoticeVO n, RedirectAttributes rttr) {
 		
 	
 		int no = 0;

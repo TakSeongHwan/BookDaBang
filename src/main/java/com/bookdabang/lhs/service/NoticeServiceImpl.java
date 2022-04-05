@@ -8,8 +8,8 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 
 import com.bookdabang.common.domain.AttachFileVO;
-import com.bookdabang.common.domain.Notice;
-import com.bookdabang.common.domain.NoticeReply;
+import com.bookdabang.common.domain.NoticeVO;
+import com.bookdabang.common.domain.NoticeReplyVO;
 import com.bookdabang.lhs.persistence.NoticeDAO;
 
 @Service
@@ -18,12 +18,12 @@ public class NoticeServiceImpl implements NoticeService {
 	NoticeDAO noticeDAO;
 
 	@Override
-	public List<Notice> entireNotice() throws Exception {
+	public List<NoticeVO> entireNotice() throws Exception {
 		return noticeDAO.entireNotice();
 	}
 
 	@Override
-	public Notice getContentByNo(int no) throws Exception {
+	public NoticeVO getContentByNo(int no) throws Exception {
 		// TODO Auto-generated method stub
 		return noticeDAO.getContentByNo(no);
 	}
@@ -35,7 +35,7 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 
 	@Override
-	public int insertNotice(Notice n) throws Exception {
+	public int insertNotice(NoticeVO n) throws Exception {
 		// TODO Auto-generated method stub
 		return noticeDAO.insertNotice(n);
 	}
@@ -59,13 +59,13 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 
 	@Override
-	public int insertReply(NoticeReply reply) throws Exception {
+	public int insertReply(NoticeReplyVO reply) throws Exception {
 		// TODO Auto-generated method stub
 		return noticeDAO.insertReply(reply);
 	}
 
 	@Override
-	public List<NoticeReply> getAllReply(int boardNo) throws Exception {
+	public List<NoticeReplyVO> getAllReply(int boardNo) throws Exception {
 		// TODO Auto-generated method stub
 		return noticeDAO.getAllReply(boardNo);
 	}
@@ -101,7 +101,7 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 
 	@Override
-	public NoticeReply getBoardNoByReplyNo(int replyNo) throws Exception {
+	public NoticeReplyVO getBoardNoByReplyNo(int replyNo) throws Exception {
 		// TODO Auto-generated method stub
 		return noticeDAO.getBoardNoByReplyNo(replyNo);
 	}
@@ -113,7 +113,7 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 
 	@Override
-	public int updateReply(NoticeReply nr) throws Exception {
+	public int updateReply(NoticeReplyVO nr) throws Exception {
 		// TODO Auto-generated method stub
 		return noticeDAO.updateReply(nr);
 	}

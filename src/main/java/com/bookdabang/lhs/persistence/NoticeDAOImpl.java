@@ -11,8 +11,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.AttachFileVO;
-import com.bookdabang.common.domain.Notice;
-import com.bookdabang.common.domain.NoticeReply;
+import com.bookdabang.common.domain.NoticeVO;
+import com.bookdabang.common.domain.NoticeReplyVO;
 
 @Repository
 public class NoticeDAOImpl implements NoticeDAO {
@@ -22,13 +22,13 @@ public class NoticeDAOImpl implements NoticeDAO {
 	private static String ns = "com.bookdabang.mapper.NoticeMapper";
 
 	@Override
-	public List<Notice> entireNotice() throws Exception {
+	public List<NoticeVO> entireNotice() throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectList(ns + ".getEntireNotice");
 	}
 
 	@Override
-	public Notice getContentByNo(int no) throws Exception {
+	public NoticeVO getContentByNo(int no) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectOne(ns+ ".readNotice",no);
 	}
@@ -40,7 +40,7 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 	@Override
-	public int insertNotice(Notice n) throws Exception {
+	public int insertNotice(NoticeVO n) throws Exception {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("no", n.getNo());
 		map.put("title", n.getTitle());
@@ -79,13 +79,13 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 	@Override
-	public int insertReply(NoticeReply reply) throws Exception {
+	public int insertReply(NoticeReplyVO reply) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.insert(ns+".insertReply",reply);
 	}
 
 	@Override
-	public List<NoticeReply> getAllReply(int boardNo) throws Exception {
+	public List<NoticeReplyVO> getAllReply(int boardNo) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectList(ns+".getReply",boardNo);
 	}
@@ -126,7 +126,7 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 	@Override
-	public NoticeReply getBoardNoByReplyNo(int no) throws Exception {
+	public NoticeReplyVO getBoardNoByReplyNo(int no) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectOne(ns+".getReplyInfoByReplyNo",no);
 	}
@@ -138,7 +138,7 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 	@Override
-	public int updateReply(NoticeReply nr) throws Exception {
+	public int updateReply(NoticeReplyVO nr) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("boardNo", nr.getBoardNo());
 		map.put("replyNo", nr.getReplyNo());
