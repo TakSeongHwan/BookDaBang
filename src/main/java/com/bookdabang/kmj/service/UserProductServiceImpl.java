@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 
 import com.bookdabang.common.domain.CategoryVO;
 import com.bookdabang.common.domain.ProductVO;
-import com.bookdabang.kmj.persistence.UserProductDAO;
+import com.bookdabang.common.persistence.ProductDAO;
 
 @Service
 public class UserProductServiceImpl implements UserProductService {
 	
 	@Inject
-	private UserProductDAO dao;
+	private ProductDAO dao;
 
 	@Override
 	public List<ProductVO> readAllProducts() throws Exception {

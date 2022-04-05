@@ -1,4 +1,4 @@
-package com.bookdabang.cyh.persistence;
+package com.bookdabang.common.persistence;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,23 +16,21 @@ import com.bookdabang.cyh.domain.SearchCriteria;
 
 @Repository
 public class ProductDAOImpl implements ProductDAO {
-
+	
 	@Inject
-	private SqlSession ses;
-
-	private String ns = "com.bookdabang.mapper.productMapper";
-
+	private SqlSession ses; // SqlSessionTemplete 객체 주입
+	
+	private static String ns = "com.bookdabang.mapper.productMapper"; // mapper의 namespace
+	
+	// 최윤호
+	
 	@Override
 	public List<CategoryVO> getCategory() throws Exception {
-
 		return ses.selectList(ns + ".getCategory");
 	}
 
-	
-
 	@Override
 	public int conditionProdCnt(SearchCriteria sc) throws Exception {
-		
 		return ses.selectOne(ns + ".conditionProdCnt", sc);
 	}
 
@@ -54,12 +52,29 @@ public class ProductDAOImpl implements ProductDAO {
 		return ses.selectList(ns + ".conditionProdView", param);
 	}
 
-
-
 	@Override
 	public ProductVO selectProdView(String isbn) throws Exception {
 		
 		return ses.selectOne(ns + ".selectProdView", isbn);
 	}
+
+	// 강명진
+	
+	@Override
+	public List<ProductVO> selectAllProducts() throws Exception {
+		return ses.selectList(ns + ".selectAllProducts");
+	}
+
+	@Override
+	public ProductVO selectProduct(int prodNo) throws Exception {
+		return ses.selectOne(ns + ".selectProduct", prodNo);
+	}
+
+	@Override
+	public List<ProductVO> selectTopProducts(int category) throws Exception {
+		return ses.selectList(ns + ".selectTopProducts", category);
+	}
+
+	
 
 }

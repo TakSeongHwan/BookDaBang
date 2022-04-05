@@ -12,9 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.bookdabang.common.domain.AddressVO;
 import com.bookdabang.common.domain.CartVO;
 import com.bookdabang.common.domain.ProdOrder;
-import com.bookdabang.common.domain.Product;
 import com.bookdabang.common.domain.ProductVO;
-import com.bookdabang.kmj.persistence.UserProductDAO;
+import com.bookdabang.common.persistence.ProductDAO;
 import com.bookdabang.tsh.domain.CartViewDTO;
 import com.bookdabang.tsh.domain.OrderDTO;
 import com.bookdabang.tsh.domain.OrderInputDTO;
@@ -30,7 +29,7 @@ public class OrderServiceImpl implements OrderService{
 	@Inject
 	private CartDAO cdao;
 	@Inject
-	private UserProductDAO pdao;
+	private ProductDAO pdao;
 	@Inject
 	public AddressDAO adao;
 
