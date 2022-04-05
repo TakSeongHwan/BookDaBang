@@ -124,5 +124,11 @@ public class NoticeServiceImpl implements NoticeService {
 		return noticeDAO.getMaxReplyNo();
 	}
 
+	@Override
+	public int updateAccessDate(String ipaddr, int noticeNo) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.updateAccessDate(ipaddr, noticeNo);
+	}
+
 	
 }

@@ -40,6 +40,7 @@
             <ul class="nav navbar-nav menu_nav ml-auto mr-auto">
                  <li class="nav-item active"><a class="nav-link" href="${contextPath}">Home</a></li>
                  <li class="nav-item active"><a class="nav-link" href="${contextPath}/product/list">도서</a></li>
+                 <li class="nav-item active"><a class="nav-link" href="${contextPath}/notice/listAll">공지사항</a></li>
                  <!--  <li class="nav-item submenu dropdown">
                    <a href="/product/list" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">shop</a>               

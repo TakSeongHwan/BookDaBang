@@ -140,7 +140,7 @@
 				.each(
 						data,
 						function(i, e) {
-							output += '<div class="list-group-item list-group-item-action replyItems" id="div'+e.replyNo+'">';
+							output += '<div class="single-comment justify-content-between d-flex replyItems" id="div'+e.replyNo+'">';
 							
 							output += '<div>';
 							if(e.step > 0){
@@ -154,7 +154,7 @@
 									+ e.replyer + '</div>';
 							output += '<div> 댓글 내용 : ' + e.replyContent
 									+ '</div>';
-							output += '<div> 작성 일자 ' + formatDate(e.replyDate)
+							output += '<div>'+ formatDate(e.replyDate)
 									+ '</div>';
 							output += '<div style="float:right; margin-right:10px;">'
 									+ "<img src='/resources/img/addrereply.png' width='20px' style='margin-right:5px;' onclick='showRereplyModal("
@@ -258,14 +258,14 @@
 		let diff = new Date() - date;
 		let diffs = diff / 1000;
 		if (diffs < 60 * 5) {
-			return '<span class="badge bg-warning text-dark rounded-pill">방금 전</span>';
+			return '<span class="badge" style="color:#fff">방금 전</span>';
 		}
 		let diffm = diffs / 60;
 		if (diffm < 60) {
-			return '<span class="badge bg-warning text-dark rounded-pill">'
+			return '<span class="badge" style="color:#fff">'
 					+ Math.floor(diffm) + '분 전</span>';
 		}
-		return '<span class="badge bg-info text-dark rounded-pill">'
+		return '<span class="badge" style="color:#fff; background-color:#384aeb">'
 				+ new Date(date).toLocaleString() + '</span>';
 	}
 	function showRereplyModal(replyNo) {
@@ -327,35 +327,36 @@
 	z-index: auto;
 }
 
-.infoArea {
-	background-color: #000000;
-	min-height: 50px;
-}
-
-.titleArea {
-	background-color: #002347;
-	align-content: center;
-	margin-bottom: 0px;
-}
-
 .contentArea {
 	margin-bottom: 0px;
 	min-height: 450px;
-	background-color: #feffff;
+	background-color:#fff;
 	padding: 15px 10px 2px 10px;
+}
+
+#replyArea{
+margin-top : 20px;
+border: 5px solid #fff;
+
+
+}
+
+.replyItems{
+border: 1px solid #fff;
+padding-left: 10px;
 }
 
 .contentContainer {
 	min-height: 800px;
 }
 
-.txtColorW {
-	color: white;
-	padding-left: 5px;
+.titleArea{
+margin-top : 15px;
+margin-bottom: 20px;
 }
 
 .writer {
-	margin: 10px;
+
 	display: inline-block;
 }
 
@@ -367,21 +368,24 @@
 </head>
 <body>
 	<jsp:include page="../userHeader.jsp"></jsp:include>
-	<div class="container mt-3 contentContainer">
-		<div class="contentContainer">
-			<h3 class="titleArea mt-4 p-5 txtColorW">${content.title }</h3>
+	<div class="container comments-area contentContainer">
+	<div class="titleArea">
+	<h3>${content.title }</h3>
 			<div class="infoArea">
-				<div class="writer txtColorW">작성자 : ${content.writer }</div>
+				<div class="writer">작성자 : ${content.writer }</div>
 				<div class="countText">
-					<span class="viewCount txtColorW" style="margin-right: 10px;">조회수
-						: ${content.viewCount }</span> <span class="reply txtColorW"
+					<span class="viewCount" style="margin-right: 10px;">조회수
+						: ${content.viewCount }</span> <span class="reply"
 						style="margin-right: 10px;">댓글수 : ${content.reply }</span>
 				</div>
 
 			</div>
+	</div>
+		<div class="contentContainer">
+			
 			<div class="contentArea">
 				<div style="margin: 0px 2px 10px 2px">${content.content }</div>
-			</div>
+			
 			<div class="attachFileArea">
 				<c:if test="${attachFile != null }">
 					<c:forEach var="attachFile" items="${attachFile}">
@@ -401,27 +405,29 @@
 			</div>
 
 
-
-
-
-			<div id="replyArea">
-				<div id="viewAllReply"></div>
-				<div class="input-group mb-3 input-group-lg">
-					<input type="text" class="form-control" id="reply" name="reply"
-						placeholder="댓글달기"> <a class="button reply-btn"
-						href="javascript:void(0)" onclick="addreply();">댓글달기</a>
-				</div>
-
-
-			</div>
-
 		</div>
 
-		<a class="button reply-btn" href="/notice/listAll">목록으로</a> <a
-			class="button reply-btn" href="javascript:void(0)"
-			onclick="modifyNotice();">수정</a> <a class="button reply-btn"
+	<div>
+			<div id="replyArea">
+				<div id="viewAllReply"></div>
+			</div>
+			<div >
+			<div style="display: inline-block; width: 70%;">
+			<input type="text" class="form-control" id="reply" name="reply"
+						placeholder="댓글달기"> 
+			</div>
+					
+						<a class="button button-header"
+						href="javascript:void(0)" onclick="addreply();">댓글달기</a>
+				</div>
+</div>
+		</div>
+
+		<a class="button button-header" href="/notice/listAll">목록으로</a> <a
+			class="button button-header" href="javascript:void(0)"
+			onclick="modifyNotice();">수정</a> <a class="button button-header"
 			href="javascript:void(0)" onclick="showAlert();">삭제</a> <a
-			class="button reply-btn" href="javascript:void(0)"
+			class="button button-header" href="javascript:void(0)"
 			onclick="history.back();">뒤로가기</a>
 
 	</div>
@@ -456,8 +462,7 @@
 						</div>
 						<div class="mb-3 mt-3">
 							<div id="imgOutput">
-								<img src='/resources/uploads/noticeBoardImg/${content.image }'
-									style='width: 100px; height: 100px; overflow: auto; margin: 10px' />
+							<div id="${content.image }">${content.image }</div>
 								<button type='button' onclick='delFile("${content.image }");'>x</button>
 							</div>
 						</div>
@@ -465,18 +470,15 @@
 							<c:forEach var="attachFile" items="${attachFile}">
 								<c:choose>
 									<c:when test="${attachFile.notImageFile == null }">
-										<div id="${attachFile.originFile }">
-											<img
-												src='/resources/uploads/attachFile${attachFile.thumbnailFile }'
-												style="width: 100px; height: 100px; overflow: auto; margin: 10px" />
+										<div>
+											<div id="${attachFile.originFile }">/resources/uploads/attachFile${attachFile.thumbnailFile }</div>
 											<button type='button'
 												onclick='delAttachFile("${attachFile.thumbnailFile}","${attachFile.notImageFile }","${attachFile.originFile }","${attachFile.attachFileNo }");'>x</button>
 										</div>
 									</c:when>
 									<c:otherwise>
-										<div id="${attachFile.originFile }">
-											<a
-												href='/resources/uploads/attachFile${attachFile.notImageFile }'>첨부파일</a>"
+										<div>
+										<div id="${attachFile.originFile }">/resources/uploads/attachFile${attachFile.notImageFile }</div>
 											<button type='button'
 												onclick='delAttachFile("${attachFile.thumbnailFile }","${attachFile.notImageFile }","${attachFile.originFile }","${attachFile.attachFileNo }");'>x</button>
 										</div>
@@ -497,16 +499,11 @@
 				<button type="button" class="btn btn-primary" data-bs-toggle="modal"
 					data-bs-target="#attachFileAdd">첨부 파일 등록</button>
 
-				<button type="submit" class="btn btn-success" id="submitBtn">저장</button>
-				<button type="button" class="btn btn-danger"
-					onclick="writeCancle();">취소</button>
+				<button type="submit" class="button button-header" id="submitBtn">저장</button>
+				<button type="reset" class="button button-header"
+					onclick="closeModiModal();">취소</button>
 
 				</form>
-			</div>
-
-			<!-- Modal footer -->
-			<div class="modal-footer">
-				<button type="button" class="btn btn-danger" onclick="closeModal();">Close</button>
 			</div>
 
 		</div>
@@ -535,7 +532,7 @@
 				<!-- Modal footer -->
 				<div class="modal-footer">
 
-					<button type="button" class="btn btn-danger"
+					<button type="button" class="button button-header"
 						data-bs-dismiss="modal" aria-label="Close">완료</button>
 				</div>
 
@@ -564,7 +561,7 @@
 				<!-- Modal footer -->
 				<div class="modal-footer">
 
-					<button type="button" class="btn btn-danger"
+					<button type="button" class="button button-header"
 						data-bs-dismiss="modal" aria-label="Close">완료</button>
 				</div>
 
@@ -580,9 +577,9 @@
 
 				<!-- Modal footer -->
 				<div class="modal-footer">
-					<button type="button" class="btn btn-danger"
+					<button type="button" class="button button-header"
 						onclick="location.href='/notice/deleteNotice?no=${content.no}'">삭제</button>
-					<button type="button" class="btn btn-primary"
+					<button type="button" class="button button-header"
 						data-bs-dismiss="modal">닫기</button>
 				</div>
 

@@ -3,10 +3,14 @@ package com.bookdabang.common.etc;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.sql.Timestamp;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.bookdabang.common.service.IPCheckService;
+import com.bookdabang.common.service.IPCheckServiceImpl;
 
 public class IPCheck {
 	private static String ipAddr;
@@ -27,7 +31,7 @@ public class IPCheck {
 		ipAddr = buffReader.readLine();
 		HttpSession session = request.getSession();
 		session.setAttribute("ipAddr", ipAddr);
-		//System.out.println("세션에 들어가있는 ip주소 " +session.getAttribute("ipAddr"));
+		System.out.println("세션에 들어가있는 ip주소 " +session.getAttribute("ipAddr"));
 		return ipAddr;
 
 	}

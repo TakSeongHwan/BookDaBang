@@ -29,9 +29,9 @@ import com.bookdabang.common.domain.AttachFileVO;
 import com.bookdabang.common.domain.Notice;
 import com.bookdabang.common.domain.VisitorIPCheck;
 import com.bookdabang.common.etc.IPCheck;
-import com.bookdabang.common.etc.UploadFileProcess;
 import com.bookdabang.common.service.IPCheckService;
 import com.bookdabang.lhs.etc.ImageFileHandling;
+import com.bookdabang.lhs.etc.UploadFileProcess;
 import com.bookdabang.lhs.service.NoticeService;
 
 @Controller
@@ -77,14 +77,18 @@ public class NoticeController {
 				long lastAccessDate = lastAccessTime.getTime();
 				long currTime = System.currentTimeMillis();
 				
-				if(currTime - lastAccessDate > 1000 * 60*60*24) {//테스트중이라 1분
-					if(service.insertAccessDate(ipaddr, no) == 1) {
+				if(currTime - lastAccessDate > 1000 * 60*60*24) {//테스트중이라 1분 
+					if(service.updateAccessDate(ipaddr, no) == 1) {
 						service.viewCountIncrese(no);
+						System.out.println("조회수 올라감");
 					}
+				}else {
+					System.out.println("조회수 안올라감");
 				}
 			}else {
 				if(service.insertAccessDate(ipaddr, no) == 1) {
 					service.viewCountIncrese(no);
+					System.out.println("조회수 올라감");
 				}
 				
 			}

@@ -29,4 +29,5 @@ public class IPCheckDAOImpl implements IPCheckDAO{
 		return ses.insert(ns+".insertAccessDate",ipaddr);
 	}
 
+
 }

@@ -18,13 +18,20 @@ function showContent(obj){
 }
 
 </script>
+<style>
+.container{
+margin-top:20px;
+margin-bottom: 20px;
+}
+
+</style>
 </head>
 <body>
 <jsp:include page="../userHeader.jsp"></jsp:include>
 		<div class="container mt-3">
 	<h1 style="margin:20px; margin-bottom:20px;">공 지 사 항</h1>
   <table class="table table-hover">
-    <thead style="background-color:#002347; color:#fff">
+    <thead style="background-color:#fafaff; color:#777">
       <tr>
     
         <th>제목</th>

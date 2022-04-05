@@ -28,4 +28,6 @@ public class IPCheckServiceImpl implements IPCheckService {
 		return ipDAO.insertAccessDate(ipaddr);
 	}
 
+
+
 }

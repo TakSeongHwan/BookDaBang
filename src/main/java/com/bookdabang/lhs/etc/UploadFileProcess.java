@@ -1,4 +1,4 @@
-package com.bookdabang.common.etc;
+package com.bookdabang.lhs.etc;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,6 +13,7 @@ import org.imgscalr.Scalr;
 import org.springframework.util.FileCopyUtils;
 
 import com.bookdabang.common.domain.AttachFileVO;
+import com.bookdabang.common.etc.MediaConfirm;
 
 public class UploadFileProcess {
 	

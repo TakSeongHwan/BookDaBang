@@ -68,4 +68,7 @@
 	<select id="getMaxReplyNo" resultType="int">
 	select max(replyNo) from notice_reply
 	</select>
+	<update id="updateAccessDate">
+	update pageview set accessDate = now() where ip_address=#{ip_address} and noticeNo=#{noticeNo}
+	</update>
 </mapper>

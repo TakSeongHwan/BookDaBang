@@ -44,6 +44,8 @@ public interface NoticeDAO {
 
 	public int getMaxReplyNo() throws Exception;
 
+	public int updateAccessDate(String ipaddr, int noticeNo) throws Exception;
+
 
 	
 }

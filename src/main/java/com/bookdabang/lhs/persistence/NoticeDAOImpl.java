@@ -154,5 +154,13 @@ public class NoticeDAOImpl implements NoticeDAO {
 		return ses.selectOne(ns+".getMaxReplyNo");
 	}
 
+	@Override
+	public int updateAccessDate(String ipaddr, int noticeNo) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("ip_address", ipaddr);
+		map.put("noticeNo",noticeNo);
+		return ses.update(ns+".updateAccessDate", map);
+	}
+
 
 }
