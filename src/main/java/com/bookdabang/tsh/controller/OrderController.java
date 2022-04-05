@@ -35,6 +35,7 @@ public class OrderController {
 	
 	@RequestMapping(value = "/checkOut")
 	public String checkout(HttpSession ses) throws Exception {
+		System.out.println("GET방식 checkOut");
 		CartSelectDTO dto = new CartSelectDTO();
 		MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember");
 		String userId = null;
@@ -52,6 +53,12 @@ public class OrderController {
 			return "redirect:/?cart=null";
 		}
 		return "/order/checkOut";
+	}
+	
+	@RequestMapping(value = "/checkOut", method = RequestMethod.POST)
+	public void postCheckout(@RequestParam ArrayList<Integer> cartNo, HttpSession ses,Model model) throws Exception{
+		System.out.println("cartNo"+cartNo);
+		model.addAttribute("cartsNo", cartNo);
 	}
 	
 	@RequestMapping(value="/getOrder",method = RequestMethod.POST)

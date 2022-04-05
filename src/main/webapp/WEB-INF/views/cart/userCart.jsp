@@ -17,7 +17,7 @@
 		cartInfo();
 	})
 
-	function allCk() {
+	function allClick() {
 		let checked = $("#allCk").is(":checked");
 		if (checked) {
 			$("input:checkbox").prop("checked", true);
@@ -38,11 +38,12 @@
 			}
 		}
 		if (chk) {
-			cartsNo = cartsNo.substr(0, cartsNo.length-1);
-			location.href="/order/checkOut?cartsNo="+cartsNo;
+			cartsNo = cartsNo.substr(0, cartsNo.length - 1);
+			return true;
 		} else {
 			alert("주문하실 책을 선택하세요.")
 		}
+		return false;
 	}
 
 	function chk() {
@@ -71,7 +72,7 @@
 								.each(
 										data,
 										function(i, e) {
-											output += '<tr><td><input type="checkbox" class="chkbox" onclick="chk();" name="checkCart" value = '
+											output += '<tr><td><input type="hidden" name = "cartNo" value='+e.cartNo+'><input type="checkbox" class="chkbox" onclick="chk();" name="checkCart" value = '
 													+ e.cartNo
 													+ ' checked /><div class="media"><div class="d-flex"><img src="'+e.cover+'" style="width: 150px"></div><div class="media-body"><input type="hidden" id= "cartNo'+e.cartNo+'" value="'+e.cartNo+'" /><p>'
 													+ e.title
@@ -91,7 +92,7 @@
 										})
 						output += '<tr><td></td><td></td><td><h5>Subtotal</h5></td><td><h5 id="subtotal">'
 								+ sum.toLocaleString()
-								+ '원</h5></td></tr><tr class="out_button_area"><td class="d-none-l"></td><td class=""></td><td></td><td><div class="checkout_btn_inner d-flex" style="float: right"><a class="gray_btn" href="#">계속하기</a> <a class="primary-btn ml-2" onclick="payOrder();" href="javascript:void(0)">결제하기</a></div></td></tr>';
+								+ '원</h5></td></tr><tr class="out_button_area"><td class="d-none-l"></td><td class=""></td><td></td><td><div class="checkout_btn_inner d-flex" style="float: right"><a class="gray_btn" href="#">계속하기</a> <button class="primary-btn ml-2" type="submit" >결제하기</a></div></td></tr>';
 						$("#output").append(output);
 					}
 				})
@@ -99,12 +100,12 @@
 
 	function addQtt(obj) {
 		let qtt = $("#prductQtt" + obj);
-		let stock = parseInt($("#stock"+obj).val());
-		if(stock<=parseInt(qtt.val())){
+		let stock = parseInt($("#stock" + obj).val());
+		if (stock <= parseInt(qtt.val())) {
 			alert("재고가 부족합니다.");
 			qtt.val(parseInt(stock));
-		}else{
-			qtt.val(parseInt(qtt.val()) + 1);	
+		} else {
+			qtt.val(parseInt(qtt.val()) + 1);
 		}
 		modiQtt(obj);
 	}
@@ -192,19 +193,20 @@
 		<div class="container">
 			<div class="cart_inner">
 				<div class="table-responsive">
-					<table class="table">
-						<thead>
-							<tr>
-								<th scope="col"><input type="checkbox" id="allCk"
-									onclick="allCk();" /> Product</th>
-								<th scope="col">Price</th>
-								<th scope="col">Quantity</th>
-								<th scope="col">Total</th>
-							</tr>
-						</thead>
-						<tbody id="output">
-						</tbody>
-					</table>
+					<form action="/order/checkOut" onsubmit="return payOrder();" method="POST">
+						<table class="table">
+							<thead>
+								<tr>
+									<th scope="col"><input type="checkbox" id="allCk" onclick="allClick();" /> Product</th>
+									<th scope="col">Price</th>
+									<th scope="col">Quantity</th>
+									<th scope="col">Total</th>
+								</tr>
+							</thead>
+							<tbody id="output">
+							</tbody>
+						</table>
+					</form>
 				</div>
 			</div>
 		</div>

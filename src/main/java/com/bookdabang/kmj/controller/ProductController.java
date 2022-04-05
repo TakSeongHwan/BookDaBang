@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bookdabang.common.domain.Product;
+import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.common.domain.Review;
 import com.bookdabang.kmj.service.ProductService;
 import com.bookdabang.kmj.service.ReviewService;
@@ -33,7 +34,7 @@ public class ProductController {
 	public void productList (Model model) throws Exception {
 		System.out.println("상품 리스트 페이지");
 		
-		List<Product> lst = service.readAllProducts();
+		List<ProductVO> lst = service.readAllProducts();
 		
 		model.addAttribute("productList", lst);
 	}
@@ -45,11 +46,11 @@ public class ProductController {
 		System.out.println(prodNo + "번 상품 상세페이지");
 		
 		// 상품 상세정보
-		Product product = service.readProduct(prodNo);
+		ProductVO product = service.readProduct(prodNo);
 		
 		// top10 상품들
 		int category = product.getCategory_code();
-		List<Product> lst = service.readTopProducts(category);
+		List<ProductVO> lst = service.readTopProducts(category);
 		
 		// 해당 상품의 리뷰들
 		List<Review> lst2 = rservice.readAllReview(prodNo);

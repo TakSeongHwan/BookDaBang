@@ -13,6 +13,7 @@ import com.bookdabang.common.domain.AddressVO;
 import com.bookdabang.common.domain.CartVO;
 import com.bookdabang.common.domain.ProdOrder;
 import com.bookdabang.common.domain.Product;
+import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.kmj.persistence.ProductDAO;
 import com.bookdabang.tsh.domain.CartViewDTO;
 import com.bookdabang.tsh.domain.OrderDTO;
@@ -53,7 +54,7 @@ public class OrderServiceImpl implements OrderService{
 			ovo.setUserId(addrvo.getUserId());
 			ovo.setProductNo(cvo.getProductNo());
 			ovo.setAddressNo(address_no);
-			Product pvo = pdao.selectProduct(cvo.getProductNo());
+			ProductVO pvo = pdao.selectProduct(cvo.getProductNo());
 			ovo.setPrice(pvo.getSell_price()*cvo.getProductQtt());
 			ovo.setProductQtt(cvo.getProductQtt());
 			if(orderPwd!=null) {

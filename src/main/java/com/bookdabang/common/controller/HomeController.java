@@ -42,9 +42,4 @@ public class HomeController {
 		return "adminHome";
 	}
 	
-	@RequestMapping(value="cart/userCart",method = RequestMethod.GET)
-	public void getCart() throws Exception{
-
-	}
-	
 }

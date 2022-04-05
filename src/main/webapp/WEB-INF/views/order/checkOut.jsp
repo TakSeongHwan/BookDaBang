@@ -146,12 +146,15 @@
 	}
 
 	function cartInfo() {
-		let param = location.href.split("?")[1];
-		console.log(param);
+		let cartNo = new Array();
+		cartNo = "${cartsNo}";
 		$.ajax({
-			url : "/userCart/all",
+			url : "/userCart/cartByNo",
 			type : "GET",
-			data : param,
+			data : {
+				cartsNo : "${cartsNo}",
+			},
+			traditional : true,
 			success : function(data) {
 				parseOrderInfo(data);
 			}

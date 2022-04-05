@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
-import com.bookdabang.common.domain.Product;
+import com.bookdabang.common.domain.ProductVO;
 
 @Repository
 public class ProductDAOImpl implements ProductDAO {
@@ -18,17 +18,17 @@ public class ProductDAOImpl implements ProductDAO {
 	private static String ns = "com.bookdabang.mapper.ProductMapper"; // mapper의 namespace
 
 	@Override
-	public List<Product> selectAllProducts() throws Exception {
+	public List<ProductVO> selectAllProducts() throws Exception {
 		return ses.selectList(ns + ".selectAllProducts");
 	}
 
 	@Override
-	public Product selectProduct(int prodNo) throws Exception {
+	public ProductVO selectProduct(int prodNo) throws Exception {
 		return ses.selectOne(ns + ".selectProduct", prodNo);
 	}
 
 	@Override
-	public List<Product> selectTopProducts(int category) throws Exception {
+	public List<ProductVO> selectTopProducts(int category) throws Exception {
 		return ses.selectList(ns + ".selectTopProducts", category);
 	}
 

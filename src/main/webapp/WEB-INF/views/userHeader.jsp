@@ -27,7 +27,7 @@
 <script type="text/javascript">
 $(function() {
 	$.ajax({
-		url :"userCart/loginCart",
+		url :"/userCart/loginCart",
 		type: "post",
 		data: {
 			userId : "${loginMember.userId}",

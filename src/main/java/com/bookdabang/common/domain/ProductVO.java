@@ -2,7 +2,7 @@ package com.bookdabang.common.domain;
 
 import java.sql.Timestamp;
 
-public class ProductVO {
+public class ProductVO { 
 	private int Product_no;
 	private String title;
 	private String author;
