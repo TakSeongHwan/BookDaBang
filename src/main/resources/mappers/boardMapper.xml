@@ -102,6 +102,14 @@
 		thumbnailFile, notImageFile)
 		values(#{freeboardNo}, #{originFile}, #{thumbnailFile}, #{notImageFile});
 	</insert>
+	
+	<update id="countLike">
+		update freeboard set likecount=  likecount+1 where boardno=#{boardno}
+	</update>
+	
+	<update id="delLikeCount">
+		update freeboard set likecount=  likecount-1 where boardno=#{boardno}
+	</update>
 </mapper>
 	
 

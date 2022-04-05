@@ -15,9 +15,11 @@
 <script>
 let boardno = ${freeBoard.boardno};
 let check = ${check};
+let reportCheck = ${reportCheck};
 
 
 $(function() {
+	
 	
 	
 	if(check == 1){
@@ -35,6 +37,9 @@ function report() {
 	let why = $("#why").val();
 	console.log(boardno, why);
 	
+	if (reportCheck == 1){
+		alert("이미 신고한 게시물입니다.");
+	} else {
 		if(why == ""){
 			alert("신고사유를 작성해주세요");
 			} else {
@@ -55,6 +60,10 @@ function report() {
 				}
 			});
 		}
+	}
+	
+		
+
 		
 	}
 	
@@ -84,17 +93,7 @@ function removeFreeBoard(boardno) {
 	});
 }
 
-/* //좋아요 검사
-function likeCheck(){
-	$.ajax({
-		url : '/lbr/board/likeCheck?boardno=' + boardno,
-		type : "GET",
-		success : function(data) {
-			alert(data);
-		}
-	});	
-}
- */
+
 
 //게시물 좋아요
 function likeBoard(gubun){
@@ -140,7 +139,7 @@ function likeBoard(gubun){
 
 #btn3 {
 	margin-top: 20px;
-	margin-left:150px; 
+	margin-left:100px; 
 	
 	
 }
@@ -200,9 +199,14 @@ function likeBoard(gubun){
 		<button class="button button-postComment button--active" type="button" data-bs-target="#myModal" data-bs-toggle="modal" id="btn1">신고하기</button>
 		<button class="button button-postComment button--active" type="button" id="btn4" onclick="removeFreeBoard(${freeBoard.boardno });">삭제하기</button>
 		<button class="button button-postComment button--active" type="button" id="btn2" onclick="">수정하기</button>
-		<button class="button button-postComment button--active" type="button" id="btn3" onclick="location.href='/board/listAllFreeBoard';">목록</button>
-		
 	
+		
+		<div class="mb-3">
+			<textarea class="form-control" rows="10" id="content" name="comment"  >
+			</textarea>
+			</div>
+			<button class="button button-postComment button--active" type="button" id="comment" onclick="" style="padding: 5px; float: right;">댓글등록</button>
+			<button class="button button-postComment button--active" type="button" id="btn3" onclick="location.href='/board/listAllFreeBoard';">목록</button>
 	</div>
 	</div>
 	<div class="modal" id="myModal" style="margin-top: 60px;">

@@ -161,8 +161,22 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
 	@Override
 	public int countReportCheck(ReportBoard reportBoard) throws Exception {
-		// TODO Auto-generated method stub
+		
 		return dao.countReportCheck(reportBoard);
+	}
+
+
+	@Override
+	public int likeCount(int no) throws Exception {
+		return dao.likeCount(no);
+		
+	}
+
+
+	@Override
+	public int delLikeCount(int no) throws Exception {
+		
+		return dao.delLikeCount(no);
 	}
 
 

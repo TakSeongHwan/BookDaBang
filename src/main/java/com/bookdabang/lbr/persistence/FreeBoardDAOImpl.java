@@ -135,6 +135,22 @@ public class FreeBoardDAOImpl implements FreeBoardDAO {
 
 
 
+	@Override
+	public int likeCount(int no) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.update(ns + ".countLike", no);
+	}
+
+
+
+	@Override
+	public int delLikeCount(int no) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.update(ns + ".delLikeCount", no);
+	}
+
+
+
 
 
 	

@@ -56,8 +56,8 @@ public class FreeBoardController {
 		recommend.setFreeboardNo(no);
 		recommend.setUserId("cat");
 
-//		reportBoard.setBoardno(no);
-//		reportBoard.setReportuser("cat");
+		reportBoard.setBoardno(no);
+		reportBoard.setReportuser("cat");
 		
 		Map<String, Object> resultMap = service.readFreeBoard(no);
 		
@@ -67,7 +67,7 @@ public class FreeBoardController {
 		model.addAttribute("freeBoard", freeBoard);
 		model.addAttribute("fileLst", fileLst);
 		model.addAttribute("check", this.service.countLikeCheck(recommend));
-		//model.addAttribute("reportCheck", this.service.countReportCheck(reportBoard));
+		model.addAttribute("reportCheck", this.service.countReportCheck(reportBoard));
 
 	}
 
@@ -270,9 +270,11 @@ public class FreeBoardController {
 		// 좋아요가 있는
 		if (gubun.equals("Y")) {
 			this.service.likeFreeBoard(recommend);
+			this.service.likeCount(no);
 			// 좋아요가 없는
 		} else {
 			this.service.unlikeFreeBoard(recommend);
+			this.service.delLikeCount(no);
 		}
 		return "/board/readFreeBoard";
 	}

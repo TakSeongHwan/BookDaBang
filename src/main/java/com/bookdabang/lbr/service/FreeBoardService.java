@@ -34,4 +34,8 @@ public interface FreeBoardService {
 	public int countLikeCheck(Recommend recommend) throws Exception;
 	
 	public int countReportCheck(ReportBoard reportBoard) throws Exception;
+
+	public int likeCount(int no)throws Exception;
+
+	public int delLikeCount(int no)throws Exception;;
 };
