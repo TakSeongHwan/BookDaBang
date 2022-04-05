@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bookdabang.common.domain.CartVO;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.ProductVO;
-import com.bookdabang.kmj.service.ProductService;
+import com.bookdabang.kmj.service.UserProductService;
 import com.bookdabang.tsh.domain.CartProdQttDTO;
 import com.bookdabang.tsh.domain.CartSelectDTO;
 import com.bookdabang.tsh.domain.CartViewDTO;
@@ -39,7 +39,7 @@ public class UserCartController {
 	@Inject
 	public CartService cService;
 	@Inject
-	public ProductService pService;
+	public UserProductService pService;
 	
 	@RequestMapping(value="/count", method = RequestMethod.GET)
 	public ResponseEntity<Integer> countCart(HttpSession ses){

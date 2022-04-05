@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bookdabang.mapper.boardMapper">
+
+	<select id="listAllFreeBoard" resultType="FreeBoard">
+		select * from freeboard
+		where deleteyn = 'y' order by date desc
+	</select>
+
+	<select id="readFreeBoard" resultType="FreeBoard">
+		select * from freeboard
+		where boardno=#{boardno}
+	</select>
+	
+	<select id="readFile" resultType="AttachFileVO">
+		select * from attachfile where freeboardNo =#{freeboardNo}
+	</select>
+
+	<select id="listAllReportBoard" resultType="ReportBoard">
+		select * from
+		reportboard order by reportno desc
+	</select>
+
+	<update id="insertReportBoard">
+		insert into reportboard(boardno, reportuser, why,
+		reportstatus) values(#{boardno},#{reportuser},#{why},#{reportstatus})
+	</update>
+
+	<insert id="insertFreeBoard">
+		insert into freeboard(writer, title, content, date)
+		values(#{writer},#{title},#{content},now())
+
+
+	</insert>
+
+	<select id="getMaxno" resultType="int">
+		select max(boardno) as nextno
+		from freeboard;
+	</select>
+
+
+
+	
+
+
+	<update id="removeFreeBoard">
+		update freeboard set deleteyn = 'N'
+		where boardno=#{boardno}
+
+	</update>
+
+	<select id="removeAllFreeBoard" resultType="FreeBoard">
+		select * from
+		freeboard where deleteyn="N";
+	</select>
+
+
+	<select id="readDelBoard" resultType="FreeBoard">
+		select * from freeboard
+		where boardno=#{boardno}
+	</select>
+
+	<select id="readMaxFileNo" resultType="int">
+		select max(attachFileNo)
+		from attachfile
+	</select>
+
+	<update id="restoreBoard">
+		update freeboard set deleteyn='Y'
+		where
+		boardno=#{boardno}
+	</update>
+
+	<insert id="likeFreeBoard">
+		insert into recommend(userId, freeBoardNo)
+		values(#{userId},#{freeboardNo})
+	</insert>
+
+	<delete id="unilkeFreeBoard">
+		delete from recommend
+		where userId=#{userId} and
+		freeBoardNo = #{freeboardNo}
+	</delete>
+
+	<select id="countLikeCheck" resultType="int">
+		select count(*)
+		from recommend
+		where userId=#{userId} and freeBoardNo = #{freeboardNo}
+	</select>
+
+	<select id="countReportBoard" resultType="int">
+		select count(*) from
+		reportboard
+		where reportuser=#{reportuser} and boardno=#{boardno}
+	</select>
+
+	<insert id="insertAttachFile">
+		insert into attachfile(freeboardNo, originFile,
+		thumbnailFile, notImageFile)
+		values(#{freeboardNo}, #{originFile}, #{thumbnailFile}, #{notImageFile});
+	</insert>
+</mapper>
+	
+
+
+ 
+ 

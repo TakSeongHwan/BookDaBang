@@ -10,4 +10,7 @@
 		select * from review where productNo = #{prodNo}
 	</select>
 	
+	<select id="selectAllComments" resultType="ReviewComment">
+		select * from review_comment where reviewNo = #{rno}
+	</select>
 </mapper>

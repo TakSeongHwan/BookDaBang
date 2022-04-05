@@ -8,4 +8,5 @@
   	<select id="login" resultType="MemberVO">
   		select * from member where userid=#{userId} and userPwd = sha1(md5(#{pwd}))
   	</select>
+
 </mapper>
