@@ -6,23 +6,9 @@
   
 <mapper namespace="com.bookdabang.mapper.productMapper" >
 
-	<select id="selectAllProducts" resultType="ProductVO">
-		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' limit 9
-	</select>
-	
-	<select id="selectProduct" resultType="ProductVO">
-		select*from product where product_no = #{prodNo}
-	</select>
-	
-	<select id="selectTopProducts" resultType="ProductVO">
-		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' and
-		category_code = #{category} order by sales_count desc limit 10
-	</select>
-
 	<select id="getCategory" resultType="CategoryVO">
 		select * from category
 	</select>
-
 
 	<select id="conditionProdCnt" resultType="int">
 		select count(*) from product where 1=1
@@ -159,6 +145,21 @@
 	
 	<select id="selectProdView" resultType="productVO">
 		select * from product where isbn = #{isbn}
+	</select>
+	
+	<!-- 강명진 -->
+	
+	<select id="selectAllProducts" resultType="ProductVO">
+		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' limit 9
+	</select>
+	
+	<select id="selectProduct" resultType="ProductVO">
+		select*from product where product_no = #{prodNo}
+	</select>
+	
+	<select id="selectTopProducts" resultType="ProductVO">
+		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' and
+		category_code = #{category} order by sales_count desc limit 10
 	</select>
 
 </mapper>
