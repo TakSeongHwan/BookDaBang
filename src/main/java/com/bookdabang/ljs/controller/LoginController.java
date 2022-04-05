@@ -68,14 +68,18 @@ public class LoginController {
 					model.addAttribute("loginMember", loginMember);
 					LoginDTO dto = new LoginDTO(loginMember.getUserId(), loginMember.getUserPwd(), true, ses.getId());
 					System.out.println(dto.toString());
-					int result = service.lastLogin(dto);
-					System.out.println("최종 로그인 시간 결과" + result);
-					
+					int result = service.lastLogin(dto); // 세션 아이디/ 최종 로그인 시간 업데이트 했으니까 쿠키에도 바꿔줘야됨
+					Cookie BookDBCook = new Cookie("BookDBCookie", dto.getSessionId()); // 북다방 쿠키에 세션키 저장 
+					BookDBCook.setMaxAge(60 * 60 * 24); // 쿠키 만료시간을 2분으로 . 60*60*24*7
+					BookDBCook.setPath("/");
+					response.addCookie(BookDBCook);
+
+					System.out.println("최종 로그인 시간 결과" + result);					
 					//response.sendRedirect("/ljs/mypage/");
 				} 
 			} 
-
 		}
+		
 		System.out.println("쿠키 있니 없니");
 		return "loginPage";
 				
@@ -83,8 +87,15 @@ public class LoginController {
 	
 	
 	@RequestMapping(value="/login", method = RequestMethod.GET) 
-	public String login() {
+	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
 		
+		try {
+			loginPage(request, response, model);
+			
+		} catch (Exception e) {
+			System.out.println("쿠키 유무 판별 실패");
+			e.printStackTrace();
+		}
 		
 		
 		
@@ -92,7 +103,7 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/loginSign", method = RequestMethod.POST)
-	public String loginPage(LoginDTO dto, Model model, HttpSession ses) {
+	public String loginSign(LoginDTO dto, Model model, HttpSession ses) {
 	
 				System.out.println("로그인 첫걸음" + dto.toString());
 				dto.setSessionId(ses.getId());
@@ -146,6 +157,7 @@ public class LoginController {
 		public String memberinfo(@RequestParam("u") String sessionId, Model model) {
 			
 			MemberVO loginMember = null;
+			System.out.println(sessionId);
 			
 			try {
 				loginMember = service.findLoginSess(sessionId);
@@ -199,9 +211,7 @@ public class LoginController {
 
 		@RequestMapping(value="/logout", method=RequestMethod.GET)
 		public void logout(HttpSession session, HttpServletResponse resp, HttpServletRequest req) throws Exception {
-			String sessionId = (String)session.getAttribute("sessionId");
 			
-			if (sessionId == null) {
 				
 				Cookie BookDBCook = new Cookie("BookDBCookie", null);
 				BookDBCook.setMaxAge(0); // 유효시간을 0으로 설정
@@ -209,7 +219,7 @@ public class LoginController {
 				resp.addCookie(BookDBCook);
 				session.invalidate();
 
-			}
+			
 		
 			// return?
 			resp.sendRedirect("/ljs/");

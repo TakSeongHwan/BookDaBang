@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class BoardController {
+public class MyPageController {
 	
 //	@RequestMapping(value = "/", method = RequestMethod.GET)
 //	public void home(@RequestParam("ses") String sessionId) {

@@ -97,7 +97,16 @@ function loginOrNot() {
               <li class="nav-item"><button><i class="ti-search"></i></button></li>
               <li class="nav-item"><button><i class="ti-shopping-cart"></i><span class="nav-shop__circle">3</span></button> </li>
               <li class="nav-item"><button type="button" onclick="loginOrNot();"><img src="${contextPath }/resources/img/user_icon.png" style= "width:18px; height:17px;"/></button></li>
-              <li class="nav-item"><a class="button button-header" href="#">${ sessionId}  Login</a></li>
+              
+              <c:choose>
+              	
+              	<c:when test="${sessionScope.sessionId != null }">
+              	<li class="nav-item"><a class="button button-header" href="${contextPath }/login">Login</a></li>
+              	</c:when>
+              	<c:otherwise>
+              		<li class="nav-item"><a class="button button-header" href="${contextPath }/logout">Logout</a></li>
+              	</c:otherwise>
+              </c:choose>
             </ul>
           </div>
         </div>

@@ -35,11 +35,7 @@
 <script src="../resources/js/main.js"></script>
 </head>
 <script>
-//window.onload = function () {
 
-//	loginOrNot();
-	
-//}
 
 
 function loginOrNot() {
@@ -54,7 +50,8 @@ function loginOrNot() {
 		console.log("로그인 했슈")
 		//location.href='/ljs/mypage/';
 	} else {
-		location.href='/ljs/returnPrePage';
+		console.log("로그인 안했슈")
+		//location.href='/ljs/returnPrePage';
 		
 	 }
 }
@@ -371,20 +368,20 @@ function loginOrNot() {
 				</div>
 				
 				<div class="col-lg-8 posts-list">
+				<h2> 회원 정보 수정</h2>
+				
 					<div class="single-post row">
-						<div class="col-lg-3  col-md-3">
-							<div id="testV" class="blog_info text-right">
-							 아이디 : ${loginMember.userId}
-							 비밀번호 : ${loginMember.userPwd }
-							 닉네임 : ${loginMember.nickName }
-							 이메일 : ${loginMember.userEmail } 
-							 전화번호 : ${loginMember.phoneNum }
+						
+							
+							아이디 : <input type="text" class="form-control" value = "${loginMember.userId}"  />  
+							비밀번호 : <input type="password" class="form-control" value = "${loginMember.userPwd }" />
+							<button>비밀번호 변경</button> 
+							닉네임 : <input type="text" class="form-control" value = "${loginMember.nickName }" />
+							이메일 : <input type="text" class="form-control" value = "${loginMember.userEmail}" />  
+							핸드폰 번호 : <input type="text" class="form-control" value = "${loginMember.phoneNum}" /> 
 							
 							
-							
-							</div>
-							
-						</div>
+						
 				</div>
 
 
