@@ -14,14 +14,14 @@ import com.bookdabang.common.domain.Recommend;
 import com.bookdabang.common.domain.ReportBoard;
 
 import com.bookdabang.lbr.etc.BoardUploadFile;
-import com.bookdabang.lbr.persistence.BoardDAO;
+import com.bookdabang.lbr.persistence.FreeBoardDAO;
 
 
 @Service
-public class BoardServiceImpl implements BoardService {
+public class FreeBoardServiceImpl implements FreeBoardService {
 
 	@Inject
-	private BoardDAO dao;
+	private FreeBoardDAO dao;
 	
 	
 	@Override

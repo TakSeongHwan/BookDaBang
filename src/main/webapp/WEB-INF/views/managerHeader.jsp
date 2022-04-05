@@ -138,11 +138,11 @@
                   </ul></li>
 
                <li class="menu-header small text-uppercase"><span
-                  class="menu-header-text">Pages</span></li>
+                  class="menu-header-text">상품관리</span></li>
                <li class="menu-item"><a href="javascript:void(0);"
                   class="menu-link menu-toggle"> <i
                      class="menu-icon tf-icons bx bx-dock-top"></i>
-                     <div data-i18n="Account Settings">Account Settings</div>
+                     <div data-i18n="Account Settings" onclick="location.href='${contextPath}/prodManager/listAll'">상품 조회</div>
                </a>
                   <ul class="menu-sub">
                      <li class="menu-item"><a

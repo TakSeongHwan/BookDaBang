@@ -8,7 +8,7 @@ import com.bookdabang.common.domain.Recommend;
 import com.bookdabang.common.domain.ReportBoard;
 import com.bookdabang.lbr.etc.BoardUploadFile;
 
-public interface BoardService {
+public interface FreeBoardService {
 	public List<FreeBoard> listAllBoards() throws Exception;
 
 	public Map<String, Object> readFreeBoard(int no) throws Exception;

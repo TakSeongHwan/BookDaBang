@@ -28,14 +28,14 @@ import com.bookdabang.common.domain.ReportBoard;
 
 import com.bookdabang.lbr.etc.BoardUploadFile;
 import com.bookdabang.lbr.etc.BoardUploadFileProcess;
-import com.bookdabang.lbr.service.BoardService;
+import com.bookdabang.lbr.service.FreeBoardService;
 
 @Controller
 @RequestMapping(value = "/board/*")
-public class BoardController {
+public class FreeBoardController {
 
 	@Inject
-	private BoardService service;
+	private FreeBoardService service;
 
 	private List<BoardUploadFile> upfileLst = new ArrayList<BoardUploadFile>();
 

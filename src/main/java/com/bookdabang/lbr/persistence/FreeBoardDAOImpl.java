@@ -14,7 +14,7 @@ import com.bookdabang.common.domain.ReportBoard;
 
 
 @Repository
-public class BoardDAOImpl implements BoardDAO {
+public class FreeBoardDAOImpl implements FreeBoardDAO {
 
 	@Inject
 	private SqlSession ses;

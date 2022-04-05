@@ -23,6 +23,27 @@
 
 <title>userHeader</title>
 </head>
+<script>
+
+function loginOrNot() {
+	// 세션 아이디 가져오란다.
+	//  로그인을 안했는데 왜 뜨지
+	// 로그인을 안해도 세션 ID 뜨는데?
+	let loginMember = "${ sessionId}";
+	console.log(loginMember);
+	
+	if (loginMember != '') {
+		// 로그인 했을 때
+		console.log("로그인 했슈")
+		location.href='/ljs/mypage/?u=' + loginMember;
+	} else {
+		alert("로그인이 되지 않았습니다.")
+		location.href='/ljs/loginPage';
+		
+	 }
+}
+
+</script>
 <body>
    <!--================ Start Header Menu Area =================-->
    <header class="header_area">
@@ -55,7 +76,7 @@
                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">Blog</a>
                    <ul class="dropdown-menu">
-                        <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="blog.html">${loginMember.userId }</a></li>
                         <li class="nav-item"><a class="nav-link" href="single-blog.html">Blog Details</a></li>
                    </ul>
             </li>
@@ -79,11 +100,12 @@
                    </ul>
             </li>
             </ul>
-
+<!-- 마이페이지 -->
             <ul class="nav-shop">
               <li class="nav-item"><button><i class="ti-search"></i></button></li>
               <li class="nav-item"><button><i class="ti-shopping-cart"></i><span class="nav-shop__circle">3</span></button> </li>
-              <li class="nav-item"><a class="button button-header" href="#">Buy Now</a></li>
+              <li class="nav-item"><button type="button" onclick="loginOrNot();"><img src="${contextPath }/resources/img/user_icon.png" style= "width:18px; height:17px;"/></button></li>
+              <li class="nav-item"><a class="button button-header" href="#">${ sessionId}  Login</a></li>
             </ul>
           </div>
         </div>

@@ -11,7 +11,7 @@ import com.bookdabang.common.domain.ReportBoard;
 
 
 
-public interface BoardDAO {
+public interface FreeBoardDAO {
 
 
 	public List<FreeBoard> getListAllFreeBoards() throws Exception;
