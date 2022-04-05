@@ -72,5 +72,5 @@ public class HomeController {
 		System.out.println("admin이 호출됨....");
 		return "adminHome";
 	}
-
+	
 }
