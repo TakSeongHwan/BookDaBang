@@ -11,7 +11,7 @@
 
 <script>
 	let attachCount = 0;
-	
+	let formData = new FormData();
 	$(document).ready(function() {
 
 		showAllReply();
@@ -29,6 +29,7 @@
 					console.log("이미지파일");
 					imgCheck = true;
 					formData.append("imageFile", upfile);
+					// 이미지 아웃풋에 출력하고(돔운행) 아이디값 파일이름으로 바꿔주기
 
 				}
 			}
@@ -45,6 +46,12 @@
 			formData.append("upfile" + attachCount, upfile);
 			attachCount++;
 
+		});
+		
+		$("#reply").click(function() {
+			let sessionId="${sessionId}";
+			let ipaddr="${ipAddr}";
+			console.log(sessionId+" , "+ipaddr);
 		});
 
 	});
@@ -186,10 +193,10 @@
 		let output = '<div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-body">댓글 내용 수정 : <input type="text" id="replyContent"name="content"/></div>';
 		output += '<div class="modal-footer"><button type="button" class="btn btn-danger" onclick="modiReply('
 				+ replyNo
-				+ ');">수정</button><button type="button" class="btn btn-primary" onclick="closeModiModal();">닫기</button></div></div></div>'
-		$("#modiModal").html(output);
+				+ ');">수정</button><button type="button" class="btn btn-primary" onclick="closeModiReplyModal();">닫기</button></div></div></div>'
+		$("#modiReplyModal").html(output);
 
-		$("#modiModal").show(200);
+		$("#modiReplyModal").show(200);
 
 	}
 	function deleteReply(replyNo) {
@@ -238,7 +245,7 @@
 			success : function(data) {
 				if (data == "success") {
 					console.log(data);
-					$("#modiModal").hide();
+					$("#modiReplyModal").hide();
 					showAllReply();
 				} else if (data == "fail") {
 					alert("댓글 수정에 실패하였습니다.")
@@ -249,6 +256,10 @@
 	}
 	function closeModiModal() {
 		$("#modiModal").hide();
+	}
+	function closeModiReplyModal(){
+		$("#modiReplyModal").hide();
+		
 	}
 	function closeModal() {
 		$("#deleteModal").hide();
@@ -320,11 +331,13 @@
 		});
 		
 	}
+	
+	
 </script>
 
 <style>
 #modiModal {
-	z-index: auto;
+	z-index: 20000;
 }
 
 .contentArea {
@@ -372,6 +385,12 @@ margin: 10px 0px;
 #buttonGroup{
 margin:30px 0px 0px 0px;
 }
+#attachFileAdd{
+z-index: 22000;
+}
+#imageFileAdd{
+z-index: 22000;
+}
 </style>
 </head>
 <body>
@@ -414,13 +433,22 @@ margin:30px 0px 0px 0px;
 
 
 		</div>
+		
+		<div id="buttonGroup">
+			<a class="button button-header" href="/notice/listAll">목록으로</a> <a
+				class="button button-header" href="javascript:void(0)"
+				onclick="modifyNotice();">수정</a> <a class="button button-header"
+				href="javascript:void(0)" onclick="showAlert();">삭제</a> <a
+				class="button button-header" href="javascript:void(0)"
+				onclick="history.back();">뒤로가기</a>
+		</div>
 
 		<div id="replyContainer">
 			<div id="replyArea">
 				<div id="viewAllReply"></div>
 			</div>
 			<div id="replyInputArea">
-					<div style="display: inline-block; width: 75%;">
+					<div style="display: inline-block; width: 85%;">
 						<input type="text" class="form-control" id="reply" name="reply"
 							placeholder="댓글을 입력하세요">
 					</div>
@@ -430,14 +458,7 @@ margin:30px 0px 0px 0px;
 			</div>
 		</div>
 	</div>
-		<div id="buttonGroup">
-			<a class="button button-header" href="/notice/listAll">목록으로</a> <a
-				class="button button-header" href="javascript:void(0)"
-				onclick="modifyNotice();">수정</a> <a class="button button-header"
-				href="javascript:void(0)" onclick="showAlert();">삭제</a> <a
-				class="button button-header" href="javascript:void(0)"
-				onclick="history.back();">뒤로가기</a>
-		</div>
+		
 	</div>
 
 
@@ -445,9 +466,11 @@ margin:30px 0px 0px 0px;
 
 	<!-- The Modal -->
 	<div class="modal" id="modiModal">
-		<div class="modal-dialog modal-lg modal-dialog-scrollable">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-
+				<div class="modal-header">
+                    <h5 class="modal-title" id="modalTopTitle">공지사항 수정</h5>
+  				</div>
 				<!-- Modal body -->
 				<div class="modal-body">
 					<form action="" method="POST" enctype="multipart/form-data">
@@ -470,8 +493,8 @@ margin:30px 0px 0px 0px;
 						</div>
 						<div class="mb-3 mt-3">
 							<div id="imgOutput">
-							<div id="${content.image }">${content.image }</div>
-								<button type='button' onclick='delFile("${content.image }");'>x</button>
+							<span id="${content.image }">${content.image }</span>
+								<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary" onclick='delFile("${content.image }");'>x</button>
 							</div>
 						</div>
 						<c:if test="${attachFile != null }">
@@ -479,17 +502,18 @@ margin:30px 0px 0px 0px;
 								<c:choose>
 									<c:when test="${attachFile.notImageFile == null }">
 										<div>
-											<div id="${attachFile.originFile }">/resources/uploads/attachFile${attachFile.thumbnailFile }</div>
-											<button type='button'
+											<span id="${attachFile.originFile }">/resources/uploads/attachFile${attachFile.thumbnailFile }</div>
+											
+											<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary"
 												onclick='delAttachFile("${attachFile.thumbnailFile}","${attachFile.notImageFile }","${attachFile.originFile }","${attachFile.attachFileNo }");'>x</button>
-										</div>
+										</span>
 									</c:when>
 									<c:otherwise>
 										<div>
-										<div id="${attachFile.originFile }">/resources/uploads/attachFile${attachFile.notImageFile }</div>
-											<button type='button'
+										<span id="${attachFile.originFile }">/resources/uploads/attachFile${attachFile.notImageFile }</div>
+											<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary" 
 												onclick='delAttachFile("${attachFile.thumbnailFile }","${attachFile.notImageFile }","${attachFile.originFile }","${attachFile.attachFileNo }");'>x</button>
-										</div>
+										</span>
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
@@ -501,16 +525,16 @@ margin:30px 0px 0px 0px;
 					<div id="attachOutput"></div>
 				</div>
 
-
-				<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+				
+				<button type="button" class="button button-blog" data-bs-toggle="modal"
 					data-bs-target="#imageFileAdd">이미지 파일 등록</button>
-				<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+				<button type="button" class="button button-blog" data-bs-toggle="modal"
 					data-bs-target="#attachFileAdd">첨부 파일 등록</button>
 
-				<button type="submit" class="button button-header" id="submitBtn">저장</button>
-				<button type="reset" class="button button-header"
+				<button type="submit" class="button button-blog" id="submitBtn">저장</button>
+				<button type="reset" class="button button-blog"
 					onclick="closeModiModal();">취소</button>
-
+				
 				</form>
 			</div>
 
@@ -519,7 +543,7 @@ margin:30px 0px 0px 0px;
 	</div>
 
 	<div class="modal" id="imageFileAdd">
-		<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-dialog modal-sm modal-dialog-centered">
 			<div class="modal-content">
 
 				<!-- Modal Header -->
@@ -548,7 +572,7 @@ margin:30px 0px 0px 0px;
 		</div>
 	</div>
 	<div class="modal" id="attachFileAdd">
-		<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-dialog modal-sm modal-dialog-centered">
 			<div class="modal-content">
 
 				<!-- Modal Header -->
@@ -596,7 +620,7 @@ margin:30px 0px 0px 0px;
 	</div>
 
 	<div class="modal" id="deleteModal"></div>
-	<div class="modal" id="modiModal"></div>
+	<div class="modal" id="modiReplyModal"></div>
 	<div class="modal" id="rereplyModal"></div>
 	<jsp:include page="../userFooter.jsp"></jsp:include>
 </body>
