@@ -156,10 +156,10 @@
 									+ '</div>';
 							output += '<div>'+ formatDate(e.replyDate)
 									+ '</div>';
-							output += '<div style="float:right; margin-right:10px;">'
-									+ "<img src='/resources/img/addrereply.png' width='20px' style='margin-right:5px;' onclick='showRereplyModal("
+							output += '<div style="float:right; margin-right:10px; margin-bottom:5px;">'
+									+ "<img src='/resources/img/addrereply.png' width='20px' style='margin-right:10px;' onclick='showRereplyModal("
 									+ e.replyNo + ");'/>";
-							output += "<img src='/resources/img/correct.png' width='20px' style='margin-right:5px;' onclick='showReplyModify("
+							output += "<img src='/resources/img/correct.png' width='20px' style='margin-right:10px;' onclick='showReplyModify("
 									+ e.replyNo + ");'/>";
 							output += "<img src='/resources/img/delete.png' width='20px' onclick='showReplyDelete("
 									+ e.replyNo + ");'/>";
@@ -368,6 +368,10 @@ margin-bottom: 20px;
 #replyInputArea{
 margin: 10px 0px;
 }
+
+#buttonGroup{
+margin:30px 0px 0px 0px;
+}
 </style>
 </head>
 <body>
@@ -426,14 +430,14 @@ margin: 10px 0px;
 			</div>
 		</div>
 	</div>
-
-		<a class="button button-header" href="/notice/listAll">목록으로</a> <a
-			class="button button-header" href="javascript:void(0)"
-			onclick="modifyNotice();">수정</a> <a class="button button-header"
-			href="javascript:void(0)" onclick="showAlert();">삭제</a> <a
-			class="button button-header" href="javascript:void(0)"
-			onclick="history.back();">뒤로가기</a>
-
+		<div id="buttonGroup">
+			<a class="button button-header" href="/notice/listAll">목록으로</a> <a
+				class="button button-header" href="javascript:void(0)"
+				onclick="modifyNotice();">수정</a> <a class="button button-header"
+				href="javascript:void(0)" onclick="showAlert();">삭제</a> <a
+				class="button button-header" href="javascript:void(0)"
+				onclick="history.back();">뒤로가기</a>
+		</div>
 	</div>
 
 
