@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.Review;
+import com.bookdabang.common.domain.ReviewComment;
 
 @Repository
 public class ReviewDAOImpl implements ReviewDAO {
@@ -20,6 +21,11 @@ public class ReviewDAOImpl implements ReviewDAO {
 	@Override
 	public List<Review> selectAllReview(int prodNo) throws Exception {
 		return ses.selectList(ns + ".selectAllReview", prodNo);
+	}
+
+	@Override
+	public List<ReviewComment> selectAllComments(int rno) throws Exception {
+		return ses.selectList(ns + ".selectAllComments", rno);
 	}
 
 }

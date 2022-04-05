@@ -8,31 +8,127 @@
 <meta charset="UTF-8">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <title>상품 상세페이지</title>
-</head>
+<script>
+	$(function() {
+		quantity(1);
+		infoReplace();
+		navColor();
+		starMaker();
+		
+	});
+	
+	function quantity(number) {
+		let q = number;
+		let output = "";
+		if (q > 1) {
+			output = "총 상품금액 : <h2 style='display:inline-block;'> " + ${product.sell_price}*q + " </h2>원";
+		}	
+		$("#totalPrice").html(output);
+	}
+	
+	function infoReplace() {
+		let info = $("#home").html();
+		info = info.replaceAll("더보기", "");
+		info = info.replace("책소개", "<h4>책소개</h4>");
+		info = info.replace("저자 및 역자소개", "<h4>저자 및 역자소개</h4>");
+		info = info.replace("(모두보기)", "<hr style='border-style: dotted;' />");
+		info = info.replace("목차", "<h4>목차</h4>");
+		info = info.replace("책속에서", "<h4>책속에서</h4>");
+		info = info.replace("출판사 제공 책소개", "<h4>출판사 제공 책소개</h4>");
+		$("#home").html(info);
+	}
+	
+	function navColor() {
+		$("#home-tab, #review-tab, #contact-tab, #profile-tab").click(function() {
+			$("#home-tab, #review-tab, #contact-tab, #profile-tab").each(function (i,e) {
+				$(e).css("background-color", "#f1f6f7");
+			});
+			$(this).css("background-color", "#384aeb");
+		});	
+	}
+
+	function starMaker() {
+		let star = "";
+
+		$(".star").each(function (i,e) {
+			star = $(e).attr("value");
+			let output = "";
+			for (i=0; i < star; i++) {
+				output += '<i class="fa fa-star"></i>&nbsp';
+			}
+			for (i=0; i < 5-star; i++) {
+				output += '<i class="fa fa-star"style="font-weight: 100"></i>&nbsp';
+			}
+			$(e).html(output);
+		});	
+	}
+	
+	function getComment(no) {
+		let rno = no;
+		console.log(rno);
+		if ($("#comment").html() == '') {
+			let url = "${contextPath}/comment/all/" + rno;
+			$.ajax({
+				url : url,
+				dataType : "json",
+				type : "get",
+				success : function (data) {
+					console.log(data);	
+					if (data != null) {
+						parseComment(data);
+					}
+				}
+			});
+		} else {
+			$("#comment").empty();
+		}
+		
+		
+	}
+	
+	function parseComment(data) {
+		$("#comment").empty();
+		let output = '<div class="row"><div class="col-lg-1"></div><div class="col-lg-10"><div class="comment_list">';
+		$.each(data, function(i, e) {
+			output += '<div class="review_item"><div class="media"><div class="media-body">'
+			output += '<h4>' + e.commenter + '</h4>';
+			output += '<h5>' + e.writeDate + '</h5><a class="reply_btn" href="#">Reply</a></div></div>';
+			output += '<p>' + e.comment + '</p></div>';
+		});
+		 output += '</div></div></div>';
+		 
+		 $("#comment").html(output);
+	}
+	
+</script>
+<style>
+ .reviewBtn {
+ 	width : 80px;
+ 	height: 35px;
+ 	margin-bottom: 10px;
+ 	font-size: 13px;
+ 	
+ }
+ 
+ #home-tab, #review-tab, #contact-tab, #profile-tab {
+ 	width: 261.9px;
+ 	height: 60px;
+ 	border:0;
+ 	border-radius:0;
+ 	font-size: 18px;
+ 	line-height: 57px;
+ }
+ 
+ #review-tab, #contact-tab, #profile-tab {
+ 	background-color: #f1f6f7;
+ }
+
+</style>
+<head>
 <body>
 	<jsp:include page="../userHeader.jsp"></jsp:include>
 	
 	<div class="container">
-		<!-- ================ start banner area ================= -->
-		<section class="blog-banner-area" id="blog">
-			<div class="container h-100">
-				<div class="blog-banner">
-					<div class="text-center">
-						<h1>도서 상세정보</h1>
-						<nav aria-label="breadcrumb" class="banner-breadcrumb">
-							<ol class="breadcrumb">
-								<li class="breadcrumb-item"><a href="#">Home</a></li>
-								<li class="breadcrumb-item active" aria-current="page">Shop
-									Single</li>
-							</ol>
-						</nav>
-					</div>
-				</div>
-			</div>
-		</section>
-		<!-- ================ end banner area ================= -->
-
-
 		<!--================Single Product Area =================-->
 		<div class="product_image_area">
 			<div class="container">
@@ -47,36 +143,50 @@
 					<div class="col-lg-5 offset-lg-1">
 						<div class="s_product_text">
 							<h3>${product.title }</h3>
-							<h2>${product.sell_price } | ${product.price}</h2>
+							<h2>판매가  : ${product.sell_price }원 
+							<c:if test="${product.sell_price != product.price }">
+								(${(product.price - product.sell_price)/product.price*100}%,
+								${product.price - product.sell_price}원 할인)
+							</c:if>
+							</h2>
 							<ul class="list">
+								<li><a><span>정가</span> : ${product.price}원</a></li>
 								<li><a class="active" href="#"><span>Category</span> :
 										Household</a></li>
-								<li><a href="#"><span>Availibility</span> : In Stock</a></li>
+								<li><a href="#"><span>Availibility</span> : In Stock(${product.stock})</a></li>
+								<li><a><span>배송비</span> : 무료</a></li>
 							</ul>
-							<p>Mill Oil is an innovative oil filled radiator with the
-								most modern technology. If you are looking for something that
-								can make your interior look awesome, and at the same time give
-								you the pleasant warm feeling during the winter.</p>
+							<p>${product.description } <br/>
+							출판사 - ${product.publisher }  ||  출판일 - ${product.pub_date}
+							</p>
+							<br/>
 							<div class="product_count">
 								<label for="qty">Quantity:</label>
-								<button
-									onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-									class="increase items-count" type="button">
-									<i class="ti-angle-left"></i>
-								</button>
-								<input type="text" name="qty" id="sst" size="2" maxlength="12"
-									value="1" title="Quantity:" class="input-text qty">
-								<button
-									onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-									class="reduced items-count" type="button">
-									<i class="ti-angle-right"></i>
-								</button>
-								<a class="button primary-btn" href="#">Add to Cart</a>
+                                <input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
+                                    class="input-text qty" style="height: 40px;">
+                                <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++; quantity(result.value);"
+                                    class="increase items-count" type="button" style="top: -2px;">
+                                    <i class="lnr lnr-chevron-up:before"><img src="//image.aladin.co.kr/img/shop/2018/icon_Aup.png" border="0"></i>
+                                    
+                                </button>
+                                <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 1 ) result.value--;quantity(result.value);"
+                                    class="reduced items-count" type="button" style="bottom: -1.5px;">
+                                    <i class="lnr lnr-chevron-down"><img src="//image.aladin.co.kr/img/shop/2018/icon_Adown.png" border="0"></i>
+                                </button>
+                               
 							</div>
-							<div class="card_area d-flex align-items-center">
+							 <div style="display: inline-block; margin-left: 50px;" id="totalPrice">
+							
+							</div>
+							<div>
+								<a class="button button--active button-contactForm" href="#">장바구니 담기</a>&nbsp;
+								<a class="button button--active button-contactForm" href="#">바로구매</a>
+							</div>
+							
+							<!--  <div class="card_area d-flex align-items-center">
 								<a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
 								<a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a>
-							</div>
+							</div>-->
 						</div>
 					</div>
 				</div>
@@ -87,98 +197,150 @@
 		<!--================Product Description Area =================-->
 		<section class="product_description_area">
 			<div class="container">
-				<ul class="nav nav-tabs" id="myTab" role="tablist">
-					<li class="nav-item"><a class="nav-link" id="home-tab"
-						data-toggle="tab" href="#home" role="tab" aria-controls="home"
-						aria-selected="true">Description</a></li>
-					<li class="nav-item"><a class="nav-link" id="profile-tab"
-						data-toggle="tab" href="#profile" role="tab"
-						aria-controls="profile" aria-selected="false">Specification</a></li>
-					<li class="nav-item"><a class="nav-link" id="contact-tab"
-						data-toggle="tab" href="#contact" role="tab"
-						aria-controls="contact" aria-selected="false">Comments</a></li>
-					<li class="nav-item"><a class="nav-link active"
-						id="review-tab" data-toggle="tab" href="#review" role="tab"
-						aria-controls="review" aria-selected="false">Reviews</a></li>
+				<ul class="nav nav-tabs" id="myTab" role="tablist" style="padding: 0">
+					<li class="nav-item" style="margin-bottom: 0;">
+						<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home"
+						 role="tab" aria-controls="home" aria-selected="true">도서 정보</a></li>
+					<li class="nav-item" >
+						<a class="nav-link" id="review-tab" data-toggle="tab" href="#review"
+						 role="tab" aria-controls="review" aria-selected="false">Reviews</a></li>
+					<li class="nav-item" >
+						<a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact"
+						role="tab" aria-controls="contact" aria-selected="false">Q&A</a></li>
+					<li class="nav-item" >
+						<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile"
+						 role="tab" aria-controls="profile" aria-selected="false">교환/반품안내</a></li>
 				</ul>
 				<div class="tab-content" id="myTabContent">
-					<div class="tab-pane fade" id="home" role="tabpanel"
-						aria-labelledby="home-tab">
-						<p>${product.detail_description }</p>
+					<!-- 도서 정보 content -->
+					<div class="tab-pane fade show active" id="home" role="tabpanel"
+						aria-labelledby="home-tab" style="white-space: pre-line;">
+						<h4>ISBN</h4>
+							${product.isbn13 } ( ${product.isbn } )
+							<hr/>${product.detail_description }
+							<hr/>${product.author_introduce }
+							<hr/>${product.index }
+							<c:if test="${product.inside_book != ''}">
+								<hr/> ${product.inside_book } 
+							</c:if>
+							<c:if test="${product.pisOffdiscription != ''}">
+								<hr/> ${product.pisOffdiscription }
+							</c:if>
+							
 					</div>
-					<div class="tab-pane fade" id="profile" role="tabpanel"
-						aria-labelledby="profile-tab">
-						<div class="table-responsive">
-							<table class="table">
-								<tbody>
-									<tr>
-										<td>
-											<h5>Width</h5>
-										</td>
-										<td>
-											<h5>128mm</h5>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<h5>Height</h5>
-										</td>
-										<td>
-											<h5>508mm</h5>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<h5>Depth</h5>
-										</td>
-										<td>
-											<h5>85mm</h5>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<h5>Weight</h5>
-										</td>
-										<td>
-											<h5>52gm</h5>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<h5>Quality checking</h5>
-										</td>
-										<td>
-											<h5>yes</h5>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<h5>Freshness Duration</h5>
-										</td>
-										<td>
-											<h5>03days</h5>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<h5>When packeting</h5>
-										</td>
-										<td>
-											<h5>Without touch of hand</h5>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<h5>Each Box contains</h5>
-										</td>
-										<td>
-											<h5>60pcs</h5>
-										</td>
-									</tr>
-								</tbody>
-							</table>
+					<!-- 리뷰 정보 content -->
+					<div class="tab-pane fade" id="review" role="tabpanel"
+						aria-labelledby="review-tab">
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="row total_rate">
+									<div class="col-6">
+										<div class="box_total">
+											<h5>Overall</h5>
+											<h4>4.0</h4>
+											<h6>(03 Reviews)</h6>
+										</div>
+									</div>
+									<div class="col-6">
+										<div class="rating_list">
+											<h3>Based on 3 Reviews</h3>
+											<ul class="list">
+												<li><a href="#">5 Star <i class="fa fa-star"></i>
+														<i class="fa fa-star"></i>
+														<i class="fa fa-star"></i>
+														<i class="fa fa-star"></i>
+														<i class="fa fa-star"></i> 01
+												</a></li>
+												<li><a href="#">4 Star <i class="fa fa-star"></i>
+														<i class="fa fa-star"></i>
+														<i class="fa fa-star"></i>
+														<i class="fa fa-star"></i>
+														<i class="fa fa-star" style="font-weight: 100"></i> 01
+												</a></li>
+												<li><a href="#">3 Star <i class="fa fa-star"></i>
+														<i class="fa fa-star"></i>
+														<i class="fa fa-star"></i>
+														<i class="fa fa-star"style="font-weight: 100"></i>
+														<i class="fa fa-star"style="font-weight: 100"></i> 01
+												</a></li>
+												<li><a href="#">2 Star <i class="fa fa-star"></i>
+														<i class="fa fa-star"></i>
+														<i class="fa fa-star"style="font-weight: 100"></i>
+														<i class="fa fa-star" style="font-weight: 100"></i>
+														<i class="fa fa-star"style="font-weight: 100"></i> 01
+												</a></li>
+												<li><a href="#">1 Star <i class="fa fa-star"></i>
+														<i class="fa fa-star"style="font-weight: 100"></i>
+														<i class="fa fa-star"style="font-weight: 100"></i>
+														<i class="fa fa-star"style="font-weight: 100"></i>
+														<i class="fa fa-star"style="font-weight: 100"></i> 01
+												</a></li>
+											</ul>							
+										</div>
+										<div>
+											<button type="submit" class="button button--active button-review"
+											style="float: right;"> 리뷰 작성</button>
+										</div>
+									</div>						
+								</div>
+								<hr/>
+								<div class="review_list">
+									<c:forEach var="review" items="${reviewList }">
+										<div class="review_item">
+											<div class="media">
+												<div class="d-flex">
+													<img src="" alt="">
+												</div>
+												<div class="media-body" >
+													<div class = "star"  value = "${review.grade }"
+													style="display: inline-block; float: left; margin-right: 25px;">														
+													</div>
+															
+													<div style="display: inline-block;">
+														<h4 style="display: inline-block; margin-right: 20px">${review.title }</h4>
+														<h5 style="float: right; margin-top: 1px">
+														${review.writer } | ${review.writedate}</h5>
+														<p style="width: 750px">${review.content }</p>
+													</div>
+													<div style="display: inline-block; float: right; width: 100px;">
+														<button type="submit" class="button button-header reviewBtn"
+														style="padding: 5px">♡ ${review.recommendNum}</button>
+														<button class="button button-header reviewBtn" style="padding: 8px"
+														onclick="getComment(${review.reviewNo})">댓글 ${review.commentNum}</button>
+													</div>
+													<div id="comment"></div>
+													<hr style="border-style: dotted; margin-top: 35px; margin-bottom: 4px" />
+													
+												</div>
+												
+											</div>
+										</div>
+									</c:forEach>
+									
+									<!--  <div class="review_item">
+										<div class="media">
+											<div class="d-flex">
+												<img src="img/product/review-2.png" alt="">
+											</div>
+											<div class="media-body">
+												<h4>Blake Ruiz</h4>
+												<i class="fa fa-star"></i> <i class="fa fa-star"></i> <i
+													class="fa fa-star"></i> <i class="fa fa-star"></i> <i
+													class="fa fa-star"></i>
+											</div>
+										</div>
+										<p>Lorem ipsum dolor sit amet, consectetur adipisicing
+											elit, sed do eiusmod tempor incididunt ut labore et dolore
+											magna aliqua. Ut enim ad minim veniam, quis nostrud
+											exercitation ullamco laboris nisi ut aliquip ex ea commodo</p>
+									</div>-->
+									
+								</div>
+							</div>
+							
 						</div>
 					</div>
+					<!-- Q&A 정보 content -->
 					<div class="tab-pane fade" id="contact" role="tabpanel"
 						aria-labelledby="contact-tab">
 						<div class="row">
@@ -272,90 +434,57 @@
 							</div>
 						</div>
 					</div>
-					<div class="tab-pane fade show active" id="review" role="tabpanel"
-						aria-labelledby="review-tab">
-						<div class="row">
-							<div class="col-lg-12">
-								<div class="row total_rate">
-									<div class="col-6">
-										<div class="box_total">
-											<h5>Overall</h5>
-											<h4>4.0</h4>
-											<h6>(03 Reviews)</h6>
-										</div>
-									</div>
-									<div class="col-6">
-										<div class="rating_list">
-											<h3>Based on 3 Reviews</h3>
-											<ul class="list">
-												<li><a href="#">5 Star <i class="fa fa-star"></i><i
-														class="fa fa-star"></i><i class="fa fa-star"></i><i
-														class="fa fa-star"></i><i class="fa fa-star"></i> 01
-												</a></li>
-												<li><a href="#">4 Star <i class="fa fa-star"></i><i
-														class="fa fa-star"></i><i class="fa fa-star"></i><i
-														class="fa fa-star"></i><i class="fa fa-star"></i> 01
-												</a></li>
-												<li><a href="#">3 Star <i class="fa fa-star"></i><i
-														class="fa fa-star"></i><i class="fa fa-star"></i><i
-														class="fa fa-star"></i><i class="fa fa-star"></i> 01
-												</a></li>
-												<li><a href="#">2 Star <i class="fa fa-star"></i><i
-														class="fa fa-star"></i><i class="fa fa-star"></i><i
-														class="fa fa-star"></i><i class="fa fa-star"></i> 01
-												</a></li>
-												<li><a href="#">1 Star <i class="fa fa-star"></i><i
-														class="fa fa-star"></i><i class="fa fa-star"></i><i
-														class="fa fa-star"></i><i class="fa fa-star"></i> 01
-												</a></li>
-											</ul>							
-										</div>
-										<div>
-											<button type="submit" class="button button--active button-review"
-											style="float: right;"> 리뷰 작성</button>
-										</div>
-									</div>						
-								</div>
-								
-								<div class="review_list">
-									<c:forEach var="review" items="${reviewList }">
-										<div class="review_item">
-											<div class="media">
-												
-													<i class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-														class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-														class="fa fa-star"></i>
-												
-												<div class="media-body">
-													<h4>${review.writer }</h4>
-													
-												</div>
-											</div>
-											<p>${review.content }</p>
-										</div>
-									</c:forEach>
-									
-									<!--  <div class="review_item">
-										<div class="media">
-											<div class="d-flex">
-												<img src="img/product/review-2.png" alt="">
-											</div>
-											<div class="media-body">
-												<h4>Blake Ruiz</h4>
-												<i class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-													class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-													class="fa fa-star"></i>
-											</div>
-										</div>
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing
-											elit, sed do eiusmod tempor incididunt ut labore et dolore
-											magna aliqua. Ut enim ad minim veniam, quis nostrud
-											exercitation ullamco laboris nisi ut aliquip ex ea commodo</p>
-									</div>-->
-									
-								</div>
-							</div>
-							
+					<!-- 교환/반품 정보 content -->
+					<div class="tab-pane fade" id="profile" role="tabpanel"
+						aria-labelledby="profile-tab">
+						<div class="table-responsive">
+							<table class="table">
+								<tbody>
+									<tr>
+										<td style="width: 260px;">
+											<h5>반품/교환 방법</h5>
+										</td>
+										<td>
+											<h5>(미정)</h5>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<h5>반품/교환 가능기간</h5>
+										</td>
+										<td>
+											<h5>(미정)</h5>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<h5>반품/교환 비용</h5>
+										</td>
+										<td>
+											<h5>(미정)</h5>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<h5>반품/교환 불가 사유</h5>
+										</td>
+										<td>
+											<h5>(미정)</h5>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<h5>소비자 피해보상<br/>환불지연에 따른 배상</h5>
+										</td>
+										<td>
+											<h5>* 상품의 불량에 의한 반품, 교환, A/S, 환불, 품질보증 및 피해보상 등에 관한 사항은<br/>
+											소비자분쟁해결기준 (공정거래위원회 고시)에 준하여 처리됨</h5><br/>
+											<h5>* 대금 환불 및 환불 지연에 따른 배상금 지급 조건, 절차 등은<br/>
+											 전자상거래 등에서의 소비자 보호에 관한 법률에 따라 처리함</h5>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
@@ -367,7 +496,7 @@
 		<section class="section-margin calc-60px">
 			<div class="container">
 				<div class="section-intro pb-60px">
-					<p>Popular Item in the market</p>
+					<p>Popular Book in the market</p>
 					<h2>
 						Best <span class="section-intro__style">Sellers</span>
 					</h2>
@@ -404,7 +533,6 @@
 		<!-- ================ Best Selling item  carousel end ================= -->
 	</div>
 	
-
 	<jsp:include page="../userFooter.jsp"></jsp:include>
 </body>
 </html>

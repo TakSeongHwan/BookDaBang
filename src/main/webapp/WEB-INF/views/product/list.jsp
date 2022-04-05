@@ -6,6 +6,18 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<script>
+	$(function() {
+		
+	});
+	
+	function categoryRadio() {
+		$(".category").click(function() {
+			$(this).prop("checked", true);
+			console.log(this)
+		});
+	}
+</script>
 <title>상품 리스트페이지</title>
 </head>
 <body>
@@ -30,40 +42,30 @@
 			</div>
 		</section>
 		<!-- ================ end banner area ================= -->
-
-
+		
 		<!-- ================ category section start ================= -->
 		<section class="section-margin--small mb-5">
 			<div class="container">
 				<div class="row">
 					<div class="col-xl-3 col-lg-4 col-md-5">
 						<div class="sidebar-categories">
-							<div class="head">Browse Categories</div>
-							<ul class="main-categories">
+							<div class="head">Book Categories</div>
+							<ul class="main-categories" style="padding: 20px 26px;">
 								<li class="common-filter">
-									<form action="#">
+									<form action="/list">
 										<ul>
-											<li class="filter-list"><input class="pixel-radio"
+											<c:forEach var="category" items="${categoryList }">
+												<li class="filter-list"><input class="pixel-radio category"
+												type="radio" id="category${category.category_code}" name="category">
+													<label for="${category.category_code}">${category.category_name}
+														<span>(${category.category_code})</span>
+													</label>
+												</li>
+											</c:forEach>
+											
+											<!-- <li class="filter-list"><input class="pixel-radio"
 												type="radio" id="men" name="brand"><label for="men">Men<span>
-														(3600)</span></label></li>
-											<li class="filter-list"><input class="pixel-radio"
-												type="radio" id="women" name="brand"><label
-												for="women">Women<span> (3600)</span></label></li>
-											<li class="filter-list"><input class="pixel-radio"
-												type="radio" id="accessories" name="brand"><label
-												for="accessories">Accessories<span> (3600)</span></label></li>
-											<li class="filter-list"><input class="pixel-radio"
-												type="radio" id="footwear" name="brand"><label
-												for="footwear">Footwear<span> (3600)</span></label></li>
-											<li class="filter-list"><input class="pixel-radio"
-												type="radio" id="bayItem" name="brand"><label
-												for="bayItem">Bay item<span> (3600)</span></label></li>
-											<li class="filter-list"><input class="pixel-radio"
-												type="radio" id="electronics" name="brand"><label
-												for="electronics">Electronics<span> (3600)</span></label></li>
-											<li class="filter-list"><input class="pixel-radio"
-												type="radio" id="food" name="brand"><label
-												for="food">Food<span> (3600)</span></label></li>
+														(3600)</span></label></li> -->
 										</ul>
 									</form>
 								</li>

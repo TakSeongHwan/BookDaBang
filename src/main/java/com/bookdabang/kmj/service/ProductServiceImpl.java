@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 
+import com.bookdabang.common.domain.CategoryVO;
 import com.bookdabang.common.domain.Product;
 import com.bookdabang.kmj.persistence.ProductDAO;
 
@@ -20,6 +21,12 @@ public class ProductServiceImpl implements ProductService {
 		List<Product> lst = dao.selectAllProducts();
 		return lst;
 	}
+	
+	@Override
+	public List<CategoryVO> readAllCategory() throws Exception {
+		List<CategoryVO> lst = dao.selectAllCategory();
+		return lst;
+	}
 
 	@Override
 	public Product readProduct(int prodNo) throws Exception {
@@ -32,5 +39,7 @@ public class ProductServiceImpl implements ProductService {
 		List<Product> lst = dao.selectTopProducts(category);
 		return lst;
 	}
+
+	
 
 }
