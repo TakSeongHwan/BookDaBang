@@ -1,6 +1,8 @@
 package com.bookdabang.common.domain;
 
-public class ReportBoard {
+
+
+public class ReportBoard   {
 	private int boardno; 
 	private String reportuser; 
 	private String why; 

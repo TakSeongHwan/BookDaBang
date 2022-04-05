@@ -9,9 +9,9 @@ public class AttachFileVO {
 	private String originFile; 
 	private String thumbnailFile; 
 	private String notImageFile;
-	public AttachFileVO() {
-		super();
-	}
+
+	public AttachFileVO() {}
+
 	public AttachFileVO(int attachFileNo, int noticeNo, int freeboardNo, int reviewNo, int productNo, String originFile,
 			String thumbnailFile, String notImageFile) {
 		super();
@@ -54,9 +54,12 @@ public class AttachFileVO {
 	public void setProductNo(int productNo) {
 		this.productNo = productNo;
 	}
+
+
 	public String getOriginFile() {
 		return originFile;
 	}
+
 	public void setOriginFile(String originFile) {
 		this.originFile = originFile;
 	}
