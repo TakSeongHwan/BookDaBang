@@ -23,7 +23,15 @@
 	</select>
 
 	<insert id="insertPoint">
+	
+	<if test="recommend !='' and recommend !='null'">
 		insert into memberpoint(userId, point, pointWhy,
 		recommend) values(#{userId}, #{point}, #{pointWhy}, #{recommend})
+	</if>
+	<if test="recommend =='' and recommend =='null'">
+		insert into memberpoint(userId, point, pointWhy,
+		recommend) values(#{userId}, #{point}, #{pointWhy}, null)
+	</if>
+	
 	</insert>
 </mapper>

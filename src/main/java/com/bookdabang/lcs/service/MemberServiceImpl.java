@@ -30,15 +30,29 @@ public class MemberServiceImpl implements MemberService {
 	public boolean insertMember(MemberDTO member) throws Exception {
 		boolean result = false;
 		int num = memberDAO.insertMember(member);
-		MemberPoint point = new MemberPoint(member.getUserId(), 10, null, "회원가입", null);
-		int r1 = memberDAO.insertPoint(point);
 		
+		
+		
+		
+		if (member.getRecommend().equals("")) {
+			MemberPoint point = new MemberPoint(member.getUserId(), 10, null, "회원가입", null);
+			int r1 = memberDAO.insertPoint(point);
+		} else {
+			MemberPoint point = new MemberPoint(member.getUserId(), 10, null, "회원가입", null);
+			int r1 = memberDAO.insertPoint(point);
+			MemberPoint recmmend = new MemberPoint(member.getRecommend(), 10, null, "추천받음",member.getUserId());
+			MemberPoint recmmend2 = new MemberPoint(member.getUserId(), 10, null, "추천함", member.getRecommend());
+			int r2 = memberDAO.insertPoint(recmmend);
+			int r3 = memberDAO.insertPoint(recmmend2);
+		}
 		
 		System.out.println("insert 성공여부 :" + num);
-		System.out.println("insert 성공여부 :" + r1);
+
+		
 		if (num != 0) {
 			result = true;
-		}
+			
+		} 
 
 		return result;
 

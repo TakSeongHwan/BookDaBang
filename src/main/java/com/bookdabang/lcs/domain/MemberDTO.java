@@ -14,8 +14,12 @@ public class MemberDTO {
 	private String userName;
 	private Timestamp memberWhen;
 	private Timestamp latsLogin;
+	private String recommend;
+	public MemberDTO() {
+		super();
+	}
 	public MemberDTO(String userId, String userPwd, String nickName, String userEmail, String gender, String birth,
-			String phoneNum, String userName, Timestamp memberWhen, Timestamp latsLogin) {
+			String phoneNum, String userName, Timestamp memberWhen, Timestamp latsLogin, String recommend) {
 		super();
 		this.userId = userId;
 		this.userPwd = userPwd;
@@ -27,16 +31,7 @@ public class MemberDTO {
 		this.userName = userName;
 		this.memberWhen = memberWhen;
 		this.latsLogin = latsLogin;
-	}
-	public MemberDTO() {
-		super();
-	}
-	@Override
-	public String toString() {
-		return "MemberDTO [userId=" + userId + ", userPwd=" + userPwd + ", nickName=" + nickName + ", userEmail="
-				+ userEmail + ", gender=" + gender + ", birth=" + birth + ", phoneNum=" + phoneNum + ", userName="
-				+ userName + ", memberWhen=" + memberWhen + ", latsLogin=" + latsLogin + ", getClass()=" + getClass()
-				+ ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
+		this.recommend = recommend;
 	}
 	public final String getUserId() {
 		return userId;
@@ -98,6 +93,18 @@ public class MemberDTO {
 	public final void setLatsLogin(Timestamp latsLogin) {
 		this.latsLogin = latsLogin;
 	}
-	
+	public final String getRecommend() {
+		return recommend;
+	}
+	public final void setRecommend(String recommend) {
+		this.recommend = recommend;
+	}
+	@Override
+	public String toString() {
+		return "MemberDTO [userId=" + userId + ", userPwd=" + userPwd + ", nickName=" + nickName + ", userEmail="
+				+ userEmail + ", gender=" + gender + ", birth=" + birth + ", phoneNum=" + phoneNum + ", userName="
+				+ userName + ", memberWhen=" + memberWhen + ", latsLogin=" + latsLogin + ", recommend=" + recommend
+				+ "]";
+	}
 	
 }

@@ -40,11 +40,7 @@ public class MemberDAOImpl implements MemberDAO {
 		
 		return sql.insert(ns + ".insertPoint", point);
 	}
-	@Override
-	public int recommendPoint(String recommend) throws Exception {
-		
-		return 0;
-	}
+	
 
 
 

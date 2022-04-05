@@ -43,8 +43,8 @@ public class MemberController {
 	}
 
 	@RequestMapping(value = "/insertMember", method = RequestMethod.POST)
-	public String insertMember(MemberDTO member, String recommend, RedirectAttributes rttr) throws Exception {
-		System.out.println("recommend : " + recommend.toString());
+	public String insertMember(MemberDTO member, RedirectAttributes rttr) throws Exception {
+//		System.out.println("recommend : " + recommend.toString());
 		System.out.println("member :  " + member.toString());
 		String redirctAdrr = "redirect:/";
 		if (service.insertMember(member)) {

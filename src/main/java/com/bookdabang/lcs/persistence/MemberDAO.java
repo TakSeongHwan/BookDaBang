@@ -19,5 +19,5 @@ public interface MemberDAO {
 	// 회원가입 포인트 부여
 	public int insertPoint(MemberPoint point) throws Exception;
 	// 추천인 적을시 포인트 부여
-	public int recommendPoint(String recommend) throws Exception;
+	
 }
