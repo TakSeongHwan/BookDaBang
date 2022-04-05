@@ -5,6 +5,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+
 <meta charset="UTF-8">
 <title>adminHome</title>
 
@@ -36,6 +38,16 @@
 				$(".prodCheck").prop("checked", false);
 			}
 		});
+		
+		$("#allUpCheck").change(function() {
+			if ($("#allUpCheck").is(":checked")) {
+				$(".upProdCheck").prop("checked", true);
+			} else {
+				$(".upProdCheck").prop("checked", false);
+			}
+		});
+		
+		
 
 		$(".sortBtn").on("click", function() {
 			$(".sortBtn").not(this).html("▽");
@@ -103,8 +115,8 @@
 							thistag = $(this);
 							thisval = $(this).text();
 							console.log(thistag, thisval);
-							let input = '<input type="text" id="a" style= "width :60px" value="'
-									+ $(this).text() + '">'
+							let input = '<input type="text" id="a" style= "width :80px" value="'
+									+ $(this).text() + '" onkeyup="inputNumberFormat(this)">'
 							$(this).html(input);
 
 							$(document).on(
@@ -118,24 +130,173 @@
 										} else if ($(this).val() != thisval) {
 											thistag.html($("#a").val());
 											thistag.css("color", "orange");
+											thistag.next().css("color", "orange");
+											
 										}
 
 									});
 
 						});
+		
+		
+		$(document)
+		.on(
+				"dblclick",
+				".updateStock",
+				function() {
+					thistag = $(this);
+					thisval = $(this).text();
+					console.log(thistag, thisval);
+					let input = '<input type="text" id="a" style= "width :80px" value="'
+							+ $(this).text() + '" onkeyup="inputNumberFormat(this)">'
+					$(this).html(input);
+
+					$(document).on(
+							"blur",
+							"#a",
+							function() {
+								if ($(this).val() == thisval
+										|| $(this).val() == "") {
+									console.log($(this).val());
+									thistag.html(thisval);
+								} else if ($(this).val() != thisval) {
+									thistag.html($("#a").val());
+									thistag.css("color", "orange");
+									thistag.next().css("color", "orange");
+									
+								}
+
+							});
+
+				});
+		
+		
+		
+		
+		
+		$(document).on("dblclick", ".updateDisplay", function(){
+			thistag = $(this);
+			let input = '<select id="sud"><option value="yes" selected>진열</option><option value="no">진열안함</option></select>';
+			$(this).html(input);
+			
+			$(document).on("blur", "#sud", function(){
+				if($("#sud").val() == "yes"){
+					thistag.html('<span class="badge bg-label-primary" id="yes">진열</span>');
+				}else if($("#sud").val() == "no") {
+					thistag.html('<span class="badge bg-label-warning" id="no">진열안함</span>');
+				}
+			});
+			
+		});
+		
+		$(document).on("dblclick", ".updateSales", function(){
+			thistag = $(this);
+			let input = '<select id="sus"><option value="sale" selected>판매</option><option value="notSales">판매안함</option><option value="soldOut">품절</option></select>';
+			$(this).html(input);
+			
+			$(document).on("blur", "#sus", function(){
+				if($("#sus").val() == "sale"){
+					thistag.html('<span class="badge bg-label-primary" id="sale">판매중</span>');
+				}else if($("#sus").val() == "notSales") {
+					thistag.html('<span class="badge bg-label-warning" "id="notSales">판매안함</span></div>');
+				}else if($("#sus").val() == "soldOut") {
+					thistag.html('<span class="badge bg-label-danger" id="soldOut">품절</span>');
+				}
+			});
+			
+		});
+		
+		
+		
+		
+		
 
 		$(document).on("click", "#updateReset", function() {
 			prodselectview(checkAry);
 		});
 
+		$(document).on("click", "#delProd", function() {
+
+		});
+		
+		
+		$(document).on("click", "#updateprod", function() {
+			alert("!");
+			
+			let updateProdAry = [];
+			
+			
+			
+			for (let i = 0; i < 10; i++) {
+					let updateProd = {updatePrice : "", updateStock : "", updateDisplay : "", updateSales : ""}
+				if ($(".upProdCheck").eq(i).is(":checked")) {
+					updateProd.updatePrice = parseInt($(".updatePrice").eq(i).html().replace(",", ""));
+					updateProd.updateStock = parseInt($(".updateStock").eq(i).html().replace(",", ""));
+					
+					
+					if($(".updateDisplay").eq(i).text() == "진열"){
+						updateProd.updateDisplay = "yes";
+					} else if($(".updateDisplay").eq(i).text() == "진열안함") {
+						updateProd.updateDisplay = "no";
+					}
+					
+					if($(".updateSales").eq(i).text() == "판매중"){
+						updateProd.updateSales = "sale";
+					} else if($(".updateSales").eq(i).text() == "판매안함") {
+						updateProd.updateSales = "notSales";
+					} else if($(".updateSales").eq(i).text() == "품절") {
+						updateProd.updateSales = "soldOut";
+					} 
+					updateProdAry.push(updateProd);
+				}
+			}
+			console.log(updateProdAry);
+			
+		});
+/*410 */
+		
+		$(document).on("change", "#updAllDisplay", function(){
+			for (let i = 0; i < 10; i++) {
+				if ($(".upProdCheck").eq(i).is(":checked")) {
+				if($("#updAllDisplay").val() == "yes"){
+				$(".updateDisplay").eq(i).html('<span class="badge bg-label-primary" id="yes">진열</span>');
+				} else {
+					$(".updateDisplay").eq(i).html('<span class="badge bg-label-warning" id="no">진열안함</span>');
+				}
+				}
+			}
+		});
+		
+
 	}
+	
+	function inputNumberFormat(obj) {
+		
+	 obj.value = comma(uncomma(obj.value));
+ 	}
+
+	
+ function comma(str) {
+     str = String(str);
+     return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+ }
+ 
+ function uncomma(str) {
+     str = String(str);
+     return str.replace(/[^\d]+/g, '');
+ }
 
 	function prodselectview(checkAry) {
 		$("#selectProdView").empty();
-		let contextPath = ${contextPath}
-		$("#selectProdView").html('<div style="position : absolute; left : 50%; top :50%; transform : translate(-50%, -50%)"><img src="/resources/img/etc/loading.gif" style="width : 100px" ></div>');
+		let contextPath = $
+		{
+			contextPath
+		}
+		$("#selectProdView")
+				.html(
+						'<div style="position : absolute; left : 50%; top :50%; transform : translate(-50%, -50%)"><img src="/resources/img/etc/loading.gif" style="width : 100px" ></div>');
 		let url = "/prodRest/up";
-		
+
 		$.ajax({
 			url : url,
 			dataType : "json",
@@ -173,8 +334,10 @@
 	}
 
 	function searchProduct(sc, pno) {
-		
-		$("#productView").html('<div style="position : absolute; left : 50%; top :50%; transform : translate(-50%, -50%)"><img src="/resources/img/etc/loading.gif" style ="width : 150px"></div>');
+
+		$("#productView")
+				.html(
+						'<div style="position : absolute; left : 50%; top :50%; transform : translate(-50%, -50%)"><img src="/resources/img/etc/loading.gif" style ="width : 150px"></div>');
 		pageNo = pno;
 		console.log(pageNo);
 		console.log(sc);
@@ -218,9 +381,10 @@
 							output += '<td>' + e.isbn + '</td>';
 							output += '<td><img src ="' + e.cover + '" width="50" /></td>';
 							output += '<td>' + e.title + '</td>';
-							output += '<td><div>' + e.price + '</div>'
-							output += '<div style="color : #ccc">'
-									+ +e.sell_price + '</div></td>';
+							let price = e.price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+							let sellPrice = e.sell_price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+							output += '<td><div>' + price+ '￦</div>'
+							output += '<div style="color : #ccc">'+sellPrice + '￦</div></td>';
 							output += '<td>' + e.stock + '</td>';
 							rgDate = new Date(
 									+new Date(e.rg_date) + 3240 * 10000)
@@ -317,30 +481,32 @@
 				.each(
 						data,
 						function(i, e) {
-							output += '<tr><td> <input class="form-check-input prodCheck"  type="checkbox" id="'+e.isbn+'" /></td>';
+							output += '<tr><td> <input class="form-check-input upProdCheck"  type="checkbox" id="'+e.isbn+'" /></td>';
 							output += '<td>' + e.isbn + '</td>';
 							output += '<td><img src ="' + e.cover + '" width="50" /></td>';
 							output += '<td>' + e.title + '</td>';
-							output += '<td><div class="updatePrice">' + e.price
-									+ '</div></td>'
-							output += '<td><div class="updatePrice">' + e.stock
-									+ '</div></td>'
+							let price = e.price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+							output += '<td><span class="updatePrice">' + price
+									+ '</span><span>￦</span></td>'
+							output += '<td><span class="updateStock">' + e.stock
+									+ '</span><span>권</span></td>'
 							if (e.display_status == "yes") {
-								displayStatus = '<span class="badge bg-label-primary">진열</span>';
+								displayStatus = '<div class="updateDisplay"><span class="badge bg-label-primary" id="yes">진열</span></div>';
 							} else {
-								displayStatus = '<span class="badge bg-label-warning">진열안함</span>';
+								displayStatus = '<div class="updateDisplay"><span class="badge bg-label-warning" id="no">진열안함</span></div>';
 							}
 							output += '<td>' + displayStatus + '</td>';
 							if (e.sales_status == "sale") {
-								salesStatus = '<span class="badge bg-label-primary">판매중</span>';
+								salesStatus = '<div class="updateSales"><span class="badge bg-label-primary" id="sale">판매중</span></div>';
 							} else if (e.sales_status == "soldOut") {
-								salesStatus = '<span class="badge bg-label-danger">품절</span>';
+								salesStatus = '<div class="updateSales"><span class="badge bg-label-danger" id="soldOut">품절</span></div>';
 							} else {
-								salesStatus = '<span class="badge bg-label-warning">판매안함</span>';
+								salesStatus = '<div class="updateSales"><span class="badge bg-label-warning" id="notSales">판매안함</span></div>';
 							}
 							output += '<td>' + salesStatus + '</td></tr>';
 							output += '</tr>';
 						});
+		/* 210 */
 
 		$("#selectProdView").append(output);
 
@@ -644,11 +810,22 @@ th {
 
 					<!-- Modal body -->
 					<div class="modal-body">
-						<table class="table">
+						<div>
+							 <select class="select2 form-select" id="updAllDisplay" style="width : 100px; display : inline-block; " >
+							 	<option value = "yes">진열</option>
+							 	<option value = "no">진열안함</option>
+							 </select>
+							 <select class="select2 form-select" id="updAllSales" style="width : 100px; display : inline-block;">
+							 	<option value= "">판매중</option>
+							 	<option>판매안함</option>
+							 	<option>품절</option>
+							 </select>
+						</div>
+						<table class="table" id="updateTable">
 							<thead>
 								<tr>
 									<th>모두체크 <input class="form-check-input" type="checkbox"
-										id="allcheck" /></th>
+										id="allUpCheck" /></th>
 									<th>상품번호</th>
 									<th>이미지</th>
 									<th>상품명</th>
@@ -660,7 +837,7 @@ th {
 								</tr>
 							</thead>
 							<tbody class="table-border-bottom-0" id="selectProdView">
-							
+
 							</tbody>
 						</table>
 					</div>
@@ -670,13 +847,14 @@ th {
 						<button type="button" class="btn btn-primary" id="updateReset">리셋</button>
 						<button type="button" class="btn btn-primary" id="updateprod">상품
 							수정</button>
-						<button type="button" class="btn btn-danger" id="delProd"  data-bs-toggle="modal" data-bs-target="#Modal">상품
+						<button type="button" class="btn btn-danger" id="delProd">상품
 							삭제</button>
 						<button type="button" class="btn btn-primary"
 							data-bs-dismiss="modal">닫기 X</button>
+
 					</div>
-						
-					
+
+
 				</div>
 			</div>
 		</div>
