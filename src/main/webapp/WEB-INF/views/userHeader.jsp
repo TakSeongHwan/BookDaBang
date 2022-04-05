@@ -16,11 +16,37 @@
 <link rel="stylesheet" href="${contextPath}/resources/vendors/owl-carousel/owl.theme.default.min.css">
 <link rel="stylesheet" href="${contextPath}/resources/vendors/owl-carousel/owl.carousel.min.css">
 <link rel="stylesheet" href="${contextPath}/resources/css/style.css">
+
+<!-- W3SCHOOL -->
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <title>userHeader</title>
 </head>
+<script>
+
+function loginOrNot() {
+	// 세션 아이디 가져오란다.
+	//  로그인을 안했는데 왜 뜨지
+	// 로그인을 안해도 세션 ID 뜨는데?
+	let loginMember = "${ sessionId}";
+	console.log(loginMember);
+	
+	if (loginMember != '') {
+		// 로그인 했을 때
+		console.log("로그인 했슈")
+		location.href='/ljs/mypage/?u=' + loginMember;
+	} else {
+		alert("로그인이 되지 않았습니다.")
+		location.href='/ljs/loginPage';
+		
+	 }
+}
+
+</script>
 <body>
-	<!--================ Start Header Menu Area =================-->
-	<header class="header_area">
+   <!--================ Start Header Menu Area =================-->
+   <header class="header_area">
     <div class="main_menu">
       <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container"> <!-- resources/img/logo.png -->
@@ -33,49 +59,62 @@
           </button>
           <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
             <ul class="nav navbar-nav menu_nav ml-auto mr-auto">
-              	<li class="nav-item active"><a class="nav-link" href="${contextPath}">Home</a></li>
-              	<li class="nav-item active"><a class="nav-link" href="${contextPath}/product/list">도서</a></li>
-              	<!--  <li class="nav-item submenu dropdown">
-                	<a href="/product/list" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                  	aria-expanded="false">shop</a>               
-                	<ul class="dropdown-menu">
-                  		<li class="nav-item"><a class="nav-link" href="category.html">Shop Category</a></li>
-                  		<li class="nav-item"><a class="nav-link" href="single-product.html">Product Details</a></li>
-                  		<li class="nav-item"><a class="nav-link" href="checkout.html">Product Checkout</a></li>
-                  		<li class="nav-item"><a class="nav-link" href="confirmation.html">Confirmation</a></li>
-                  		<li class="nav-item"><a class="nav-link" href="cart.html">Shopping Cart</a></li>
-                	</ul>
-			 	</li>-->
-              	<li class="nav-item submenu dropdown">
-                	<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                  	aria-expanded="false">Blog</a>
-                	<ul class="dropdown-menu">
-                  		<li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
-                  		<li class="nav-item"><a class="nav-link" href="single-blog.html">Blog Details</a></li>
-                	</ul>
-				</li>
-				<li class="nav-item submenu dropdown">
-                	<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                  	aria-expanded="false">Pages</a>
-                	<ul class="dropdown-menu">
-                  		<li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
-                  		<li class="nav-item"><a class="nav-link" href="register.html">Register</a></li>
-                  		<li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>
-                	</ul>
-              	</li>
-              	<li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                 <li class="nav-item active"><a class="nav-link" href="${contextPath}">Home</a></li>
+                 <li class="nav-item active"><a class="nav-link" href="${contextPath}/product/list">도서</a></li>
+                 <!--  <li class="nav-item submenu dropdown">
+                   <a href="/product/list" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                     aria-expanded="false">shop</a>               
+                   <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="nav-link" href="category.html">Shop Category</a></li>
+                        <li class="nav-item"><a class="nav-link" href="single-product.html">Product Details</a></li>
+                        <li class="nav-item"><a class="nav-link" href="checkout.html">Product Checkout</a></li>
+                        <li class="nav-item"><a class="nav-link" href="confirmation.html">Confirmation</a></li>
+                        <li class="nav-item"><a class="nav-link" href="cart.html">Shopping Cart</a></li>
+                   </ul>
+             </li>-->
+                 <li class="nav-item submenu dropdown">
+                   <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                     aria-expanded="false">Blog</a>
+                   <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="nav-link" href="blog.html">${loginMember.userId }</a></li>
+                        <li class="nav-item"><a class="nav-link" href="single-blog.html">Blog Details</a></li>
+                   </ul>
+            </li>
+            <li class="nav-item submenu dropdown">
+                   <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                     aria-expanded="false">Pages</a>
+                   <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="register.html">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>
+                   </ul>
+                 </li>
+                 <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+  				
+  				 <li class="nav-item submenu dropdown">
+                   <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                     aria-expanded="false">게시판</a>
+                   <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">자유게시판</a></li>
+                        <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>
+                   </ul>
+            </li>
             </ul>
-
+<!-- 마이페이지 -->
             <ul class="nav-shop">
               <li class="nav-item"><button><i class="ti-search"></i></button></li>
               <li class="nav-item"><button><i class="ti-shopping-cart"></i><span class="nav-shop__circle">3</span></button> </li>
-              <li class="nav-item"><a class="button button-header" href="#">Buy Now</a></li>
+              <li class="nav-item"><button type="button" onclick="loginOrNot();"><img src="${contextPath }/resources/img/user_icon.png" style= "width:18px; height:17px;"/></button></li>
+              <li class="nav-item"><a class="button button-header" href="#">${ sessionId}  Login</a></li>
             </ul>
           </div>
         </div>
       </nav>
     </div>
   </header>
+   <!--================ End Header Menu Area =================-->
+   
+
 	<!--================ End Header Menu Area =================-->
 	
   <script src="${contextPath}/resources/vendors/jquery/jquery-3.2.1.min.js"></script>

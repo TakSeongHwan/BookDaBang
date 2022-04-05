@@ -6,20 +6,159 @@
   
 <mapper namespace="com.bookdabang.mapper.productMapper" >
 
-	<select id="selectAllProducts" resultType="Product">
+	<select id="selectAllProducts" resultType="ProductVO">
 		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' limit 9
 	</select>
 	
-	<select id="getCategory" resultType="CategoryVO">
-		select*from category
-	</select>
-	
-	<select id="selectProduct" resultType="Product">
+	<select id="selectProduct" resultType="ProductVO">
 		select*from product where product_no = #{prodNo}
 	</select>
 	
-	<select id="selectTopProducts" resultType="Product">
+	<select id="selectTopProducts" resultType="ProductVO">
 		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' and
 		category_code = #{category} order by sales_count desc limit 10
 	</select>
+
+	<select id="getCategory" resultType="CategoryVO">
+		select * from category
+	</select>
+
+
+	<select id="conditionProdCnt" resultType="int">
+		select count(*) from product where 1=1
+		<if test="searchType != '' and  searchType != null">
+			<if test="searchType =='title'">
+				and title like concat('%', #{searchWord}, '%')
+			</if>
+			<if test="searchType =='isbn'">
+				and isbn like concat('%', #{searchWord}, '%')
+			</if>
+			<if test="searchType =='author'">
+				and author like concat('%', #{searchWord}, '%')
+			</if>
+			<if test="searchType =='content'">
+				and description like concat('%', #{searchWord}, '%')
+			</if>
+		</if>
+		<if
+			test="category_code != 'NaN' and category_code !=null and category_code != ''">
+			and category_code = #{category_code}
+		</if>
+
+		<if test="startRgDate != '' and srartRgDate != null">
+			and rg_date between date(#{startRgDate) and
+			date(#{endRgDate});
+		</if>
+		<if test="display_status != '' and display_status != null">
+			and display_status = #{display_status}
+		</if>
+		<if test="sales_status != '' and sales_status != null">
+			and sales_status = #{sales_status}
+		</if>
+
+	</select>
+
+	<select id="conditionProdView" resultType="ProductVO">
+		select * from product where 1=1
+		<if test="searchType !='' and  searchType != null">
+			<if test="searchType =='title'">
+				and title like concat('%', #{searchWord}, '%')
+			</if>
+			<if test="searchType =='isbn'">
+				and isbn like concat('%', #{searchWord}, '%')
+			</if>
+			<if test="searchType =='author'">
+				and author like concat('%', #{searchWord}, '%')
+			</if>
+			<if test="searchType =='content'">
+				and description like concat('%', #{searchWord}, '%')
+			</if>
+		</if>
+
+		<if
+			test="category_code != 'NaN' and category_code !=null and category_code != ''">
+			and category_code = #{category_code}
+		</if>
+
+		<if test="startRgDate != '' and srartRgDate != null">
+			and rg_date between date(#{startRgDate) and
+			date(#{endRgDate});
+		</if>
+		<if test="display_status != '' and display_status != null">
+			and display_status = #{display_status}
+		</if>
+		<if test="sales_status != '' and sales_status != null">
+			and sales_status = #{sales_status}
+		</if>
+
+		<if test="sortWord != '' and sortWord != null">
+
+			<if test="sortWord == 'price'">
+				<if test="sortMethod == 'desc'">
+					order by price desc
+				</if>
+				<if test="sortMethod == 'asc'">
+					order by price asc
+				</if>
+			</if>
+
+			<if test="sortWord == 'sellPrice'">
+				<if test="sortMethod == 'desc'">
+					order by sell_price desc
+				</if>
+				<if test="sortMethod == 'asc'">
+					order by sell_price asc
+				</if>
+			</if>
+
+			<if test="sortWord == 'stock'">
+				<if test="sortMethod == 'desc'">
+					order by stock desc
+				</if>
+				<if test="sortMethod == 'asc'">
+					order by stock asc
+				</if>
+			</if>
+
+			<if test="sortWord == 'salesCount'">
+				<if test="sortMethod == 'desc'">
+					order by sales_count desc
+				</if>
+				<if test="sortMethod == 'asc'">
+					order by sales_count asc
+				</if>
+			</if>
+			<if test="sortWord == 'readCount'">
+				<if test="sortMethod == 'desc'">
+					order by read_count desc
+				</if>
+				<if test="sortMethod == 'asc'">
+					order by read_count asc
+				</if>
+			</if>
+			<if test="sortWord == 'rgDate'">
+				<if test="sortMethod == 'desc'">
+					order by rg_date desc
+				</if>
+				<if test="sortMethod == 'asc'">
+					order by rg_date asc
+				</if>
+			</if>
+			<if test="sortWord == 'endDate'">
+				<if test="sortMethod == 'desc'">
+					order by end_date desc
+				</if>
+				<if test="sortMethod == 'asc'">
+					order by end_date asc
+				</if>
+			</if>
+
+		</if>
+		limit #{startNum}, #{postPerPage}
+	</select>
+	
+	<select id="selectProdView" resultType="productVO">
+		select * from product where isbn = #{isbn}
+	</select>
+
 </mapper>

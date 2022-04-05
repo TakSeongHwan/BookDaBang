@@ -2,12 +2,12 @@ package com.bookdabang.common.domain;
 
 import java.sql.Timestamp;
 
-public class Product {
+public class ProductVO {
 	private int product_no;
 	private String title;
 	private String author;
-	private String price;
-	private String sell_price;
+	private int price;
+	private int sell_price;
 	private String publisher;
 	private int category_code;
 	private String description;
@@ -29,11 +29,11 @@ public class Product {
 	private String isbn;
 	private String isbn13;
 
-	public Product() {
-
+	public ProductVO() {
+		super();
 	}
 
-	public Product(int product_no, String title, String author, String price, String sell_price, String publisher,
+	public ProductVO(int product_no, String title, String author, int price, int sell_price, String publisher,
 			int category_code, String description, Timestamp pub_date, int stock, Timestamp rg_date, Timestamp end_date,
 			Timestamp update_date, String display_status, int read_count, String sales_status, int sales_count,
 			String cover, String detail_description, String index, String inside_book, String author_introduce,
@@ -90,19 +90,19 @@ public class Product {
 		this.author = author;
 	}
 
-	public String getPrice() {
+	public int getPrice() {
 		return price;
 	}
 
-	public void setPrice(String price) {
+	public void setPrice(int price) {
 		this.price = price;
 	}
 
-	public String getSell_price() {
+	public int getSell_price() {
 		return sell_price;
 	}
 
-	public void setSell_price(String sell_price) {
+	public void setSell_price(int sell_price) {
 		this.sell_price = sell_price;
 	}
 
@@ -268,7 +268,7 @@ public class Product {
 
 	@Override
 	public String toString() {
-		return "Product [product_no=" + product_no + ", title=" + title + ", author=" + author + ", price=" + price
+		return "ProductVO [product_no=" + product_no + ", title=" + title + ", author=" + author + ", price=" + price
 				+ ", sell_price=" + sell_price + ", publisher=" + publisher + ", category_code=" + category_code
 				+ ", description=" + description + ", pub_date=" + pub_date + ", stock=" + stock + ", rg_date="
 				+ rg_date + ", end_date=" + end_date + ", update_date=" + update_date + ", display_status="

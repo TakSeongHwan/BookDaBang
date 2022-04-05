@@ -19,6 +19,7 @@
 <title>userFooter</title>
 </head>
 <body>
+
 	<!--================ Start footer Area  =================-->	
 	<footer class="footer">
 		<div class="footer-area">
