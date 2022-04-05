@@ -11,7 +11,7 @@
 
 <script>
 
-let ses = "${ sessionId}"
+let ses = "${ sessionId}";
 
 console.log("이것도 안되니?" + ses);
 

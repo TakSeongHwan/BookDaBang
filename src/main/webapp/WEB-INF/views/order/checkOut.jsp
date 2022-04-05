@@ -146,14 +146,12 @@
 	}
 
 	function cartInfo() {
-		let cartNo = new Array();
-		cartNo = "${cartsNo}";
+		let cartNo = "${cartsNo}";
+		console.log(cartNo);
 		$.ajax({
 			url : "/userCart/cartByNo",
-			type : "GET",
-			data : {
-				cartsNo : "${cartsNo}",
-			},
+			type : "POST",
+			data : cartNo,
 			traditional : true,
 			success : function(data) {
 				parseOrderInfo(data);

@@ -32,19 +32,11 @@
 
 $(function() {
     $.ajax({
-        url :"/userCart/loginCart",
-        type: "post",
-        data: {
-            userId : "${loginMember.userId}",
-            ipaddr : "211.197.18.247"
-        },
-        success: function(data){
-            console.log(data);
-        }
-    });
-    $.ajax({
         url: "/userCart/count",
         type: "GET",
+        data: {
+        	sessionId : "${sessionId}"
+        },
         success: function(data){
             console.log(data);
             $("#cntCart").text(data);
@@ -133,7 +125,7 @@ function loginOrNot() {
               <li class="nav-item"><button><i class="ti-search"></i></button></li>
               <li class="nav-item"><form action="${contextPath }/cart/userCart" method="get"><button type="submit"><i class="ti-shopping-cart"></i><span class="nav-shop__circle" id ="cntCart"></span></button></form></li>
               <li class="nav-item"><button type="button" onclick="loginOrNot();"><img src="${contextPath }/resources/img/user_icon.png" style= "width:18px; height:17px;"/></button></li>
-              <li class="nav-item"><a class="button button-header" href="#">${ sessionId}  Login</a></li>
+              <li class="nav-item"><a class="button button-header" href="#">Login</a></li>
             </ul>
           </div>
         </div>

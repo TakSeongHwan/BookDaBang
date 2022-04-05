@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.ljs.domain.LoginDTO;
 import com.bookdabang.ljs.service.LoginService;
+import com.bookdabang.tsh.domain.CartSelectDTO;
+import com.bookdabang.tsh.service.CartService;
 
 
 
@@ -35,6 +37,8 @@ public class LoginController {
 	
 	@Inject
 	private LoginService service;
+	@Inject
+	private CartService cservice;
 	
 	/**
 	 * Simply selects the home view to render by returning its name.
@@ -64,7 +68,6 @@ public class LoginController {
 				System.out.println(loginMember.toString());
 				
 				if (loginMember != null) {
-					
 					model.addAttribute("loginMember", loginMember);
 					LoginDTO dto = new LoginDTO(loginMember.getUserId(), loginMember.getUserPwd(), true, ses.getId());
 					System.out.println(dto.toString());
@@ -110,9 +113,9 @@ public class LoginController {
 						
 						// 만약 로그인 정보가 틀렸을 때는 어떤 값을 보내야 하지?
 						
-					} else {
-						
+					} else { 
 						model.addAttribute("loginMember", loginMember);
+						cservice.updateCartUserId(new CartSelectDTO(loginMember.getUserId(), (String)ses.getAttribute("ipAddr")));
 						
 						int result = service.lastLogin(dto);
 						System.out.println(result);
