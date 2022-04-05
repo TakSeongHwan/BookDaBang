@@ -5,18 +5,27 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>자유게시판</title>
+<script>
+
+  
+	function readFreeBoard(boardno) {
+		location.href="/board/readFreeBoard?boardno=" + boardno;
+		
+	}
+	
+	
+</script>
 <style>
-#listTable thead{
+#listTable thead {
 	background-color: #dcdcdc;
 }
-
 </style>
 </head>
 <body>
 	<jsp:include page="../userHeader.jsp"></jsp:include>
 	<div class="container">
-		<h2 style="margin: 30px; font-family: monospace;" >자유게시판</h2>
+		<h2 style="margin: 30px; font-family: monospace;">자유게시판</h2>
 
 		<table class="table table-hover" id=listTable>
 			<thead>
@@ -31,7 +40,7 @@
 			</thead>
 			<tbody>
 				<c:forEach var="board" items="${freeBoard }">
-					<tr>
+					<tr onclick="readFreeBoard(${board.boardno});">
 						<td>${board.boardno }</td>
 						<td>${board.title }</td>
 						<td>${board.writer }</td>
@@ -43,8 +52,10 @@
 			</tbody>
 		</table>
 
+		<div>
+				<button class="button button-header" onclick="location.href='/board/insertFreeBoard';" style="margin: 10px;">글 작성</button>
 
-
+		</div>											
 	</div>
 
 
