@@ -5,8 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-
+<scirpt src="${contextPath}/resources/js/jQueryRotateCompressed.js">
 <meta charset="UTF-8">
 <title>adminHome</title>
 
@@ -209,11 +208,17 @@
 		
 		
 		
-		
 
-		$(document).on("click", "#updateReset", function() {
+		$(document).on("click", "#reflashImg", function() {
+			$("#reflashImg").css("transform": "rotate")
 			prodselectview(checkAry);
+			/* for(let i=0; i< 100; i++){
+				
+			}  */
+			
 		});
+		
+		
 
 		$(document).on("click", "#delProd", function() {
 
@@ -266,6 +271,22 @@
 				}
 			}
 		});
+		updAllSales
+		$(document).on("change", "#updAllSales", function(){
+			for (let i = 0; i < 10; i++) {
+				if ($(".upProdCheck").eq(i).is(":checked")) {
+				if($("#updAllSales").val() == "sale"){
+				$(".updateSales").eq(i).html('<span class="badge bg-label-primary" id="sale">판매중</span>');
+				} else if($("#updAllSales").val() == "notSales") {
+					$(".updateSales").eq(i).html('<span class="badge bg-label-warning" "id="notSales">판매안함</span></div>');
+				} else{
+					$(".updateSales").eq(i).html('<span class="badge bg-label-danger" id="soldOut">품절</span>');
+				}
+				
+				}
+			}
+		});
+		
 		
 
 	}
@@ -451,6 +472,8 @@
 						+ i
 						+ "</a></li>";
 			}
+			
+			
 		}
 
 		if (pageNo < data.pagingInfo.totalPage) {
@@ -613,6 +636,10 @@ th {
 	background-color: #fff;
 	margin-top: 20px;
 }
+
+
+
+
 </style>
 </head>
 <body>
@@ -810,16 +837,19 @@ th {
 
 					<!-- Modal body -->
 					<div class="modal-body">
+					<span class="text-muted fw-light">일괄 상태 /</span> 변경
 						<div>
-							 <select class="select2 form-select" id="updAllDisplay" style="width : 100px; display : inline-block; " >
+							 <select class="select2 form-select" id="updAllDisplay" style="width : 110px; display : inline-block; " >
 							 	<option value = "yes">진열</option>
 							 	<option value = "no">진열안함</option>
 							 </select>
-							 <select class="select2 form-select" id="updAllSales" style="width : 100px; display : inline-block;">
-							 	<option value= "">판매중</option>
-							 	<option>판매안함</option>
-							 	<option>품절</option>
+							 <select class="select2 form-select" id="updAllSales" style="width : 110px; display : inline-block;">
+							 	<option value= "sale">판매중</option>
+							 	<option value="notSales">판매안함</option>
+							 	<option value="soldOut">품절</option>
 							 </select>
+							 <button type="button"id="updateReset" style="border: none; background-color: #fff "><img src="/resources/img/etc/reflash.png" id="reflashImg" width="40px"></button>
+							 
 						</div>
 						<table class="table" id="updateTable">
 							<thead>
@@ -844,7 +874,7 @@ th {
 
 					<!-- Modal footer -->
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" id="updateReset">리셋</button>
+						
 						<button type="button" class="btn btn-primary" id="updateprod">상품
 							수정</button>
 						<button type="button" class="btn btn-danger" id="delProd">상품
