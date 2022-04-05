@@ -14,12 +14,34 @@ public class MemberDAOImpl implements MemberDAO  {
 	@Inject
 	private SqlSession ses;
 	
-	private static String ns = "com.bookdabang.mapper.TestMapper";
+	private static String ns = "com.bookdabang.mapper.MyPageMapper";
 	
 	@Override
 	public MemberVO login(LoginDTO dto) throws Exception {
-		// TODO Auto-generated method stub
+		 
 		return ses.selectOne(ns + ".login", dto);
 	}
+
+	@Override
+	public int withdrawMember(String userId) throws Exception {
+		
+		return ses.update(ns + ".withdrawMember", userId);
+	}
+
+	@Override
+	public int lastLogin(LoginDTO dto) {
+		
+		return ses.update(ns  + ".putLastLogin", dto) ;
+	}
+
+	@Override
+	public MemberVO findLoginSess(String sessionId) throws Exception {
+		 
+		return ses.selectOne(ns + ".loginSession", sessionId);
+	}
+
+
+	
+	
 
 }

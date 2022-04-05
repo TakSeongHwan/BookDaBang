@@ -43,8 +43,8 @@
 	<interceptors>
 		<!-- 컨트롤단을 계속 주시하고 있다가 -->
 		<interceptor>
-			<mapping path="/loginPage"/> <!-- /member/loginPost 매핑이 요청되면 -->
-			<beans:ref bean="loginInterceptor"/><!-- request를 가로채 testInterceptor 객체가 실행되도록 -->
+			<mapping path="/loginSign"/> <!-- /member/loginPage 매핑이 요청되면 -->
+			<beans:ref bean="loginInterceptor"/><!-- request를 가로채 loginInterceptor 객체가 실행되도록 -->
 		</interceptor>
 
 	</interceptors>

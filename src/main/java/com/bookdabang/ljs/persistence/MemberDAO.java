@@ -7,4 +7,12 @@ public interface MemberDAO {
 
 	public MemberVO login(LoginDTO dto) throws Exception;
 	
+	public MemberVO findLoginSess(String sessionId) throws Exception;
+	
+	public int withdrawMember(String userId) throws Exception;
+	
+	public int lastLogin(LoginDTO dto);
+	
+	
+	
 }

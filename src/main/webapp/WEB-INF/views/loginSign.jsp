@@ -7,21 +7,14 @@
 <title>Insert title here</title>
 </head>
 <script>
-window.onload = function () {
-	let sessionId = "${ sessionId}"
-	
-	if (sessionId == "" || null) {
-		location.href = "/ljs/login"
-		console.log(sessionId)
-	} else {
-		console.log(sessionId)
-		location.href = "/ljs/"
-	}
-	
-}
+let ses = "${ sessionId}"
+location.href="/ljs/?u=" + ses;
+
+
 
 </script>
 <body>
-
+${ loginMember.userId}
+${ loginMember.userName}
 </body>
 </html>

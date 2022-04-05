@@ -21,4 +21,33 @@ public class MemberServiceImpl implements MemberService {
 		return mdao.login(dto);
 	}
 
-}
+
+	@Override
+	public int withdrawMember(String userId) throws Exception {
+		// TODO Auto-generated method stub
+		return mdao.withdrawMember(userId);
+	}
+
+
+	@Override
+	public int lastLogin(LoginDTO dto) throws Exception {
+		
+		return mdao.lastLogin(dto); 
+		
+	}
+
+
+	@Override
+	public MemberVO findLoginSess(String sessionId) throws Exception {
+		
+		return mdao.findLoginSess(sessionId);
+	}
+
+				
+				
+	}
+
+
+
+
+

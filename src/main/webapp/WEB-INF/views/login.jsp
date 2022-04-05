@@ -29,16 +29,48 @@
   <script src="resources/js/main.js"></script>
 <body>
 <script>
+
+window.onload = function () {
+	
+	let status = getParameter();	
+	
+	if (status = "fail" ) {
+		let autoLoginBox = document.getElementById('autoLoginBox');
+		let incorrect = document.createElement('div');
+		incorrect.innerHTML = "아이디 혹은 비밀번호를 다시 확인해주세요!"
+		autoLoginBox.appendChild(incorrect);
+
+	}
+
+
+}
+
+
+
+function getParameter(param) {
+    let returnVal = -1; // 리턴할 값을 저장할 변수
+    let url = location.href;
+    console.log(url);
+
+    let queryString = url.split("?") [1].split("&");
+    console.log(queryString);
+
+    let status= queryString[0].split("=")[1];
+    console.log(status);
+    
+    return status;
+}
+
 function displayWarn() {
 	if (document.getElementById("autoLogin").checked) {
 		alert("자동 로그인 기능은 공공장소에서 사용하지 마세요!");
 		return true;
 	}
 }
+
+
 </script>
 <jsp:include page="userHeader.jsp"></jsp:include>
-  
-  
 	<section class="blog-banner-area" id="category">
 		<div class="container h-100">
 			<div class="blog-banner">
@@ -74,22 +106,22 @@ function displayWarn() {
 					
 						<h3>Log in to enter</h3>
 						
-						<form action="loginPage" method="post">
+						<form action="loginSign" method="post">
 							<div class="col-md-12 form-group">
-								<input type="text" class="form-control" id="userId" name="userId" placeholder="아이디 " onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
+								<input type="text" class="form-control" id="userId" name="userId" placeholder="아이디 " onfocus="this.placeholder = ''" onblur="this.placeholder = '아이디'">
 							</div>
 							<div class="col-md-12 form-group">
-								<input type="password" class="form-control" id="pwd" name="pwd" placeholder="비밀번호" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
+								<input type="password" class="form-control" id="pwd" name="pwd" placeholder="비밀번호" onfocus="this.placeholder = ''" onblur="this.placeholder = '비밀번호'">
 							</div>
 							<div class="col-md-12 form-group">
-								<div class="creat_account">
+								<div class="creat_account" id ="autoLoginBox">
 									<input type="checkbox" id="autoLogin" name="autoLogin">
 									<label for="f-option2">자동로그인</label>
 								</div>
 							</div>
 							<div class="col-md-12 form-group">
-								<button type="submit" class="button button-login w-100" onclick="return displayWarn();">로그인</button>
-								<a href="#">아이디/ 비밀번호 찾기</a>
+								<button type="submit" class="button button-login w-100" onclick="return displayWarn();">로그인 </button>
+								<label for="forgotPwd"><a href="#">아이디/ 비밀번호 찾기</a></label>
 							</div>
 						</form>
 					</div>
