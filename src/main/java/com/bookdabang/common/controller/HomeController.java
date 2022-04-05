@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bookdabang.common.domain.MemberVO;
-import com.bookdabang.ljs.service.MemberService;
+import com.bookdabang.ljs.service.LoginService;
 
 /**
  * Handles requests for the application home page.
@@ -26,7 +26,7 @@ public class HomeController {
 	
 	
 	@Inject
-	private MemberService service;
+	private LoginService service;
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 

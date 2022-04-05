@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.ljs.domain.LoginDTO;
-import com.bookdabang.ljs.service.MemberService;
+import com.bookdabang.ljs.service.LoginService;
 
 
 
@@ -31,10 +31,10 @@ import com.bookdabang.ljs.service.MemberService;
  */
 @Controller
 @RequestMapping("/*")
-public class MemberController {
+public class LoginController {
 	
 	@Inject
-	private MemberService service;
+	private LoginService service;
 	
 	/**
 	 * Simply selects the home view to render by returning its name.

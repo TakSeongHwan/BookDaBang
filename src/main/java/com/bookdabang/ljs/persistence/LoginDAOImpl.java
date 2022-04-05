@@ -9,7 +9,7 @@ import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.ljs.domain.LoginDTO;
 
 @Repository
-public class MemberDAOImpl implements MemberDAO  {
+public class LoginDAOImpl implements LoginDAO  {
 
 	@Inject
 	private SqlSession ses;

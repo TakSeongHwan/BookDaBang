@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.ljs.domain.LoginDTO;
-import com.bookdabang.ljs.persistence.MemberDAO;
+import com.bookdabang.ljs.persistence.LoginDAO;
 
 @Service
-public class MemberServiceImpl implements MemberService {
+public class LoginServiceImpl implements LoginService {
 	
 	@Inject
-	private MemberDAO mdao;
+	private LoginDAO mdao;
 	
 	
 	@Override

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bookdabang.mapper.memberMapper">
+	<insert id="insertMember">
+		insert into member(userId, userPwd, nickName,
+		userEmail, gender, phoneNum, userName) value(#{userId},
+		sha1(md5(#{userPwd})), #{nickName}, #{userEmail}, #{gender},
+		#{phoneNum}, #{userName})
+	</insert>
+
+	<select id="userIdCheck" resultType="MemberVO">
+		select * from member where
+		userId = #{userId}
+	</select>
+
+	<select id="nickNameCheck" resultType="MemberVO">
+		select * from member where
+		nickName = #{nickName}
+	</select>
+
+	<insert id="insertPoint">
+	
+	<if test="recommend !='' and recommend !='null'">
+		insert into memberpoint(userId, point, pointWhy,
+		recommend) values(#{userId}, #{point}, #{pointWhy}, #{recommend})
+	</if>
+	<if test="recommend =='' and recommend =='null'">
+		insert into memberpoint(userId, point, pointWhy,
+		recommend) values(#{userId}, #{point}, #{pointWhy}, null)
+	</if>
+	
+	</insert>
+</mapper>
