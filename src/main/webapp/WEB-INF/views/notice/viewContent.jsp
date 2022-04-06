@@ -53,22 +53,22 @@
 		
 		$("#reply").click(function() {
 			let sessionId="${sessionId}";
-			let getUserIdUrl = "/notice/getUserId"
+			let getUserIdUrl = "${pageContext.request.contextPath}/notice/getUserId"
 				
 				$.ajax({
 						url : getUserIdUrl, 
-						dataType : "text", 
+						dataType : "json", 
 						type : "GET",
 						data : {
 							sessionId : sessionId
 							
 						},
 						success : function(data) { 
-							console.log(data);
-							if(data != "UserIdNotFound"){
-								$("#writer").val(data);
+							console.log(data.userId);
+							if(data.userId != null){
+								$("#writer").val(data.userId);
 							}else{
-								location.href="${contextPath}/login";
+								location.href="${pageContext.request.contextPath}/login";
 							}
 							
 						}, error: function(e){
@@ -103,7 +103,8 @@
 	function addreply() {
 		let reply = $("#reply").val();
 		console.log(reply);
-		let writer = "cat"//세션아이디값 받아다쓸거
+		let writer = $("#writer").val();
+		console.log(writer)
 		let no = "${content.no}"
 
 		let sendData = JSON.stringify({
@@ -112,7 +113,7 @@
 			replyContent : reply
 		});
 
-		let url = "/noticeReply/addReply";
+		let url = "${pageContext.request.contextPath}/noticeReply/addReply";
 		$.ajax({
 			url : url,
 			dataType : "text",
@@ -123,9 +124,9 @@
 				"x-HTTP-Method-Override" : "POST"
 			},
 			success : function(data) {
-				console.log("갱신이 왜 안되지?");
+		
 				if (data == "success") {
-					console.log("갱신이 왜 안되지?");
+				
 					showAllReply();//현재 글의 모든 댓글을 가져와 화면에 출력
 				} else if (data == "fail") {
 					alert("댓글 등록 실패!");
@@ -141,7 +142,7 @@
 	function showAllReply() {
 
 		let boardNo = "${content.no}"
-		let url = "/noticeReply/all/" + boardNo;
+		let url = "${pageContext.request.contextPath}/noticeReply/all/" + boardNo;
 		$.ajax({
 			url : url,
 			dataType : "JSON",
@@ -170,7 +171,7 @@
 							output += '<div>';
 							if(e.step > 0){
 								for(let count = 0; count < e.step; count++){
-									output+= '<img src="/resources/img/reply.png" width="20px"/>'
+									output+= '<img src="${pageContext.request.contextPath}/resources/img/reply.png" width="20px"/>'
 								}
 									
 								
@@ -182,11 +183,11 @@
 							output += '<div>'+ formatDate(e.replyDate)
 									+ '</div>';
 							output += '<div style="float:right; margin-right:10px; margin-bottom:5px;">'
-									+ "<img src='/resources/img/addrereply.png' width='20px' style='margin-right:10px;' onclick='showRereplyModal("
+									+ "<img src='${pageContext.request.contextPath}/resources/img/addrereply.png' width='20px' style='margin-right:10px;' onclick='showRereplyModal("
 									+ e.replyNo + ");'/>";
-							output += "<img src='/resources/img/correct.png' width='20px' style='margin-right:10px;' onclick='showReplyModify("
+							output += "<img src='${pageContext.request.contextPath}/resources/img/correct.png' width='20px' style='margin-right:10px;' onclick='showReplyModify("
 									+ e.replyNo + ");'/>";
-							output += "<img src='/resources/img/delete.png' width='20px' onclick='showReplyDelete("
+							output += "<img src='${pageContext.request.contextPath}/resources/img/delete.png' width='20px' onclick='showReplyDelete("
 									+ e.replyNo + ");'/>";
 							output += '</div>';
 							output += '</div></div>';
@@ -218,7 +219,7 @@
 
 	}
 	function deleteReply(replyNo) {
-		let url = "/noticeReply/" + replyNo;
+		let url = "${pageContext.request.contextPath}/noticeReply/" + replyNo;
 		$.ajax({
 			url : url,
 			dataType : "text",
@@ -237,7 +238,7 @@
 
 	}
 	function modiReply(replyNo) {
-		let url = "/noticeReply/" + replyNo;
+		let url = "${pageContext.request.contextPath}/noticeReply/" + replyNo;
 		let content = $("#replyContent").val();
 		let boardNo = $
 		{
@@ -274,7 +275,7 @@
 	}
 	function closeModiModal() {
 		$("#modiModal").hide();
-		location.href="/notice/viewContent?no="+${content.no}
+		location.href="${pageContext.request.contextPath}/notice/viewContent?no="+${content.no}
 	}
 	function closeModiReplyModal(){
 		$("#modiReplyModal").hide();
@@ -288,11 +289,11 @@
 		let diff = new Date() - date;
 		let diffs = diff / 1000;
 		if (diffs < 60 * 5) {
-			return '<span class="badge" style="color:#fff">방금 전</span>';
+			return '<span class="badge" style="color:#fff; background-color:#384aeb">방금 전</span>';
 		}
 		let diffm = diffs / 60;
 		if (diffm < 60) {
-			return '<span class="badge" style="color:#fff">'
+			return '<span class="badge" style="color:#fff; background-color:#384aeb">'
 					+ Math.floor(diffm) + '분 전</span>';
 		}
 		return '<span class="badge" style="color:#fff; background-color:#384aeb">'
@@ -313,7 +314,7 @@
 	}
 	function insertRereply(replyNo){
 		
-		let url = "/noticeReply/rereply";
+		let url = "${pageContext.request.contextPath}/noticeReply/rereply";
 		
 		let replyer = $("#rereplyer").val();
 		let replyContent = $("#rereplyContent").val();
@@ -431,9 +432,12 @@ z-index: 22000;
 			
 			<div class="contentArea">
 				<div style="margin: 0px 2px 10px 2px">${content.content }</div>
-			<div class="imgFileArea"><img
-									src='/resources/uploads/noticeBoardImg/${content.image }'
-									style="margin: 10px" /></div>
+			<div class="imgFileArea">
+			<c:if test="${content.image != null }">
+				<img src='/resources/uploads/noticeBoardImg/${content.image }' style="margin: 10px" />
+			</c:if>				
+			</div>
+									
 			<div class="attachFileArea">
 				<c:if test="${attachFile != null }">
 					<c:forEach var="attachFile" items="${attachFile}">
@@ -456,7 +460,7 @@ z-index: 22000;
 		</div>
 		
 		<div id="buttonGroup">
-			<a class="button button-header" href="/notice/listAll">목록으로</a><a
+			<a class="button button-header" href="${pageContext.request.contextPath}/notice/listAll">목록으로</a><a
 				class="button button-header" href="javascript:void(0)"
 				onclick="history.back();">뒤로가기</a>
 				 <a
@@ -496,7 +500,7 @@ z-index: 22000;
   				</div>
 				<!-- Modal body -->
 				<div class="modal-body">
-					<form action="" method="POST" enctype="multipart/form-data">
+					<form action="${pageContext.request.contextPath}/notice/updateNotice" method="POST" enctype="multipart/form-data">
 						<input type="hidden" name="no" id="no" value="${content.no}" />
 
 						<div class="mb-3 mt-3">
@@ -516,25 +520,30 @@ z-index: 22000;
 						</div>
 						<div class="mb-3 mt-3">
 							<div id="imgOutput">
-							<span>${content.image }</span>
-											
-											<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary"
-												onclick='delFile();'>x</button>
+								<c:if test="${content.image != null }">
+								
+									<span>${content.image }</span>
+										<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary"
+													onclick='delFile();'>x</button>
+													
+							
+								</c:if>
 							</div>
 						</div>
+						<div id="existingAttachFile">
 						<c:if test="${attachFile != null }">
 							<c:forEach var="attachFile" items="${attachFile}">
 								<c:choose>
 									<c:when test="${attachFile.notImageFile == null }">
-										<div id="existingAttachImg">
+										<div id="existingAttachImg${attachFile.attachFileNo }">
 											<span>${attachFile.thumbnailFile }</span>
 											
 											<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary"
 												onclick='delAttachFile("${attachFile.attachFileNo }");'>x</button>
-										</div>
+										
 									</c:when>
 									<c:otherwise>
-										<div id="existingAttachNotImg">
+										<div id="existingAttachNotImg${attachFile.attachFileNo }">
 										<span>/resources/uploads/attachFile${attachFile.notImageFile }</span>
 											<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary" 
 												onclick='delAttachFile("${attachFile.attachFileNo }");'>x</button>
@@ -543,7 +552,7 @@ z-index: 22000;
 								</c:choose>
 							</c:forEach>
 						</c:if>
-
+						</div>
 						<input type="hidden" name="image" id="image" />
 				</div>
 				<div class="mb-3 mt-3" id="attachFileDiv">
@@ -635,7 +644,7 @@ z-index: 22000;
 				<!-- Modal footer -->
 				<div class="modal-footer">
 					<button type="button" class="button button-header"
-						onclick="location.href='/notice/deleteNotice?no=${content.no}'">삭제</button>
+						onclick="location.href='${pageContext.request.contextPath}/notice/deleteNotice?no=${content.no}'">삭제</button>
 					<button type="button" class="button button-header"
 						data-bs-dismiss="modal">닫기</button>
 				</div>

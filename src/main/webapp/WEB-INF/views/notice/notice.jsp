@@ -14,7 +14,7 @@ $(function(){
 });
 function showContent(obj){
 	let no = $(obj).attr("id");
-	location.href="/notice/viewContent?no="+no;
+	location.href="${pageContext.request.contextPath}/notice/viewContent?no="+no;
 }
 
 </script>
@@ -54,7 +54,7 @@ margin-bottom: 20px;
      </c:forEach>
     </tbody>
   </table>
-  <a class="button" href="/notice/viewNoticeWrite">글쓰기</a>
+  <a class="button" href="${pageContext.request.contextPath}/notice/viewNoticeWrite">글쓰기</a>
 
 </div>
 

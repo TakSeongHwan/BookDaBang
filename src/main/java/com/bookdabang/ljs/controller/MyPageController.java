@@ -25,7 +25,7 @@ public class MyPageController {
 	@Inject
 	private LoginService service;
 	
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping(value = "/memberinfo", method = RequestMethod.GET)
 	public String memberinfo(@RequestParam("u") String sessionId, Model model) {
 		
 		MemberVO loginMember = null;

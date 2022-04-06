@@ -62,7 +62,7 @@ function loginOrNot() {
 	if (loginMember != '') {
 		// 로그인 했을 때
 		console.log("로그인 상태")
-		location.href='${contextPath }/mypage/?u=' + loginMember;
+		location.href='${contextPath }/mypage/memberinfo?u=' + loginMember;
 	} else {
 		console.log("로그인이 되지 않았습니다.")
 		location.href='${contextPath }/login.html';

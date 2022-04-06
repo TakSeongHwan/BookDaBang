@@ -12,7 +12,7 @@
 $(document).ready(function(){
 	
 	let sessionId = "${sessionId}";
-	let getUserIdUrl = "/notice/getUserId"
+	let getUserIdUrl = "${pageContext.request.contextPath}/notice/getUserId"
 
 		$.ajax({
 				url : getUserIdUrl, 
@@ -23,8 +23,8 @@ $(document).ready(function(){
 					
 				},
 				success : function(data) { 
-					console.log(data);
-					//userId
+					console.log(data.userId);
+					$("#writer").val(data.userId);
 				
 					
 				}, error: function(e){
@@ -36,7 +36,7 @@ $(document).ready(function(){
 	
 	$("#imageFile").change(function(){
 		
-		let url = "/notice/imageHandling";
+		let url = "${pageContext.request.contextPath}/notice/imageHandling";
 		let upfile = this.files[0];
 		let fileName = upfile.name;
 		
@@ -86,7 +86,7 @@ $(document).ready(function(){
 	
 $("#attachFile").change(function(){
 		
-		let url = "/notice/attactFileUpload";
+		let url = "${pageContext.request.contextPath}/notice/attactFileUpload";
 		let upfile = this.files[0];
 		console.log(upfile);
 		let formData = new FormData();
@@ -158,7 +158,7 @@ $("#attachFile").change(function(){
 });
 
 function delFile(data){
-	let url = "/notice/delImgFile";
+	let url = "${pageContext.request.contextPath}/notice/delImgFile";
 	
 	$.ajax({
 			url : url, 
@@ -180,7 +180,7 @@ function delFile(data){
 function delAttachFile(thumbnailFile,notImageFile,originFile){
 	console.log(thumbnailFile+","+notImageFile+","+originFile);
 	
-	let url = "/notice/attachFileDelete"
+	let url = "${pageContext.request.contextPath}/notice/attachFileDelete"
 		$.ajax({
 			url : url, 
 			dataType : "text", 
@@ -205,7 +205,7 @@ function delAttachFile(thumbnailFile,notImageFile,originFile){
 	
 }
 function writeCancle(){
-	let url = "/notice/uploadCancle";
+	let url = "${pageContext.request.contextPath}/notice/uploadCancle";
 	let targetFileDiv = $("#imgOutput").html();
 	console.log(targetFileDiv);
 	let targetFile = targetFileDiv.split("/")[4].split("\"")[0];
@@ -244,7 +244,7 @@ z-index:20000;
 <div class="container mt-3 comment-form" >
 <h3 style="margin-bottom:50px;">공지사항 등록</h3>
  
-  <form action="/notice/insertNotice" method="post" >
+  <form action="${pageContext.request.contextPath}/notice/insertNotice" method="post" >
    	 <div class="mb-3 mt-3 title">
   
  	 <input type="text" class="form-control"  id="title"  name="title" placeholder="글 제목 입력">

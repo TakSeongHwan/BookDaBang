@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,6 +101,9 @@ public class NoticeController {
 			}
 			
 			content = service.getContentByNo(no);
+			if(content.getImage().length() == 0) {
+				content.setImage(null);
+			}
 			af = service.getAttachFile(no);
 			if(af.size()<1) {
 				af = null;
@@ -332,7 +336,7 @@ public class NoticeController {
 	public ResponseEntity<Map<String,String>> getUserId(@RequestParam("sessionId") String sessionId) {
 		ResponseEntity<Map<String,String>> result = null;
 		MemberVO mv = null;
-		Map<String,String> map = null;
+		Map<String,String> map = new HashMap<String, String>();
 		try {
 			mv = loginService.findLoginSess(sessionId);
 			System.out.println(mv);
