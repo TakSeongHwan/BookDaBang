@@ -13,7 +13,7 @@ import com.bookdabang.common.domain.CategoryVO;
 import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.cyh.domain.SearchCriteria;
-import com.bookdabang.cyh.persistence.ProductDAO;
+import com.bookdabang.common.persistence.ProductDAO;
 
 @Service
 public class ProductServiceImpl implements ProductService {

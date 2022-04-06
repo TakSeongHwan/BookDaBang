@@ -10,14 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.bookdabang.common.domain.CategoryVO;
-import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.cyh.service.ProductService;
-
 
 
 @Controller
 @RequestMapping(value = "/prodManager/*")
-public class ProductController {
+public class ProductController2 {
 	
 	@Inject 
 	private ProductService service;

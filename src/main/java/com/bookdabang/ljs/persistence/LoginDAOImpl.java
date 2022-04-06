@@ -1,10 +1,13 @@
 package com.bookdabang.ljs.persistence;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.bookdabang.common.domain.MemberPoint;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.ljs.domain.LoginDTO;
 
@@ -38,6 +41,12 @@ public class LoginDAOImpl implements LoginDAO  {
 	public MemberVO findLoginSess(String sessionId) throws Exception {
 		 
 		return ses.selectOne(ns + ".loginSession", sessionId);
+	}
+
+	@Override
+	public List<MemberPoint> pointCheck(String userId) {
+		
+		return ses.selectList(ns+ ".pointCheck", userId);
 	}
 
 

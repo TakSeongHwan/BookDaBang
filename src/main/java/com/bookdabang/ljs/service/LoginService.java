@@ -1,5 +1,8 @@
 package com.bookdabang.ljs.service;
 
+import java.util.List;
+
+import com.bookdabang.common.domain.MemberPoint;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.ljs.domain.LoginDTO;
 
@@ -12,6 +15,8 @@ public interface LoginService {
 	public int lastLogin(LoginDTO dto) throws Exception;
 	
 	public int withdrawMember(String userId) throws Exception;
+	
+	public List<MemberPoint> pointCheck(String userId) throws Exception;
 	
 	
 }

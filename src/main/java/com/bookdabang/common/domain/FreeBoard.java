@@ -6,7 +6,7 @@ public class FreeBoard {
 	private int boardno;
 	private String writer;
 	private String title; 
-	private String content ; 
+	private String content; 
 	private int readcount;
 	private String deleteyn; 
 	private Timestamp date; 

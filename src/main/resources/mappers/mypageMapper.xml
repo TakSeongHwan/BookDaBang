@@ -10,17 +10,22 @@
   	</select>
   	
   	<update id = "putLastLogin">
-  		update member set lastLogin = now(), sessionId=#{sessionId} where userId=#{userId};
+  		update member set lastLogin = now(), sessionId=#{sessionId} where userId=#{userId}
   	</update>
   	
   	<select id = "loginSession" resultType="MemberVO">
-  		select * from member where sessionId = #{sessionId};
+  		select * from member where sessionId = #{sessionId}
   	</select>
   	
   	<update id = "withdrawMember" >
   	    update member set isDraw = 'Y' where userId=#{userId} 
   	</update>
   	
+	<select id = "pointCheck" resultType="MemberPoint">
+		select * from memberpoint where userid=#{userId};
+	
+	</select>
+
 
   	
   	

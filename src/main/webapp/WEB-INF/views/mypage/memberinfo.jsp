@@ -35,27 +35,23 @@
 <script src="../resources/js/main.js"></script>
 </head>
 <script>
+	function loginOrNot() {
+		// 세션 아이디 가져오란다.
+		//  로그인을 안했는데 왜 뜨지
+		// 로그인을 안해도 세션 ID 뜨는데?
+		let loginMember = "${ sessionId}";
+		console.log(loginMember);
 
+		if (loginMember != '') {
+			// 로그인 했을 때
+			console.log("로그인 했슈")
+			//location.href='/ljs/mypage/';
+		} else {
+			console.log("로그인 안했슈")
+			//location.href='/ljs/returnPrePage';
 
-
-function loginOrNot() {
-	// 세션 아이디 가져오란다.
-	//  로그인을 안했는데 왜 뜨지
-	// 로그인을 안해도 세션 ID 뜨는데?
-	let loginMember = "${ sessionId}";
-	console.log(loginMember);
-	
-	if (loginMember != '') {
-		// 로그인 했을 때
-		console.log("로그인 했슈")
-		//location.href='/ljs/mypage/';
-	} else {
-		console.log("로그인 안했슈")
-		//location.href='/ljs/returnPrePage';
-		
-	 }
-}
-
+		}
+	}
 
 	function withdrawMember() {
 
@@ -64,26 +60,52 @@ function loginOrNot() {
 		let url = "withdrawMember.do";
 
 		$.ajax({
+					url : url,
+					dataType : "text",
+					type : "POST",
+					data : {
+						ses : ses
+					},
+					success : function(data) { // 통신 성공시 실행될 콜백 함수
+						console.log(data)
+						if (data == 1) {
+							console
+									.log(document.getElementById('confirm').innerHTML);
+							document.getElementById('confirm').innerHTML = "<p>탈퇴가 완료되었습니다. 삭제 후 30일 이내에 복구 신청시, 계정을 다시 사용하실 수 있습니다.</p>";
+							$(".yesButton").remove();
+
+							// 예 / 아니오를 모달창  확인 버튼 하나로 바꾸기.
+							document.getElementsByClassName('buttonCon')[0].innerHTML = "확인"
+						}
+
+					}
+				});
+	}
+	
+	function pointHistory() {
+		
+		let ses = "${ sessionId}"; // 세션에 담긴 ID값 가져오라
+
+		let url = "viewPoint.do";
+		
+		
+		$.ajax({
 			url : url,
-			dataType : "text",
+			dataType : "json",
+			contentType :"application/json; charset=utf-8", 
 			type : "POST",
 			data : {
 				ses : ses
 			},
 			success : function(data) { // 통신 성공시 실행될 콜백 함수
-				console.log(data)
-				if (data == 1) {
-					console.log(document.getElementById('confirm').innerHTML);
-					document.getElementById('confirm').innerHTML = "<p>탈퇴가 완료되었습니다. 삭제 후 30일 이내에 복구 신청시, 계정을 다시 사용하실 수 있습니다.</p>";
-					$(".yesButton").remove();
-					
-					// 예 / 아니오를 모달창  확인 버튼 하나로 바꾸기.
-					document.getElementsByClassName('buttonCon')[0].innerHTML = "확인"
-				}
+				console.log("뭐가 문제요")
+				
 
 			}
 		});
+		
 	}
+	
 </script>
 <style>
 .deleteMember {
@@ -236,10 +258,14 @@ function loginOrNot() {
 
 @media ( min-width : 800px) {
 	.col-lg-4 {
-	margin-left: -18%;
-}
+		margin-left: -18%;
+	}
 }
 
+.form-control {
+	display: flex;
+	width: 70%;
+}
 </style>
 
 
@@ -285,11 +311,7 @@ function loginOrNot() {
 							<h4 class="widget_title">Post Catgories</h4>
 							<div class="br"></div>
 							<ul class="list cat-list">
-								<li><a href="mypage/modifyinfo"
-									class="d-flex justify-content-between">
-										<p>회원 정보 수정</p>
-
-								</a></li>
+								<li><p>회원 정보 수정</p></li>
 								<li><a href="#" class="d-flex justify-content-between">
 										<p>주문 현황</p>
 								</a></li>
@@ -304,10 +326,7 @@ function loginOrNot() {
 										<p>내가 좋아요/신고한 게시물</p>
 
 								</a></li>
-								<li><a href="#" class="d-flex justify-content-between">
-										<p>적립금 조회</p>
-
-								</a></li>
+								<li onclick = "pointHistory();"><p>적립금 조회</p></li>
 								<li><a href="#" class="d-flex justify-content-between"
 									data-bs-toggle="modal" data-bs-target="#modalCenter">
 										<p>회원 탈퇴</p>
@@ -366,23 +385,36 @@ function loginOrNot() {
 						</aside>
 					</div>
 				</div>
-				
+
 				<div class="col-lg-8 posts-list">
-				<h2> 회원 정보 수정</h2>
-				
+					<h2>회원 정보 수정</h2>
+
 					<div class="single-post row">
+
+
+						아이디 : <input type="text" class="form-control"
+							value="${loginMember.userId}" />
+						비밀번호 : <input type="password"
+							class="form-control" value="${loginMember.userPwd }" />
 						
-							
-							아이디 : <input type="text" class="form-control" value = "${loginMember.userId}"  />  
-							비밀번호 : <input type="password" class="form-control" value = "${loginMember.userPwd }" />
-							<button>비밀번호 변경</button> 
-							닉네임 : <input type="text" class="form-control" value = "${loginMember.nickName }" />
-							이메일 : <input type="text" class="form-control" value = "${loginMember.userEmail}" />  
-							핸드폰 번호 : <input type="text" class="form-control" value = "${loginMember.phoneNum}" /> 
-							
-							
+						<button data-bs-toggle="modal" data-bs-target="#modalPwd">비밀번호
+							변경</button>
+						이름 : <input type="text" class="form-control"
+							value="${loginMember.nickName }" /> 	
+						닉네임 : <input type="text" class="form-control"
+							value="${loginMember.nickName }" /> 
+						핸드폰 번호 : <input type="text" class="form-control" value="${loginMember.phoneNum}" />
+						이메일 : <input type="text" class="form-control" value="${loginMember.userEmail}" /> 
+						생일 : <div>"${loginMember.birth }" </div>
 						
-				</div>
+	
+	
+
+	
+	
+
+
+					</div>
 
 
 
@@ -393,17 +425,44 @@ function loginOrNot() {
 							<div class="modal-content">
 								<div class="modal-header">
 									<h5 class="modal-title" id="modalCenterTitle">Modal title</h5>
-									
+
 									<button type="button" class="btn-close" data-bs-dismiss="modal"
 										aria-label="Close"></button>
 								</div>
-								<div class="modal-body" id = "confirm">
-								<p>정말로 탈퇴하시겠습니까?</p>
+								<div class="modal-body" id="confirm">
+									<p>정말로 탈퇴하시겠습니까?</p>
 								</div>
 								<div class="modal-footer">
-									<button type="button" class="btn btn-outline-secondary yesButton"
-										 onclick = "withdrawMember();" >예</button>
-									<button type="button" class="btn btn-primary buttonCon" data-bs-dismiss="modal">아니오</button>
+									<button type="button"
+										class="btn btn-outline-secondary yesButton"
+										onclick="withdrawMember();">예</button>
+									<button type="button" class="btn btn-primary buttonCon"
+										data-bs-dismiss="modal">아니오</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- 비밀번호 변경 모달 -->
+					<div class="modal fade" id="modalPwd" tabindex="-1"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modalCenterTitle">비밀번호 변경</h5>
+
+									<button type="button" class="btn-close" data-bs-dismiss="modal"
+										aria-label="Close"></button>
+								</div>
+								<div class="modal-body" id="pwdModi">
+									변경할 비밀번호를 입력해주세요. : <input type="text" class="form-control" />
+								</div>
+								<div class="modal-footer">
+									<button type="button"
+										class="btn btn-outline-secondary yesButton"
+										onclick="withdrawMember();">예</button>
+									<button type="button" class="btn btn-primary buttonCon"
+										data-bs-dismiss="modal">아니오</button>
 								</div>
 							</div>
 						</div>

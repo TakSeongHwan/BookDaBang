@@ -44,9 +44,11 @@
 				console.log(data);
 				if (data == "success") {
 					idCheck = true;
-					outputErrMsg($("#userId"), "사용할수 있는 ID입니다")
+					alert("사용할수 있는 ID입니다")
+
 				} else {
-					outputErrMsg($("#userId"), "중복되는 ID입니다")
+					alert("중복되는 ID입니다")
+
 				}
 			}
 		});
@@ -67,9 +69,11 @@
 				console.log(data)
 				if (data == "success") {
 					nickCheck = true;
-					outputErrMsg($("#nickName"), "사용할수 있는 닉네임 입니다")
+					alert("사용할수 있는 닉네임 입니다")
+				
 				} else {
-					outputErrMsg($("#nickName"), "중복되는 닉네임 입니다")
+					alert("중복되는 닉네임 입니다")
+	
 				}
 
 			}
@@ -294,7 +298,6 @@ input[type=button]:hover {
 										class="form-check-label" for="flexRadioDefault2"> 여자 </label>
 								</div>
 
-					
 								<div class="col-md-12 form-group">
 									<button 
 										class="button button-register w-100" type="button" onclick="validate();">회원가입</button>
