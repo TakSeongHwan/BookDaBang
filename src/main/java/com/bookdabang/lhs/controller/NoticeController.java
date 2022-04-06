@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bookdabang.common.domain.AttachFileVO;
+import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.NoticeVO;
 import com.bookdabang.common.domain.VisitorIPCheck;
 import com.bookdabang.common.etc.IPCheck;
@@ -33,6 +35,7 @@ import com.bookdabang.common.service.IPCheckService;
 import com.bookdabang.lhs.etc.ImageFileHandling;
 import com.bookdabang.lhs.etc.UploadFileProcess;
 import com.bookdabang.lhs.service.NoticeService;
+import com.bookdabang.ljs.service.LoginService;
 
 @Controller
 @RequestMapping("/notice/*")
@@ -43,6 +46,9 @@ public class NoticeController {
 	
 	@Inject
 	IPCheckService ipService;
+	
+	@Inject
+	private LoginService loginService;
 
 	private List<AttachFileVO> fileList = new ArrayList<AttachFileVO>();
 
@@ -321,6 +327,26 @@ public class NoticeController {
 			result = new ResponseEntity<String>("success", HttpStatus.OK);
 		
 		return result;
+	}
+	@RequestMapping("getUserId")
+	public ResponseEntity<Map<String,String>> getUserId(@RequestParam("sessionId") String sessionId) {
+		ResponseEntity<Map<String,String>> result = null;
+		MemberVO mv = null;
+		Map<String,String> map = null;
+		try {
+			mv = loginService.findLoginSess(sessionId);
+			System.out.println(mv);
+			if(mv != null) {
+				map.put("userId", mv.getUserId());
+				result = new ResponseEntity<Map<String,String>>(map, HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			
+			result = new ResponseEntity<Map<String,String>>(HttpStatus.BAD_REQUEST);
+			e.printStackTrace();
+		}
+		return result;
+		
 	}
 
 }

@@ -10,6 +10,30 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
 $(document).ready(function(){
+	
+	let sessionId = "${sessionId}";
+	let getUserIdUrl = "/notice/getUserId"
+
+		$.ajax({
+				url : getUserIdUrl, 
+				dataType : "json", 
+				type : "GET",
+				data : {
+					sessionId : sessionId
+					
+				},
+				success : function(data) { 
+					console.log(data);
+					//userId
+				
+					
+				}, error: function(e){
+					console.log(e.responseText);
+					
+				}
+			});
+	
+	
 	$("#imageFile").change(function(){
 		
 		let url = "/notice/imageHandling";
@@ -104,6 +128,32 @@ $("#attachFile").change(function(){
 		 
 	});
 	
+	$("#title").blur(function(){
+		$("#titleOk").empty();
+		let title = $("#title").val();
+		console.log(title)
+		if(title.length <= 0){
+			let output = ' <div class="alert alert-danger">제목은 비워둘 수 없습니다</div>'
+			$("#titleOk").append(output);
+		}else if(title.length >50){
+			let output = ' <div class="alert alert-danger">제목은 50자 이내로 적어주십시오</div>'
+			$("#titleOk").append(output);
+		}
+		
+	});
+	$("#content").blur(function(){
+		$("#contentOk").empty();
+		let content = $("#content").val();
+	
+		if(content.length <= 0){
+			let output = ' <div class="alert alert-danger">내용은 비워둘 수 없습니다.</div>'
+			$("#contentOk").append(output);
+		}else if(content.length >1000){
+			let output = ' <div class="alert alert-danger">내용은 1000자 이내로 적어주십시오</div>'
+			$("#contentOk").append(output);
+		}
+		
+	});
 	
 });
 
@@ -191,35 +241,36 @@ z-index:20000;
 </head>
 <body>
 <jsp:include page="../userHeader.jsp"></jsp:include>
-<div class="container mt-3">
-<h3>공지사항 등록</h3>
+<div class="container mt-3 comment-form" >
+<h3 style="margin-bottom:50px;">공지사항 등록</h3>
  
   <form action="/notice/insertNotice" method="post" >
-   <div class="mb-3 mt-3">
-  	 <label for="title" class="form-label">글 제목 : </label>
- 	 <input type="text" class="form-control" name="title" placeholder="글 제목 입력">
- 	  </div>
+   	 <div class="mb-3 mt-3 title">
+  
+ 	 <input type="text" class="form-control"  id="title"  name="title" placeholder="글 제목 입력">
+ 	 </div>
+ 	 <div id="titleOk"></div>
  	  <div class="mb-3 mt-3">
- 	  <label for="writer" class="form-label">작성자 : </label>
-  	 <input type="text" class="form-control" name="writer" placeholder="세션에서 받아온 값 리드온리할거">
+ 	  
+  	 <input type="text" id="writer" class="form-control" name="writer" readonly>
   	  </div>
   	    <div class="mb-3 mt-3">
-      <label for="comment">글 내용:</label>
-      <textarea class="form-control" rows="5" id="content" name="content"></textarea>
+      <textarea class="form-control" rows="5" id="content" name="content" placeholder="내용 입력"></textarea>
       	</div>
+      	<div id="contentOk"></div>
       	<input type="hidden" name="image" id="image"/>
   		 
-	 
- 	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#imageFileAdd">
+	 <div style="margin-top:50px;">
+ 	<button type="button" class="button button-header" data-bs-toggle="modal" data-bs-target="#imageFileAdd">
 		이미지 파일 등록
 	</button>
-	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#attachFileAdd">
+	<button type="button" class="button button-header" data-bs-toggle="modal" data-bs-target="#attachFileAdd">
 		첨부 파일 등록
 	</button>
 		
-		<button type="submit" class="btn btn-success" id="submitBtn" >저장</button>
-			<button type="button" class="btn btn-danger" onclick="writeCancle();">취소</button>
-
+		<button type="submit" class="button button-header" id="submitBtn" >저장</button>
+			<button type="button" class="button button-header" onclick="writeCancle();">취소</button>
+	</div>
   </form>
  
 </div>
@@ -247,7 +298,7 @@ z-index:20000;
 				<!-- Modal footer -->
 				<div class="modal-footer">
 
-					<button type="button" class="btn btn-danger" data-bs-dismiss="modal">닫기</button>
+					<button type="button" class="button button-header" data-bs-dismiss="modal">닫기</button>
 				</div>
 
 			</div>
@@ -275,7 +326,7 @@ z-index:20000;
 				<!-- Modal footer -->
 				<div class="modal-footer">
 
-					<button type="button" class="btn btn-danger" data-bs-dismiss="modal">닫기</button>
+					<button type="button" class="button button-header" data-bs-dismiss="modal">닫기</button>
 				</div>
 
 			</div>

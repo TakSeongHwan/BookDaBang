@@ -29,7 +29,9 @@
 					console.log("이미지파일");
 					imgCheck = true;
 					formData.append("imageFile", upfile);
-					// 이미지 아웃풋에 출력하고(돔운행) 아이디값 파일이름으로 바꿔주기
+					
+					let existingImg = "<span id='existingImg'>"+fileName+"</span>";
+					existingImg += '<button type="button" class="btn rounded-pill btn-icon btn-outline-secondary" onclick="delFile();">x</button>'
 
 				}
 			}
@@ -41,6 +43,7 @@
 		$("#attachFile").change(function() {
 
 			let upfile = this.files[0];
+			let fileName = upfile.name;
 			console.log(upfile);
 
 			formData.append("upfile" + attachCount, upfile);
@@ -50,27 +53,42 @@
 		
 		$("#reply").click(function() {
 			let sessionId="${sessionId}";
-			let ipaddr="${ipAddr}";
-			console.log(sessionId+" , "+ipaddr);
+			let getUserIdUrl = "/notice/getUserId"
+				
+				$.ajax({
+						url : getUserIdUrl, 
+						dataType : "text", 
+						type : "GET",
+						data : {
+							sessionId : sessionId
+							
+						},
+						success : function(data) { 
+							console.log(data);
+							if(data != "UserIdNotFound"){
+								$("#writer").val(data);
+							}else{
+								location.href="${contextPath}/login";
+							}
+							
+						}, error: function(e){
+							console.log(e.responseText);
+							
+						}
+					});
 		});
+		
 
 	});
 
-	function delFile(data) {
+	function delFile() {
+		$("#imgOutput").empty();
+	}
+	function delAttachFile(attachFileNo) {
+		console.log(attachFileNo);
 
 	}
-	function delAttachFile(thumbnailFile, notImageFile, originFile,
-			attachFileNo) {
-		console.log(thumbnailFile + "," + notImageFile + "," + originFile + ","
-				+ attachFileNo);
 
-	}
-	function modifyAttachFile() {
-		//파일들을 아작스로 바로 보내지 말고, 따로 값을 hidden에 정리해둔 다음 전송버튼이 눌리면 그때 보내자. 
-	}
-	function writeCancle() {
-
-	}
 	function modifyNotice() {
 		$("#modiModal").show(200);
 
@@ -256,6 +274,7 @@
 	}
 	function closeModiModal() {
 		$("#modiModal").hide();
+		location.href="/notice/viewContent?no="+${content.no}
 	}
 	function closeModiReplyModal(){
 		$("#modiReplyModal").hide();
@@ -412,7 +431,9 @@ z-index: 22000;
 			
 			<div class="contentArea">
 				<div style="margin: 0px 2px 10px 2px">${content.content }</div>
-			
+			<div class="imgFileArea"><img
+									src='/resources/uploads/noticeBoardImg/${content.image }'
+									style="margin: 10px" /></div>
 			<div class="attachFileArea">
 				<c:if test="${attachFile != null }">
 					<c:forEach var="attachFile" items="${attachFile}">
@@ -435,12 +456,13 @@ z-index: 22000;
 		</div>
 		
 		<div id="buttonGroup">
-			<a class="button button-header" href="/notice/listAll">목록으로</a> <a
-				class="button button-header" href="javascript:void(0)"
-				onclick="modifyNotice();">수정</a> <a class="button button-header"
-				href="javascript:void(0)" onclick="showAlert();">삭제</a> <a
+			<a class="button button-header" href="/notice/listAll">목록으로</a><a
 				class="button button-header" href="javascript:void(0)"
 				onclick="history.back();">뒤로가기</a>
+				 <a
+				class="button button-header" href="javascript:void(0)"
+				onclick="modifyNotice();">수정</a> <a class="button button-header"
+				href="javascript:void(0)" onclick="showAlert();">삭제</a> 
 		</div>
 
 		<div id="replyContainer">
@@ -451,6 +473,7 @@ z-index: 22000;
 					<div style="display: inline-block; width: 85%;">
 						<input type="text" class="form-control" id="reply" name="reply"
 							placeholder="댓글을 입력하세요">
+							<input type="hidden" id="writer"/>
 					</div>
 
 					<a class="button button-header"
@@ -493,27 +516,29 @@ z-index: 22000;
 						</div>
 						<div class="mb-3 mt-3">
 							<div id="imgOutput">
-							<span id="${content.image }">${content.image }</span>
-								<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary" onclick='delFile("${content.image }");'>x</button>
+							<span>${content.image }</span>
+											
+											<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary"
+												onclick='delFile();'>x</button>
 							</div>
 						</div>
 						<c:if test="${attachFile != null }">
 							<c:forEach var="attachFile" items="${attachFile}">
 								<c:choose>
 									<c:when test="${attachFile.notImageFile == null }">
-										<div>
-											<span id="${attachFile.originFile }">/resources/uploads/attachFile${attachFile.thumbnailFile }</div>
+										<div id="existingAttachImg">
+											<span>${attachFile.thumbnailFile }</span>
 											
 											<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary"
-												onclick='delAttachFile("${attachFile.thumbnailFile}","${attachFile.notImageFile }","${attachFile.originFile }","${attachFile.attachFileNo }");'>x</button>
-										</span>
+												onclick='delAttachFile("${attachFile.attachFileNo }");'>x</button>
+										</div>
 									</c:when>
 									<c:otherwise>
-										<div>
-										<span id="${attachFile.originFile }">/resources/uploads/attachFile${attachFile.notImageFile }</div>
+										<div id="existingAttachNotImg">
+										<span>/resources/uploads/attachFile${attachFile.notImageFile }</span>
 											<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary" 
-												onclick='delAttachFile("${attachFile.thumbnailFile }","${attachFile.notImageFile }","${attachFile.originFile }","${attachFile.attachFileNo }");'>x</button>
-										</span>
+												onclick='delAttachFile("${attachFile.attachFileNo }");'>x</button>
+										</div>
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
