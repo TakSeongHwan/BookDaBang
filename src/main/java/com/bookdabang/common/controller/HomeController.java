@@ -22,20 +22,20 @@ import com.bookdabang.ljs.service.LoginService;
  */
 @Controller
 public class HomeController {
-
+	
 	
 	
 	@Inject
 	private LoginService service;
-	
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
+	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model, @RequestParam(value = "u", required = false) String sessionId) {
-		logger.info("Welcome home! The client locale is {}.", locale);
+
 
 		//Date date = new Date();
 		//DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
@@ -62,16 +62,27 @@ public class HomeController {
 			model.addAttribute("loginMember", loginMember);
 
 		}
+
+		
+		Date date = new Date();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		
+		String formattedDate = dateFormat.format(date);
+		
+		model.addAttribute("serverTime", formattedDate );
+
 		
 		return "home";
 		
 
 	}
 	
+
 	@RequestMapping(value="admin", method=RequestMethod.GET)
 	public String exam2() {
 		System.out.println("admin이 호출됨....");
 		return "adminHome";
 	}
 	
+
 }

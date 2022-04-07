@@ -104,8 +104,13 @@ function loginOrNot() {
                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">Blog</a>
                    <ul class="dropdown-menu">
+<<<<<<< HEAD
                         <li class="nav-item"><a class="nav-link" href="blog.html">${loginMember.userId }</a></li>
                         <li class="nav-item"><a class="nav-link" href="single-blog.html">Blog Details</a></li>
+=======
+                        <li class="nav-item"><a class="nav-link" href="eventboard">event</a></li>
+                        <li class="nav-item"><a class="nav-link" href="single-blog.html">attendance</a></li>
+>>>>>>> KHN
                    </ul>
             </li>
             <li class="nav-item submenu dropdown">
@@ -117,6 +122,13 @@ function loginOrNot() {
                         <!-- <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>  -->
                    </ul>
                  </li>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                 <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+  
+=======
+>>>>>>> KHN
                  <!-- <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>  -->
   				
   				 <li class="nav-item submenu dropdown">
@@ -124,9 +136,17 @@ function loginOrNot() {
                      aria-expanded="false">게시판</a>
                    <ul class="dropdown-menu">
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">자유게시판</a></li>
+<<<<<<< HEAD
                         <!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->
                    </ul>
             </li>
+=======
+                        <li class="nav-item"><a class="nav-link" href="${contextPath}/event/allEventList">이벤트 게시판</a></li>
+                        <!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->
+                   </ul>
+            </li>
+>>>>>>> parent of 66c2768 (Revert "게시판 Reading 작업")
+>>>>>>> KHN
             </ul>
 <!-- 마이페이지 -->
             <ul class="nav-shop">
