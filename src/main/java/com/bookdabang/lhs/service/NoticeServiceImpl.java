@@ -130,5 +130,30 @@ public class NoticeServiceImpl implements NoticeService {
 		return noticeDAO.updateAccessDate(ipaddr, noticeNo);
 	}
 
+	@Override
+	public int updateNewImageFile(String newImage, int noticeNo) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.updateNewImageFile(newImage, noticeNo);
+	}
+
+
+	@Override
+	public int getAfByNoImgFn(String fn) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.getAfByNoImgFn(fn);
+	}
+
+	@Override
+	public int getAfByThumbFn(String fn) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.getAfByThumbFn(fn);
+	}
+
+	@Override
+	public int deleteOldAttachFile(int attachFileNo) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.deleteOldAttachFile(attachFileNo);
+	}
+
 	
 }

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bookdabang.common.domain.AttachFileVO;
@@ -156,7 +157,93 @@ public class NoticeController {
 	
 	
 	@RequestMapping(value="updateNotice", method=RequestMethod.POST)
-	public void updateNotice() {
+	@Transactional
+	public String updateNotice(NoticeVO n, RedirectAttributes rttr, MultipartHttpServletRequest multipartRequest, HttpServletRequest request) {
+		//null이 들어가면 얄짤없이 예외나는거같다 나눠야함
+		String newImage = multipartRequest.getFile("newImgFile").getOriginalFilename();
+		ImageFileHandling ifhl = new ImageFileHandling();
+		UploadFileProcess ufp = new UploadFileProcess();
+		
+		String oldImgName = request.getParameter("oldImgName");
+		String[] oldAttachFileName = request.getParameterValues("deletedAttachFile");
+		
+		String upPathImg = request.getSession().getServletContext().getRealPath("resources/uploads/noticeBoardImg/");
+		String upPathAttach =  request.getSession().getServletContext().getRealPath("resources/uploads/attachFile");
+		
+		boolean imgChange = false;
+		boolean attachChange = false;
+		boolean uploadSuccess = false;
+		
+		if(multipartRequest != null) {
+			System.out.println(newImage);
+			n.setImage(newImage);
+			try {
+				ifhl.fileUploading(newImage, upPathImg, multipartRequest.getFile("newImgFile").getBytes());
+				int isImgUpdate = service.updateNewImageFile(newImage, n.getNo());
+				System.out.println("이미지 변경 성공?"+isImgUpdate);
+				ifhl.fileDelete(upPathImg, oldImgName);
+				imgChange = true;
+			} catch (Exception e) {
+				rttr.addFlashAttribute("result", "fail");
+				e.printStackTrace();
+			}
+		}
+		System.out.println(oldAttachFileName);
+		if(oldAttachFileName != null) {
+			for(String fn : oldAttachFileName) {
+				System.out.println(fn);
+				int attachFileNo = 0;
+				System.out.println(fn.split("/")[4].split("_")[0].equals("thumb"));
+				try {
+					if(fn.split("/")[4].split("_")[0].equals("thumb")) {
+					
+						attachFileNo = service.getAfByThumbFn(fn);
+					}else {
+						attachFileNo = service.getAfByNoImgFn(fn);
+					}
+					
+					System.out.println("첨부파일번호"+attachFileNo);
+					service.deleteOldAttachFile(attachFileNo);
+					ifhl.fileDelete(upPathAttach, fn);
+					attachChange = true;
+				} catch (Exception e) {
+					rttr.addFlashAttribute("result", "fail");
+					e.printStackTrace();
+				}
+				
+			}
+		}
+
+		List<MultipartFile> list = multipartRequest.getFiles("newAttachFile");
+		AttachFileVO uploadFile = null;
+		if(list.size() > 0) {
+			for(MultipartFile mf : list) {
+				if (mf.getSize() > 0) {
+					try {
+						uploadFile = ufp.uploadFileRename(upPathAttach, mf.getOriginalFilename(), mf.getBytes());
+						service.insertAttachFile(uploadFile, n.getNo());
+						uploadSuccess = true;
+					} catch (Exception e) {
+						rttr.addFlashAttribute("result", "fail");
+						e.printStackTrace();
+					}
+				}
+				
+			}
+		}
+		
+		
+		System.out.println(n.toString());
+		System.out.println("게시물 안 이미지 파일의 업로드경로 : " + upPathImg);
+		System.out.println("첨부파일의 업로드경로 : " + upPathAttach);
+		
+		//글내용들만 db에 업데이트 시켜주면 그림/첨부/글내용 모두 수정하는 업데이트기능은 완료된다.
+		
+		if(uploadSuccess && imgChange && attachChange) {
+			rttr.addFlashAttribute("result", "success");
+		}
+		
+		return "redirect:/notice/listAll";
 		
 	}
 	
@@ -313,7 +400,7 @@ public class NoticeController {
 			
 			
 			for (AttachFileVO af : this.fileList) {
-				System.out.println("알 수 없지만");
+			
 				
 				if (af.getThumbnailFile() != null) {
 
@@ -325,7 +412,7 @@ public class NoticeController {
 				
 			}
 		}
-	
+		System.out.println(targetFile);
 		ifh.fileDelete(upPathImg, targetFile);
 		
 			result = new ResponseEntity<String>("success", HttpStatus.OK);

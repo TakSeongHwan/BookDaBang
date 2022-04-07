@@ -29,6 +29,7 @@
 	<select id="getAttachFile" resultType="AttachFileVO">
 		select * from attachfile
 		where noticeNo=#{noticeNo}
+		order by attachFileNo asc
 	</select>
 	<delete id="deleteNotice">
 		delete from notice where no=#{no}
@@ -71,4 +72,16 @@
 	<update id="updateAccessDate">
 	update pageview set accessDate = now() where ip_address=#{ip_address} and noticeNo=#{noticeNo}
 	</update>
+	<update id="updateNewImageFile">
+	update notice set image=#{image} where no=#{no}
+	</update>
+	<select id="selectAfByNoImgFn" resultType="int">
+	select attachFileNo from attachfile where notImageFile=#{notImageFile}
+	</select>
+	<select id="selectAfByThumbFn" resultType="int">
+	select attachFileNo from attachfile where thumbnailFile=#{thumbnailFile}	
+	</select>
+	<delete id="deleteOldAttachFile">
+	delete from attachfile where attachFileNo = #{attachFileNo}
+	</delete>
 </mapper>

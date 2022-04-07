@@ -10,13 +10,24 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <script>
-	let attachCount = 0;
-	let formData = new FormData();
+
+
+	let newImageUp = false;
+	let attachFileUp = false;
+	
+	let imgChangeCount = 0;
+	let oldFileNames = new Array();
 	$(document).ready(function() {
 
 		showAllReply();
+		
+		$("#newAttachFile").change(function(){
+			attachFileUp = true;
+		});
+		
+		
 
-		$("#imageFile").change(function() {
+		$("#newImgFile").change(function() {
 			let upfile = this.files[0];
 			let fileName = upfile.name;
 
@@ -28,11 +39,18 @@
 				if (fileExt == imgExt[i]) {
 					console.log("이미지파일");
 					imgCheck = true;
-					formData.append("imageFile", upfile);
-					
+					console.log(imgChangeCount)
+					if(imgChangeCount == 0){
+						let oldImgName = $("#imgFileArea img").attr("src").split("/")[5];
+						console.log(oldImgName);
+						$("#oldImgName").val(oldImgName);
+						newImageUp = true;
+						
+					}
 					let existingImg = "<span id='existingImg'>"+fileName+"</span>";
 					existingImg += '<button type="button" class="btn rounded-pill btn-icon btn-outline-secondary" onclick="delFile();">x</button>'
-
+					$("#imgOutput").html(existingImg);
+					imgChangeCount++;
 				}
 			}
 			if (!imgCheck) {
@@ -40,17 +58,6 @@
 			}
 		});
 
-		$("#attachFile").change(function() {
-
-			let upfile = this.files[0];
-			let fileName = upfile.name;
-			console.log(upfile);
-
-			formData.append("upfile" + attachCount, upfile);
-			attachCount++;
-
-		});
-		
 		$("#reply").click(function() {
 			let sessionId="${sessionId}";
 			let getUserIdUrl = "${pageContext.request.contextPath}/notice/getUserId"
@@ -78,24 +85,95 @@
 					});
 		});
 		
+		
+		$("#title").blur(function(){
+			$("#titleOk").empty();
+			let title = $("#title").val();
+			console.log(title)
+			if(title.length <= 0){
+				let output = ' <div class="alert alert-danger">제목은 비워둘 수 없습니다</div>'
+				$("#titleOk").append(output);
+			}else if(title.length >50){
+				let output = ' <div class="alert alert-danger">제목은 50자 이내로 적어주십시오</div>'
+				$("#titleOk").append(output);
+			}
+			
+		});
+		$("#content").blur(function(){
+			$("#contentOk").empty();
+			let content = $("#content").val();
+		
+			if(content.length <= 0){
+				let output = ' <div class="alert alert-danger">내용은 비워둘 수 없습니다.</div>'
+				$("#contentOk").append(output);
+			}else if(content.length >1000){
+				let output = ' <div class="alert alert-danger">내용은 1000자 이내로 적어주십시오</div>'
+				$("#contentOk").append(output);
+			}
+			
+		});
+		
 
 	});
 
 	function delFile() {
+		if(imgChangeCount == 0){
+			let oldImgName = $("#imgFileArea img").attr("src").split("/")[5];
+			console.log(oldImgName);
+			$("#oldImgName").val(oldImgName);
+			newImageUp = false;
+			
+		}
 		$("#imgOutput").empty();
+		imgChangeCount++;
 	}
-	function delAttachFile(attachFileNo) {
-		console.log(attachFileNo);
+	function delAttachFile(obj) {
+		let getFileId = $(obj).attr("id");
+		let fileName = $(obj).siblings("span").html();
+		getFileType = getFileId.split("-")[0];
+		
+		for(let i in oldFileNames){
+		
+			if(getFileType == "delAttachImgFileBtn"){
+				if(oldFileNames[i].split(",")[1] == fileName){
+					let output = '<input type="hidden" name="deletedAttachFile" value="'+fileName+'">'
+					$("#deletedAttachFile").append(output);
+				}
+				$("#"+getFileId+"").parent().hide();
+			}else if(getFileType == "delAttachNotImgFileBtn"){
 
+				if(oldFileNames[i].split(",")[2].split("]]")[0] == fileName){
+					console.log(fileName)
+					let output = '<input type="hidden" name="deletedAttachFile" value="'+fileName+'">'
+					$("#deletedAttachFile").append(output);
+				
+					
+				}
+				$("#"+getFileId+"").parent().hide();
+			}
+			
+		}
 	}
 
 	function modifyNotice() {
 		$("#modiModal").show(200);
+	
+		let oldAttachFile = "${attachFile}"
+		let oafArray = oldAttachFile.replace(/[\t\s]/g,'').split("AttachFileVO");
+	
+		for(let i = 1; i < oafArray.length; i++){
+			
+				let originFile = oafArray[i].split(",")[5].split("=")[1];
+				let thumbnailFile = oafArray[i].split(",")[6].split("=")[1];
+				let notImageFile = oafArray[i].split(",")[7].split("=")[1];
+				
+				oldFileNames[i-1] = (originFile+","+thumbnailFile+","+notImageFile);
+			
+			
+		}
 
 	}
-	function closeModal() {
-		$("#modiModal").hide(0);
-	}
+	
 	function showAlert() {
 
 		$("#delAlert").show(200);
@@ -202,7 +280,7 @@
 		let output = '<div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-body">댓글을 삭제하시겠습니까?</div>';
 		output += '<div class="modal-footer"><button type="button" class="btn btn-danger" onclick="deleteReply('
 				+ replyNo
-				+ ');">삭제</button><button type="button" class="btn btn-primary" onclick="closeModal();">닫기</button></div></div></div>'
+				+ ');">삭제</button><button type="button" class="btn btn-primary" id="replyDelModalBtn" onclick="closeModal(this);">닫기</button></div></div></div>'
 		$("#deleteModal").html(output);
 
 		$("#deleteModal").show(200);
@@ -212,7 +290,7 @@
 		let output = '<div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-body">댓글 내용 수정 : <input type="text" id="replyContent"name="content"/></div>';
 		output += '<div class="modal-footer"><button type="button" class="btn btn-danger" onclick="modiReply('
 				+ replyNo
-				+ ');">수정</button><button type="button" class="btn btn-primary" onclick="closeModiReplyModal();">닫기</button></div></div></div>'
+				+ ');">수정</button><button type="button" class="btn btn-primary" id="replyModiModalBtn" onclick="closeModal(this);">닫기</button></div></div></div>'
 		$("#modiReplyModal").html(output);
 
 		$("#modiReplyModal").show(200);
@@ -273,17 +351,14 @@
 			}
 		});
 	}
-	function closeModiModal() {
-		$("#modiModal").hide();
+	function closeModal(obj) {
+		
+		let val = $(obj).attr("id");
+		console.log(val)
+		$("#"+val+"").parent().parent().parent().hide();
 		location.href="${pageContext.request.contextPath}/notice/viewContent?no="+${content.no}
 	}
-	function closeModiReplyModal(){
-		$("#modiReplyModal").hide();
-		
-	}
-	function closeModal() {
-		$("#deleteModal").hide();
-	}
+
 	function formatDate(date) {
 
 		let diff = new Date() - date;
@@ -302,16 +377,14 @@
 	function showRereplyModal(replyNo) {
 		let output = '<div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-body">대댓글 입력 : <input type="text" id="rereplyContent" name="replyContent"/><input type="hidden" id ="rereplyer" name="replyer" value="cat"/></div>';
 		output += '<div class="modal-footer"><button type="button" class="btn btn-danger" onclick="insertRereply('
-				+ replyNo+ ');">입력</button><button type="button" class="btn btn-primary" onclick="closRereplyModal();">닫기</button></div></div></div>'
+				+ replyNo+ ');">입력</button><button type="button" class="btn btn-primary" id="rereplyModalBtn" onclick="closeModal(this);">닫기</button></div></div></div>'
 		//댓글단사람은 로그인한 유저 아이디값 받아와서 채워주기
 		$("#rereplyModal").html(output);
 
 		$("#rereplyModal").show(200);
 
 	}
-	function closRereplyModal(){
-		$("#rereplyModal").hide();
-	}
+	
 	function insertRereply(replyNo){
 		
 		let url = "${pageContext.request.contextPath}/noticeReply/rereply";
@@ -351,6 +424,7 @@
 		});
 		
 	}
+
 	
 	
 </script>
@@ -432,10 +506,10 @@ z-index: 22000;
 			
 			<div class="contentArea">
 				<div style="margin: 0px 2px 10px 2px">${content.content }</div>
-			<div class="imgFileArea">
-			<c:if test="${content.image != null }">
-				<img src='/resources/uploads/noticeBoardImg/${content.image }' style="margin: 10px" />
-			</c:if>				
+			<div id="imgFileArea">
+				<c:if test="${content.image != null }">
+					<img src='${pageContext.request.contextPath}/resources/uploads/noticeBoardImg/${content.image }' style="margin: 10px" />
+				</c:if>				
 			</div>
 									
 			<div class="attachFileArea">
@@ -444,12 +518,12 @@ z-index: 22000;
 						<c:choose>
 							<c:when test="${attachFile.notImageFile == null }">
 								<img
-									src='/resources/uploads/attachFile${attachFile.thumbnailFile }'
+									src='${pageContext.request.contextPath}/resources/uploads/attachFile${attachFile.thumbnailFile }'
 									style="width: 100px; height: 100px; overflow: auto; margin: 10px" />
 							</c:when>
 							<c:otherwise>
 								<a
-									href='/resources/uploads/attachFile${attachFile.notImageFile }'>첨부파일</a>
+									href='${pageContext.request.contextPath}/resources/uploads/attachFile${attachFile.notImageFile }'>첨부파일</a>
 							</c:otherwise>
 						</c:choose>
 					</c:forEach>
@@ -500,14 +574,15 @@ z-index: 22000;
   				</div>
 				<!-- Modal body -->
 				<div class="modal-body">
-					<form action="${pageContext.request.contextPath}/notice/updateNotice" method="POST" enctype="multipart/form-data">
+					<form action="${pageContext.request.contextPath}/notice/updateNotice" id="modiForm" method="POST" enctype="multipart/form-data">
 						<input type="hidden" name="no" id="no" value="${content.no}" />
 
 						<div class="mb-3 mt-3">
 							<label for="title" class="form-label">글 제목 : </label> <input
-								type="text" class="form-control" name="title"
+								type="text" class="form-control" name="title" id="title"
 								value="${content.title }">
 						</div>
+						 <div id="titleOk"></div>
 						<div class="mb-3 mt-3">
 							<label for="writer" class="form-label">작성자 : </label> <input
 								type="text" class="form-control" name="writer"
@@ -517,6 +592,16 @@ z-index: 22000;
 							<label for="comment">글 내용:</label>
 							<textarea class="form-control" rows="5" id="content"
 								name="content">${content.content }</textarea>
+						</div>
+						 <div id="contentOk"></div>
+						
+						<div class="mb-3 mt-3" id="deletedFileNames">
+						<div id="deletedImgFile">
+						<input type="hidden" id="oldImgName" name="oldImgName"> 
+						</div>
+						<div id="deletedAttachFile">
+						
+						</div>
 						</div>
 						<div class="mb-3 mt-3">
 							<div id="imgOutput">
@@ -531,43 +616,47 @@ z-index: 22000;
 							</div>
 						</div>
 						<div id="existingAttachFile">
-						<c:if test="${attachFile != null }">
-							<c:forEach var="attachFile" items="${attachFile}">
-								<c:choose>
-									<c:when test="${attachFile.notImageFile == null }">
-										<div id="existingAttachImg${attachFile.attachFileNo }">
-											<span>${attachFile.thumbnailFile }</span>
-											
-											<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary"
-												onclick='delAttachFile("${attachFile.attachFileNo }");'>x</button>
-										
-									</c:when>
-									<c:otherwise>
-										<div id="existingAttachNotImg${attachFile.attachFileNo }">
-										<span>/resources/uploads/attachFile${attachFile.notImageFile }</span>
-											<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary" 
-												onclick='delAttachFile("${attachFile.attachFileNo }");'>x</button>
-										</div>
-									</c:otherwise>
-								</c:choose>
-							</c:forEach>
-						</c:if>
+							<c:if test="${attachFile != null }">
+								<c:forEach var="attachFile" items="${attachFile}">
+									<c:choose>
+										<c:when test="${attachFile.notImageFile == null }">
+											<div id="existingAttachImg${attachFile.attachFileNo }">
+												<span>${attachFile.thumbnailFile }</span>
+												
+												<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary"
+													id="delAttachImgFileBtn-${attachFile.attachFileNo }" onclick='delAttachFile(this);'>x</button>
+											</div>
+										</c:when>
+										<c:otherwise>
+											<div id="existingAttachNotImg${attachFile.attachFileNo }">
+											<span>${attachFile.notImageFile }</span>
+												<button type='button' class="btn rounded-pill btn-icon btn-outline-secondary" 
+													id="delAttachNotImgFileBtn-${attachFile.attachFileNo }"" onclick='delAttachFile(this);'>x</button>
+											</div>
+										</c:otherwise>
+									</c:choose>
+								</c:forEach>
+							</c:if>
 						</div>
-						<input type="hidden" name="image" id="image" />
+					<div class="mb-3 mt-3">
+					<label for="newImgFile">이미지 파일 추가 :</label>
+							<input type="file" id="newImgFile" name="newImgFile"/>
+						</div>
+						<div class="mb-3 mt-3" id="newAttachFileArea">
+						<label for="newAttachFile">첨부 파일 추가 :</label>
+							<input type="file" id="newAttachFile" name="newAttachFile" multiple/>
+						</div>
+						
+					
+					
 				</div>
-				<div class="mb-3 mt-3" id="attachFileDiv">
-					<div id="attachOutput"></div>
-				</div>
+		
 
-				
-				<button type="button" class="button button-blog" data-bs-toggle="modal"
-					data-bs-target="#imageFileAdd">이미지 파일 등록</button>
-				<button type="button" class="button button-blog" data-bs-toggle="modal"
-					data-bs-target="#attachFileAdd">첨부 파일 등록</button>
+			
 
-				<button type="submit" class="button button-blog" id="submitBtn">저장</button>
-				<button type="reset" class="button button-blog"
-					onclick="closeModiModal();">취소</button>
+				<button type="submit" class="button button-blog" id="submitBtn" ">저장</button>
+				<button type="reset" id="modiModalCloseBtn" class="button button-blog"
+					onclick="closeModal(this);">취소</button>
 				
 				</form>
 			</div>

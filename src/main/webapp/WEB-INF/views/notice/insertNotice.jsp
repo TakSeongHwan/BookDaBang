@@ -60,7 +60,7 @@ $(document).ready(function(){
        				data : formData,
        				success : function(data) { 
        					console.log(data);
-       					let output="<div><img src='/resources/uploads/noticeBoardImg/"+data+"' style='width:100px; height:100px; overflow: auto; margin:10px' />";
+       					let output="<div><img src='${pageContext.request.contextPath}/resources/uploads/noticeBoardImg/"+data+"' style='width:100px; height:100px; overflow: auto; margin:10px' />";
        					output += "<button type='button' onclick='delFile(\""+data+"\");'>x</button></div>";
        					console.log(output);
        					$("#imgOutput").html(output);
@@ -108,10 +108,10 @@ $("#attachFile").change(function(){
        					console.log(originFile)
        			
        					if(data.notImageFile == null){
-       						output = "<div id="+originFile+"><img src='/resources/uploads/attachFile"+data.thumbnailFile+"' style='width:100px; height:100px; overflow: auto; margin:10px' />";
+       						output = "<div id="+originFile+"><img src='${pageContext.request.contextPath}/resources/uploads/attachFile"+data.thumbnailFile+"' style='width:100px; height:100px; overflow: auto; margin:10px' />";
        						output +="<button type='button' onclick='delAttachFile(\""+data.thumbnailFile+"\",\""+data.notImageFile+"\",\""+data.originFile+"\");'>x</button></div>";
        					}else if(data.notImageFile != null){
-       						output = "<div id="+originFile+"><a href='/resources/uploads/attachFile"+data.notImageFile+"'>첨부파일</a>";
+       						output = "<div id="+originFile+"><a href='${pageContext.request.contextPath}/resources/uploads/attachFile"+data.notImageFile+"'>첨부파일</a>";
        						output += "<button type='button' onclick='delAttachFile(\""+data.thumbnailFile+"\",\""+data.notImageFile+"\",\""+data.originFile+"\");'>x</button></div>";
        					}
        				
@@ -208,7 +208,7 @@ function writeCancle(){
 	let url = "${pageContext.request.contextPath}/notice/uploadCancle";
 	let targetFileDiv = $("#imgOutput").html();
 	console.log(targetFileDiv);
-	let targetFile = targetFileDiv.split("/")[4].split("\"")[0];
+	let targetFile = targetFileDiv.split("/")[5].split("\"")[0];
 	console.log(targetFile);
 	
 	$.ajax({
@@ -220,7 +220,7 @@ function writeCancle(){
  			},
 		success : function(data){
 			console.log(data);
-			location.href = '/notice/listAll';
+			location.href = '${pageContext.request.contextPath}/notice/listAll';
 			
 		},error : function(e){
 			

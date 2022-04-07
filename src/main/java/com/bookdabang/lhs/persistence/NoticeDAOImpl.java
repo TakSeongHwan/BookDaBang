@@ -162,5 +162,31 @@ public class NoticeDAOImpl implements NoticeDAO {
 		return ses.update(ns+".updateAccessDate", map);
 	}
 
+	@Override
+	public int updateNewImageFile(String newImage, int noticeNo) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("image", newImage);
+		map.put("no",noticeNo);
+		return ses.update(ns+".updateNewImageFile", map);
+	}
+
+	@Override
+	public int getAfByNoImgFn(String notImageFile) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns+".selectAfByNoImgFn",notImageFile);
+	}
+
+	@Override
+	public int getAfByThumbFn(String thumbnailFile) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns+".selectAfByThumbFn",thumbnailFile);
+	}
+
+	@Override
+	public int deleteOldAttachFile(int attachFileNo) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.delete(ns+".deleteOldAttachFile",attachFileNo);
+	}
+
 
 }

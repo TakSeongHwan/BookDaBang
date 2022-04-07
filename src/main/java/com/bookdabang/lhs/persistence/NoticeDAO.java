@@ -46,6 +46,14 @@ public interface NoticeDAO {
 
 	public int updateAccessDate(String ipaddr, int noticeNo) throws Exception;
 
+	public int updateNewImageFile(String newImage, int noticeNo) throws Exception;
+
+	public int getAfByNoImgFn(String fn) throws Exception;
+
+	public int getAfByThumbFn(String fn) throws Exception;
+
+	public int deleteOldAttachFile(int attachFileNo) throws Exception;
+
 
 	
 }
