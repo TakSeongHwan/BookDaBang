@@ -124,7 +124,6 @@ function loginOrNot() {
                      aria-expanded="false">게시판</a>
                    <ul class="dropdown-menu">
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">자유게시판</a></li>
-                        <li class="nav-item"><a class="nav-link" href="${contextPath}/event/allEventList">이벤트 게시판</a></li>
                         <!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->
                    </ul>
             </li>
