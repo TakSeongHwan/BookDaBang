@@ -68,8 +68,22 @@
                         <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>
                    </ul>
                  </li>
+<<<<<<< HEAD
                  <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
   
+=======
+                 <!-- <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>  -->
+  				
+  				 <li class="nav-item submenu dropdown">
+                   <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                     aria-expanded="false">게시판</a>
+                   <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">자유게시판</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath}/event/allEventList">이벤트 게시판</a></li>
+                        <!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->
+                   </ul>
+            </li>
+>>>>>>> parent of 66c2768 (Revert "게시판 Reading 작업")
             </ul>
 
             <ul class="nav-shop">
