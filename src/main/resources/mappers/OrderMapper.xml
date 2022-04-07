@@ -40,4 +40,14 @@
 		update prodOrder set confirm= 'Y' where orderNo = #{orderNo} 
 	</update>
 	
+	<!-- 전체 출력 -->
+	<select id="orderView" resultType="ProdOrder">
+		select * from prodOrder limit #{startNum}, #{postPerPage}
+	</select>
+	
+	<!-- 전체 주문 개수 -->
+	<select id="allOrderCnt" resultType="int">
+		select count(*) from prodOrder
+	</select>
+	
 </mapper>

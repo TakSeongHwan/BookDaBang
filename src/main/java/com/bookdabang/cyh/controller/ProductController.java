@@ -15,7 +15,7 @@ import com.bookdabang.cyh.service.ProductService;
 
 @Controller
 @RequestMapping(value = "/prodManager/*")
-public class ProductController2 {
+public class ProductController {
 	
 	@Inject 
 	private ProductService service;

@@ -8,8 +8,11 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 
 import com.bookdabang.common.domain.CartVO;
+import com.bookdabang.common.domain.ProductVO;
+import com.bookdabang.common.persistence.ProductDAO;
 import com.bookdabang.tsh.domain.CartProdQttDTO;
 import com.bookdabang.tsh.domain.CartSelectDTO;
+import com.bookdabang.tsh.domain.CartViewDTO;
 import com.bookdabang.tsh.persistence.CartDAO;
 
 @Service
@@ -17,6 +20,8 @@ public class CartServiceImpl implements CartService {
 
 	@Inject
 	private CartDAO dao;
+	@Inject
+	private ProductDAO pdao;
 	
 	@Override
 	public List<CartVO> getAllCart(CartSelectDTO dto) throws Exception {
@@ -65,6 +70,18 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public int loginCart(CartSelectDTO dto) throws Exception {
 		return dao.loginCart(dto);
+	}
+
+	@Override
+	public List<CartViewDTO> getCartView(List<CartVO> cartLst) throws Exception {
+		List<CartViewDTO> cartView = new ArrayList<CartViewDTO>();
+		for (CartVO cart : cartLst) {
+			ProductVO product = pdao.selectProduct(cart.getProductNo());
+			CartViewDTO cv = new CartViewDTO(product.getProduct_no(), cart.getCartNo(), product.getTitle(),
+					product.getCover(), product.getSell_price(), cart.getProductQtt(), product.getStock());
+			cartView.add(cv);
+		}
+		return cartView;
 	}
 
 

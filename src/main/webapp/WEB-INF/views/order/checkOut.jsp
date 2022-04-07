@@ -146,12 +146,18 @@
 	}
 
 	function cartInfo() {
-		let cartNo = "${cartsNo}";
+		let cartNo = new Array();
+		<c:forEach items="${cartLst}" var="item1">
+			cartNo.push("${item1}")
+		</c:forEach>
+		cartNo = JSON.stringify(cartNo);
 		console.log(cartNo);
 		$.ajax({
 			url : "/userCart/cartByNo",
 			type : "POST",
 			data : cartNo,
+			dataType: "json",
+			contentType: "application/json",
 			traditional : true,
 			success : function(data) {
 				parseOrderInfo(data);
@@ -308,10 +314,12 @@
 			</div>
 		</div>
 	</section>
+
 	<!--================End Checkout Area =================-->
 
 
 	<jsp:include page="../userFooter.jsp"></jsp:include>
+	
 
 
 	<script

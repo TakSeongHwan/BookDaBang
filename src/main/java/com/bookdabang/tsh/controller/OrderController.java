@@ -10,6 +10,8 @@ import javax.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +20,7 @@ import com.bookdabang.common.domain.AddressVO;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.ProdOrder;
 import com.bookdabang.tsh.domain.CartSelectDTO;
+import com.bookdabang.tsh.domain.CartViewDTO;
 import com.bookdabang.tsh.domain.OrderDTO;
 import com.bookdabang.tsh.domain.OrderInputDTO;
 import com.bookdabang.tsh.service.AddressService;
@@ -32,33 +35,46 @@ public class OrderController {
 	private OrderService service;
 	@Inject
 	private CartService cService;
-	
-	@RequestMapping(value = "/checkOut")
-	public String checkout(HttpSession ses) throws Exception {
-		System.out.println("GET방식 checkOut");
-		CartSelectDTO dto = new CartSelectDTO();
-		MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember");
-		String userId = null;
-		String ipaddr = null;
-		if (loginMember != null) {
-			userId = loginMember.getUserId();
-		} else {
-			ipaddr = "211.197.18.247";
-		}
-		dto.setUserId(userId);
-		dto.setIpaddr(ipaddr);
-		int cntCart = cService.countCart(dto);
-		System.out.println(cntCart);
-		if(cntCart < 1) {
-			return "redirect:/?cart=null";
-		}
-		return "/order/checkOut";
-	}
+
+//	@RequestMapping(value = "/checkOut")
+//	public String checkout(HttpSession ses) throws Exception {
+//		System.out.println("GET방식 checkOut");
+//		CartSelectDTO dto = new CartSelectDTO();
+//		MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember");
+//		String userId = null;
+//		String ipaddr = null;
+//		if (loginMember != null) {
+//			userId = loginMember.getUserId();
+//		} else {
+//			ipaddr = "211.197.18.247";
+//		}
+//		dto.setUserId(userId);
+//		dto.setIpaddr(ipaddr);
+//		int cntCart = cService.countCart(dto);
+//		System.out.println(cntCart);
+//		if(cntCart < 1) {
+//			return "redirect:/?cart=null";
+//		}
+//		return "/order/checkOut";
+//	}
 	
 	@RequestMapping(value = "/checkOut", method = RequestMethod.POST)
-	public void postCheckout(@RequestParam ArrayList<Integer> cartNo, HttpSession ses,Model model) throws Exception{
-		System.out.println("cartNo"+cartNo);
-		model.addAttribute("cartsNo", cartNo);
+	public void postCheckout(@ModelAttribute ArrayList<CartViewDTO> dto,HttpServletRequest req, HttpSession ses,Model model) throws Exception{
+		System.out.println(dto);
+		String[] cartNo = req.getParameterValues("cartNo");
+		String[] cover = req.getParameterValues("cover");
+		String[] product_no = req.getParameterValues("product_no");
+		String[] productQtt = req.getParameterValues("productQtt");
+		String[] sell_price = req.getParameterValues("sell_price");
+		String[] stock = req.getParameterValues("stock");
+		String[] title = req.getParameterValues("title");
+		String[] checkCart = req.getParameterValues("checkCart");
+		List<Integer> cartLst = new ArrayList<Integer>();
+		for(String cart : checkCart) {
+			cartLst.add(Integer.parseInt(cart));
+		}
+		model.addAttribute("cartLst", cartLst);
+		
 	}
 	
 	@RequestMapping(value="/getOrder",method = RequestMethod.POST)
