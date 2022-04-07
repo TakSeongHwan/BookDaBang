@@ -3,7 +3,7 @@ package com.bookdabang.common.domain;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-public class EventBoardVo {
+public class EventBoardVO {
 	private int boardno;
 	private String writer;
 	private Timestamp date;
@@ -12,9 +12,9 @@ public class EventBoardVo {
 	private String title;
 	private String content;
 	
-	public EventBoardVo() { }
+	public EventBoardVO() { }
 	
-	public EventBoardVo(int boardno, String writer, Timestamp date, int readcount, Date duration, String title,
+	public EventBoardVO(int boardno, String writer, Timestamp date, int readcount, Date duration, String title,
 			String content) {
 		super();
 		this.boardno = boardno;

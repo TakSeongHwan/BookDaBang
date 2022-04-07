@@ -2,7 +2,7 @@ package com.bookdabang.common.domain;
 
 import java.sql.Timestamp;
 
-public class EventReplyVo {
+public class EventReplyVO {
 	private int boardNo;
 	private int replyNo;
 	private String replywriter;
@@ -12,9 +12,9 @@ public class EventReplyVo {
 	private int step;
 	private int reforder;
 	
-	public EventReplyVo(){}
+	public EventReplyVO(){}
 
-	public EventReplyVo(int boardNo, int replyNo, String replywriter, Timestamp replyDate, String content, int ref,
+	public EventReplyVO(int boardNo, int replyNo, String replywriter, Timestamp replyDate, String content, int ref,
 			int step, int reforder) {
 		super();
 		this.boardNo = boardNo;
