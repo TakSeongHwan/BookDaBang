@@ -21,18 +21,6 @@ console.log("이것도 안되니?" + ses);
 
 <body>
 	<jsp:include page="userHeader.jsp"></jsp:include>
-<<<<<<< HEAD
-		<div> <button type="button" class="btn">${ sessionId}</button>
-<button type="button" class="btn btn-primary">${loginMember.userName}</button>
-<button type="button" class="btn btn-secondary">${ sessionId}</button>
-<button type="button" class="btn btn-success">Success</button>
-<button type="button" class="btn btn-info">Info</button>
-<button type="button" class="btn btn-warning">Warning</button>
-<button type="button" class="btn btn-danger">Danger</button>
-<button type="button" class="btn btn-dark">Dark</button>
-<button type="button" class="btn btn-light">Light</button>
-<button type="button" class="btn btn-link">Link</button> </div>
-=======
 	<div>
 		<button type="button" class="btn">Basic</button>
 		<button type="button" class="btn btn-primary">Primary</button>
@@ -45,7 +33,6 @@ console.log("이것도 안되니?" + ses);
 		<button type="button" class="btn btn-light">Light</button>
 		<button type="button" class="btn btn-link">Link</button>
 	</div>
->>>>>>> KHN
 	<jsp:include page="userFooter.jsp"></jsp:include>
 </body>
 </html>
