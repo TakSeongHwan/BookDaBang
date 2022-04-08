@@ -14,12 +14,14 @@ public class ProdOrder {
 	private String confirm; 
 	private int price; 
 	private String orderPwd;
+	private String orderBundle;
 	public ProdOrder() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	public ProdOrder(int orderNo, String userId, int productNo, int productQtt, int orderState_code,
-			Timestamp orderDate, int addressNo, Timestamp releaseDate, String confirm, int price, String orderPwd) {
+			Timestamp orderDate, int addressNo, Timestamp releaseDate, String confirm, int price, String orderPwd,
+			String orderBundle) {
 		super();
 		this.orderNo = orderNo;
 		this.userId = userId;
@@ -32,6 +34,7 @@ public class ProdOrder {
 		this.confirm = confirm;
 		this.price = price;
 		this.orderPwd = orderPwd;
+		this.orderBundle = orderBundle;
 	}
 	public int getOrderNo() {
 		return orderNo;
@@ -99,12 +102,19 @@ public class ProdOrder {
 	public void setOrderPwd(String orderPwd) {
 		this.orderPwd = orderPwd;
 	}
+	public String getOrderBundle() {
+		return orderBundle;
+	}
+	public void setOrderBundle(String orderBundle) {
+		this.orderBundle = orderBundle;
+	}
 	@Override
 	public String toString() {
 		return "ProdOrder [orderNo=" + orderNo + ", userId=" + userId + ", productNo=" + productNo + ", productQtt="
 				+ productQtt + ", orderState_code=" + orderState_code + ", orderDate=" + orderDate + ", addressNo="
 				+ addressNo + ", releaseDate=" + releaseDate + ", confirm=" + confirm + ", price=" + price
-				+ ", orderPwd=" + orderPwd + "]";
+				+ ", orderPwd=" + orderPwd + ", orderBundle=" + orderBundle + "]";
 	}
+	
 	
 }

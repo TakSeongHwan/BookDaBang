@@ -8,32 +8,37 @@ import java.net.URLEncoder;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
 import org.xml.sax.helpers.ParserAdapter;
+
+import com.bookdabang.cyh.domain.ProdInfo;
+
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-class Item{
-	public String Title = "";
-	public String Link = "";
-}
 
 class AladdinOpenAPIHandler extends DefaultHandler {
-	public List<Item> Items;
-	private Item currentItem;
+	public List<ProdInfo> Items;
+	private ProdInfo currentItem;
 	private boolean inItemElement = false;
 	private String tempValue;
 
 	public AladdinOpenAPIHandler( ){
-		Items = new ArrayList<Item>();
+		Items = new ArrayList<ProdInfo>();
 	}
 
 	public void startElement(String namespace, String localName, String qName, Attributes atts) {
 		if (localName.equals("item")) {
-			currentItem = new Item();
+			currentItem = new ProdInfo();
 			inItemElement = true;
-		} else if (localName.equals("title")) {
+		} else if (localName.equals("author")) {
 			tempValue = "";
-		} else if (localName.equals("link")) {
+		} else if (localName.equals("publisher")) {
+			tempValue = "";
+		} else if (localName.equals("pubDate")) {
+			tempValue = "";
+		} else if (localName.equals("description")) {
+			tempValue = "";
+		}else if (localName.equals("title")) {
 			tempValue = "";
 		}
 	}
@@ -48,10 +53,16 @@ class AladdinOpenAPIHandler extends DefaultHandler {
 				Items.add(currentItem);
 				currentItem = null;
 				inItemElement = false;
-			} else if (localName.equals("title")) {
-				currentItem.Title = tempValue;
-			} else if (localName.equals("link")) {
-				currentItem.Link = tempValue;
+			} else if (localName.equals("author")) {
+				currentItem.author = tempValue;
+			} else if (localName.equals("publisher")) {
+				currentItem.publisher = tempValue;
+			}else if (localName.equals("pubDate")) {
+				currentItem.pubDate = tempValue;
+			}else if (localName.equals("description")) {
+				currentItem.description = tempValue;
+			}else if (localName.equals("title")) {
+				currentItem.title = tempValue;
 			}
 		}
 	}
@@ -89,13 +100,15 @@ public class API_InputProcess {
 		return BASE_URL + sb.toString();
 	}
 
-	public void apiInput() throws Exception {
-		
-		String url = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbkrke98ss1728001&itemIdType=ISBN&ItemId=K492638427&output=xml&Version=20131101&OptResult=ebookList,usedList,reviewList'";
+	public ProdInfo apiInput(String isbn) throws Exception {
+		ProdInfo prodInfo = null;
+		String url = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbkrke98ss1728001&itemIdType=ISBN&ItemId="+isbn+"&output=xml&Version=20131101&OptResult=ebookList,usedList,reviewList'";
 		AladdinOpenAPIHandler api = new AladdinOpenAPIHandler();
 		api.parseXml(url);
-		for(Item item : api.Items){
-			System.out.println(item.Title + " : " + item.Link);
+		for(ProdInfo item : api.Items){
+			
+			prodInfo = item;
 		}
+		return prodInfo;
 	}
 }

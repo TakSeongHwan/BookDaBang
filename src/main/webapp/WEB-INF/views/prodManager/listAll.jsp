@@ -37,7 +37,7 @@
 				$(".prodCheck").prop("checked", false);
 			}
 		});
-		
+
 		$("#allUpCheck").change(function() {
 			if ($("#allUpCheck").is(":checked")) {
 				$(".upProdCheck").prop("checked", true);
@@ -45,8 +45,6 @@
 				$(".upProdCheck").prop("checked", false);
 			}
 		});
-		
-		
 
 		$(".sortBtn").on("click", function() {
 			$(".sortBtn").not(this).html("▽");
@@ -115,7 +113,8 @@
 							thisval = $(this).text();
 							console.log(thistag, thisval);
 							let input = '<input type="text" id="a" style= "width :80px" value="'
-									+ $(this).text() + '" onkeyup="inputNumberFormat(this)">'
+									+ $(this).text()
+									+ '" onkeyup="inputNumberFormat(this)">'
 							$(this).html(input);
 
 							$(document).on(
@@ -129,183 +128,223 @@
 										} else if ($(this).val() != thisval) {
 											thistag.html($("#a").val());
 											thistag.css("color", "orange");
-											thistag.next().css("color", "orange");
-											
+											thistag.next().css("color",
+													"orange");
+
 										}
 
 									});
 
 						});
-		
-		
+
 		$(document)
-		.on(
-				"dblclick",
-				".updateStock",
-				function() {
-					thistag = $(this);
-					thisval = $(this).text();
-					console.log(thistag, thisval);
-					let input = '<input type="text" id="a" style= "width :80px" value="'
-							+ $(this).text() + '" onkeyup="inputNumberFormat(this)">'
-					$(this).html(input);
+				.on(
+						"dblclick",
+						".updateStock",
+						function() {
+							thistag = $(this);
+							thisval = $(this).text();
+							console.log(thistag, thisval);
+							let input = '<input type="text" id="a" style= "width :80px" value="'
+									+ $(this).text()
+									+ '" onkeyup="inputNumberFormat(this)">'
+							$(this).html(input);
 
-					$(document).on(
-							"blur",
-							"#a",
-							function() {
-								if ($(this).val() == thisval
-										|| $(this).val() == "") {
-									console.log($(this).val());
-									thistag.html(thisval);
-								} else if ($(this).val() != thisval) {
-									thistag.html($("#a").val());
-									thistag.css("color", "orange");
-									thistag.next().css("color", "orange");
-									
-								}
+							$(document).on(
+									"blur",
+									"#a",
+									function() {
+										if ($(this).val() == thisval
+												|| $(this).val() == "") {
+											console.log($(this).val());
+											thistag.html(thisval);
+										} else if ($(this).val() != thisval) {
+											thistag.html($("#a").val());
+											thistag.css("color", "orange");
+											thistag.next().css("color",
+													"orange");
 
-							});
+										}
 
-				});
-		
-		
-		
-		
-		
-		$(document).on("dblclick", ".updateDisplay", function(){
-			thistag = $(this);
-			let input = '<select id="sud"><option value="yes" selected>진열</option><option value="no">진열안함</option></select>';
-			$(this).html(input);
-			
-			$(document).on("blur", "#sud", function(){
-				if($("#sud").val() == "yes"){
-					thistag.html('<span class="badge bg-label-primary" id="yes">진열</span>');
-				}else if($("#sud").val() == "no") {
-					thistag.html('<span class="badge bg-label-warning" id="no">진열안함</span>');
-				}
-			});
-			
-		});
-		
-		$(document).on("dblclick", ".updateSales", function(){
-			thistag = $(this);
-			let input = '<select id="sus"><option value="sale" selected>판매</option><option value="notSales">판매안함</option><option value="soldOut">품절</option></select>';
-			$(this).html(input);
-			
-			$(document).on("blur", "#sus", function(){
-				if($("#sus").val() == "sale"){
-					thistag.html('<span class="badge bg-label-primary" id="sale">판매중</span>');
-				}else if($("#sus").val() == "notSales") {
-					thistag.html('<span class="badge bg-label-warning" "id="notSales">판매안함</span></div>');
-				}else if($("#sus").val() == "soldOut") {
-					thistag.html('<span class="badge bg-label-danger" id="soldOut">품절</span>');
-				}
-			});
-			
-		});
-		
-		
-		
-		
+									});
+
+						});
+
+		$(document)
+				.on(
+						"dblclick",
+						".updateDisplay",
+						function() {
+							thistag = $(this);
+							let input = '<select id="sud"><option value="yes" selected>진열</option><option value="no">진열안함</option></select>';
+							$(this).html(input);
+
+							$(document)
+									.on(
+											"blur",
+											"#sud",
+											function() {
+												if ($("#sud").val() == "yes") {
+													thistag
+															.html('<span class="badge bg-label-primary" id="yes">진열</span>');
+												} else if ($("#sud").val() == "no") {
+													thistag
+															.html('<span class="badge bg-label-warning" id="no">진열안함</span>');
+												}
+											});
+
+						});
+
+		$(document)
+				.on(
+						"dblclick",
+						".updateSales",
+						function() {
+							thistag = $(this);
+							let input = '<select id="sus"><option value="sale" selected>판매</option><option value="notSales">판매안함</option><option value="soldOut">품절</option></select>';
+							$(this).html(input);
+
+							$(document)
+									.on(
+											"blur",
+											"#sus",
+											function() {
+												if ($("#sus").val() == "sale") {
+													thistag
+															.html('<span class="badge bg-label-primary" id="sale">판매중</span>');
+												} else if ($("#sus").val() == "notSales") {
+													thistag
+															.html('<span class="badge bg-label-warning" "id="notSales">판매안함</span></div>');
+												} else if ($("#sus").val() == "soldOut") {
+													thistag
+															.html('<span class="badge bg-label-danger" id="soldOut">품절</span>');
+												}
+											});
+
+						});
 
 		$(document).on("click", "#reflashImg", function() {
-			$("#reflashImg").css("transform": "rotate")
 			prodselectview(checkAry);
-			/* for(let i=0; i< 100; i++){
-				
-			}  */
-			
+
 		});
-		
-		
 
 		$(document).on("click", "#delProd", function() {
 
 		});
-		
-		
-		$(document).on("click", "#updateprod", function() {
-			alert("!");
-			
-			let updateProdAry = [];
-			
-			
-			
-			for (let i = 0; i < 10; i++) {
-					let updateProd = {updatePrice : "", updateStock : "", updateDisplay : "", updateSales : ""}
-				if ($(".upProdCheck").eq(i).is(":checked")) {
-					updateProd.updatePrice = parseInt($(".updatePrice").eq(i).html().replace(",", ""));
-					updateProd.updateStock = parseInt($(".updateStock").eq(i).html().replace(",", ""));
-					
-					
-					if($(".updateDisplay").eq(i).text() == "진열"){
-						updateProd.updateDisplay = "yes";
-					} else if($(".updateDisplay").eq(i).text() == "진열안함") {
-						updateProd.updateDisplay = "no";
-					}
-					
-					if($(".updateSales").eq(i).text() == "판매중"){
-						updateProd.updateSales = "sale";
-					} else if($(".updateSales").eq(i).text() == "판매안함") {
-						updateProd.updateSales = "notSales";
-					} else if($(".updateSales").eq(i).text() == "품절") {
-						updateProd.updateSales = "soldOut";
-					} 
-					updateProdAry.push(updateProd);
-				}
-			}
-			console.log(updateProdAry);
-			
-		});
-/*410 */
-		
-		$(document).on("change", "#updAllDisplay", function(){
-			for (let i = 0; i < 10; i++) {
-				if ($(".upProdCheck").eq(i).is(":checked")) {
-				if($("#updAllDisplay").val() == "yes"){
-				$(".updateDisplay").eq(i).html('<span class="badge bg-label-primary" id="yes">진열</span>');
-				} else {
-					$(".updateDisplay").eq(i).html('<span class="badge bg-label-warning" id="no">진열안함</span>');
-				}
-				}
-			}
-		});
+
+		$(document)
+				.on(
+						"click",
+						"#updateprod",
+						function() {
+							let updateProdAry = [];
+
+							for (let i = 0; i < 10; i++) {
+								let updateProd = {
+									prodNo : "",
+									updatePrice : "",
+									updateStock : "",
+									updateDisplay : "",
+									updateSales : ""
+								}
+								if ($(".upProdCheck").eq(i).is(":checked")) {
+									updateProd.prodNo = $(".upProdCheck").eq(i)
+											.attr("id");
+									updateProd.updatePrice = parseInt($(
+											".updatePrice").eq(i).html()
+											.replace(",", ""));
+									updateProd.updateStock = parseInt($(
+											".updateStock").eq(i).html()
+											.replace(",", ""));
+
+									if ($(".updateDisplay").eq(i).text() == "진열") {
+										updateProd.updateDisplay = "yes";
+									} else if ($(".updateDisplay").eq(i).text() == "진열안함") {
+										updateProd.updateDisplay = "no";
+									}
+
+									if ($(".updateSales").eq(i).text() == "판매중") {
+										updateProd.updateSales = "sale";
+									} else if ($(".updateSales").eq(i).text() == "판매안함") {
+										updateProd.updateSales = "notSales";
+									} else if ($(".updateSales").eq(i).text() == "품절") {
+										updateProd.updateSales = "soldOut";
+									}
+									updateProdAry.push(updateProd);
+								}
+							}
+							console.log(updateProdAry);
+							updateProd(updateProdAry);
+
+						});
+		/*410 */
+
+		$(document)
+				.on(
+						"change",
+						"#updAllDisplay",
+						function() {
+							for (let i = 0; i < 10; i++) {
+								if ($(".upProdCheck").eq(i).is(":checked")) {
+									if ($("#updAllDisplay").val() == "yes") {
+										$(".updateDisplay")
+												.eq(i)
+												.html(
+														'<span class="badge bg-label-primary" id="yes">진열</span>');
+									} else {
+										$(".updateDisplay")
+												.eq(i)
+												.html(
+														'<span class="badge bg-label-warning" id="no">진열안함</span>');
+									}
+								}
+							}
+						});
 		updAllSales
-		$(document).on("change", "#updAllSales", function(){
-			for (let i = 0; i < 10; i++) {
-				if ($(".upProdCheck").eq(i).is(":checked")) {
-				if($("#updAllSales").val() == "sale"){
-				$(".updateSales").eq(i).html('<span class="badge bg-label-primary" id="sale">판매중</span>');
-				} else if($("#updAllSales").val() == "notSales") {
-					$(".updateSales").eq(i).html('<span class="badge bg-label-warning" "id="notSales">판매안함</span></div>');
-				} else{
-					$(".updateSales").eq(i).html('<span class="badge bg-label-danger" id="soldOut">품절</span>');
-				}
-				
-				}
-			}
-		});
-		
-		
+		$(document)
+				.on(
+						"change",
+						"#updAllSales",
+						function() {
+							for (let i = 0; i < 10; i++) {
+								if ($(".upProdCheck").eq(i).is(":checked")) {
+									if ($("#updAllSales").val() == "sale") {
+										$(".updateSales")
+												.eq(i)
+												.html(
+														'<span class="badge bg-label-primary" id="sale">판매중</span>');
+									} else if ($("#updAllSales").val() == "notSales") {
+										$(".updateSales")
+												.eq(i)
+												.html(
+														'<span class="badge bg-label-warning" "id="notSales">판매안함</span></div>');
+									} else {
+										$(".updateSales")
+												.eq(i)
+												.html(
+														'<span class="badge bg-label-danger" id="soldOut">품절</span>');
+									}
+
+								}
+							}
+						});
 
 	}
-	
-	function inputNumberFormat(obj) {
-		
-	 obj.value = comma(uncomma(obj.value));
- 	}
 
-	
- function comma(str) {
-     str = String(str);
-     return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
- }
- 
- function uncomma(str) {
-     str = String(str);
-     return str.replace(/[^\d]+/g, '');
- }
+	function inputNumberFormat(obj) {
+
+		obj.value = comma(uncomma(obj.value));
+	}
+
+	function comma(str) {
+		str = String(str);
+		return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+	}
+
+	function uncomma(str) {
+		str = String(str);
+		return str.replace(/[^\d]+/g, '');
+	}
 
 	function prodselectview(checkAry) {
 		$("#selectProdView").empty();
@@ -402,10 +441,13 @@
 							output += '<td>' + e.isbn + '</td>';
 							output += '<td><img src ="' + e.cover + '" width="50" /></td>';
 							output += '<td>' + e.title + '</td>';
-							let price = e.price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-							let sellPrice = e.sell_price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-							output += '<td><div>' + price+ '￦</div>'
-							output += '<div style="color : #ccc">'+sellPrice + '￦</div></td>';
+							let price = e.price.toString().replace(
+									/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+							let sellPrice = e.sell_price.toString().replace(
+									/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+							output += '<td><div>' + price + '￦</div>'
+							output += '<div style="color : #ccc">' + sellPrice
+									+ '￦</div></td>';
 							output += '<td>' + e.stock + '</td>';
 							rgDate = new Date(
 									+new Date(e.rg_date) + 3240 * 10000)
@@ -414,7 +456,9 @@
 							if (!e.update_date) {
 								upDate = "수정날짜 없음";
 							} else {
-
+								upDate = new Date(
+										+new Date(e.update_date) + 3240 * 10000)
+										.toISOString().split("T")[0];
 							}
 							output += '<td><div>' + rgDate + '</div>';
 							output += '<div style="color : #ccc">' + upDate
@@ -472,8 +516,7 @@
 						+ i
 						+ "</a></li>";
 			}
-			
-			
+
 		}
 
 		if (pageNo < data.pagingInfo.totalPage) {
@@ -508,11 +551,15 @@
 							output += '<td>' + e.isbn + '</td>';
 							output += '<td><img src ="' + e.cover + '" width="50" /></td>';
 							output += '<td>' + e.title + '</td>';
-							let price = e.price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+							output += '<td style="font-size : 12px">'
+									+ ConversionOfcategory(e.category_code)
+									+ '</td>';
+							let price = e.price.toString().replace(
+									/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 							output += '<td><span class="updatePrice">' + price
 									+ '</span><span>￦</span></td>'
-							output += '<td><span class="updateStock">' + e.stock
-									+ '</span><span>권</span></td>'
+							output += '<td><span class="updateStock">'
+									+ e.stock + '</span><span>권</span></td>'
 							if (e.display_status == "yes") {
 								displayStatus = '<div class="updateDisplay"><span class="badge bg-label-primary" id="yes">진열</span></div>';
 							} else {
@@ -532,6 +579,76 @@
 		/* 210 */
 
 		$("#selectProdView").append(output);
+
+	}
+
+	function updateProd(updateProdAry) {
+		let JsonUpdateProdAry = JSON.stringify(updateProdAry);
+		console.log(JsonUpdateProdAry);
+
+		let url = "/prodRest/";
+		$.ajax({
+			url : url,
+			dataType : "text",
+			type : "put",
+			traditional : true,
+			headers : {
+				"content-type" : "application/json",
+				"X-HTTP-Method-Override" : "POST"
+			},
+			data : JsonUpdateProdAry,
+
+			success : function(data) {
+				console.log(data)
+				if (data == "success") {
+					alert("업데이트에 성공했군요");
+					/* prodselectview(checkAry); */
+					location.reload();
+				}
+
+			},
+			error : function(data) {
+				console.log(data)
+
+			}
+
+		});
+	}
+
+	function ConversionOfcategory(category_code) {
+		let category = "";
+		switch (category_code) {
+		case 10:
+			category = "철학, 심리학, 윤리학";
+			return category
+		case 20:
+			category = "종교";
+			return category
+		case 30:
+			category = "사회과학";
+			return category
+		case 40:
+			category = "자연과학";
+			return category
+		case 50:
+			category = "기술과학";
+			return category
+		case 60:
+			category = "예술";
+			return category
+		case 70:
+			category = "언어";
+			return category
+		case 80:
+			category = "문학";
+			return category
+		case 90:
+			category = "역사, 지리, 과학";
+			return category
+		case 100:
+			category = "미분류";
+			return category
+		}
 
 	}
 </script>
@@ -555,11 +672,13 @@
 }
 
 .card {
-	width: 100%;
+	width: 99%;
+	margin: 0 auto;
+	overflow: hidden;
 }
 
 td {
-	max-width: 200px;
+	max-width: 150px;
 	overflow: hidden;
 }
 
@@ -568,7 +687,7 @@ th {
 }
 
 .searchZoon {
-	width: 1300px;
+	width: 1200px;
 	margin: 0 auto;
 }
 
@@ -637,9 +756,14 @@ th {
 	margin-top: 20px;
 }
 
+#reflashImg {
+	opacity: 0.7;
+}
 
-
-
+#reflashImg:hover {
+	transform: rotate(180deg);
+	transition: 0.5s;
+}
 </style>
 </head>
 <body>
@@ -837,19 +961,26 @@ th {
 
 					<!-- Modal body -->
 					<div class="modal-body">
-					<span class="text-muted fw-light">일괄 상태 /</span> 변경
+						<span class="text-muted fw-light">일괄 상태 /</span> 변경
 						<div>
-							 <select class="select2 form-select" id="updAllDisplay" style="width : 110px; display : inline-block; " >
-							 	<option value = "yes">진열</option>
-							 	<option value = "no">진열안함</option>
-							 </select>
-							 <select class="select2 form-select" id="updAllSales" style="width : 110px; display : inline-block;">
-							 	<option value= "sale">판매중</option>
-							 	<option value="notSales">판매안함</option>
-							 	<option value="soldOut">품절</option>
-							 </select>
-							 <button type="button"id="updateReset" style="border: none; background-color: #fff "><img src="/resources/img/etc/reflash.png" id="reflashImg" width="40px"></button>
-							 
+							<select class="select2 form-select" id="updAllDisplay"
+								style="width: 110px; display: inline-block;">
+								<option selected disabled hidden>진열 상태</option>
+								<option value="yes">진열</option>
+								<option value="no">진열안함</option>
+							</select> <select class="select2 form-select" id="updAllSales"
+								style="width: 110px; display: inline-block;">
+								<option selected disabled hidden>판매 상태</option>
+								<option value="sale">판매중</option>
+								<option value="notSales">판매안함</option>
+								<option value="soldOut">품절</option>
+							</select>
+							<button type="button" id="updateReset"
+								style="border: none; background-color: #fff"></button>
+							<img src="/resources/img/etc/reflash.png" id="reflashImg"
+								width="20px">
+							</button>
+
 						</div>
 						<table class="table" id="updateTable">
 							<thead>
@@ -859,6 +990,7 @@ th {
 									<th>상품번호</th>
 									<th>이미지</th>
 									<th>상품명</th>
+									<th>카테고리</th>
 									<th>판매가 /할인가</th>
 									<th>재고
 									<th>진열 상태</th>
@@ -874,7 +1006,7 @@ th {
 
 					<!-- Modal footer -->
 					<div class="modal-footer">
-						
+
 						<button type="button" class="btn btn-primary" id="updateprod">상품
 							수정</button>
 						<button type="button" class="btn btn-danger" id="delProd">상품
