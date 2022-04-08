@@ -3,10 +3,12 @@
  */
 package com.bookdabang.lcs.persistence;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 import com.bookdabang.common.domain.MemberPoint;
 import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.Withdraw;
+import com.bookdabang.lcs.domain.IsdormantDTO;
 import com.bookdabang.lcs.domain.MemberDTO;
 
 public interface MemberDAO {
@@ -18,6 +20,13 @@ public interface MemberDAO {
 	public MemberVO nickNameCheck(String nickName) throws Exception;
 	// 회원가입 포인트 부여
 	public int insertPoint(MemberPoint point) throws Exception;
-	// 추천인 적을시 포인트 부여
+	// 회원조회
+	public List<MemberVO> selectMember() throws Exception;
+	// 휴면회원조회
+	public List<MemberVO> dormantMember() throws Exception;
+	// 탈퇴회원조회
+	public List<Withdraw> deleteMember() throws Exception;
+	// 휴면회원 전환
+	public int updatedormant(IsdormantDTO dormant) throws Exception;
 	
 }

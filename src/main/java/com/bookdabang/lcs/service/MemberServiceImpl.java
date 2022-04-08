@@ -2,6 +2,8 @@
 package com.bookdabang.lcs.service;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -15,25 +17,24 @@ import org.springframework.stereotype.Service;
 
 import com.bookdabang.common.domain.MemberPoint;
 import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.Withdraw;
+import com.bookdabang.lcs.domain.IsdormantDTO;
 import com.bookdabang.lcs.domain.MemberDTO;
 import com.bookdabang.lcs.etc.SendMail;
 import com.bookdabang.lcs.persistence.MemberDAO;
+import com.mysql.cj.xdevapi.Result;
 
 @Service
 public class MemberServiceImpl implements MemberService {
 
 	@Inject
 	private MemberDAO memberDAO; // 객체 주입
-	
+
 
 	@Override
 	public boolean insertMember(MemberDTO member) throws Exception {
 		boolean result = false;
 		int num = memberDAO.insertMember(member);
-		
-		
-		
-		
 		if (member.getRecommend().equals("")) {
 			MemberPoint point = new MemberPoint(member.getUserId(), 10, null, "회원가입", null);
 			int r1 = memberDAO.insertPoint(point);
@@ -132,8 +133,36 @@ public class MemberServiceImpl implements MemberService {
 		
 	}
 
+	@Override
+	public List<MemberVO> selectMember() throws Exception {
+		 
+		return memberDAO.selectMember();
+	}
 
+	@Override
+	public List<MemberVO> dormantMember() throws Exception {
+		
+		return memberDAO.dormantMember();
+	}
 
+	@Override
+	public List<Withdraw> deleteMember() throws Exception {
+		
+		return memberDAO.deleteMember();
+	}
+
+	@Override
+	public boolean updatedormant(IsdormantDTO dormant) throws Exception {
+		boolean result = false; 
+		
+		
+		if(memberDAO.updatedormant(dormant) == 1) {
+			result = true;
+		}
+		return result;  
+	}
+	
+	
 
 	}
 	
