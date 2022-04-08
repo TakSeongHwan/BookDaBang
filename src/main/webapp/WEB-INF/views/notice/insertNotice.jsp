@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
         <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+        <c:set var="contextPath" value="<%=request.getContextPath() %>"></c:set>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,32 +12,10 @@
 <script>
 $(document).ready(function(){
 	
-	let sessionId = "${sessionId}";
-	let getUserIdUrl = "${pageContext.request.contextPath}/notice/getUserId"
-
-		$.ajax({
-				url : getUserIdUrl, 
-				dataType : "json", 
-				type : "GET",
-				data : {
-					sessionId : sessionId
-					
-				},
-				success : function(data) { 
-					console.log(data.userId);
-					$("#writer").val(data.userId);
-				
-					
-				}, error: function(e){
-					console.log(e.responseText);
-					
-				}
-			});
-	
 	
 	$("#imageFile").change(function(){
 		
-		let url = "${pageContext.request.contextPath}/notice/imageHandling";
+		let url = "${contextPath}/notice/imageHandling";
 		let upfile = this.files[0];
 		let fileName = upfile.name;
 		
@@ -60,7 +39,7 @@ $(document).ready(function(){
        				data : formData,
        				success : function(data) { 
        					console.log(data);
-       					let output="<div><img src='${pageContext.request.contextPath}/resources/uploads/noticeBoardImg/"+data+"' style='width:100px; height:100px; overflow: auto; margin:10px' />";
+       					let output="<div><img src='${contextPath}/resources/uploads/noticeBoardImg/"+data+"' style='width:100px; height:100px; overflow: auto; margin:10px' />";
        					output += "<button type='button' onclick='delFile(\""+data+"\");'>x</button></div>";
        					console.log(output);
        					$("#imgOutput").html(output);
@@ -86,7 +65,7 @@ $(document).ready(function(){
 	
 $("#attachFile").change(function(){
 		
-		let url = "${pageContext.request.contextPath}/notice/attactFileUpload";
+		let url = "${contextPath}/notice/attactFileUpload";
 		let upfile = this.files[0];
 		console.log(upfile);
 		let formData = new FormData();
@@ -108,10 +87,10 @@ $("#attachFile").change(function(){
        					console.log(originFile)
        			
        					if(data.notImageFile == null){
-       						output = "<div id="+originFile+"><img src='${pageContext.request.contextPath}/resources/uploads/attachFile"+data.thumbnailFile+"' style='width:100px; height:100px; overflow: auto; margin:10px' />";
+       						output = "<div id="+originFile+"><img src='${contextPath}/resources/uploads/attachFile"+data.thumbnailFile+"' style='width:100px; height:100px; overflow: auto; margin:10px' />";
        						output +="<button type='button' onclick='delAttachFile(\""+data.thumbnailFile+"\",\""+data.notImageFile+"\",\""+data.originFile+"\");'>x</button></div>";
        					}else if(data.notImageFile != null){
-       						output = "<div id="+originFile+"><a href='${pageContext.request.contextPath}/resources/uploads/attachFile"+data.notImageFile+"'>첨부파일</a>";
+       						output = "<div id="+originFile+"><a href='${contextPath}/resources/uploads/attachFile"+data.notImageFile+"'>첨부파일</a>";
        						output += "<button type='button' onclick='delAttachFile(\""+data.thumbnailFile+"\",\""+data.notImageFile+"\",\""+data.originFile+"\");'>x</button></div>";
        					}
        				
@@ -158,7 +137,7 @@ $("#attachFile").change(function(){
 });
 
 function delFile(data){
-	let url = "${pageContext.request.contextPath}/notice/delImgFile";
+	let url = "${contextPath}/notice/delImgFile";
 	
 	$.ajax({
 			url : url, 
@@ -180,7 +159,7 @@ function delFile(data){
 function delAttachFile(thumbnailFile,notImageFile,originFile){
 	console.log(thumbnailFile+","+notImageFile+","+originFile);
 	
-	let url = "${pageContext.request.contextPath}/notice/attachFileDelete"
+	let url = "${contextPath}/notice/attachFileDelete"
 		$.ajax({
 			url : url, 
 			dataType : "text", 
@@ -205,7 +184,7 @@ function delAttachFile(thumbnailFile,notImageFile,originFile){
 	
 }
 function writeCancle(){
-	let url = "${pageContext.request.contextPath}/notice/uploadCancle";
+	let url = "${contextPath}/notice/uploadCancle";
 	let targetFileDiv = $("#imgOutput").html();
 	console.log(targetFileDiv);
 	let targetFile = targetFileDiv.split("/")[5].split("\"")[0];
@@ -220,7 +199,7 @@ function writeCancle(){
  			},
 		success : function(data){
 			console.log(data);
-			location.href = '${pageContext.request.contextPath}/notice/listAll';
+			location.href = '${contextPath}/notice/listAll';
 			
 		},error : function(e){
 			
@@ -244,7 +223,7 @@ z-index:20000;
 <div class="container mt-3 comment-form" >
 <h3 style="margin-bottom:50px;">공지사항 등록</h3>
  
-  <form action="${pageContext.request.contextPath}/notice/insertNotice" method="post" >
+  <form action="${contextPath}/notice/insertNotice" method="post" >
    	 <div class="mb-3 mt-3 title">
   
  	 <input type="text" class="form-control"  id="title"  name="title" placeholder="글 제목 입력">
@@ -252,7 +231,7 @@ z-index:20000;
  	 <div id="titleOk"></div>
  	  <div class="mb-3 mt-3">
  	  
-  	 <input type="text" id="writer" class="form-control" name="writer" readonly>
+  	 <input type="text" id="writer" class="form-control" name="writer" value="${userId }" readonly>
   	  </div>
   	    <div class="mb-3 mt-3">
       <textarea class="form-control" rows="5" id="content" name="content" placeholder="내용 입력"></textarea>

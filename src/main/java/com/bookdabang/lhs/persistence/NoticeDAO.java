@@ -54,6 +54,8 @@ public interface NoticeDAO {
 
 	public int deleteOldAttachFile(int attachFileNo) throws Exception;
 
+	public int updateNoticeText(NoticeVO n) throws Exception;
+
 
 	
 }

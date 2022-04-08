@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
     <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<c:set var="contextPath" value="<%=request.getContextPath() %>"></c:set>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,7 +16,7 @@ $(function(){
 });
 function showContent(obj){
 	let no = $(obj).attr("id");
-	location.href="${pageContext.request.contextPath}/notice/viewContent?no="+no;
+	location.href="${contextPath}/notice/viewContent?no="+no;
 }
 
 </script>
@@ -55,8 +56,9 @@ margin-bottom: 20px;
      </c:forEach>
     </tbody>
   </table>
-  <a class="button" href="${pageContext.request.contextPath}/notice/viewNoticeWrite">글쓰기</a>
-
+  <c:if test="${userId == 'admin' }">
+  <a class="button" href="${contextPath}/notice/viewNoticeWrite">글쓰기</a>
+	</c:if>
 </div>
 
 	<jsp:include page="../userFooter.jsp"></jsp:include>

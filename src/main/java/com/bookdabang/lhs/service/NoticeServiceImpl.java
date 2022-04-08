@@ -18,7 +18,8 @@ public class NoticeServiceImpl implements NoticeService {
 	NoticeDAO noticeDAO;
 
 	@Override
-	public List<NoticeVO> entireNotice() throws Exception {
+	public List<NoticeVO> entireNotice(int pageNo) throws Exception {
+		System.out.println(pageNo);
 		return noticeDAO.entireNotice();
 	}
 
@@ -153,6 +154,23 @@ public class NoticeServiceImpl implements NoticeService {
 	public int deleteOldAttachFile(int attachFileNo) throws Exception {
 		// TODO Auto-generated method stub
 		return noticeDAO.deleteOldAttachFile(attachFileNo);
+	}
+
+	@Override
+	public int updateNoticeText(NoticeVO n) throws Exception {
+		// TODO Auto-generated method stub
+		return noticeDAO.updateNoticeText(n);
+	}
+
+	@Override
+	public boolean updateNoticeAndAttach(NoticeVO n, List<AttachFileVO> fileName) throws Exception {
+		boolean result = false;
+		
+		
+		
+		
+		
+		return result;
 	}
 
 	

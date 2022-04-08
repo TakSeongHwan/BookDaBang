@@ -40,7 +40,7 @@
 		values(#{boardNo},#{replyer},#{replyContent}, #{ref}, #{step}, #{refOrder})
 	</insert>
 	<select id="getReply" resultType="NoticeReplyVO">
-		select * from notice_reply where boardNo = #{boardNo} order by ref desc, step asc, refOrder desc
+		select * from notice_reply where boardNo = #{boardNo} order by ref desc, reforder asc
 	</select>
 	<select id="pageViewCheck" resultType="java.sql.Timestamp">
 		select max(accessDate) from pageview where ip_address = #{ip_address} and noticeNo = #{noticeNo}
@@ -84,4 +84,7 @@
 	<delete id="deleteOldAttachFile">
 	delete from attachfile where attachFileNo = #{attachFileNo}
 	</delete>
+	<update id="updateNoticeText">
+	update notice set title=#{title}, content=#{content} where no=#{no}
+	</update>
 </mapper>

@@ -55,10 +55,27 @@ public class NoticeController {
 	private List<AttachFileVO> fileList = new ArrayList<AttachFileVO>();
 
 	@RequestMapping("listAll")
-	public String notice(Model m) {
+	public String notice(Model m, HttpServletRequest request, @RequestParam(value="pageNo",required=false, defaultValue="1") String tmp) {
 		List<NoticeVO> notice = new ArrayList<NoticeVO>();
+
+		String sessionId = request.getSession().getId();
+		System.out.println(sessionId);
+		
+		ResponseEntity<Map<String,String>> result = null;
+		MemberVO mv = null;
+		
+		int pageNo = 1;
+		if(!tmp.equals("") || tmp != null) {
+			pageNo = Integer.parseInt(tmp);
+		}
+		
 		try {
-			notice = service.entireNotice();
+			mv = loginService.findLoginSess(sessionId);
+			System.out.println(mv);
+			if(mv != null) {
+			m.addAttribute("userId", mv.getUserId());
+			}
+			notice = service.entireNotice(pageNo);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -74,7 +91,22 @@ public class NoticeController {
 		NoticeVO content = null;
 		List<AttachFileVO> af = null;
 		String ipaddr = null;
+		
+		String sessionId = request.getSession().getId();
+		System.out.println(sessionId);
+		
+		ResponseEntity<Map<String,String>> result = null;
+		MemberVO mv = null;
+		
 		try {
+			
+			mv = loginService.findLoginSess(sessionId);
+			System.out.println(mv);
+			if(mv != null) {
+			m.addAttribute("userId", mv.getUserId());
+				
+			}
+			
 			ipaddr = IPCheck.getIPAddr(request);
 			//System.out.println("세션에 넣어둔 ip가 잘 저장되어있나? "+request.getSession().getAttribute("ipAddr"));
 			Timestamp lastAccessTime = service.pageViewCheck(ipaddr, no);
@@ -121,46 +153,59 @@ public class NoticeController {
 	}
 
 	@RequestMapping("viewNoticeWrite")
-	public String showNoticeWritePage() {
+	public String showNoticeWritePage(HttpServletRequest request, Model m) {
+		
+		String sessionId = request.getSession().getId();
+		System.out.println(sessionId);
+		
+		ResponseEntity<Map<String,String>> result = null;
+		MemberVO mv = null;
+	
+			try {
+				mv = loginService.findLoginSess(sessionId);
+				System.out.println(mv);
+				if(mv != null) {
+				m.addAttribute("userId", mv.getUserId());
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+		
 		return "/notice/insertNotice";
 
 	}
 
 	@RequestMapping(value = "insertNotice", method = RequestMethod.POST)
 	public String insertNotice(NoticeVO n, RedirectAttributes rttr) {
-		
 	
-		int no = 0;
-		try {
-			no = service.getNoticeNo() + 1;
-			n.setNo(no);
-			
-			if(service.insertNotice(n) == 1) {
-				
-				for(AttachFileVO af : this.fileList) {
-					service.insertAttachFile(af, no);
+	
+			try {
+				int no = service.getNoticeNo() + 1;
+				n.setNo(no);
+				if(service.insertNotice(n) == 1) {
+					
+					for(AttachFileVO af : this.fileList) {
+						service.insertAttachFile(af, n.getNo() );
+					}
+					rttr.addFlashAttribute("result", "success");
 				}
-				rttr.addFlashAttribute("result", "success");
+			} catch (Exception e) {
+				rttr.addFlashAttribute("result", "fail");
+				e.printStackTrace();
 			}
-			
-				
-		
-		} catch (Exception e) {
-			rttr.addFlashAttribute("result", "fail");
-			e.printStackTrace();
-		}
-		
-		
-		
 		return "redirect:/notice/listAll";
 	}
 	
 	
 	@RequestMapping(value="updateNotice", method=RequestMethod.POST)
-	@Transactional
 	public String updateNotice(NoticeVO n, RedirectAttributes rttr, MultipartHttpServletRequest multipartRequest, HttpServletRequest request) {
-		//null이 들어가면 얄짤없이 예외나는거같다 나눠야함
-		String newImage = multipartRequest.getFile("newImgFile").getOriginalFilename();
+		
+		boolean newImageUploadCheck = Boolean.parseBoolean(request.getParameter("newImageUploadCheck"));
+		boolean newAttachUploadCheck = Boolean.parseBoolean(request.getParameter("newAttachUploadCheck"));
+	
 		ImageFileHandling ifhl = new ImageFileHandling();
 		UploadFileProcess ufp = new UploadFileProcess();
 		
@@ -170,81 +215,60 @@ public class NoticeController {
 		String upPathImg = request.getSession().getServletContext().getRealPath("resources/uploads/noticeBoardImg/");
 		String upPathAttach =  request.getSession().getServletContext().getRealPath("resources/uploads/attachFile");
 		
-		boolean imgChange = false;
-		boolean attachChange = false;
-		boolean uploadSuccess = false;
-		
-		if(multipartRequest != null) {
-			System.out.println(newImage);
-			n.setImage(newImage);
-			try {
-				ifhl.fileUploading(newImage, upPathImg, multipartRequest.getFile("newImgFile").getBytes());
-				int isImgUpdate = service.updateNewImageFile(newImage, n.getNo());
-				System.out.println("이미지 변경 성공?"+isImgUpdate);
+		try {
+			if(newImageUploadCheck) {
+				String newImage = multipartRequest.getFile("newImgFile").getOriginalFilename();
+				if(newImage != null) {
+					n.setImage(newImage);
+					ifhl.fileUploading(newImage, upPathImg, multipartRequest.getFile("newImgFile").getBytes());
+					if(service.updateNewImageFile(newImage, n.getNo()) == 1) {						
+					}
+				}
+			}else {
+				System.out.println("새로운 이미지 등록 없음");
+			}
+			
+			if(newAttachUploadCheck) {
+				List<MultipartFile> list = multipartRequest.getFiles("newAttachFile");
+				AttachFileVO uploadFile = null;
+				if(list.size() > 0) {
+					for(MultipartFile mf : list) {
+						if (mf.getSize() > 0) {
+								uploadFile = ufp.uploadFileRename(upPathAttach, mf.getOriginalFilename(), mf.getBytes());
+								service.insertAttachFile(uploadFile, n.getNo());
+						}						
+					}
+				}
+			}else {
+				System.out.println("새로운 첨부파일 등록 없음");
+			}
+			if(oldImgName != null) {
 				ifhl.fileDelete(upPathImg, oldImgName);
-				imgChange = true;
-			} catch (Exception e) {
-				rttr.addFlashAttribute("result", "fail");
-				e.printStackTrace();
-			}
-		}
-		System.out.println(oldAttachFileName);
-		if(oldAttachFileName != null) {
-			for(String fn : oldAttachFileName) {
-				System.out.println(fn);
-				int attachFileNo = 0;
-				System.out.println(fn.split("/")[4].split("_")[0].equals("thumb"));
-				try {
-					if(fn.split("/")[4].split("_")[0].equals("thumb")) {
+			}else {
+				System.out.println("이미지 변경 없음");
+			}	
+			if(oldAttachFileName != null) {
+				for(String fn : oldAttachFileName) {
+					int attachFileNo = 0;
 					
-						attachFileNo = service.getAfByThumbFn(fn);
-					}else {
-						attachFileNo = service.getAfByNoImgFn(fn);
-					}
-					
-					System.out.println("첨부파일번호"+attachFileNo);
-					service.deleteOldAttachFile(attachFileNo);
-					ifhl.fileDelete(upPathAttach, fn);
-					attachChange = true;
-				} catch (Exception e) {
-					rttr.addFlashAttribute("result", "fail");
-					e.printStackTrace();
+						if(fn.split("/")[4].split("_")[0].equals("thumb")) {			
+							attachFileNo = service.getAfByThumbFn(fn);
+						}else {
+							attachFileNo = service.getAfByNoImgFn(fn);
+						}				
+						service.deleteOldAttachFile(attachFileNo);
+						ifhl.fileDelete(upPathAttach, fn);	
 				}
-				
+			}else {
+				System.out.println("첨부파일 삭제 없음");
 			}
+			service.updateNoticeText(n);
+			rttr.addFlashAttribute("result", "success");	
+		} catch (Exception e) {
+			rttr.addFlashAttribute("result", "fail");
+			e.printStackTrace();
 		}
-
-		List<MultipartFile> list = multipartRequest.getFiles("newAttachFile");
-		AttachFileVO uploadFile = null;
-		if(list.size() > 0) {
-			for(MultipartFile mf : list) {
-				if (mf.getSize() > 0) {
-					try {
-						uploadFile = ufp.uploadFileRename(upPathAttach, mf.getOriginalFilename(), mf.getBytes());
-						service.insertAttachFile(uploadFile, n.getNo());
-						uploadSuccess = true;
-					} catch (Exception e) {
-						rttr.addFlashAttribute("result", "fail");
-						e.printStackTrace();
-					}
-				}
-				
-			}
-		}
-		
-		
-		System.out.println(n.toString());
-		System.out.println("게시물 안 이미지 파일의 업로드경로 : " + upPathImg);
-		System.out.println("첨부파일의 업로드경로 : " + upPathAttach);
-		
-		//글내용들만 db에 업데이트 시켜주면 그림/첨부/글내용 모두 수정하는 업데이트기능은 완료된다.
-		
-		if(uploadSuccess && imgChange && attachChange) {
-			rttr.addFlashAttribute("result", "success");
-		}
-		
-		return "redirect:/notice/listAll";
-		
+		return "redirect:/notice/viewContent?no="+n.getNo();
 	}
 	
 	@RequestMapping("deleteNotice")
@@ -419,25 +443,6 @@ public class NoticeController {
 		
 		return result;
 	}
-	@RequestMapping("getUserId")
-	public ResponseEntity<Map<String,String>> getUserId(@RequestParam("sessionId") String sessionId) {
-		ResponseEntity<Map<String,String>> result = null;
-		MemberVO mv = null;
-		Map<String,String> map = new HashMap<String, String>();
-		try {
-			mv = loginService.findLoginSess(sessionId);
-			System.out.println(mv);
-			if(mv != null) {
-				map.put("userId", mv.getUserId());
-				result = new ResponseEntity<Map<String,String>>(map, HttpStatus.OK);
-			}
-		} catch (Exception e) {
-			
-			result = new ResponseEntity<Map<String,String>>(HttpStatus.BAD_REQUEST);
-			e.printStackTrace();
-		}
-		return result;
-		
-	}
+
 
 }

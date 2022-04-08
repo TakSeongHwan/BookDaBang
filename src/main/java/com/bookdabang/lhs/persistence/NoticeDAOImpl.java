@@ -188,5 +188,11 @@ public class NoticeDAOImpl implements NoticeDAO {
 		return ses.delete(ns+".deleteOldAttachFile",attachFileNo);
 	}
 
+	@Override
+	public int updateNoticeText(NoticeVO n) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.update(ns+".updateNoticeText",n);
+	}
+
 
 }

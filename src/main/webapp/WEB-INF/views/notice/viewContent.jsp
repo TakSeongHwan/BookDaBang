@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<c:set var="contextPath" value="<%=request.getContextPath() %>"></c:set>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,6 +15,7 @@
 
 	let newImageUp = false;
 	let attachFileUp = false;
+	let loginUser = "${userId}";
 	
 	let imgChangeCount = 0;
 	let oldFileNames = new Array();
@@ -23,6 +25,7 @@
 		
 		$("#newAttachFile").change(function(){
 			attachFileUp = true;
+			$("#newAttachUploadCheck").val("true");
 		});
 		
 		
@@ -41,11 +44,17 @@
 					imgCheck = true;
 					console.log(imgChangeCount)
 					if(imgChangeCount == 0){
-						let oldImgName = $("#imgFileArea img").attr("src").split("/")[5];
-						console.log(oldImgName);
-						$("#oldImgName").val(oldImgName);
-						newImageUp = true;
+						if("${content.image}" != ""){
+							let oldImgName = $("#imgFileArea img").attr("src").split("/")[5];
+							console.log(oldImgName);
+							let output = '<input type="hidden" id="oldImgName" name="oldImgName" value="'+oldImgName+'">'
+							$("#deletedImgFile").html(output);
+				
+						}
 						
+						newImageUp = true;
+						$("#newImageUploadCheck").val("true");
+						$("#imgErrorAlert").empty();
 					}
 					let existingImg = "<span id='existingImg'>"+fileName+"</span>";
 					existingImg += '<button type="button" class="btn rounded-pill btn-icon btn-outline-secondary" onclick="delFile();">x</button>'
@@ -54,35 +63,16 @@
 				}
 			}
 			if (!imgCheck) {
-				alert("이미지 파일만 업로드 가능합니다!");
+				let output='<div class="alert alert-danger">이미지 파일만 업로드 가능합니다!</div>'
+				$("#imgErrorAlert").html(output);
+				$("#newImgFile").val("");
 			}
 		});
 
 		$("#reply").click(function() {
-			let sessionId="${sessionId}";
-			let getUserIdUrl = "${pageContext.request.contextPath}/notice/getUserId"
-				
-				$.ajax({
-						url : getUserIdUrl, 
-						dataType : "json", 
-						type : "GET",
-						data : {
-							sessionId : sessionId
-							
-						},
-						success : function(data) { 
-							console.log(data.userId);
-							if(data.userId != null){
-								$("#writer").val(data.userId);
-							}else{
-								location.href="${pageContext.request.contextPath}/login";
-							}
-							
-						}, error: function(e){
-							console.log(e.responseText);
-							
-						}
-					});
+			if(loginUser == ""){
+				location.href="${contextPath}/login";
+			}
 		});
 		
 		
@@ -120,8 +110,10 @@
 		if(imgChangeCount == 0){
 			let oldImgName = $("#imgFileArea img").attr("src").split("/")[5];
 			console.log(oldImgName);
-			$("#oldImgName").val(oldImgName);
+			let output = '<input type="hidden" id="oldImgName" name="oldImgName" value="'+oldImgName+'">'
+			$("#deletedImgFile").html(output);
 			newImageUp = false;
+			$("#newImageUploadCheck").val("false");
 			
 		}
 		$("#imgOutput").empty();
@@ -130,8 +122,9 @@
 	function delAttachFile(obj) {
 		let getFileId = $(obj).attr("id");
 		let fileName = $(obj).siblings("span").html();
-		getFileType = getFileId.split("-")[0];
-		
+		let getFileType = getFileId.split("-")[0];
+		console.log(fileName)
+		console.log(getFileType)
 		for(let i in oldFileNames){
 		
 			if(getFileType == "delAttachImgFileBtn"){
@@ -141,9 +134,10 @@
 				}
 				$("#"+getFileId+"").parent().hide();
 			}else if(getFileType == "delAttachNotImgFileBtn"){
-
-				if(oldFileNames[i].split(",")[2].split("]]")[0] == fileName){
-					console.log(fileName)
+				console.log(oldFileNames[i].split(",")[2].split("]")[0])
+				console.log(fileName)
+				if(oldFileNames[i].split(",")[2].split("]")[0] == fileName){
+					console.log(fileName);
 					let output = '<input type="hidden" name="deletedAttachFile" value="'+fileName+'">'
 					$("#deletedAttachFile").append(output);
 				
@@ -191,7 +185,7 @@
 			replyContent : reply
 		});
 
-		let url = "${pageContext.request.contextPath}/noticeReply/addReply";
+		let url = "${contextPath}/noticeReply/addReply";
 		$.ajax({
 			url : url,
 			dataType : "text",
@@ -220,7 +214,7 @@
 	function showAllReply() {
 
 		let boardNo = "${content.no}"
-		let url = "${pageContext.request.contextPath}/noticeReply/all/" + boardNo;
+		let url = "${contextPath}/noticeReply/all/" + boardNo;
 		$.ajax({
 			url : url,
 			dataType : "JSON",
@@ -249,23 +243,23 @@
 							output += '<div>';
 							if(e.step > 0){
 								for(let count = 0; count < e.step; count++){
-									output+= '<img src="${pageContext.request.contextPath}/resources/img/reply.png" width="20px"/>'
+									output+= '<img src="${contextPath}/resources/img/reply.png" width="20px"/>'
 								}
 									
 								
 							}
-							output += '<div id="rep'+e.replyNo+'">'
+							output += '<div id="'+e.replyNo+'">'
 									+ e.replyer + '</div>';
 							output += '<div> 댓글 내용 : ' + e.replyContent
 									+ '</div>';
 							output += '<div>'+ formatDate(e.replyDate)
 									+ '</div>';
 							output += '<div style="float:right; margin-right:10px; margin-bottom:5px;">'
-									+ "<img src='${pageContext.request.contextPath}/resources/img/addrereply.png' width='20px' style='margin-right:10px;' onclick='showRereplyModal("
+									+ "<img src='${contextPath}/resources/img/addrereply.png' width='20px' style='margin-right:10px;' onclick='showRereplyModal("
 									+ e.replyNo + ");'/>";
-							output += "<img src='${pageContext.request.contextPath}/resources/img/correct.png' width='20px' style='margin-right:10px;' onclick='showReplyModify("
+							output += "<img src='${contextPath}/resources/img/correct.png' width='20px' style='margin-right:10px;' onclick='showReplyModify("
 									+ e.replyNo + ");'/>";
-							output += "<img src='${pageContext.request.contextPath}/resources/img/delete.png' width='20px' onclick='showReplyDelete("
+							output += "<img src='${contextPath}/resources/img/delete.png' width='20px' onclick='showReplyDelete("
 									+ e.replyNo + ");'/>";
 							output += '</div>';
 							output += '</div></div>';
@@ -297,66 +291,78 @@
 
 	}
 	function deleteReply(replyNo) {
-		let url = "${pageContext.request.contextPath}/noticeReply/" + replyNo;
-		$.ajax({
-			url : url,
-			dataType : "text",
-			type : "DELETE",
-			headers : {
-				"content-type" : "application/json",
-				"x-HTTP-Method-Override" : "POST"
-			},
-			success : function(data) {
-				console.log(data);
-				$("#deleteModal").hide();
-				showAllReply();
+		let replyer = $("#"+replyNo+"").html();
+		console.log(replyer);
+		let url = "${contextPath}/noticeReply/" + replyNo;
+		if(replyer == loginUser){
+			$.ajax({
+				url : url,
+				dataType : "text",
+				type : "DELETE",
+				headers : {
+					"content-type" : "application/json",
+					"x-HTTP-Method-Override" : "POST"
+				},
+				success : function(data) {
+					console.log(data);
+					$("#deleteModal").hide();
+					showAllReply();
 
-			}
-		});
+				}
+			});
+		}else{
+			alert("본인이 쓴 댓글만 삭제할 수 있습니다. ")
+		}
+		
 
 	}
 	function modiReply(replyNo) {
-		let url = "${pageContext.request.contextPath}/noticeReply/" + replyNo;
+		let url = "${contextPath}/noticeReply/" + replyNo;
 		let content = $("#replyContent").val();
-		let boardNo = $
-		{
-			content.no
-		}
+		let boardNo = "${content.no}"
 		console.log(content);
-		let sendData = JSON.stringify({
-			replyNo : replyNo,
-			replyContent : content,
-			replyer : "cat",//로그인한 유저 아이디값 받아오기
-			boardNo : boardNo
+		let replyer = $("#"+replyNo+"").html();
+		console.log(replyer)
+		console.log(loginUser)
+		if(replyer == loginUser){
+			let sendData = JSON.stringify({
+				replyNo : replyNo,
+				replyContent : content,
+				replyer : loginUser,//로그인한 유저 아이디값 받아오기
+				boardNo : boardNo
 
-		});
-		$.ajax({
-			url : url,
-			dataType : "text",
-			data : sendData,
-			type : "PUT",
-			headers : {
-				"content-type" : "application/json",
-				"x-HTTP-Method-Override" : "POST"
-			},
-			success : function(data) {
-				if (data == "success") {
-					console.log(data);
-					$("#modiReplyModal").hide();
-					showAllReply();
-				} else if (data == "fail") {
-					alert("댓글 수정에 실패하였습니다.")
+			});
+			$.ajax({
+				url : url,
+				dataType : "text",
+				data : sendData,
+				type : "PUT",
+				headers : {
+					"content-type" : "application/json",
+					"x-HTTP-Method-Override" : "POST"
+				},
+				success : function(data) {
+					if (data == "success") {
+						console.log(data);
+						$("#modiReplyModal").hide();
+						showAllReply();
+					} else if (data == "fail") {
+						alert("댓글 수정에 실패하였습니다.")
+					}
+
 				}
-
-			}
-		});
+			});
+		}else{
+			alert("댓글수정은 자신이 쓴 댓글만 가능")
+		}
+		
 	}
 	function closeModal(obj) {
 		
 		let val = $(obj).attr("id");
 		console.log(val)
 		$("#"+val+"").parent().parent().parent().hide();
-		location.href="${pageContext.request.contextPath}/notice/viewContent?no="+${content.no}
+		location.href="${contextPath}/notice/viewContent?no="+${content.no}
 	}
 
 	function formatDate(date) {
@@ -375,7 +381,7 @@
 				+ new Date(date).toLocaleString() + '</span>';
 	}
 	function showRereplyModal(replyNo) {
-		let output = '<div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-body">대댓글 입력 : <input type="text" id="rereplyContent" name="replyContent"/><input type="hidden" id ="rereplyer" name="replyer" value="cat"/></div>';
+		let output = '<div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-body">대댓글 입력 : <input type="text" id="rereplyContent" name="replyContent"/><input type="hidden" id ="rereplyer" name="replyer" /></div>';
 		output += '<div class="modal-footer"><button type="button" class="btn btn-danger" onclick="insertRereply('
 				+ replyNo+ ');">입력</button><button type="button" class="btn btn-primary" id="rereplyModalBtn" onclick="closeModal(this);">닫기</button></div></div></div>'
 		//댓글단사람은 로그인한 유저 아이디값 받아와서 채워주기
@@ -387,16 +393,16 @@
 	
 	function insertRereply(replyNo){
 		
-		let url = "${pageContext.request.contextPath}/noticeReply/rereply";
+		let url = "${contextPath}/noticeReply/rereply";
 		
-		let replyer = $("#rereplyer").val();
+
 		let replyContent = $("#rereplyContent").val();
 		let boardNo = ${content.no}
 		
 		let sendData = JSON.stringify({
 			replyNo : replyNo,
 			replyContent : replyContent,
-			replyer : replyer,//로그인한 유저 아이디값 받아오기
+			replyer : loginUser,//로그인한 유저 아이디값 받아오기
 			ref : replyNo,
 			boardNo : boardNo
 		});
@@ -424,7 +430,24 @@
 		});
 		
 	}
+function beforeSubmit(){
+	if(newImageUp == true && attachFileUp == true){
+		$("#modiForm").attr("action","${contextPath}/notice/updateNotice");
+		$("#modiForm").submit();
+	}else if(newImageUp == false && attachFileUp == true){
+		$("#modiForm").attr("action","${contextPath}/notice/updateNoticeAttach");
+		$("#modiForm").submit();
+	}else if(newImageUp == true && attachFileUp == false){
+		$("#modiForm").attr("action","${contextPath}/notice/updateNoticeImg");
+		$("#modiForm").submit();
+	}else if(newImageUp == false && attachFileUp == false){
+		$("#modiForm").attr("action","${contextPath}/notice/updateNoticeText");
+		$("#modiForm").submit();
+	}
 
+
+	
+}
 	
 	
 </script>
@@ -436,7 +459,6 @@
 
 .contentArea {
 	margin-bottom: 0px;
-	min-height: 450px;
 	background-color:#fff;
 	padding: 15px 10px 2px 10px;
 }
@@ -453,9 +475,6 @@ border: 1px solid #fff;
 padding-left: 10px;
 }
 
-.contentContainer {
-	min-height: 800px;
-}
 
 .titleArea{
 margin-top : 15px;
@@ -479,10 +498,13 @@ margin: 10px 0px;
 #buttonGroup{
 margin:30px 0px 0px 0px;
 }
-#attachFileAdd{
+#modiReplyModal{
 z-index: 22000;
 }
-#imageFileAdd{
+#rereplyModal{
+z-index: 22000;
+}
+#deleteModal{
 z-index: 22000;
 }
 </style>
@@ -508,7 +530,7 @@ z-index: 22000;
 				<div style="margin: 0px 2px 10px 2px">${content.content }</div>
 			<div id="imgFileArea">
 				<c:if test="${content.image != null }">
-					<img src='${pageContext.request.contextPath}/resources/uploads/noticeBoardImg/${content.image }' style="margin: 10px" />
+					<img src='${contextPath}/resources/uploads/noticeBoardImg/${content.image }' style="width: 300px; overflow: auto; margin: 10px" />
 				</c:if>				
 			</div>
 									
@@ -518,12 +540,12 @@ z-index: 22000;
 						<c:choose>
 							<c:when test="${attachFile.notImageFile == null }">
 								<img
-									src='${pageContext.request.contextPath}/resources/uploads/attachFile${attachFile.thumbnailFile }'
-									style="width: 100px; height: 100px; overflow: auto; margin: 10px" />
+									src='${contextPath}/resources/uploads/attachFile${attachFile.thumbnailFile }'
+									style="width: 100px; hoverflow: auto; margin: 10px" />
 							</c:when>
 							<c:otherwise>
 								<a
-									href='${pageContext.request.contextPath}/resources/uploads/attachFile${attachFile.notImageFile }'>첨부파일</a>
+									href='${contextPath}/resources/uploads/attachFile${attachFile.notImageFile }'>${attachFile.notImageFile }</a>
 							</c:otherwise>
 						</c:choose>
 					</c:forEach>
@@ -534,13 +556,17 @@ z-index: 22000;
 		</div>
 		
 		<div id="buttonGroup">
-			<a class="button button-header" href="${pageContext.request.contextPath}/notice/listAll">목록으로</a><a
+			<a class="button button-header" href="${contextPath}/notice/listAll">목록으로</a><a
 				class="button button-header" href="javascript:void(0)"
 				onclick="history.back();">뒤로가기</a>
+				
+				<c:if test="${userId == 'admin'}">
 				 <a
 				class="button button-header" href="javascript:void(0)"
 				onclick="modifyNotice();">수정</a> <a class="button button-header"
 				href="javascript:void(0)" onclick="showAlert();">삭제</a> 
+				</c:if>
+				
 		</div>
 
 		<div id="replyContainer">
@@ -551,7 +577,7 @@ z-index: 22000;
 					<div style="display: inline-block; width: 85%;">
 						<input type="text" class="form-control" id="reply" name="reply"
 							placeholder="댓글을 입력하세요">
-							<input type="hidden" id="writer"/>
+							<input type="hidden" id="writer" value="userId"/>
 					</div>
 
 					<a class="button button-header"
@@ -562,9 +588,6 @@ z-index: 22000;
 		
 	</div>
 
-
-
-
 	<!-- The Modal -->
 	<div class="modal" id="modiModal">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -574,7 +597,7 @@ z-index: 22000;
   				</div>
 				<!-- Modal body -->
 				<div class="modal-body">
-					<form action="${pageContext.request.contextPath}/notice/updateNotice" id="modiForm" method="POST" enctype="multipart/form-data">
+					<form action="${contextPath}/notice/updateNotice" id="modiForm" method="POST" enctype="multipart/form-data">
 						<input type="hidden" name="no" id="no" value="${content.no}" />
 
 						<div class="mb-3 mt-3">
@@ -594,10 +617,13 @@ z-index: 22000;
 								name="content">${content.content }</textarea>
 						</div>
 						 <div id="contentOk"></div>
-						
+						<div>
+						<input type="hidden" id="newImageUploadCheck" name="newImageUploadCheck"/>
+						<input type="hidden" id="newAttachUploadCheck" name="newAttachUploadCheck"/>
+						</div>
 						<div class="mb-3 mt-3" id="deletedFileNames">
 						<div id="deletedImgFile">
-						<input type="hidden" id="oldImgName" name="oldImgName"> 
+						
 						</div>
 						<div id="deletedAttachFile">
 						
@@ -642,11 +668,12 @@ z-index: 22000;
 					<label for="newImgFile">이미지 파일 추가 :</label>
 							<input type="file" id="newImgFile" name="newImgFile"/>
 						</div>
+						<div id="imgErrorAlert"></div>
 						<div class="mb-3 mt-3" id="newAttachFileArea">
 						<label for="newAttachFile">첨부 파일 추가 :</label>
 							<input type="file" id="newAttachFile" name="newAttachFile" multiple/>
 						</div>
-						
+				
 					
 					
 				</div>
@@ -654,7 +681,7 @@ z-index: 22000;
 
 			
 
-				<button type="submit" class="button button-blog" id="submitBtn" ">저장</button>
+				<button type="submit" class="button button-blog" id="submitBtn" >저장</button>
 				<button type="reset" id="modiModalCloseBtn" class="button button-blog"
 					onclick="closeModal(this);">취소</button>
 				
@@ -665,64 +692,6 @@ z-index: 22000;
 	</div>
 	</div>
 
-	<div class="modal" id="imageFileAdd">
-		<div class="modal-dialog modal-sm modal-dialog-centered">
-			<div class="modal-content">
-
-				<!-- Modal Header -->
-				<div class="modal-header">
-					<h4 class="modal-title">이미지 등록</h4>
-
-				</div>
-
-				<!-- Modal body -->
-				<div class="modal-body">
-
-
-					<label for="file"></label> <input type="file" class="form-control"
-						id="imageFile" name="upfile">
-
-				</div>
-
-				<!-- Modal footer -->
-				<div class="modal-footer">
-
-					<button type="button" class="button button-header"
-						data-bs-dismiss="modal" aria-label="Close">완료</button>
-				</div>
-
-			</div>
-		</div>
-	</div>
-	<div class="modal" id="attachFileAdd">
-		<div class="modal-dialog modal-sm modal-dialog-centered">
-			<div class="modal-content">
-
-				<!-- Modal Header -->
-				<div class="modal-header">
-
-					<h4 class="modal-title">첨부파일 등록</h4>
-
-				</div>
-
-				<!-- Modal body -->
-				<div class="modal-body">
-
-					<label for="file"></label> <input type="file" class="form-control"
-						id="attachFile" name="attachFile">
-
-				</div>
-
-				<!-- Modal footer -->
-				<div class="modal-footer">
-
-					<button type="button" class="button button-header"
-						data-bs-dismiss="modal" aria-label="Close">완료</button>
-				</div>
-
-			</div>
-		</div>
-	</div>
 	<div class="modal" id="delAlert">
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
@@ -733,7 +702,7 @@ z-index: 22000;
 				<!-- Modal footer -->
 				<div class="modal-footer">
 					<button type="button" class="button button-header"
-						onclick="location.href='${pageContext.request.contextPath}/notice/deleteNotice?no=${content.no}'">삭제</button>
+						onclick="location.href='${contextPath}/notice/deleteNotice?no=${content.no}'">삭제</button>
 					<button type="button" class="button button-header"
 						data-bs-dismiss="modal">닫기</button>
 				</div>
