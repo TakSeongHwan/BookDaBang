@@ -19,7 +19,19 @@ public interface ProductDAO {
 	// 강명진
 	
 	// 전체 상품 가져오는 메서드
-	public List<ProductVO> selectAllProducts () throws Exception;
+	public List<ProductVO> selectAllProducts (PagingInfo pi,int sort) throws Exception;
+	
+	// 카테고리 정보 가져오는 메서드
+	public List<CategoryVO> selectCategory() throws Exception;
+	
+	// 전체 상품 가져오는 메서드 (카테고리 번호가 있을 경우)
+	public List<ProductVO> selectAllProducts (int cno,PagingInfo pi,int sort) throws Exception;
+	
+	// 전체 상품의 개수 가져오기
+	public int getTotalPost() throws Exception;
+	
+	// 전체 상품의 개수 가져오기 (카테고리 번호가 있을 경우)
+	public int getTotalPost(int cno) throws Exception;
 	
 	// 전체 카테고리 가져오는 메서드 - getCategory() 이용
 	

@@ -10,6 +10,7 @@
 <title>상품 상세페이지</title>
 <script>
 	$(function() {
+		priceReplace();
 		quantity(1);
 		infoReplace();
 		navColor();
@@ -17,11 +18,21 @@
 		
 	});
 	
+	function priceReplace() {
+		let sellPrice = $(".s_product_text h2").text().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+		$(".s_product_text h2").text(sellPrice);
+		
+		let listPrice = $("#listPrice").html().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+		$("#listPrice").html(listPrice);
+	}
+	
 	function quantity(number) {
 		let q = number;
 		let output = "";
 		if (q > 1) {
-			output = "총 상품금액 : <h2 style='display:inline-block;'> " + ${product.sell_price}*q + " </h2>원";
+			let price = String(${product.sell_price}*q);
+			price = price.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+			output = "총 상품금액 : <h2 style='display:inline-block;'> " + price + " </h2>원";
 		}	
 		$("#totalPrice").html(output);
 	}
@@ -81,24 +92,36 @@
 			});
 		} else {
 			$("#comment").empty();
-		}
-		
-		
+		}	
 	}
 	
 	function parseComment(data) {
 		$("#comment").empty();
-		let output = '<div class="row"><div class="col-lg-1"></div><div class="col-lg-10"><div class="comment_list">';
+		let output = '<div class="comments-area">';
 		$.each(data, function(i, e) {
-			output += '<div class="review_item"><div class="media"><div class="media-body">'
-			output += '<h4>' + e.commenter + '</h4>';
-			output += '<h5>' + e.writeDate + '</h5><a class="reply_btn" href="#">Reply</a></div></div>';
-			output += '<p>' + e.comment + '</p></div>';
+			output += '<div class="comment-list" style="padding-bottom: 25px;"><div class="single-comment justify-content-between d-flex">';
+			output += '<div class="user justify-content-between" style="width:800px;"><div class="desc">';
+			output += '<p class="commenter">' + e.commenter + '</p>';
+			let writtenDate = calcDate(e.writeDate);
+			output += '<p class="date">' + writtenDate + '</p>';
+			output += '<p class="comment">' + e.comment + '</p></div></div>';
+			output += '<div class="reply-btn"><a href="#" class="btn-reply text-uppercase">reply</a></div></div></div>';
 		});
-		 output += '</div></div></div>';
+		 output += '<hr/><textarea class="form-control" name="comment" id= "commentText" rows="3" placeholder="comment"></textarea>';
+		 output += '<button type="submit" class="button button--active button-contactForm" style="float:right;">댓글 작성</button></div>';
 		 
 		 $("#comment").html(output);
 	}
+	
+	function calcDate(rd) {
+		// '방금전', '0분전','날짜 시간'
+		let diff = new Date() - rd; // 댓글 단 시간과 현재시간의 차
+		let diffSecond = diff / 1000; // 초단위
+		if(diffSecond < 60 * 5) return '방금전';
+		let diffMiniutes = diffSecond / 60; // 분단위
+		if(diffMiniutes < 60) return Math.floor(diffMiniutes) + '분전';
+		return new Date(rd).toLocaleString();
+	}	
 	
 </script>
 <style>
@@ -122,7 +145,40 @@
  #review-tab, #contact-tab, #profile-tab {
  	background-color: #f1f6f7;
  }
-
+ 
+ .commenter {
+ 	text-align : left;
+ 	font-size: 20px;
+ }
+ 
+ #commentText {
+ 	width: 800px;
+ 	display: inline-block;
+ }
+ 
+ .comment-list {
+ 	background-color: white;
+ 	padding : 10px 10px 25px 30px;
+ 	margin-bottom: 25px;
+ 	border : 1px solid #ced4da;
+ 	border-radius: 20px;
+ 	box-shadow : 2px 2px 2px 2px #ced4da;
+ }
+ 
+ .btn-reply {
+	margin-top: 12px;
+ 	border : 1px solid #ced4da;
+ 	border-radius: 20px;
+ }
+ 
+ .commenter{
+ 	display: inline-block;
+ }
+ 
+ .date {
+ 	display: inline-block;
+ 	margin-left: 14px;
+ }
 </style>
 <head>
 <body>
@@ -150,7 +206,7 @@
 							</c:if>
 							</h2>
 							<ul class="list">
-								<li><a><span>정가</span> : ${product.price}원</a></li>
+								<li><a id="listPrice"><span>정가</span> : ${product.price}원</a></li>
 								<li><a class="active" href="#"><span>Category</span> :
 										Household</a></li>
 								<li><a href="#"><span>Availibility</span> : In Stock(${product.stock})</a></li>

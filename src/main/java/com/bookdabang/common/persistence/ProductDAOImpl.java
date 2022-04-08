@@ -61,8 +61,37 @@ public class ProductDAOImpl implements ProductDAO {
 	// 강명진
 	
 	@Override
-	public List<ProductVO> selectAllProducts() throws Exception {
-		return ses.selectList(ns + ".selectAllProducts");
+	public List<ProductVO> selectAllProducts(PagingInfo pi,int sort) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("startNum", pi.getStartNum());
+		param.put("postPerPage", pi.getPostPerPage());
+		param.put("sort", sort);
+		return ses.selectList(ns + ".selectAllProducts",param);
+	}
+	
+	@Override
+	public List<ProductVO> selectAllProducts(int cno,PagingInfo pi,int sort) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("cno", cno);
+		param.put("startNum", pi.getStartNum());
+		param.put("postPerPage", pi.getPostPerPage());
+		param.put("sort", sort);
+		return ses.selectList(ns + ".selectProductsByCategory",param);
+	}
+	
+	@Override
+	public List<CategoryVO> selectCategory() throws Exception {
+		return ses.selectList(ns + ".selectCategory");
+	}
+	
+	@Override
+	public int getTotalPost() throws Exception {
+		return ses.selectOne(ns + ".getTotalPost");
+	}
+	
+	@Override
+	public int getTotalPost(int cno) throws Exception {
+		return ses.selectOne(ns + ".getTotalPostByCategory",cno);
 	}
 
 	@Override
@@ -74,6 +103,10 @@ public class ProductDAOImpl implements ProductDAO {
 	public List<ProductVO> selectTopProducts(int category) throws Exception {
 		return ses.selectList(ns + ".selectTopProducts", category);
 	}
+
+	
+
+	
 
 	
 
