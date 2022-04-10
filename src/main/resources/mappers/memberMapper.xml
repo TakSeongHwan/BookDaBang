@@ -46,6 +46,10 @@
 	<select id="deleteMember" resultType="Withdraw">
 		select * from withdraw
 	</select>
+	<!-- 회원 삭제 -->
+	<delete id="delete">
+		delete from member where userId =#{userId}
+	</delete>
 	
 	<!-- 휴면/정지 전환 -->
 	<update id="isdormant">

@@ -16,23 +16,25 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.Withdraw;
 import com.bookdabang.lcs.domain.IsdormantDTO;
 import com.bookdabang.lcs.service.MemberService;
+import com.mysql.cj.xdevapi.Result;
 
 @Controller
 @RequestMapping(value = "/admin/*")
 public class AdminMemberController {
 
 	@Inject
-	private MemberService service; //객체 주입
+	private MemberService service; //媛앹껜 二쇱엯
 	
 	@RequestMapping (value = "/adminMember/listAll", method = RequestMethod.GET)
 	public  String adminMember(Model model) throws Exception {
-		// model 페이지이동 - url이 바귈때
+		// model �럹�씠吏��씠�룞 - url�씠 諛붽톲�븣
 		List<MemberVO> lst = service.selectMember();
 		List<MemberVO> dormantLst = service.dormantMember();
 		List<Withdraw> deleteLst = service.deleteMember();
@@ -61,8 +63,13 @@ public class AdminMemberController {
 			e.printStackTrace();
 		}
 		return result;
-		
-		
+	}
+	@RequestMapping(value = "/adminMember/delete", method = RequestMethod.GET)
+	public String deleteMember(@RequestParam String userId) throws Exception {
+		System.out.println(userId);
+		System.out.println(service.delete(userId));
+		String result = null;
+		return result;
 	}
 
 }

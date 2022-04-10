@@ -31,6 +31,8 @@ public interface MemberService {
 	
 	public boolean updatedormant(IsdormantDTO dormant) throws Exception;
 	
+	public boolean delete(String userId) throws Exception;
+	
 	
 
 }

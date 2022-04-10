@@ -70,6 +70,11 @@ public class MemberDAOImpl implements MemberDAO {
 		return sql.update(ns + ".isdormant", dormant);
 
 	}
+	@Override
+	public int delete(String userId) throws Exception {
+		return sql.delete(ns +".delete", userId);
+		
+	}
 	
 
 

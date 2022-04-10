@@ -161,6 +161,15 @@ public class MemberServiceImpl implements MemberService {
 		}
 		return result;  
 	}
+
+	@Override
+	public boolean delete(String userId) throws Exception {
+		boolean result = false;
+			if(memberDAO.delete(userId) == 1) {
+				result = true;
+			}
+		return result;
+	}
 	
 	
 

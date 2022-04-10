@@ -28,5 +28,7 @@ public interface MemberDAO {
 	public List<Withdraw> deleteMember() throws Exception;
 	// 휴면회원 전환
 	public int updatedormant(IsdormantDTO dormant) throws Exception;
+	// 회원삭제
+	public int delete(String userId) throws Exception;
 	
 }

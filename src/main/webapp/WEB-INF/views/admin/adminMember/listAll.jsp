@@ -9,24 +9,30 @@
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 	window.onload = function() {
 		let dormant = {
-				isdormant : "",
-				userId : ""
-		}		
+			isdormant : "",
+			userId : ""
+		}
 
 		$(document).on("change", ".dormentCk", function() {
 			let url = "/admin/adminMember/dormantUpdate";
 			let index = $(".dormentCk").index(this);
 			dormant.userId = $(".userId").eq(index).html();
-			
+
 			if ($(".dormentCk").is(":checked")) {
 				dormant.isdormant = "Y";
 			} else {
 				dormant.isdormant = "N";
 			}
-			
+
 			console.log(dormant);
 
 			$.ajax({
@@ -38,8 +44,33 @@
 
 				}
 			});
-
 		});
+
+	}
+	//회원 삭제 모달
+	let userId = null;
+	function deleteMember(i) {
+		userId= $("#" + i).text();
+		$(".modal-body").html(userId + "를 삭제하시겠습니까?")
+	}
+	//회원 삭제
+	function delete2() {
+		let url = "/admin/adminMember/delete"
+			$.ajax({
+				url : url, // ajax와 통신할곳
+				dataType : "text", // 수신 받을 데이터의 타입
+				type : "GET",
+				data : {
+					userId : userId
+				},
+				success : function(data) { // 통신 성공시 실행될 콜백 함수
+					console.log(data);
+					if (data == "success") {
+						
+
+					}
+				}
+			}); 
 	}
 </script>
 <style>
@@ -135,22 +166,50 @@
 						<th>아이디</th>
 						<th>탈퇴사유</th>
 						<th>탈퇴일</th>
-						<th>비고</th>
+						<th>삭제</th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach var="Withdraw" items="${deleteMeber }"
 						varStatus="status">
 						<tr>
-							<td><c:out value="${Withdraw.userId}" /></td>
+							<td id='${status.count }'><c:out value="${Withdraw.userId}" /></td>
 							<td><c:out value="${Withdraw.why}" /></td>
 							<td><fmt:formatDate value="${Withdraw.withdrawWhen}"
 									pattern="yyyy-MM-dd" /></td>
-							<td></td>
+							<td><img src="../../resources/img/delete.png"
+								style="width: 20px;" data-bs-toggle="modal"
+								data-bs-target="#myModal"
+								onclick="deleteMember('${status.count }');" /></td>
 						</tr>
 					</c:forEach>
 				</tbody>
 			</table>
+		</div>
+	</div>
+	<!-- The Modal -->
+	<div class="modal fade" id="myModal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">삭제</h4>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body"></div>
+
+				<!-- Modal footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger"
+						data-bs-dismiss="modal">취소</button>
+					<button type="button" class="btn btn-danger"
+						data-bs-dismiss="modal" onclick="delete2();">확인</button>
+				</div>
+
+			</div>
 		</div>
 	</div>
 
