@@ -35,13 +35,9 @@
 	</insert>
 	<!-- 전체회원조회 -->
 	<select id="selectMember" resultType="MemberVO">
-		select * from member
+		select * from member where isdormant ="n" and isDraw="n"
 	</select>
-	<!-- 휴면/및 정지 회원 조회-->
-	<select id="dormantMember" resultType="MemberVO">
-		 select * from member where
-		TIMESTAMPDIFF(DAY, lastLogin, now()) >= 90
-	</select>
+
 	<!-- 삭제 회원 조회 -->
 	<select id="deleteMember" resultType="Withdraw">
 		select * from withdraw
@@ -50,6 +46,12 @@
 	<delete id="delete">
 		delete from member where userId =#{userId}
 	</delete>
+	
+	<!-- 휴면/및 정지 회원 조회-->
+	<select id="dormantMember" resultType="MemberVO">
+		 select * from member where
+		TIMESTAMPDIFF(DAY, lastLogin, now()) >= 90
+	</select>
 	
 	<!-- 휴면/정지 전환 -->
 	<update id="isdormant">
