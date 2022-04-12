@@ -1,4 +1,4 @@
-package com.bookdabang.lbr.etc;
+package com.bookdabang.ljs.etc;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,12 +13,12 @@ import javax.imageio.ImageIO;
 import org.imgscalr.Scalr;
 import org.springframework.util.FileCopyUtils;
 
+import com.bookdabang.lbr.etc.BoardUploadFile;
+import com.bookdabang.lbr.etc.MediaConfirm;
 
-
-
-
-public class BoardUploadFileProcess {
-	private BoardUploadFile uploadFile = new BoardUploadFile();
+public class ImageFileProcess {
+	
+private BoardUploadFile uploadFile = new BoardUploadFile();
 	
 	
 	public BoardUploadFile uploadFileRename(String upPath, String originalFilename, byte[] file) throws IOException {
@@ -112,5 +112,6 @@ public class BoardUploadFileProcess {
 			}
 		}
 	}
+	
+	
 }
-

@@ -110,9 +110,9 @@ function loginOrNot() {
             </li>
             <li class="nav-item submenu dropdown">
                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                     aria-expanded="false">Pages</a>
+                     aria-expanded="true">Pages</a>
                    <ul class="dropdown-menu">
-                        <li class="nav-item"><a class="nav-link" href="${contextPath}/login.html">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">Login</a></li>
                         <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">Register</a></li>
                         <!-- <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>  -->
                    </ul>
@@ -124,6 +124,7 @@ function loginOrNot() {
                      aria-expanded="false">게시판</a>
                    <ul class="dropdown-menu">
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">자유게시판</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath }/cs/">고객센터게시판</a></li>
                         <!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->
                    </ul>
             </li>

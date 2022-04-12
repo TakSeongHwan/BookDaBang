@@ -49,7 +49,7 @@ public class LoginServiceImpl implements LoginService {
 
 	@Override
 	public List<MemberPoint> pointCheck(String userId) throws Exception {
-		// TODO Auto-generated method stub
+		
 		return mdao.pointCheck(userId);
 	}
 				
