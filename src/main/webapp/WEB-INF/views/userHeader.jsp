@@ -117,6 +117,7 @@ function loginOrNot() {
                         <li class="nav-item"><a class="nav-link" href="cart.html">Shopping Cart</a></li>
                    </ul>
              </li>-->
+<<<<<<< HEAD
 							<li class="nav-item submenu dropdown"><a href="#"
 								class="nav-link dropdown-toggle" data-toggle="dropdown"
 								role="button" aria-haspopup="true" aria-expanded="false">Blog</a>
@@ -142,6 +143,61 @@ function loginOrNot() {
 									<!-- <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>  -->
 								</ul></li>
 
+=======
+                 <li class="nav-item submenu dropdown">
+                   <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                     aria-expanded="false">Blog</a>
+                   <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="nav-link" href="blog.html">${loginMember.userId }</a></li>
+                        <li class="nav-item"><a class="nav-link" href="single-blog.html">Blog Details</a></li>
+                   </ul>
+            </li>
+            <li class="nav-item submenu dropdown">
+                   <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                     aria-expanded="true">Pages</a>
+                   <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">Register</a></li>
+                        <!-- <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>  -->
+                   </ul>
+                 </li>
+                 <!-- <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>  -->
+  				
+  				 <li class="nav-item submenu dropdown">
+                   <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                     aria-expanded="false">게시판</a>
+                   <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">자유게시판</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath }/cs/">고객센터게시판</a></li>
+                        <!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->
+                   </ul>
+            </li>
+            </ul>
+<!-- 마이페이지 -->
+            <ul class="nav-shop">
+              <li class="nav-item"><button><i class="ti-search"></i></button></li>
+              <li class="nav-item"><form action="${contextPath }/cart/userCart" method="get"><button type="submit"><i class="ti-shopping-cart"></i><span class="nav-shop__circle" id ="cntCart"></span></button></form></li>
+              <li class="nav-item"><button type="button" onclick="loginOrNot();"><img src="${contextPath }/resources/img/user_icon.png" style= "width:18px; height:17px;"/></button></li>
+              
+              <c:choose>
+              	
+              	<c:when test="${sessionId != null }">
+              	<li class="nav-item"><a class="button button-header" href="${contextPath }/logout">Logout</a></li>
+              	</c:when>
+              	<c:otherwise>
+              	<li class="nav-item"><a class="button button-header" href="${contextPath }/loginPage">Login</a></li>
+              		
+              	</c:otherwise>
+              </c:choose>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+   <!--================ End Header Menu Area =================-->
+   
+>>>>>>> bd12cece55579efa25622e920e2cfd460c1e69b5
 
 							<li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
 
