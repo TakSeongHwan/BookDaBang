@@ -7,7 +7,7 @@
 <mapper namespace="com.bookdabang.mapper.NoticeMapper">
 	<select id="getEntireNotice" resultType="NoticeVO">
 		select * from notice
-		order by no desc
+		order by no desc limit #{startNum}, #{postPerPage}
 	</select>
 	<select id="readNotice" resultType="NoticeVO">
 		select * from notice where no
@@ -87,4 +87,29 @@
 	<update id="updateNoticeText">
 	update notice set title=#{title}, content=#{content} where no=#{no}
 	</update>
+	 <select id="getTotalPost" resultType="int">
+ 	select count(*) as totalCnt from notice
+ 	</select>
+ 	
+ 	<select id="getSearchResultCnt" resultType="int">
+ 	  select count(*) from notice where
+ 	  <if test='searchType.equals("title")'>
+ 	  title like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType.equals("content")'>
+ 	  content like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  order by no desc
+ 	</select>
+ 	
+ 	<select id="getSearchResultList" resultType="noticeVO">
+ 		select * from notice where
+ 	  <if test='searchType == "title"'>
+ 	  title like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType == "content"'>
+ 	  content like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  order by no desc limit #{startNum}, #{postPerPage}
+ 	</select>
 </mapper>

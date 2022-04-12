@@ -4,11 +4,14 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import com.bookdabang.common.domain.AttachFileVO;
+import com.bookdabang.common.domain.BoardSearch;
 import com.bookdabang.common.domain.NoticeVO;
+import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.NoticeReplyVO;
 
 public interface NoticeDAO {
-	public List<NoticeVO> entireNotice() throws Exception;
+	public List<NoticeVO> entireNotice(PagingInfo pi) throws Exception;
+	public List<NoticeVO> entireNotice(PagingInfo pi, BoardSearch bs) throws Exception;
 	
 	public NoticeVO getContentByNo(int no) throws Exception;
 	
@@ -55,6 +58,10 @@ public interface NoticeDAO {
 	public int deleteOldAttachFile(int attachFileNo) throws Exception;
 
 	public int updateNoticeText(NoticeVO n) throws Exception;
+	
+	public int getTotalPost() throws Exception;
+	
+	public int getSearchResultCnt(BoardSearch bs) throws Exception;
 
 
 	

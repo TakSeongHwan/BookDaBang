@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,8 +30,10 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bookdabang.common.domain.AttachFileVO;
+import com.bookdabang.common.domain.BoardSearch;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.NoticeVO;
+import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.VisitorIPCheck;
 import com.bookdabang.common.etc.IPCheck;
 import com.bookdabang.common.service.IPCheckService;
@@ -55,37 +58,54 @@ public class NoticeController {
 	private List<AttachFileVO> fileList = new ArrayList<AttachFileVO>();
 
 	@RequestMapping("listAll")
-	public String notice(Model m, HttpServletRequest request, @RequestParam(value="pageNo",required=false, defaultValue="1") String tmp) {
+	public String notice(Model m, HttpServletRequest request, @RequestParam(value="pageNo",required=false, defaultValue="1") String currPg,
+			@ModelAttribute BoardSearch bs) {
 		List<NoticeVO> notice = new ArrayList<NoticeVO>();
 
 		String sessionId = request.getSession().getId();
-		System.out.println(sessionId);
+	
 		
 		ResponseEntity<Map<String,String>> result = null;
 		MemberVO mv = null;
 		
 		int pageNo = 1;
-		if(!tmp.equals("") || tmp != null) {
-			pageNo = Integer.parseInt(tmp);
+		if(!currPg.equals("") || currPg != null) {
+			pageNo = Integer.parseInt(currPg);
+		}
+		if(bs.getSearchWord() == null) {
+			bs.setSearchWord("");
+		}
+		if(bs.getSearchType() == null) {
+			bs.setSearchType("");
 		}
 		
+		
+		List<NoticeVO> list = new ArrayList<NoticeVO>();
+		PagingInfo pi = null;
+		System.out.println("검색 : "+bs);
 		try {
 			mv = loginService.findLoginSess(sessionId);
 			System.out.println(mv);
+			
 			if(mv != null) {
 			m.addAttribute("userId", mv.getUserId());
 			}
-			notice = service.entireNotice(pageNo);
+			
+			Map<String,Object> map = service.entireNotice(pageNo, bs);
+			list = (List<NoticeVO>) map.get("notice");
+			pi = (PagingInfo) map.get("pagingInfo");
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		m.addAttribute("notice", notice);
+		
+		m.addAttribute("notice",list);
+		m.addAttribute("pagingInfo",pi);
 		return "notice/notice";
 	}
 
 	@RequestMapping("viewContent")
-	@Transactional
 	public void showNoticeContent(Model m, @RequestParam("no") int no, HttpServletRequest request) {
 		System.out.println(no);
 		NoticeVO content = null;
@@ -108,32 +128,7 @@ public class NoticeController {
 			}
 			
 			ipaddr = IPCheck.getIPAddr(request);
-			//System.out.println("세션에 넣어둔 ip가 잘 저장되어있나? "+request.getSession().getAttribute("ipAddr"));
-			Timestamp lastAccessTime = service.pageViewCheck(ipaddr, no);
-		
-			System.out.println(lastAccessTime);
-			if(lastAccessTime != null) {
-				
-				long lastAccessDate = lastAccessTime.getTime();
-				long currTime = System.currentTimeMillis();
-				
-				if(currTime - lastAccessDate > 1000 * 60*60*24) {//테스트중이라 1분 
-					if(service.updateAccessDate(ipaddr, no) == 1) {
-						service.viewCountIncrese(no);
-						System.out.println("조회수 올라감");
-					}
-				}else {
-					System.out.println("조회수 안올라감");
-				}
-			}else {
-				if(service.insertAccessDate(ipaddr, no) == 1) {
-					service.viewCountIncrese(no);
-					System.out.println("조회수 올라감");
-				}
-				
-			}
-			
-			content = service.getContentByNo(no);
+			content = service.getContentByNo(ipaddr,no);
 			if(content.getImage().length() == 0) {
 				content.setImage(null);
 			}
@@ -146,6 +141,7 @@ public class NoticeController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		System.out.println(content);
 		
 		m.addAttribute("attachFile", af);
@@ -272,12 +268,19 @@ public class NoticeController {
 	}
 	
 	@RequestMapping("deleteNotice")
-	public String deleteNotice(@RequestParam int no, RedirectAttributes rttr) {
+	public String deleteNotice(@RequestParam int no, RedirectAttributes rttr, HttpServletRequest request) {
 		System.out.println("삭제할 게시물"+no);
+		
+		String upPathImg = request.getSession().getServletContext().getRealPath("resources/uploads/noticeBoardImg/");
+		String upPathAttach =  request.getSession().getServletContext().getRealPath("resources/uploads/attachFile");
+		
+		ImageFileHandling ifh = new ImageFileHandling();
+		
 		int result = 0;
 		try {
-			result = service.deleteNotice(no);
+			result = service.deleteNotice(no, upPathImg, upPathAttach);
 			if(result == 1) {
+
 				rttr.addFlashAttribute("result", "success");
 			}
 		} catch (Exception e) {

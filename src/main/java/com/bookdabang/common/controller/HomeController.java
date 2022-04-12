@@ -1,7 +1,9 @@
 package com.bookdabang.common.controller;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.ProductVO;
+import com.bookdabang.lhs.service.ChartService;
 import com.bookdabang.ljs.service.LoginService;
 
 /**
@@ -27,6 +31,9 @@ public class HomeController {
 	
 	@Inject
 	private LoginService service;
+	
+	@Inject
+	ChartService cService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
@@ -62,6 +69,18 @@ public class HomeController {
 			model.addAttribute("loginMember", loginMember);
 
 		}
+		
+			List<ProductVO> list = new ArrayList<ProductVO>();
+			try {
+				list = cService.getProductSort();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			model.addAttribute("product",list);
+		
+		
 		
 		return "home";
 		

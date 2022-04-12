@@ -362,7 +362,7 @@
 		let val = $(obj).attr("id");
 		console.log(val)
 		$("#"+val+"").parent().parent().parent().hide();
-		location.href="${contextPath}/notice/viewContent?no="+${content.no}
+		
 	}
 
 	function formatDate(date) {
@@ -430,24 +430,7 @@
 		});
 		
 	}
-function beforeSubmit(){
-	if(newImageUp == true && attachFileUp == true){
-		$("#modiForm").attr("action","${contextPath}/notice/updateNotice");
-		$("#modiForm").submit();
-	}else if(newImageUp == false && attachFileUp == true){
-		$("#modiForm").attr("action","${contextPath}/notice/updateNoticeAttach");
-		$("#modiForm").submit();
-	}else if(newImageUp == true && attachFileUp == false){
-		$("#modiForm").attr("action","${contextPath}/notice/updateNoticeImg");
-		$("#modiForm").submit();
-	}else if(newImageUp == false && attachFileUp == false){
-		$("#modiForm").attr("action","${contextPath}/notice/updateNoticeText");
-		$("#modiForm").submit();
-	}
 
-
-	
-}
 	
 	
 </script>
@@ -545,7 +528,7 @@ z-index: 22000;
 							</c:when>
 							<c:otherwise>
 								<a
-									href='${contextPath}/resources/uploads/attachFile${attachFile.notImageFile }'>${attachFile.notImageFile }</a>
+									href='${contextPath}/resources/uploads/attachFile${attachFile.notImageFile }'>첨부파일</a>
 							</c:otherwise>
 						</c:choose>
 					</c:forEach>
@@ -693,19 +676,16 @@ z-index: 22000;
 	</div>
 
 	<div class="modal" id="delAlert">
-		<div class="modal-dialog modal-sm">
+		<div class="modal-dialog modal-sm modal-dialog-centered" >
 			<div class="modal-content">
 
 				<!-- Modal body -->
 				<div class="modal-body">${content.no }번공지사항을 삭제하시겠습니까?</div>
 
-				<!-- Modal footer -->
-				<div class="modal-footer">
+		
 					<button type="button" class="button button-header"
 						onclick="location.href='${contextPath}/notice/deleteNotice?no=${content.no}'">삭제</button>
-					<button type="button" class="button button-header"
-						data-bs-dismiss="modal">닫기</button>
-				</div>
+					<button type="button" class="button button-header" id="closeCheckDelModal"onclick="closeModal(this);">닫기</button>
 
 			</div>
 		</div>

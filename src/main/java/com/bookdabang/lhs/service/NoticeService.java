@@ -2,17 +2,21 @@ package com.bookdabang.lhs.service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import com.bookdabang.common.domain.AttachFileVO;
+import com.bookdabang.common.domain.BoardSearch;
 import com.bookdabang.common.domain.NoticeVO;
 import com.bookdabang.common.domain.NoticeReplyVO;
 
 public interface NoticeService {
 
 	//공지사항 전체조회
-	public List<NoticeVO> entireNotice(int pageNo) throws Exception;
+	public Map<String,Object> entireNotice(int pageNo, BoardSearch bs) throws Exception;
 	
 	//no번 공지사항 조회
+	public NoticeVO getContentByNo(String ipaddr, int no) throws Exception;
+	
 	public NoticeVO getContentByNo(int no) throws Exception;
 	
 	//공지사항번호 최대값 가져오기 
@@ -28,7 +32,7 @@ public interface NoticeService {
 	public List<AttachFileVO> getAttachFile(int no) throws Exception;
 
 	//공지사항 삭제하기
-	public int deleteNotice(int no) throws Exception;
+	public int deleteNotice(int no, String upPathImg, String upPathAttach) throws Exception;
 
 	//댓글 등록하기
 	public int insertReply(NoticeReplyVO reply) throws Exception;
@@ -82,6 +86,8 @@ public interface NoticeService {
 	public int updateNoticeText(NoticeVO n) throws Exception;
 	
 	public boolean updateNoticeAndAttach(NoticeVO n, List<AttachFileVO> fileName) throws Exception;
+
+	
 	
 	
 	
