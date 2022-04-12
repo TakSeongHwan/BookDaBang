@@ -62,5 +62,10 @@ public class EventServiceImpl implements EventService {
 		return result;
 	}
 
+	@Override
+	public List allBestList() throws Exception {
+		return dao.allBestList();
+	}
+
 
 }

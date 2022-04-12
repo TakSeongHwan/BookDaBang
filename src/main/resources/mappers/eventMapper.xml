@@ -33,6 +33,14 @@
 		where boardno = #{no}
 	</delete>
 	
+	<!-- ETC -->
+	<!-- 베스트 게시글 불러오기 -->
+	<select id="allBestList" resultType="FreeBoard">
+		select * from freeboard
+		where likecount > 5 order by date desc
+	</select>
+	
+	
 </mapper>
 	
 

@@ -34,7 +34,17 @@ public class EventBoardController {
 	
 	private List<UploadFile> upfileLst = new ArrayList<UploadFile>(); // 업로드된 파일들의 리스트
 	
+	//ETC-------------------------------------------------------------
+	@RequestMapping(value = "/allBestList", method = RequestMethod.GET)
+	public String allBestList(Locale locale, Model model) throws Exception {
+		System.out.println("베스트 게시글을 불러옵니다");
+		List allBestList = service.allBestList();
+		model.addAttribute("allBestList", allBestList);
+		
+		return "/event/allBestList";
+	}
 	
+
 	// reading-----------------------------------------------------------
 	// GET방식으로 통신하여 들어오는 이벤트 하위, 전체 리스트를 불러오는 기능을 작성
 	@RequestMapping(value = "/allEventList", method = RequestMethod.GET) 

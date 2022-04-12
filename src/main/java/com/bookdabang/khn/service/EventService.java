@@ -14,9 +14,11 @@ public interface EventService {
 
 	public EventBoardVo readDetailEvent(int no) throws Exception; // 게시글 세부 내용 읽어오기
 
-	public int deleteEvent(int no) throws Exception;
+	public int deleteEvent(int no) throws Exception; // 게시글 삭제
 
 	public Timestamp pageViewCheck(String ipAddr, int no);
+
+	public List allBestList() throws Exception; // 베스트 게시글 불러오기
 
 
 }

@@ -156,6 +156,8 @@ function loginOrNot() {
 										href="${contextPath}/board/listAllFreeBoard">자유게시판</a></li>
 									<li class="nav-item"><a class="nav-link"
 										href="${contextPath}/event/allEventList">이벤트 게시판</a></li>
+										<li class="nav-item"><a class="nav-link"
+										href="${contextPath}/event/allBestList">베스트 게시글</a></li>
 									<!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->
 								</ul></li>
 

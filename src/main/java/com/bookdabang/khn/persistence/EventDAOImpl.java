@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.EventBoardVo;
 
+
 @Repository
 public class EventDAOImpl implements EventDAO {
 
@@ -38,6 +39,12 @@ public class EventDAOImpl implements EventDAO {
 	@Override
 	public int deleteEvent(int no) throws Exception {
 		return ses.delete(ns + ".delEvent", no);
+	}
+
+
+	@Override
+	public List allBestList() throws Exception {
+		return ses.selectList(ns + ".allBestList");
 	}
 
 
