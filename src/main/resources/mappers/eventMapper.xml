@@ -27,17 +27,31 @@
 		(#{title} , #{eventStart} , #{eventEnd}, #{content}, #{mainImg})
 	</insert>
 	
+	<insert id="insertReply">
+		insert into event_Reply
+		(boardNo, replywriter, content)
+	</insert>
+	
+	
 	<!-- Delete -->
 	<delete id="delEvent">
 		delete from event_board 
-		where boardno = #{no}
+		where boardNo = #{no}
 	</delete>
+	
+	
+	<!-- Delete -->
+	<update id="updateEvent">
+		update event_board
+		set title = #{title}, eventStart = #{eventStart}, eventEnd = #{eventEnd}, content = #{content}, mainImg=#{mainImg}
+		where boardNo = #{boardNo}
+	</update>
 	
 	<!-- ETC -->
 	<!-- 베스트 게시글 불러오기 -->
 	<select id="allBestList" resultType="FreeBoard">
 		select * from freeboard
-		where likecount > 5 order by date desc
+		where readcount > 5 order by date desc
 	</select>
 	
 	

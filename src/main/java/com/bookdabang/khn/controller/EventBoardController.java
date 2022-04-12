@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bookdabang.common.domain.AttachFileVO;
 import com.bookdabang.common.domain.EventBoardVo;
+import com.bookdabang.common.domain.EventReplyVo;
 import com.bookdabang.common.domain.ReportBoard;
 import com.bookdabang.common.etc.IPCheck;
 import com.bookdabang.khn.etc.UploadFile;
@@ -33,16 +34,6 @@ public class EventBoardController {
 	private EventService service;
 	
 	private List<UploadFile> upfileLst = new ArrayList<UploadFile>(); // 업로드된 파일들의 리스트
-	
-	//ETC-------------------------------------------------------------
-	@RequestMapping(value = "/allBestList", method = RequestMethod.GET)
-	public String allBestList(Locale locale, Model model) throws Exception {
-		System.out.println("베스트 게시글을 불러옵니다");
-		List allBestList = service.allBestList();
-		model.addAttribute("allBestList", allBestList);
-		
-		return "/event/allBestList";
-	}
 	
 
 	// reading-----------------------------------------------------------
@@ -70,8 +61,18 @@ public class EventBoardController {
 		EventBoardVo detailEvent = service.readDetailEvent(no);
 		model.addAttribute("detailEvent", detailEvent);
 		
-		return "event/detailEvent";
+		return "/event/detailEvent";
 		
+	}
+	
+	// 베스트 게시글
+	@RequestMapping(value = "/allBestList", method = RequestMethod.GET)
+	public String allBestList(Locale locale, Model model) throws Exception {
+		System.out.println("베스트 게시글을 불러옵니다");
+		List allBestList = service.allBestList();
+		model.addAttribute("allBestList", allBestList);
+		
+		return "/event/allBestList";
 	}
 	
 	
@@ -89,10 +90,8 @@ public class EventBoardController {
 		System.out.println("글을 등록합니다.");
 		
 		if (service.insertEvent(newEvent)) {
-			rttr.addFlashAttribute("result", "success");
 			result = "redirect:/event/allEventList";
 		} else {
-			rttr.addFlashAttribute("result", "fail");
 			result = "redirect:/event/insertEvent";
 		}
 
@@ -100,16 +99,56 @@ public class EventBoardController {
 		
 	}
 	
+	@RequestMapping(value = "/reply", method = RequestMethod.POST)
+	public String reply(EventReplyVo newReply, RedirectAttributes rttr) throws Exception {
+		System.out.println("댓글을 남깁니다");
+		
+		boolean EventReply = service.insertReply(newReply);
+		
+		return null;
+	}
 	
-	// delete
+	
+	// delete-----------------------------------------------------------
 	@RequestMapping(value = "/eventDel")
 	public String deleteEvent(@RequestParam("boardno") String boardno, Model model, HttpServletRequest request) throws Exception {
 		int no = Integer.parseInt(boardno);
-		int result = 0;
 		System.out.println(no + "번 게시글을 삭제합니다");
 		
 		int deleteEvent = service.deleteEvent(no);
 		
 		return "redirect:/event/allEventList";
+	}
+	
+	
+	
+	// update-----------------------------------------------------------
+	@RequestMapping(value = "/eventUpdatePage") // 업데이트 페이지로 이동
+	public String eventUpdatePage(@RequestParam("boardno") String boardno, Model model, HttpServletRequest request) throws Exception {
+		int no = Integer.parseInt(boardno);
+		EventBoardVo detailEvent = service.readDetailEvent(no);
+		model.addAttribute("detailEvent", detailEvent);
+		
+		return "/event/upDateEvent";
+	}
+	
+	
+	@RequestMapping(value = "/eventUpdate", method = RequestMethod.GET) // 실제 업데이트 로직
+	public String eventUpdate(@RequestParam("boardno") String boardno, EventBoardVo updateEvent, RedirectAttributes rttr) throws Exception {
+		String result = "";
+		int no = Integer.parseInt(boardno);
+		System.out.println(no + "번 게시글을 업데이트합니다");
+		
+		if (service.updateEvent(updateEvent)) {
+			System.out.println("업데이트 성공");
+			rttr.addFlashAttribute("result", "success");
+			result = "redirect:/event/detailEvent?" + no;
+		} else {
+			System.out.println("업데이트 실패");
+			rttr.addFlashAttribute("result", "fail");
+			result = "redirect:/event/upDateEvent";
+		}
+	
+		return result;
 	}
 }

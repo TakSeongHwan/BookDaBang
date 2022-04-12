@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 
 import com.bookdabang.common.domain.EventBoardVo;
+import com.bookdabang.common.domain.EventReplyVo;
 import com.bookdabang.khn.persistence.EventDAO;
 
 @Service // 서비스 단임을 명시
@@ -34,9 +35,21 @@ public class EventServiceImpl implements EventService {
 		boolean result = false;
 		newEvent.setContent(newEvent.getContent().replace("\r\n", "<br />")); // 줄바꿈 적용
 		
-		int r1 = dao.insertEvent(newEvent);
+		int result1 = dao.insertEvent(newEvent);
 		
-		if(r1 == 1) {
+		if(result1 == 1) {
+			result = true;
+		}
+		
+		return result;
+	}
+	
+	
+	@Override // 댓글 입력
+	public boolean insertReply(EventReplyVo newReply) throws Exception {
+		boolean result = false;
+		int result1 = dao.insertReply(newReply);
+		if(result1 == 1) {
 			result = true;
 		}
 		
@@ -49,15 +62,27 @@ public class EventServiceImpl implements EventService {
 	public int deleteEvent(int no) throws Exception {
 		return dao.deleteEvent(no);
 	}
-
+	
+	
+	// Update----------------------------------------
+	@Override
+	public boolean updateEvent(EventBoardVo updateEvent) throws Exception {
+		boolean result = false;
+		updateEvent.setContent(updateEvent.getContent().replace("\r\n", "<br />"));
+		
+		int result1 = dao.updateEvent(updateEvent);
+		if (result1 == 1) {
+			result = true;
+		}
+		
+		return result;
+	}
 	
 	
 	// Etc-----------------------------------------
 	@Override
 	public Timestamp pageViewCheck(String ipAddr, int no) {
 		Timestamp result = null;
-		
-		
 		
 		return result;
 	}
@@ -66,6 +91,11 @@ public class EventServiceImpl implements EventService {
 	public List allBestList() throws Exception {
 		return dao.allBestList();
 	}
+
+	
+
+
+	
 
 
 }

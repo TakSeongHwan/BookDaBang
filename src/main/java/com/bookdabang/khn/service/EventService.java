@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.bookdabang.common.domain.EventBoardVo;
+import com.bookdabang.common.domain.EventReplyVo;
 import com.bookdabang.khn.etc.UploadFile;
 
 public interface EventService {
@@ -15,10 +16,18 @@ public interface EventService {
 	public EventBoardVo readDetailEvent(int no) throws Exception; // 게시글 세부 내용 읽어오기
 
 	public int deleteEvent(int no) throws Exception; // 게시글 삭제
+	
+	public boolean updateEvent(EventBoardVo updateEvent) throws Exception; // 게시글 수정
 
 	public Timestamp pageViewCheck(String ipAddr, int no);
 
 	public List allBestList() throws Exception; // 베스트 게시글 불러오기
 
+	public boolean insertReply(EventReplyVo newReply) throws Exception; // 댓글 등록
+
+	
+
+
 
 }
+

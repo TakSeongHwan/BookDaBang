@@ -19,9 +19,8 @@
 				<tr>
 					<th>글번호</th>
 					<th>제목</th>
-					<th>작성일자</th>
 					<th>글쓴이</th>
-					<th>추천수</th>
+					<th>날짜</th>
 					<th>조회수</th>
 				</tr>
 			</thead>
@@ -30,9 +29,8 @@
 					<tr onclick="location.href='${contextPath}/board/readFreeBoard?boardno=${allBestList.boardno }';"> <!-- 클릭시 글넘버를 GET으로 넘기며 이동--->
 						<td>${allBestList.boardno }</td>
 						<td>${allBestList.title }</td>
-						<td>${allBestList.date }</td>
 						<td>${allBestList.writer }</td>
-						<td>${allBestList.likecount }</td>
+						<td>${allBestList.date }</td>
 						<td>${allBestList.readcount }</td>
 					</tr>
 				</c:forEach>
