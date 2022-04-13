@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.bookdabang.common.domain.AddressVO;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.ProdOrder;
+import com.bookdabang.ljs.service.LoginService;
 import com.bookdabang.tsh.domain.CartSelectDTO;
 import com.bookdabang.tsh.domain.CartViewDTO;
 import com.bookdabang.tsh.domain.OrderDTO;
@@ -35,6 +36,8 @@ public class OrderController {
 	private OrderService service;
 	@Inject
 	private CartService cService;
+	@Inject
+	private LoginService lService;
 
 //	@RequestMapping(value = "/checkOut")
 //	public String checkout(HttpSession ses) throws Exception {
@@ -83,12 +86,15 @@ public class OrderController {
 	}
 	
 	@RequestMapping(value="/insertOrder",method = RequestMethod.POST)
-	public String insertOrder(AddressVO addrvo ,OrderInputDTO dto,String deliverymessage) throws Exception {
+	public String insertOrder(String sessionId,AddressVO addrvo ,OrderInputDTO dto,String deliverymessage) throws Exception {
 		System.out.println(deliverymessage);
 		System.out.println(dto);
+		System.out.println(sessionId);
+		addrvo.setUserId(lService.findLoginSess(sessionId).getUserId());
 		addrvo.setAddress_no(dto.getAddressNo());
 		System.out.println(addrvo);
 		String orderPwd = dto.getOrderPwd();
+		System.out.println(orderPwd);
 		List<String> cartNo = new ArrayList<String>();
 		String[] cartsNo = dto.getCartsNo().split(",");
 		for(int i = 0; i < cartsNo.length; i++) {

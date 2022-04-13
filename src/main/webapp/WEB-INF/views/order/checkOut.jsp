@@ -43,7 +43,7 @@
 			if (telValidator($("#phoneNumber").val())) {
 				if ($("#f-option5").prop("checked")
 						&& $("#f-option6").prop("checked")) {
-					if ("${loginMember.userId}".length < 1) {
+					if ("${sessionId}".length < 1) {
 						console.log($("#orderPwd").val())
 						if ($("#orderPwd").val() == "") {
 							alert("주문 비밀번호를 입력해주세요")
@@ -77,7 +77,7 @@
 	});
 
 	function showOrderPwd() {
-		if ("${loginMember.userId}".length < 1) {
+		if ("${sessionId}".length < 1) {
 			let output = '<input type="password" class="form-control" id="orderPwd"placeholder="주문 비밀번호를 입력하세요">'
 			$("#pwdDiv").append(output);
 		}
@@ -94,11 +94,11 @@
 		formData.setAttribute("name", "orderPwd");
 		formData.setAttribute("value", orderPwd);
 
-		if ("${loginMember.userId}".length > 1) {
+		if ("${sessionId}".length > 1) {
 			let formData1 = document.createElement("input");
 			formData.setAttribute("type", 'hidden');
-			formData.setAttribute("name", "userId");
-			formData.setAttribute("value", "${loginMember.userId}");
+			formData.setAttribute("name", "sessionId");
+			formData.setAttribute("value", "${sessionId}");
 			form.appendChild(formData1);
 		}
 

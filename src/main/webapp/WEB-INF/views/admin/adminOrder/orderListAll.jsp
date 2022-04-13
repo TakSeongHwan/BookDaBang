@@ -16,16 +16,9 @@
 	let checkAry = [];
 	let SearchCriteria = {
 		searchWord : "",
-		category_code : "",
 		searchType : "",
-		startRgDate : "",
-		endRgDate : "",
-		startUpdate : "",
-		endUpDate : "",
-		display_status : "",
-		sales_status : "",
-		sortWord : "",
-		sortMethod : ""
+		startSellDate : "",
+		endSellDate : "",
 	}
 
 	window.onload = function() {
@@ -34,22 +27,13 @@
 
 	function search() {
 		pageNo = 1;
-
-		$(".sortBtn").html("▽");
-		SearchCriteria.sortWord = "";
-		SearchCriteria.sortMethod = "";
 		SearchCriteria.searchWord = $("#searchWord").val();
-		SearchCriteria.category_code = parseInt($("#category").val());
 		SearchCriteria.searchType = $("#serachType").val();
-		SearchCriteria.startRgDate = $("#startRgDate").val();
-		SearchCriteria.endRgDate = $("#endRgDate").val();
-		SearchCriteria.startUpdate = $("#startUpdate").val();
-		SearchCriteria.endUpDate = $("#endUpDate").val();
-
+		SearchCriteria.startSellDate = $("#startSellDate").val();
+		SearchCriteria.endSellDate = $("#endSellDate").val();
 		JsonSearchCriteria = JSON.stringify(SearchCriteria);
 		console.log(JsonSearchCriteria);
-		searchProduct(SearchCriteria, pageNo);
-
+		searchOrder(SearchCriteria, pageNo);
 	}
 
 	function searchOrder(sc, pno) {
@@ -77,6 +61,56 @@
 		});
 
 	}
+	
+	function stateChange(obj){
+		let id = obj.id.substring(5);
+		console.log(id);
+		$(obj).html("<select  id='"+obj.id+"' name='orderState' onchange='state("+id+")'><option value='1'>선택</option><option value='1'>출고 준비중</option><option value='2'>배송중</option><option value='3'>배송 완료</option><option value='4'>주문 취소</option><option value='5'>상품 환불</option></select>");
+	}
+	
+	function confirmChange(obj){
+		let id = obj.id.substring(7);
+		$(obj).html("<select id='"+obj.id+"' name='confirm' onchange='confirm("+id+");'><option value='N'>선택</option><option value='N'>미확정</option><option value='Y'>구매 확정</option></select>");
+	}
+	
+	function confirm(id){
+		let url = "/orderManager/confirm/"+id
+		let sendData = $("#confirm"+id+" option:selected").val();
+		$.ajax({
+			url : url,
+			data : {
+				confirm : sendData
+			},
+			type : "put",
+			headers : {
+				"X-HTTP-Method-Override" : "POST"
+			},
+			success : function(data) {
+				console.log(data);
+				$("#confirm"+id).html($("#confirm"+id+" option:selected").html());
+			}
+		});
+	}
+	
+	function state(id){
+		let url = "/orderManager/orderState/"+id
+		let sendData = $("#state"+id+" option:selected").val();
+		console.log(sendData);
+		$.ajax({
+			url : url,
+			data : {
+				orderState : sendData
+			},
+			type : "put",
+			headers : {
+				"X-HTTP-Method-Override" : "POST"
+			},
+			success : function(data) {
+				console.log(data);
+				searchOrder(SearchCriteria, pageNo);
+			}
+		});
+	}
 
 	function searchView(data) {
 		$("#orderView").empty();
@@ -93,42 +127,45 @@
 			output += '<td>' + e.productNo + '</td>';
 			output += '<td><img src ="' + e.cover + '" width="50" /></td>';
 			output += '<td>' + e.title + '</td>';
+			output += '<td>' + e.productQtt + '</td>';
 			let price = e.price.toLocaleString();
 			output += '<td>' + price + '원</td>'
 			orderDate = new Date(+new Date(e.orderDate) + 3240 * 10000).toISOString().split("T")[0];
 			output += '<td>' + orderDate + '</td>';
+			output += '<td id="state'+e.orderNo+'" ondblclick="stateChange(this);">';
 			if(e.orderState_code == 1){
-				output += '<td>출고 준비중</td>';
+				output += '출고 준비중';
 			}else if(e.orderState_code == 2){
-				output += '<td>배송중</td>';
+				output += '배송중';
 			}else if(e.orderState_code == 3){
-				output += '<td>배송 완료</td>';
+				output += '배송 완료';
 			}else if(e.orderState_code == 4){
-				output += '<td>주문 취소</td>';
+				output += '주문 취소';
 			}else if(e.orderState_code == 5){
-				output += '<td>상품 환불</td>';
+				output += '상품 환불';
 			}
+			output += "</td>";
 			if (e.releaseDate == null) {
 				output += '<td>미출고</td>'
 			} else {
 				releaseDate = new Date(+new Date(e.releaseDate) + 3240 * 10000).toISOString().split("T")[0];
 				output += '<td>'+releaseDate+'</td>'
 			}
-			if(e.confirm==null){
-				output += '<td>미확정</td>'
+			if(e.confirm==null||e.confirm=='N'){
+				output += '<td  id="confirm'+e.orderNo+'" ondblclick="confirmChange(this);"> 미확정</td>'
 			}else{
-				output += '<td>구매 확정</td></tr>';
+				output += '<td  id="confirm'+e.orderNo+'" ondblclick="confirmChange(this);">구매 확정</td></tr>';
 			}
 			
 		});
 
 		if (pageNo != 1) {
-			pagingoutput += "<li class='page-item last'><a class='page-link'onclick='searchProduct("
+			pagingoutput += "<li class='page-item last'><a class='page-link'onclick='searchOrder("
 					+ JsonSearchCriteria
 					+ ","
 					+ 1
 					+ ")' ><i class='tf-icon bx bx-chevrons-left'></i></a></li>";
-			pagingoutput += "<li class='page-item last'><a class='page-link'onclick='searchProduct("
+			pagingoutput += "<li class='page-item last'><a class='page-link'onclick='searchOrder("
 					+ JsonSearchCriteria
 					+ ","
 					+ (pageNo - 1)
@@ -136,7 +173,7 @@
 		}
 		for (let i = data.pagingInfo.startNoOfCurPagingBlock; i <= data.pagingInfo.endNoOfCurPagingBlock; i++) {
 			if (pageNo == i) {
-				pagingoutput += "<li class='page-item active'><a class='page-link' onclick='searchProduct("
+				pagingoutput += "<li class='page-item active'><a class='page-link' onclick='searchOrder("
 						+ JsonSearchCriteria
 						+ ","
 						+ i
@@ -144,7 +181,7 @@
 						+ i
 						+ "</a></li>";
 			} else {
-				pagingoutput += "<li class='page-item'><a class='page-link' onclick='searchProduct("
+				pagingoutput += "<li class='page-item'><a class='page-link' onclick='searchOrder("
 						+ JsonSearchCriteria
 						+ ","
 						+ i
@@ -155,12 +192,12 @@
 		}
 
 		if (pageNo < data.pagingInfo.totalPage) {
-			pagingoutput += "<li class='page-item last'><a class='page-link'onclick='searchProduct("
+			pagingoutput += "<li class='page-item last'><a class='page-link'onclick='searchOrder("
 					+ JsonSearchCriteria
 					+ ","
 					+ (pageNo + 1)
 					+ ")' ><i class='tf-icon bx bx-chevron-right'></i></a></li>";
-			pagingoutput += "<li class='page-item last'><a class='page-link'onclick='searchProduct("
+			pagingoutput += "<li class='page-item last'><a class='page-link'onclick='searchOrder("
 					+ JsonSearchCriteria
 					+ ","
 					+ (data.pagingInfo.totalPage)
@@ -171,32 +208,6 @@
 
 		$("#pagingZone").append(pagingoutput);
 		$("#orderView").append(output);
-
-	}
-	
-	function searchProduct(sc, pno) {
-
-		$("#productView")
-				.html(
-						'<div style="position : absolute; left : 50%; top :50%; transform : translate(-50%, -50%)"><img src="/resources/img/etc/loading.gif" style ="width : 150px"></div>');
-		pageNo = pno;
-		console.log(pageNo);
-		console.log(sc);
-		$("#allcheck").prop("checked", false)
-
-		let url = "/orderManager/getAll/" + pageNo;
-
-		$.ajax({
-			url : url,
-			dataType : "json",
-			type : "post",
-			data : sc,
-			success : function(data) {
-				console.log(data)
-				searchView(data);
-			}
-
-		});
 
 	}
 
@@ -211,9 +222,25 @@
 .searchContainer {
 	width: 100%;
 	padding: 30px;
-	height: 470px;
+	height: 300px;
 	display: inline-block;
 }
+
+.sellDateSearch {
+	float: right;
+	width: 500px;
+}
+
+.sellDateSearch>label {
+	margin-top: 3px;
+	display: block
+}
+
+.sellDateSearch>input {
+	width: 150px;
+	display: inline-block;
+}
+
 
 .searchText {
 	margin: 0 auto;
@@ -248,35 +275,6 @@ th {
 	margin-top: 3px;
 }
 
-.rgDateSearch {
-	width: 350px;
-}
-
-.rgDateSearch>label {
-	margin-top: 3px;
-	display: block
-}
-
-.rgDateSearch>input {
-	width: 150px;
-	display: inline-block;
-}
-
-.upDateDateSearch {
-	float: right;
-	width: 500px;
-}
-
-.upDateDateSearch>label {
-	margin-top: 3px;
-	display: block
-}
-
-.upDateDateSearch>input {
-	width: 150px;
-	display: inline-block;
-}
-
 #pagingZone {
 	width: 700px;
 	margin: 0 auto;
@@ -308,8 +306,8 @@ th {
 	<jsp:include page="../../managerHeader.jsp"></jsp:include>
 	<div class="container">
 		<h4 class="fw-bold py-3 mb-4">
-			<span class="text-muted fw-light" style="line-height: 80px">상품
-				관리 /</span> 상품 조회
+			<span class="text-muted fw-light" style="line-height: 80px">주문
+				관리 /</span> 주문 조회
 		</h4>
 	</div>
 	<div class="searchContainer">
@@ -322,92 +320,24 @@ th {
 					class="select2 form-select"
 					style="width: 150px; display: inline-block;" id="serachType">
 					<option value="title" selected hidden>키워드 검색</option>
-					<option value="title">제목</option>
-					<option value="isbn">ISBN</option>
-					<option value="author">작가</option>
-					<option value="content">내용</option>
+					<option value="orderNo">주문번호</option>
+					<option value="prodNo">상품번호</option>
+					<option value="userId">아이디</option>
 				</select>
 			</div>
-			<div class="searchZoon" style="height: 200px">
+			<div class="searchZoon" style="height: 70px">
 
-				<div class="rgDateSearch">
-					<label for="rgDate" class="form-label">등록 날짜</label> <input
-						type="date" class="form-control" id="startRgDate" name="username"
+				<div class="sellDateSearch">
+					<label class="form-label">판매 날짜</label> <input
+						type="date" class="form-control" id="startSellDate" name="username"
 						placeholder="검색할 내용을 입력하세요" autofocus style="margin-right: 10px;" /><span
 						style="font-size: 24px">~</span><input type="date"
-						class="form-control" id="endRgDate" name="username"
+						class="form-control" id="endSellDate" name="username"
 						placeholder="검색할 내용을 입력하세요" autofocus style="margin-left: 10px" />
 				</div>
-
-				<div class="upDateDateSearch">
-					<label for="rgDate" class="form-label">수정 날짜</label> <input
-						type="date" class="form-control" id="startUpdate" name="username"
-						placeholder="검색할 내용을 입력하세요" autofocus style="margin-right: 10px;" /><span
-						style="font-size: 24px">~</span><input type="date"
-						class="form-control" id="endUpDate" name="username"
-						placeholder="검색할 내용을 입력하세요" autofocus style="margin-left: 10px" />
-				</div>
-
-				<div class="upDateDateSearch">
-					<label for="rgDate" class="form-label">마감 날짜</label> <input
-						type="date" class="form-control" id="startUpdate" name="username"
-						placeholder="검색할 내용을 입력하세요" autofocus style="margin-right: 10px;" /><span
-						style="font-size: 24px">~</span><input type="date"
-						class="form-control" id="endUpDate" name="username"
-						placeholder="검색할 내용을 입력하세요" autofocus style="margin-left: 10px" />
-				</div>
-
-				<div style="clear: both">
-					<div>
-
-						<table class="table" id="searchTable">
-							<tr>
-								<td style="border-right: 1px solid #ccc"><label
-									class="form-check-label" for="defaultCheck3"> 전체 </label></td>
-								<td><input class="form-check-input" id="all_status"
-									type="checkbox" value="sale" id="defaultCheck3" checked /></td>
-							</tr>
-							<tr>
-								<td style="border-right: 1px solid #ccc">판매 상태</td>
-								<td><input class="form-check-input sales_status"
-									type="radio" value="sale" id="defaultCheck3"
-									name="sales_status" /> <label class="form-check-label"
-									for="defaultCheck3">판매중 </label></td>
-								<td><input class="form-check-input sales_status"
-									type="radio" value="notSale" id="defaultCheck3"
-									name="sales_status" /> <label class="form-check-label"
-									for="defaultCheck3">판매안함 </label></td>
-								<td><input class="form-check-input sales_status"
-									type="radio" value="soldOut" id="defaultCheck3"
-									name="sales_status" /> <label class="form-check-label"
-									for="defaultCheck3">품절</label></td>
-							</tr>
-							<tr>
-								<td style="border-right: 1px solid #ccc">진열 상태</td>
-								<td><input class="form-check-input display_status"
-									type="radio" value="yes" id="defaultCheck3"
-									name="display_status" /> <label class="form-check-label"
-									for="defaultCheck3">진열 </label></td>
-								<td><input class="form-check-input display_status"
-									type="radio" value="no" id="defaultCheck3"
-									name="display_status" /> <label class="form-check-label"
-									for="defaultCheck3">진열안함 </td>
-
-							</tr>
-						</table>
-
-
-					</div>
-				</div>
-
 
 			</div>
 		</div>
-
-
-
-
-
 		<div
 			style="width: 1200px; margin: 0 auto; margin-top: 25px; clear: both">
 			<button type="button" class="btn btn-primary" onclick="search();">검색</button>
@@ -422,11 +352,6 @@ th {
 
 	<div class="card">
 		<h4 class="card-header">주문 조회</h4>
-		<div>
-			<button type="button" class="btn rounded-pill btn-outline-primary"
-				style="float: left; margin-left: 15px" data-bs-toggle="modal"
-				data-bs-target="#myModal" id="batchUpdate">일괄 업데이트 / 삭제</button>
-		</div>
 		<div class="table-responsive text-nowrap">
 			<table class="table">
 				<thead>
@@ -436,6 +361,7 @@ th {
 						<th>상품 번호</th>
 						<th>이미지</th>
 						<th>상품명</th>
+						<th>판매수</th>
 						<th>판매가</th>
 						<th>판매일</th>
 						<th>주문 상태</th>

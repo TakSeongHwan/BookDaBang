@@ -1,5 +1,6 @@
 package com.bookdabang.tsh.persistence;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.ProdOrder;
-import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.tsh.domain.OrderDTO;
+import com.bookdabang.tsh.etc.SearchCriteria;
 @Repository
 public class OrderDAOImpl implements OrderDAO {
 
@@ -45,25 +46,29 @@ public class OrderDAOImpl implements OrderDAO {
 	@Override
 	public int allOrderCnt(SearchCriteria sc) throws Exception {
 		// TODO Auto-generated method stub
-		return ses.selectOne(ns + ".allOrderCnt", sc);
+		return ses.selectOne(ns + ".orderCnt", sc);
 	}
 
 	@Override
 	public List<ProdOrder> orderView(SearchCriteria sc, PagingInfo pi) throws Exception {
 		Map<String, Object> param = new HashMap<String, Object>();
 		
-		param.put("searchType", sc.getSearchType());
-		param.put("searchWord", sc.getSearchWord());
-		param.put("category_code",sc.getCategory_code());
 		param.put("startNum",pi.getStartNum() );
 		param.put("postPerPage",pi.getPostPerPage());
-		param.put("sortWord", sc.getSortWord());
-		param.put("sortMethod", sc.getSortMethod());
-		param.put("startRgDate", sc.getStartRgDate());
-		param.put("endRgDate", sc.getEndRgDate());
-		param.put("display_status",sc.getDisplay_status());
-		param.put("sales_status",sc.getSales_status());
+		param.put("searchType", sc.getSearchType());
+		param.put("searchWord", sc.getSearchWord());
+		param.put("startSellDate", sc.getStartSellDate());
+		param.put("endSellDate", sc.getEndSellDate());
 		return ses.selectList(ns + ".orderView", param);
+	}
+
+	@Override
+	public int updateOrderState(int orderState, int orderNo) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("orderState",orderState);
+		param.put("orderNo",orderNo);
+		int result = ses.update(ns+".updateOrderState", param);
+		return result;
 	}
 	
 	
