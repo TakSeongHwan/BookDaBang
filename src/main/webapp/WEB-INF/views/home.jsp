@@ -7,25 +7,76 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>BookDaBang</title>
+
+
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+
 </head>
 
+
 <script>
-	
+	$(function() {
+		let owl = $('#bestSellerCarousel');
+		owl.owlCarousel({
+			items : 4,
+			loop : true,
+			margin : 10,
+			autoplay : true,
+			autoplayTimeout : 2000,
+			autoplayHoverPause : true
+		});
+
+		let owl2 = $('#randomCarousel');
+		owl2.owlCarousel({
+			items : 4,
+			loop : true,
+			margin : 10,
+			autoplay : true,
+			autoplayTimeout : 2000,
+			autoplayHoverPause : true
+		});
+		
+	});
 </script>
 <style>
+.owl-stage-outer{
+height: 400px;
+}
+.card-product__img>img{
+max-width:auto;
+min-width:auto;
+max-height:300px;
+min-height: 280px;
 
 
-.prodImg{
-position: absolute;
-bottom: 0px;
 }
-.card-product__img{
-height: 500px;
-object-fit: cover;
+.owl-item{
+	height: 400px;
+
 }
+
+.card-product__title>a{
+text-overflow: ellipsis;
+overflow: hidden;
+white-space: nowrap;
+  height: 25px;
+  width:165px;
+text-align: center;
+}
+.my-card-body{
+padding-top: 10px;
+}
+.owl-dots{
+visibility: hidden !important;
+}
+
 
 </style>
+
 
 <body>
 	<jsp:include page="userHeader.jsp"></jsp:include>
@@ -50,48 +101,75 @@ object-fit: cover;
 		</div>
 
 		<div class="section-intro" style="margin-top: 100px;">
-          <h2>Best Sellers</h2>
-        </div>
+			<h2>Best Sellers</h2>
+		</div>
+		
+		
 		<div class="owl-carousel owl-theme owl-loaded owl-drag"
-			id="bestSellerCarousel" >
-
+			id="bestSellerCarousel">
 			<div class="owl-stage-outer">
 				<div class="owl-stage"
 					style="transform: translate3d(-2850px, 0px, 0px); width: 4560px;">
 
 					<c:forEach var="prod" items="${product }">
-						<div class="owl-item active"
-							style=" margin-right: 30px;">
+						<div class="owl-item active" style="margin-right: 30px;">
 							<div class="card text-center card-product">
-								<div class="card-product__img" >
+								<div class="card-product__img">
 
-									<img class="img-fluid prodImg" src="${prod.cover}"/>
-									
+									<img class="img-fluid prodImg" src="${prod.cover}" />
+
 								</div>
-								<div class="card-body">
-									<h4 class="card-product__title">
-										<a href='${contextPath }/product/detail?no=${prod.product_no }'>${prod.title }</a>
-									</h4>
-									<p class="card-product__price">${prod.sell_price }</p>
+								<div class="my-card-body">
+									<div class="card-product__title">
+										<a
+											href='${contextPath }/product/detail?no=${prod.product_no }'>${prod.title }</a>
+									</div>
+									<div class="card-product__price">${prod.sell_price }￦</div>
 								</div>
 							</div>
 						</div>
-
-
-
-
-
 					</c:forEach>
-
-
-
-
 				</div>
 			</div>
 		</div>
+		
+		
+		<div class="section-intro" style="margin-top: 100px;">
+			<h2>Random Recommendation</h2>
+		</div>
+		<div class="owl-carousel owl-theme owl-loaded owl-drag"
+			id="randomCarousel">
+			<div class="owl-stage-outer">
+				<div class="owl-stage"
+					style="transform: translate3d(-2850px, 0px, 0px); width: 4560px;">
 
-	</div>
+					<c:forEach var="random" items="${randomBook }">
+						<div class="owl-item active" style="margin-right: 30px;">
+							<div class="card text-center card-product">
+								<div class="card-product__img">
 
+									<img class="img-fluid prodImg" src="${random.cover}" />
+
+								</div>
+								<div class="my-card-body">
+									<div class="card-product__title">
+										<a
+											href='${contextPath }/product/detail?no=${random.product_no }'>${random.title }</a>
+									</div>
+									<div class="card-product__price">${random.sell_price }￦</div>
+								</div>
+							</div>
+						</div>
+					</c:forEach>
+				</div>
+			</div>
+		</div>
+		
+
+</div>
 	<jsp:include page="userFooter.jsp"></jsp:include>
+
+
+
 </body>
 </html>

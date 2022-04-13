@@ -70,17 +70,27 @@ public class HomeController {
 
 		}
 		
-			List<ProductVO> list = new ArrayList<ProductVO>();
+			List<ProductVO> bestSellerlist = new ArrayList<ProductVO>();
 			try {
-				list = cService.getProductSort();
+				bestSellerlist = cService.getProductSort();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-			model.addAttribute("product",list);
+			model.addAttribute("product",bestSellerlist);
 		
-		
+			List<ProductVO> randomList = new ArrayList<ProductVO>();
+			try {
+				randomList = cService.getRandomSelect();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			model.addAttribute("randomBook",randomList);
+			
+			
 		
 		return "home";
 		

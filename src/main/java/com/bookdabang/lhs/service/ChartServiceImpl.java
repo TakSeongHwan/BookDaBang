@@ -7,6 +7,8 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 
 import com.bookdabang.common.domain.ProductVO;
+import com.bookdabang.common.domain.VisitorIPCheck;
+import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 import com.bookdabang.lhs.persistence.ChartDAO;
 
 
@@ -21,6 +23,24 @@ public class ChartServiceImpl implements ChartService {
 	public List<ProductVO> getProductSort() throws Exception {
 		// TODO Auto-generated method stub
 		return chartDAO.getProductSort();
+	}
+
+	@Override
+	public List<ProductVO> getRandomSelect() throws Exception {
+		// TODO Auto-generated method stub
+		return chartDAO.getRandomSelect();
+	}
+
+	@Override
+	public List<VisitorCountWithDateFormat> getVisitorInfo() throws Exception {
+		// TODO Auto-generated method stub
+		return chartDAO.getVisitorInfo();
+	}
+
+	@Override
+	public int autoInsertVisitor(VisitorIPCheck vipc) throws Exception {
+		// TODO Auto-generated method stub
+		return chartDAO.autoInsertVisitor(vipc);
 	}
 
 }
