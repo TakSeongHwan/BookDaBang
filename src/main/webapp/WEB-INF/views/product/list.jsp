@@ -72,7 +72,7 @@
 			output += '<div class="col-md-6 col-lg-4"><div class="card text-center card-product"><div class="card-product__img">';
 			output += '<img class="card-img" src="' + e.cover + '" alt="">';
 			output += '<ul class="card-product__imgOverlay"><li><a href="${contextPath}/product/detail?no=' + e.product_no +
-					'"><button><i class="ti-search"></i></button></a></li><li><button><i class="ti-shopping-cart"></i></button></li><li><button><i class="ti-heart"></i></button></li></ul></div>';
+					'"><button><i class="ti-search"></i></button></a></li><li><button><i class="ti-shopping-cart"></i></button></li><li><button><i class="ti-money"></i></button></li></ul></div>';
 			output += '<div class="card-body"><p>' + e.author
 						+ '| ' + e.publisher + '</p>';
 			output += '<h4 class="card-product__title"><a href="${contextPath}/product/detail?no=' + e.product_no
@@ -191,10 +191,6 @@
 													</label>
 												</li>
 											</c:forEach>
-											
-											<!-- <li class="filter-list"><input class="pixel-radio"
-												type="radio" id="men" name="brand"><label for="men">Men<span>
-														(3600)</span></label></li> -->
 										</ul>
 									</form>
 								</li>
@@ -267,7 +263,7 @@
 								<ul id ="sort">
 									<li class="orderBy"><a href="javascript:orderBy(1);" id ="bySellCount">판매순</a></li>
 									<li class="orderBy"><a href="javascript:orderBy(2);" id ="byPubDate">출간일순</a></li>
-									<li class="orderBy"><a href="javascript:orderBy(3);" id ="byDiscount">할인순</a></li>
+									<li class="orderBy"><a href="javascript:orderBy(3);" id ="byDiscount">가격순</a></li>
 								</ul>
 							</div>
 							<div class="sorting">
@@ -302,9 +298,14 @@
 														</a>
 													</li>
 													<li>
-														<button><i class="ti-shopping-cart"></i></button></li>
+														<a href="">
+															<button><i class="ti-shopping-cart"></i></button>
+														</a>
+													</li>
 													<li>
-														<button><i class="ti-heart"></i></button>
+														<a href="">
+															<button><i class="ti-money"></i></button>
+														</a>
 													</li>
 												</ul>
 											</div>
@@ -320,6 +321,7 @@
 								</c:forEach>	
 							</div>
 						</section>
+						<!-- 페이징 -->
 						<nav class="blog-pagination justify-content-center d-flex">
                           	<ul class="pagination">
                           		<c:if test="${param.pageNo > 2 }">
@@ -384,123 +386,6 @@
 		</section>
 		<!-- ================ category section end ================= -->
 
-		<!-- ================ top product area start ================= -->
-		<section class="related-product-area">
-			<div class="container">
-				<div class="section-intro pb-60px">
-					<p>Popular Item in the market</p>
-					<h2>
-						Top <span class="section-intro__style">Product</span>
-					</h2>
-				</div>
-				<div class="row mt-30">
-					<div class="col-sm-6 col-xl-3 mb-4 mb-xl-0">
-						<div class="single-search-product-wrapper">
-							<div class="single-search-product d-flex">
-								<a href="#"><img src="img/product/product-sm-1.png" alt=""></a>
-								<div class="desc">
-									<a href="#" class="title">Gray Coffee Cup</a>
-									<div class="price">$170.00</div>
-								</div>
-							</div>
-							<div class="single-search-product d-flex">
-								<a href="#"><img src="img/product/product-sm-2.png" alt=""></a>
-								<div class="desc">
-									<a href="#" class="title">Gray Coffee Cup</a>
-									<div class="price">$170.00</div>
-								</div>
-							</div>
-							<div class="single-search-product d-flex">
-								<a href="#"><img src="img/product/product-sm-3.png" alt=""></a>
-								<div class="desc">
-									<a href="#" class="title">Gray Coffee Cup</a>
-									<div class="price">$170.00</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-sm-6 col-xl-3 mb-4 mb-xl-0">
-						<div class="single-search-product-wrapper">
-							<div class="single-search-product d-flex">
-								<a href="#"><img src="img/product/product-sm-4.png" alt=""></a>
-								<div class="desc">
-									<a href="#" class="title">Gray Coffee Cup</a>
-									<div class="price">$170.00</div>
-								</div>
-							</div>
-							<div class="single-search-product d-flex">
-								<a href="#"><img src="img/product/product-sm-5.png" alt=""></a>
-								<div class="desc">
-									<a href="#" class="title">Gray Coffee Cup</a>
-									<div class="price">$170.00</div>
-								</div>
-							</div>
-							<div class="single-search-product d-flex">
-								<a href="#"><img src="img/product/product-sm-6.png" alt=""></a>
-								<div class="desc">
-									<a href="#" class="title">Gray Coffee Cup</a>
-									<div class="price">$170.00</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-sm-6 col-xl-3 mb-4 mb-xl-0">
-						<div class="single-search-product-wrapper">
-							<div class="single-search-product d-flex">
-								<a href="#"><img src="img/product/product-sm-7.png" alt=""></a>
-								<div class="desc">
-									<a href="#" class="title">Gray Coffee Cup</a>
-									<div class="price">$170.00</div>
-								</div>
-							</div>
-							<div class="single-search-product d-flex">
-								<a href="#"><img src="img/product/product-sm-8.png" alt=""></a>
-								<div class="desc">
-									<a href="#" class="title">Gray Coffee Cup</a>
-									<div class="price">$170.00</div>
-								</div>
-							</div>
-							<div class="single-search-product d-flex">
-								<a href="#"><img src="img/product/product-sm-9.png" alt=""></a>
-								<div class="desc">
-									<a href="#" class="title">Gray Coffee Cup</a>
-									<div class="price">$170.00</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-sm-6 col-xl-3 mb-4 mb-xl-0">
-						<div class="single-search-product-wrapper">
-							<div class="single-search-product d-flex">
-								<a href="#"><img src="img/product/product-sm-1.png" alt=""></a>
-								<div class="desc">
-									<a href="#" class="title">Gray Coffee Cup</a>
-									<div class="price">$170.00</div>
-								</div>
-							</div>
-							<div class="single-search-product d-flex">
-								<a href="#"><img src="img/product/product-sm-2.png" alt=""></a>
-								<div class="desc">
-									<a href="#" class="title">Gray Coffee Cup</a>
-									<div class="price">$170.00</div>
-								</div>
-							</div>
-							<div class="single-search-product d-flex">
-								<a href="#"><img src="img/product/product-sm-3.png" alt=""></a>
-								<div class="desc">
-									<a href="#" class="title">Gray Coffee Cup</a>
-									<div class="price">$170.00</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-		<!-- ================ top product area end ================= -->
 	</div>
 	
 	<jsp:include page="../userFooter.jsp"></jsp:include>

@@ -55,6 +55,7 @@ public class HomeController {
 			} catch (Exception e) {
 				
 				System.out.println("홈컨트롤러에서 세션 아이디를 못받아옴");
+				// Null point Exception
 				e.printStackTrace();
 			}
 			

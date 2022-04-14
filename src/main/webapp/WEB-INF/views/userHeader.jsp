@@ -61,10 +61,10 @@ function loginOrNot() {
 	
 	if (loginMember != '') {
 		// 로그인 했을 때
-		console.log("로그인 했슈")
+		console.log("로그인 상태")
 		location.href='${contextPath }/mypage/?u=' + loginMember;
 	} else {
-		alert("로그인이 되지 않았습니다.")
+		console.log("로그인이 되지 않았습니다.")
 		location.href='${contextPath }/login.html';
 		
 	 }
@@ -113,7 +113,7 @@ function loginOrNot() {
                      aria-expanded="false">Pages</a>
                    <ul class="dropdown-menu">
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/login.html">Login</a></li>
-                        <li class="nav-item"><a class="nav-link" href="${contextPath}/member/registerMember">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">Register</a></li>
                         <!-- <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>  -->
                    </ul>
                  </li>
@@ -133,7 +133,17 @@ function loginOrNot() {
               <li class="nav-item"><button><i class="ti-search"></i></button></li>
               <li class="nav-item"><form action="${contextPath }/cart/userCart" method="get"><button type="submit"><i class="ti-shopping-cart"></i><span class="nav-shop__circle" id ="cntCart"></span></button></form></li>
               <li class="nav-item"><button type="button" onclick="loginOrNot();"><img src="${contextPath }/resources/img/user_icon.png" style= "width:18px; height:17px;"/></button></li>
-              <li class="nav-item"><a class="button button-header" href="#">${ sessionId}  Login</a></li>
+              
+              <c:choose>
+              	
+              	<c:when test="${sessionId != null }">
+              	<li class="nav-item"><a class="button button-header" href="${contextPath }/logout">Logout</a></li>
+              	</c:when>
+              	<c:otherwise>
+              	<li class="nav-item"><a class="button button-header" href="${contextPath }/loginPage">Login</a></li>
+              		
+              	</c:otherwise>
+              </c:choose>
             </ul>
           </div>
         </div>

@@ -9,13 +9,17 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <title>상품 상세페이지</title>
 <script>
+	let rno = 0;
+	let cno = 0;
+	
 	$(function() {
 		priceReplace();
 		quantity(1);
 		infoReplace();
 		navColor();
 		starMaker();
-		
+		reviewStar();
+		reviewStatus();	
 	});
 	
 	function priceReplace() {
@@ -74,11 +78,15 @@
 		});	
 	}
 	
-	function getComment(no) {
-		let rno = no;
-		console.log(rno);
-		if ($("#comment").html() == '') {
-			let url = "${contextPath}/comment/all/" + rno;
+	function getComment(no,obj) { //$(".comments-area").length == 1 && rno != no
+		if (rno == no) {
+			$(".comments-area").remove();
+			rno = 0;
+			return;
+		} else {
+			$(".comments-area").remove();
+			let url = "/comment/all/" + no;
+			console.log(url);
 			$.ajax({
 				url : url,
 				dataType : "json",
@@ -86,31 +94,49 @@
 				success : function (data) {
 					console.log(data);	
 					if (data != null) {
-						parseComment(data);
+						parseComment(data,obj);
 					}
+				},error : function() {
+					parseComment(null,obj);
 				}
-			});
-		} else {
-			$("#comment").empty();
-		}	
+			});	
+		}
+		rno = no;
 	}
 	
-	function parseComment(data) {
-		$("#comment").empty();
-		let output = '<div class="comments-area">';
-		$.each(data, function(i, e) {
-			output += '<div class="comment-list" style="padding-bottom: 25px;"><div class="single-comment justify-content-between d-flex">';
-			output += '<div class="user justify-content-between" style="width:800px;"><div class="desc">';
-			output += '<p class="commenter">' + e.commenter + '</p>';
-			let writtenDate = calcDate(e.writeDate);
-			output += '<p class="date">' + writtenDate + '</p>';
-			output += '<p class="comment">' + e.comment + '</p></div></div>';
-			output += '<div class="reply-btn"><a href="#" class="btn-reply text-uppercase">reply</a></div></div></div>';
-		});
+	function parseComment(data,obj) {
+		let output = '<div class="comments-area" style="display:none;">';
+		if (data != null) {
+			$.each(data, function(i, e) {
+				output += '<div class="comment-list" style="padding-bottom: 25px;">';
+				output += '<div class="single-comment justify-content-between d-flex" id ="' + e.commentNo +
+						'" value = "' + $(obj).val() + ',' + e.ref + ',' + e.step + ',' + e.reforder + '">';
+				output += '<div class="user justify-content-between" style="width:800px;"><div class="desc">';
+				for (let i = 0; i < e.step; i++) {
+					output += '<img src="${contextPath}/resources/img/review/reply.png" id= "replyImg" />';
+				}
+				output += '<p class="commenter">' + e.commenter + '</p>';
+				
+				let writtenDate = calcDate(e.writeDate);
+				if (writtenDate == '방금전') {
+					output += '<p class="date" style="color:red;">' + writtenDate + '</p>';
+				} else if (writtenDate.indexOf('분전') != -1){
+					output += '<p class="date" style="color:blue;">' + writtenDate + '</p>';
+				} else {
+					output += '<p class="date">' + writtenDate + '</p>';
+				}
+				
+				output += '<p class="comment">' + e.comment + '</p></div></div>';
+				output += '<div class="reply-btn"><a href="javascript:replyMaker(' + e.commentNo + ');" class="btn-reply text-uppercase">'
+				+ 'reply</a></div></div></div>';
+			});
+		}
 		 output += '<hr/><textarea class="form-control" name="comment" id= "commentText" rows="3" placeholder="comment"></textarea>';
-		 output += '<button type="submit" class="button button--active button-contactForm" style="float:right;">댓글 작성</button></div>';
+		 let rno = $(obj).val();
+		 output += '<button type="" class="button button--active button-contactForm" onclick="addComment(' + rno + ');" style="float:right;">댓글 작성</button></div>';
 		 
-		 $("#comment").html(output);
+		 $(obj).parent().after(output);
+		 $(".comments-area").slideDown(500);	 
 	}
 	
 	function calcDate(rd) {
@@ -121,7 +147,187 @@
 		let diffMiniutes = diffSecond / 60; // 분단위
 		if(diffMiniutes < 60) return Math.floor(diffMiniutes) + '분전';
 		return new Date(rd).toLocaleString();
-	}	
+	}
+	
+	function replyMaker(no) {
+		//$(".comments-area").html().indexOf("replyForm") == -1) // $("#replyForm").length != 1
+		if (cno == no) {
+			$("#replyForm").remove();
+			cno = 0;
+			return;
+		} else {
+			$("#replyForm").remove();
+			let output = '<div id= "replyForm"><hr/><textarea class="form-control" name="reply" id= "replyText" rows="3" placeholder="reply"></textarea>';
+			output += '<button class="button button--active button-contactForm" onclick="addReply(' + no +
+					')" style="float:right; width: 90px;">답글 작성</button></div>';	
+			$("#" + no).after(output);
+		}
+		cno = no;
+	}
+	
+	function addComment(rno) {
+		let id = "${sessionId}";
+		let comment = $('#commentText').val();
+		
+		if (id) {
+			if (comment != "") {
+				let reviewNo = parseInt(rno);
+				let url = '/comment';
+				let sendData = JSON.stringify({
+					reviewNo : reviewNo, commenter : id, comment : comment
+				});
+				console.log(sendData);
+				$.ajax({
+					url : url,
+					data : sendData,
+					dataType : "text",
+					type : "post",
+					headers : {
+						"content-type" : "application/json",
+						"X-HTTP-Method-Override" : "POST"
+					},
+					success : function (data) {
+						console.log(data);
+						if(data == "success") {
+							alert("댓글 등록 성공");
+							location.reload();
+							
+						} else if(data == "fail") { 
+							alert("댓글등록실패");
+						}
+					}
+				});
+			} else {
+				validate("#commentText",1);
+			}	
+		} else {
+			loginAlarm();
+		}
+	}
+	
+	function addReply(no) {
+		let id = "${sessionId}";
+		let comment = $('#replyText').val();
+		if (id) {
+			if (comment != "") {
+				// 필요한 형태로 변환
+				let str = $("#" + no).attr("value");
+				let reviewNo = parseInt(str.split(",")[0]);
+				let ref = parseInt(str.split(",")[1]);
+				let step = parseInt(str.split(",")[2]);
+				let reforder = parseInt(str.split(",")[3]);
+				
+				let url = '/comment';
+				let sendData = JSON.stringify({
+					commenter : id, comment : comment, reviewNo : reviewNo,
+					ref : ref, step : step, reforder : reforder
+				});
+				console.log(sendData);
+				$.ajax({
+					url : url,
+					data : sendData,
+					dataType : "text",
+					type : "post",
+					headers : {
+						"content-type" : "application/json",
+						"X-HTTP-Method-Override" : "POST"
+					},
+					success : function (data) {
+						console.log(data);
+						if(data == "success") {
+							alert("답글 등록 성공");
+							location.reload();
+						} else if(data == "fail") { 
+							alert("답글등록실패");
+						}
+					}
+				});
+			} else {
+				validate("#replyText",1);
+			}	
+		} else {
+			loginAlarm();
+		}
+	}
+	
+	function loginAlarm() {
+		alert("로그인 후 이용가능합니다!");
+		location.href = "/login";
+	}
+	
+	function validate(obj,version) {
+		$('#msg').remove();
+		let output = "";
+		if (version == 1) {
+			output = "<div id ='msg' style='color:red; padding-bottom: 15px;'>내용을 입력해주세요</div>";
+		} else {
+			output = "<div id ='msg' style='color:red; padding-bottom: 13px; margin-left: 10px;'>별점을 선택해주세요</div>";
+		}
+		
+		$(obj).before(output);
+		$(obj).focus();
+	}
+	
+	function like(rno,obj) {
+		let url = "/review/like?no=" + rno + "&change=1";
+		console.log(url);	
+		$.ajax({
+			url : url,
+			dataType : "text",
+			type : "get",
+			success : function (data) { // 아직 미완성
+				console.log(data);	
+				if (data == "success") {
+					alert("좋아요 성공");	
+				} else if(data == "fail") { 
+					alert("좋아요 실패");
+				}
+			}
+		});	
+	}
+	
+	function showModal() {
+		if ("${sessionId}") {
+			$(".newStar").css("font-weight", 100);
+			$("#msg").remove();
+			$("#modalBack").fadeIn(400);
+			$('body').css("overflow", "hidden");
+		} else {
+			loginAlarm();
+		}
+	}
+	
+	function cancleModal() {
+		 $("#modalBack").fadeOut(400);
+		 $('body').css("overflow", "scroll"); 
+	}
+	 
+	function reviewStar() {
+		$(document).on("mouseover", ".newStar", function(){
+			let n = $(this).attr("id").split("star")[1];
+			$(".newStar").css("font-weight", 100);
+			for (let i = 1; i <= n; i++) {
+				$("#star" + i).css("font-weight", 900);
+			}
+			$("#starCount").val(n);
+		});
+	}
+	
+	function addReview() {
+		if ($(".newStar").css("font-weight") == 100) {
+			validate($(".rating_list div"), 2);
+			return false;
+		}
+	}
+	
+	function reviewStatus() {
+		let status = '${result}';
+		if(status == "success") {
+			alert("리뷰 등록 성공");
+		} else if (status == "fail") {
+			alert("리뷰 등록 실패");
+		}
+	}
 	
 </script>
 <style>
@@ -151,7 +357,7 @@
  	font-size: 20px;
  }
  
- #commentText {
+ #commentText, #replyText {
  	width: 800px;
  	display: inline-block;
  }
@@ -179,11 +385,41 @@
  	display: inline-block;
  	margin-left: 14px;
  }
+ 
+ #replyImg {
+ 	width : 20px;
+ 	height : 20px;
+ 	margin-right: 10px;
+ 	margin-bottom: 5px;
+ }
+ 
+ #modalBack {
+ 	position: fixed;
+ 	top:0; left: 0; bottom: 0; right: 0;
+ 	background:rgba(0,0,0,.3);
+ 	z-index: 999;
+ 	display: none;
+ }
+ 
+ #reviewModal {
+		position: absolute;
+  		top: 18%; left: 31%;
+  		overflow: auto;
+  		width: 800px; height: 600px;
+  		border-radius : 25px;
+  		box-shadow : 10px 10px 10px 10px;
+}
+ 
+ .newStar {
+ 	color : #fbd600;
+ 	font-size: 30px;
+ }
+ 
 </style>
 <head>
 <body>
 	<jsp:include page="../userHeader.jsp"></jsp:include>
-	
+
 	<div class="container">
 		<!--================Single Product Area =================-->
 		<div class="product_image_area">
@@ -208,8 +444,8 @@
 							<ul class="list">
 								<li><a id="listPrice"><span>정가</span> : ${product.price}원</a></li>
 								<li><a class="active" href="#"><span>Category</span> :
-										Household</a></li>
-								<li><a href="#"><span>Availibility</span> : In Stock(${product.stock})</a></li>
+										${product.category_code}</a></li>
+								<li><a href="#"><span>재고</span> : ${product.stock}개</a></li>
 								<li><a><span>배송비</span> : 무료</a></li>
 							</ul>
 							<p>${product.description } <br/>
@@ -281,8 +517,7 @@
 							</c:if>
 							<c:if test="${product.pisOffdiscription != ''}">
 								<hr/> ${product.pisOffdiscription }
-							</c:if>
-							
+							</c:if>	
 					</div>
 					<!-- 리뷰 정보 content -->
 					<div class="tab-pane fade" id="review" role="tabpanel"
@@ -335,7 +570,7 @@
 										</div>
 										<div>
 											<button type="submit" class="button button--active button-review"
-											style="float: right;"> 리뷰 작성</button>
+											style="float: right;" onclick="showModal()"> 리뷰 작성</button>
 										</div>
 									</div>						
 								</div>
@@ -351,46 +586,25 @@
 													<div class = "star"  value = "${review.grade }"
 													style="display: inline-block; float: left; margin-right: 25px;">														
 													</div>
-															
 													<div style="display: inline-block;">
 														<h4 style="display: inline-block; margin-right: 20px">${review.title }</h4>
+														
+														
 														<h5 style="float: right; margin-top: 1px">
 														${review.writer } | ${review.writedate}</h5>
 														<p style="width: 750px">${review.content }</p>
 													</div>
 													<div style="display: inline-block; float: right; width: 100px;">
 														<button type="submit" class="button button-header reviewBtn"
-														style="padding: 5px">♡ ${review.recommendNum}</button>
-														<button class="button button-header reviewBtn" style="padding: 8px"
-														onclick="getComment(${review.reviewNo})">댓글 ${review.commentNum}</button>
+														style="padding: 5px" onclick="like(${review.reviewNo},this)">♡ ${review.recommendNum}</button>
+														<button class="button button-header reviewBtn" style="padding: 8px" value="${review.reviewNo}"
+														onclick="getComment(${review.reviewNo},this)">댓글 ${review.commentNum}</button>
 													</div>
-													<div id="comment"></div>
 													<hr style="border-style: dotted; margin-top: 35px; margin-bottom: 4px" />
-													
 												</div>
-												
 											</div>
 										</div>
 									</c:forEach>
-									
-									<!--  <div class="review_item">
-										<div class="media">
-											<div class="d-flex">
-												<img src="img/product/review-2.png" alt="">
-											</div>
-											<div class="media-body">
-												<h4>Blake Ruiz</h4>
-												<i class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-													class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-													class="fa fa-star"></i>
-											</div>
-										</div>
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing
-											elit, sed do eiusmod tempor incididunt ut labore et dolore
-											magna aliqua. Ut enim ad minim veniam, quis nostrud
-											exercitation ullamco laboris nisi ut aliquip ex ea commodo</p>
-									</div>-->
-									
 								</div>
 							</div>
 							
@@ -547,6 +761,47 @@
 			</div>
 		</section>
 		<!--================End Product Description Area =================-->
+		
+		<!-- 리뷰 작성 모달창 -->
+		<div id="modalBack">
+			<div class="comment-form" id="reviewModal">
+				<h3 style="margin-bottom: 70px;">리뷰 작성</h3>
+				<form action="/review" method="post">
+					<div class="form-group form-inline">
+						<div class="form-group col-lg-8 col-md-8 name">
+							<h4 style="margin-bottom: 15px;">제목 </h4>
+							<input type="text" class="form-control" id="title" name = "title"
+								placeholder="Enter title" required=""
+								style="border-radius : 20px;">
+							<input type="hidden" name ="writer" value="${sessionId }">
+						</div>
+						<div class="form-group col-lg-4 col-md-4 rating_list">
+							<h4 style="margin-bottom: 15px;">등급 </h4>
+							<div>
+								<i class="fa fa-star newStar" id="star1" style="font-weight: 100"></i>
+								<i class="fa fa-star newStar" id="star2" style="font-weight: 100"></i>
+								<i class="fa fa-star newStar" id="star3" style="font-weight: 100"></i>
+								<i class="fa fa-star newStar" id="star4" style="font-weight: 100"></i>
+								<i class="fa fa-star newStar" id="star5" style="font-weight: 100"></i>
+							</div>
+							<input type="hidden" id ="starCount" name ="grade">
+						</div>
+					</div>
+					<div class="form-group">
+						<h4 style="text-align: left; margin-bottom: 15px;">내용</h4>
+						<textarea class="form-control mb-10" rows="5" name="content"
+							placeholder="content" required=""
+							style="border-radius : 20px;"></textarea>
+					</div>
+					<input type="hidden" name ="productNo" value="${product.product_no }">
+					
+					<button type="submit" class="button button--active"
+					 onclick="return addReview();" style="margin: 25px;"> 작성하기 </button>
+					<button type="reset" class="button button--active"
+					 onclick="cancleModal()" style="margin: 25px;"> 취소하기 </button>
+				</form>
+			</div>
+		</div>
 
 		<!-- ================ Best Selling item  carousel ================= -->
 		<section class="section-margin calc-60px">
@@ -563,15 +818,21 @@
 							<div class="card-product__img">
 								<img class="img-fluid" src="${product.cover }" alt="">
 								<ul class="card-product__imgOverlay">
-									<li><button>
-											<i class="ti-search"></i>
-										</button></li>
-									<li><button>
-											<i class="ti-shopping-cart"></i>
-										</button></li>
-									<li><button>
-											<i class="ti-heart"></i>
-										</button></li>
+									<li>
+										<a href="${contextPath}/product/detail?no=${product.product_no}">
+											<button><i class="ti-search"></i></button>
+										</a>
+									</li>
+									<li>
+										<a href="">
+											<button><i class="ti-shopping-cart"></i></button>
+										</a>
+									</li>
+									<li>
+										<a href="">
+											<button><i class="ti-money"></i></button>
+										</a>
+									</li>
 								</ul>
 							</div>
 							<div class="card-body">

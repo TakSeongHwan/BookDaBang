@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bookdabang.common.domain.CategoryVO;
 import com.bookdabang.common.domain.ProductVO;
-import com.bookdabang.common.domain.Review;
+import com.bookdabang.common.domain.ReviewVO;
 import com.bookdabang.common.domain.ReviewComment;
 import com.bookdabang.kmj.service.UserProductService;
 import com.bookdabang.common.domain.PagingInfo;
@@ -105,7 +105,7 @@ public class UserProductController {
 		List<ProductVO> lst = pService.readTopProducts(category);
 		
 		// 해당 상품의 리뷰들
-		List<Review> lst2 = rService.readAllReview(prodNo);
+		List<ReviewVO> lst2 = rService.readAllReview(prodNo);
 		
 		model.addAttribute("product", product);
 		model.addAttribute("topList", lst);
