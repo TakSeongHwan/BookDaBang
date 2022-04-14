@@ -161,7 +161,7 @@ public class LoginController {
 				} 
 				
 
-				return "/loginSign";
+				return "loginSign";
 	}
 	
 
@@ -194,7 +194,7 @@ public class LoginController {
 			
 		
 			// return?
-			resp.sendRedirect("/ljs/");
+			resp.sendRedirect("/");
 		}
 		
 		

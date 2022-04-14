@@ -26,15 +26,22 @@
 				and description like concat('%', #{searchWord}, '%')
 			</if>
 		</if>
-		<if
-			test="category_code != 'NaN' and category_code !=null and category_code != ''">
+		<if test="category_code != 'NaN' and category_code !=null and category_code != ''">
 			and category_code = #{category_code}
 		</if>
 
-		<if test="startRgDate != '' and srartRgDate != null">
-			and rg_date between date(#{startRgDate) and
-			date(#{endRgDate});
+		<if test="startRgDate != '' and startRgDate != null">
+			and rg_date between date(#{startRgDate}) and date(#{endRgDate})
 		</if>
+		
+		<if test="startUpdate != '' and startUpdate != null">
+			and update_date between date(#{startUpdate}) and date(#{endUpDate})
+		</if>
+		
+		<if test="start_endDate != '' and start_endDate != null">
+			and end_date between date(#{start_endDate}) and date(#{end_endDate})
+		</if>
+		
 		<if test="display_status != '' and display_status != null">
 			and display_status = #{display_status}
 		</if>
@@ -66,13 +73,24 @@
 			and category_code = #{category_code}
 		</if>
 
-		<if test="startRgDate != '' and srartRgDate != null">
-			and rg_date between date(#{startRgDate) and
-			date(#{endRgDate});
+		<if test="startRgDate != '' and startRgDate != null">
+			and rg_date between date(#{startRgDate}) and date(#{endRgDate})
 		</if>
+		
+		
+		<if test="startUpdate != '' and startUpdate != null">
+			and update_date between date(#{startUpdate}) and date(#{endUpdate})
+		</if>
+		
+		<if test="start_endDate != '' and start_endDate != null">
+			and end_date between date(#{start_endDate}) and date(#{end_endDate})
+		</if>
+		
+		
 		<if test="display_status != '' and display_status != null">
 			and display_status = #{display_status}
 		</if>
+		
 		<if test="sales_status != '' and sales_status != null">
 			and sales_status = #{sales_status}
 		</if>
@@ -147,10 +165,122 @@
 		select * from product where isbn = #{isbn}
 	</select>
 	
+	<update id = "updateProd">
+		update product set price=#{updatePrice}, stock =#{updateStock}, display_status = #{updateDisplay}, sales_status = #{updateSales}, update_date= now()
+		where isbn = #{prodNo}
+	</update>
+	
+	<select id="validationProdNo" resultType="int">
+		select count(*) from product where isbn = #{prodNo}
+	</select>
+	
+	<select id="validSession" resultType="MemberVO">
+		select * from member where sessionId = #{sessionId}
+	</select>
+	
+	<!-- Q&A -->
+	
+	<!-- Q&A count -->
+	<select id="getQnaCntByISBN" resultType="int">
+		select count(*) from product_qna where product_no = #{isbn}
+	</select>
+	<select id="getQnaCntofnotAnswer" resultType="int">
+		select count(*) from product_qna where answer_status ='wating'
+	</select>
+	<select id="getQnaCntofAnswer" resultType="int">
+		select count(*) from product_qna where answer_status ='answer'
+	</select>
+	
+	<!-- Q&A의 응답, 응답안됨, 전체 글을 가져옴  -->
+	<select id="selectProdQnAByISBN" resultType="ProductQnA">
+		select * from product_qna  where product_no = #{isbn} order by ref desc, ref_order asc limit #{startNum}, #{postPerPage}
+	</select>
+	
+	<select id="selectAllProdQnA_NoAnswer" resultType="ProductQnA">
+		select * from product_qna where answer_status = 'wating' order by ref desc, ref_order asc limit #{startNum}, #{postPerPage}
+	</select>
+	<select id="selectAllProdQnA_Answer" resultType="ProductQnA">
+		select * from product_qna where answer_status = 'answer' order by ref desc, ref_order asc limit #{startNum}, #{postPerPage}
+	</select>
+	
+	<!--현재 글번호중 제일 높은 수를 가져옴  -->
+	<select id="getMaxquestionNo" resultType = "int">
+		select max(question_no) from product_qna
+	</select>
+	
+	<insert id="insertProdQnA">
+	<choose>
+		<when test="pwd != '' and pwd != null">
+			insert into product_qna(question_no,product_no, writer, content, pwd, ref) value(#{ref},#{isbn}, #{writer}, #{content}, md5(#{pwd}), #{ref})
+		</when>
+		<otherwise>
+			insert into product_qna(question_no,product_no, writer, content, ref) value(#{ref},#{isbn}, #{writer}, #{content}, #{ref})
+		</otherwise>
+		
+		</choose>	
+	</insert>
+	
+	<select id="isAdmin" resultType="String">
+		select isAdmin from member where sessionId = #{sessionId} and isAdmin = 'Y'
+	</select>
+	
+	<delete id="deleteQnA">
+		delete from product_qna where ref = #{questionNo}
+	</delete>
+	
+	
+	<insert id="insertAnswer">
+		insert into product_qna values(0,#{product_no},null,now(), #{content}, 'answer', null,#{question_no},1,1);
+	</insert>
+	<update id="updateAnserStatus">
+		update product_qna set answer_status = 'answer' where question_no = #{question_no}
+	</update>
+	
+	
+	
+	
 	<!-- 강명진 -->
 	
 	<select id="selectAllProducts" resultType="ProductVO">
-		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' limit 9
+		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes'
+		<if test="sort == 1">
+			order by sales_count desc 
+		</if>
+		<if test="sort == 2">
+			order by pub_date desc 
+		</if>
+		<if test="sort == 3">
+			order by sell_price desc 
+		</if>
+		limit #{startNum},#{postPerPage}
+	</select>
+	
+	<select id="selectCategory" resultType="CategoryVO">
+		select c.*,count(*) as productCount from category c,product p where c.category_code = p.category_code
+		and display_status = 'yes' group by c.category_code
+	</select>
+	
+	<select id="selectProductsByCategory" resultType="ProductVO">
+		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' and
+		category_code = #{cno} 
+		<if test="sort == 1">
+			order by sales_count desc 
+		</if>
+		<if test="sort == 2">
+			order by pub_date desc 
+		</if>
+		<if test="sort == 3">
+			order by sell_price desc 
+		</if>
+		limit #{startNum},#{postPerPage}
+	</select>
+	
+	<select id="getTotalPost" resultType="int">
+		select count(*) as totalCnt from product where display_status = 'yes'
+	</select>
+	
+	<select id="getTotalPostByCategory" resultType="int">
+		select count(*) as totalCnt from product where display_status = 'yes' and category_code = #{cno} 
 	</select>
 	
 	<select id="selectProduct" resultType="ProductVO">

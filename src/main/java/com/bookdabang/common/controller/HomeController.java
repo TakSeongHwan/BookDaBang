@@ -1,7 +1,9 @@
 package com.bookdabang.common.controller;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.ProductVO;
+import com.bookdabang.lhs.service.ChartService;
 import com.bookdabang.ljs.service.LoginService;
 
 /**
@@ -22,20 +26,23 @@ import com.bookdabang.ljs.service.LoginService;
  */
 @Controller
 public class HomeController {
-	
+
 	
 	
 	@Inject
 	private LoginService service;
-
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
+	@Inject
+	ChartService cService;
+	
+	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model, @RequestParam(value = "u", required = false) String sessionId) {
-
+		logger.info("Welcome home! The client locale is {}.", locale);
 
 		//Date date = new Date();
 		//DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
@@ -62,27 +69,38 @@ public class HomeController {
 			model.addAttribute("loginMember", loginMember);
 
 		}
-
 		
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+			List<ProductVO> bestSellerlist = new ArrayList<ProductVO>();
+			try {
+				bestSellerlist = cService.getProductSort();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			model.addAttribute("product",bestSellerlist);
 		
-		String formattedDate = dateFormat.format(date);
-		
-		model.addAttribute("serverTime", formattedDate );
-
+			List<ProductVO> randomList = new ArrayList<ProductVO>();
+			try {
+				randomList = cService.getRandomSelect();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			model.addAttribute("randomBook",randomList);
+			
+			
 		
 		return "home";
 		
 
 	}
 	
-
 	@RequestMapping(value="admin", method=RequestMethod.GET)
 	public String exam2() {
 		System.out.println("admin이 호출됨....");
 		return "adminHome";
 	}
 	
-
 }

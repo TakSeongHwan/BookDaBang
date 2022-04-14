@@ -253,11 +253,17 @@
 </script>
 <style>
 
-div.pwdModi i{
+#pwdModi {
+
+    position: relative;
+
+}
+
+
+#pwdModi i{
     position: absolute;
-    left: 75%;
-    top: 27px;
-    color: orange;
+    left: 90%;
+    top: 52px;
 }
 
 .deleteMember {
@@ -493,15 +499,7 @@ div.pwdModi i{
 								</div>
 							</div>			
 						</c:forEach>
-							<div class="media post_item">
-								<img src="img/blog/popular-post/post2.jpg" alt="post">
-								<div class="media-body">
-									<a href="blog-details.html">
-										<h3>The Amazing Hubble</h3>
-									</a>
-									<p>02 Hours ago</p>
-								</div>
-							</div>
+
 							<div class="br"></div>
 						</aside>
 					</div>
@@ -522,8 +520,7 @@ div.pwdModi i{
 						핸드폰 번호 : <input type="text" class="form-control" value="${loginMember.phoneNum}" />
 						이메일 : <input type="text" class="form-control" value="${loginMember.userEmail}" /> 
 						생일 : <div>"${loginMember.birth }" </div>
-						
-						주소 : 
+
 						
 					</div>
 					<!-- Modal -->
@@ -561,8 +558,11 @@ div.pwdModi i{
 								</div>
 								<div class="modal-body" id="pwdModi">
 									현재 비밀번호 : <input type = "password" class="form-control" id ="originalPwd" placeholder="현재 비밀번호를 입력해주세요." />
+									
 								<i class="fa fa-eye fa-lg" ></i>
+								
 									<span id="correctOrNot"></span>
+									<br/>
 									변경할 비밀번호 :  <input type="text" class="form-control" id ="pwd1" placeholder="변경할 비밀번호를 입력해주세요." />
 									변경할 비밀번호 확인 :  <input type="text" class="form-control" id ="pwd2"  placeholder="변경할 비밀번호를 다시 확인해주세요." />
 									

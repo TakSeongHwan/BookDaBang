@@ -6,11 +6,48 @@
   
 <mapper namespace="com.bookdabang.mapper.ReviewMapper" >
 
-	<select id="selectAllReview" resultType="Review">
+	<select id="selectAllReview" resultType="ReviewVO">
 		select * from review where productNo = #{prodNo}
 	</select>
 	
 	<select id="selectAllComments" resultType="ReviewComment">
-		select * from review_comment where reviewNo = #{rno}
+		select * from review_comment where reviewNo = #{rno} order by ref asc,step asc, reforder desc
 	</select>
+	
+	<insert id="insertComment">
+		 insert into review_comment(commenter,comment,reviewNo,ref) values (#{commenter},#{comment},#{reviewNo},#{ref})
+	</insert>
+	
+	<update id="updateCommentNum">
+		update review set commentNum = commentNum + 1 where reviewNo = #{reviewNo}
+	</update>
+	
+	<select id="selectNextRef" resultType="int">
+		select max(commentNo) + 1 as nextRef from review_comment
+	</select>
+	
+	<update id="updatePrevReply">
+		update review_comment set reforder = reforder + 1 where ref = #{ref} and reforder > #{reforder}
+	</update>
+	
+	<insert id="insertReply">
+		 insert into review_comment(commenter,comment,reviewNo,ref,step,reforder)
+		  values (#{commenter},#{comment},#{reviewNo},#{ref},#{step} + 1, #{reforder} + 1)
+	</insert>
+	
+	<update id="updateRecommend">
+		update review set 
+		<if test="change == 1">
+			recommendNum = recommendNum + 1 
+		</if>
+		<if test="change == 2">
+			recommendNum = recommendNum - 1 
+		</if>
+		 where reviewNo = #{reviewNo}
+	</update>
+	
+	<insert id="insertReview">
+		 insert into review(title,writer,content,grade,productNo)
+		 values (#{title},#{writer},#{content},#{grade},#{productNo})
+	</insert>
 </mapper>

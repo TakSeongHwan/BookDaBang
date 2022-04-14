@@ -1,5 +1,7 @@
 package com.bookdabang.tsh.domain;
 
+import java.util.List;
+
 public class CartViewDTO {
 	private int product_no;
 	private int cartNo;

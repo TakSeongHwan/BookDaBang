@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bookdabang.common.domain.NoticeReply;
+import com.bookdabang.common.domain.NoticeReplyVO;
 import com.bookdabang.lhs.service.NoticeService;
 
 
@@ -30,18 +30,18 @@ public class NoticeReplyController {
 	NoticeService service;
 	
 	@RequestMapping(value="/all/{boardNo}", method = RequestMethod.GET)
-	public ResponseEntity<List<NoticeReply>> getEntiresReplies(@PathVariable("boardNo") int boardNo) {
+	public ResponseEntity<List<NoticeReplyVO>> getEntiresReplies(@PathVariable("boardNo") int boardNo) {
 		System.out.println("공지사항" +boardNo);
 		
-		ResponseEntity<List<NoticeReply>> result = null;
-		List<NoticeReply> list = new ArrayList<NoticeReply>();
+		ResponseEntity<List<NoticeReplyVO>> result = null;
+		List<NoticeReplyVO> list = new ArrayList<NoticeReplyVO>();
 		try {
 			list = service.getAllReply(boardNo);
 			System.out.println(list);
-			result = new ResponseEntity<List<NoticeReply>>(list, HttpStatus.OK);
+			result = new ResponseEntity<List<NoticeReplyVO>>(list, HttpStatus.OK);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			result = new ResponseEntity<List<NoticeReply>>(HttpStatus.BAD_REQUEST);
+			result = new ResponseEntity<List<NoticeReplyVO>>(HttpStatus.BAD_REQUEST);
 			e.printStackTrace();
 		}
 		return result;
@@ -50,7 +50,7 @@ public class NoticeReplyController {
 
 	@RequestMapping(value="addReply", method=RequestMethod.POST)
 	@Transactional
-	public ResponseEntity<String> addReply(@RequestBody NoticeReply reply ){
+	public ResponseEntity<String> addReply(@RequestBody NoticeReplyVO reply ){
 		ResponseEntity<String> result = null;
 		System.out.println("댓글 : "+ reply.toString());
 		
@@ -74,7 +74,7 @@ public class NoticeReplyController {
 	
 	@RequestMapping(value="/{replyNo}",method=RequestMethod.PUT)
 	@Transactional
-	public @ResponseBody String modiReply(@RequestBody NoticeReply nr){
+	public @ResponseBody String modiReply(@RequestBody NoticeReplyVO nr){
 		String result = null;
 
 		try {
@@ -111,11 +111,11 @@ public class NoticeReplyController {
 	}
 	@RequestMapping(value="rereply", method=RequestMethod.POST)
 	@Transactional
-	public ResponseEntity<String> addRereply(@RequestBody NoticeReply reply){
+	public ResponseEntity<String> addRereply(@RequestBody NoticeReplyVO reply){
 		ResponseEntity<String> result = null;
 		
 		try {
-			NoticeReply nr = service.getBoardNoByReplyNo(reply.getReplyNo());
+			NoticeReplyVO nr = service.getBoardNoByReplyNo(reply.getReplyNo());
 			reply.setRef(nr.getRef());
 			reply.setStep(nr.getStep() +1);
 			reply.setRefOrder(nr.getRefOrder()+1);
