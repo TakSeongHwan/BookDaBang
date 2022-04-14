@@ -22,32 +22,66 @@
 
 
 
-</head>
-
-
 <script>
+let width = window.innerWidth;
+let items = 8;
 	$(function() {
-		let owl = $('#bestSellerCarousel');
-		owl.owlCarousel({
-			items : 8,
-			loop : true,
-			margin : 20,
-			autoplay : true,
-			autoplayTimeout : 2000,
-			autoplayHoverPause : true
-		});
+	
+		drawCarousel();
+		window.addEventListener('resize', function() {
+			resizeWidth(); 
+			console.log(width);
+			if(width <= 1200 && width > 800){
+				items = 6;				
+			}
+			if(width <= 800 && width >400){
+				items = 4; 
+			}
+			if(width <= 400 && width > 200){
+				items = 2;
+			}
+			if(width <= 200){
+				items = 1;
+			}
+			console.log(items);
+			drawCarousel();
+	
+			
+			});
 
-		let owl2 = $('#randomCarousel');
-		owl2.owlCarousel({
-			items : 8,
-			loop : true,
-			margin : 20,
-			autoplay : true,
-			autoplayTimeout : 2000,
-			autoplayHoverPause : true
-		});
+
+
+		
 		
 	});
+	function drawCarousel(){
+		let owl = $('#bestSellerCarousel');
+		let owl2 = $('#randomCarousel');
+		let data = {
+				items : items,
+				loop : true,
+				margin : 20,
+				autoplay : true,
+				autoplayTimeout : 2000,
+				autoplayHoverPause : true
+			};
+		
+		
+		//owl.trigger('replace.owl.carousel',html).trigger('refresh.owl.carousel');
+		//owl2.trigger('replace.owl.carousel',html).trigger('refresh.owl.carousel');
+	
+		console.log("왜 안바뀌어")
+		owl.owlCarousel(data);
+		
+		owl2.owlCarousel(data);
+		
+		
+		
+	}
+	function resizeWidth(){
+		
+		width = window.innerWidth;
+	}
 </script>
 <style>
 .owl-stage-outer{
@@ -84,6 +118,9 @@ visibility: hidden !important;
 
 
 </style>
+
+
+</head>
 
 
 <body>

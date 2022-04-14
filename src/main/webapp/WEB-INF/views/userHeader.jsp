@@ -33,10 +33,6 @@ $(function() {
     $.ajax({
         url :"/userCart/loginCart",
         type: "post",
-        data: {
-            userId : "${loginMember.userId}",
-            ipaddr : "211.197.18.247"
-        },
         success: function(data){
             console.log(data);
         }
