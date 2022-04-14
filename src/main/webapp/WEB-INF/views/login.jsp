@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="contextPath" value="<%=request.getContextPath() %>"></c:set>
 <!DOCTYPE html>
 <html>
 <head>
@@ -121,6 +123,13 @@ function displayWarn() {
 							</div>
 							<div class="col-md-12 form-group">
 								<button type="submit" class="button button-login w-100" onclick="return displayWarn();">로그인 </button>
+								<div>
+								 	<button style="background-color: #03c75a; color : #fff; width:300px; border:none; margin-top:10px; height : 45px; line-height : 40px; text-align:left"><img src="/resources/img/etc/btnG_naver.png" width="40"><div style="width:250px; text-align: center; display: inline-block; color:#fff">네이버 로그인</div></button>
+								 	
+								 	<img src="/resources/img/etc/kakao_login_medium_wide.png" >
+								 	
+								 	
+								 </div>
 								<label for="forgotPwd"><a href="#">아이디/ 비밀번호 찾기</a></label>
 							</div>
 						</form>

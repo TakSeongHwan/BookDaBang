@@ -17,6 +17,17 @@
 <link rel="stylesheet" href="${contextPath}/resources/vendors/owl-carousel/owl.carousel.min.css">
 <link rel="stylesheet" href="${contextPath}/resources/css/style.css">
 <title>userFooter</title>
+
+<style>
+
+
+.footerContent{
+margin:auto;
+
+
+}
+
+</style>
 </head>
 <body>
 
@@ -25,7 +36,9 @@
 		<div class="footer-area">
 			<div class="container">
 				<div class="row section_gap">
+					<!-- 
 					<div class="col-lg-3 col-md-6 col-sm-6">
+				
 						<div class="single-footer-widget tp_widgets">
 							<h4 class="footer_title large_title">Our Mission</h4>
 							<p>
@@ -35,21 +48,32 @@
 							<p>
 								So seed seed green that winged cattle in. Gathering thing made fly you're no divided deep moved 
 							</p>
+							
 						</div>
+						
 					</div>
-					<div class="offset-lg-1 col-lg-2 col-md-6 col-sm-6">
+					 -->
+					<div class="col-lg-3 col-md-6 col-sm-6 footerContent">
 						<div class="single-footer-widget tp_widgets">
 							<h4 class="footer_title">Quick Links</h4>
+							<span>
 							<ul class="list">
 								<li><a href="#">Home</a></li>
 								<li><a href="#">Shop</a></li>
 								<li><a href="#">Blog</a></li>
-								<li><a href="#">Product</a></li>
+								
+							</ul>
+							</span>
+							<span>
+							<ul class="list">
+							<li><a href="#">Product</a></li>
 								<li><a href="#">Brand</a></li>
 								<li><a href="#">Contact</a></li>
 							</ul>
+							</span>
 						</div>
 					</div>
+					<!-- 
 					<div class="col-lg-2 col-md-6 col-sm-6">
 						<div class="single-footer-widget instafeed">
 							<h4 class="footer_title">Gallery</h4>
@@ -63,8 +87,10 @@
 							</ul>
 						</div>
 					</div>
-					<div class="offset-lg-1 col-lg-3 col-md-6 col-sm-6">
+					 -->
+					<div class="col-lg-3 col-md-6 col-sm-6 footerContent">
 						<div class="single-footer-widget tp_widgets">
+						
 							<h4 class="footer_title">Contact Us</h4>
 							<div class="ml-40">
 								<p class="sm-head">

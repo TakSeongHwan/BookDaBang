@@ -7,16 +7,18 @@
 
 	<select id="listAllFreeBoard" resultType="FreeBoard">
 		select * from freeboard
-		where deleteyn = 'y' order by date desc
+		where deleteyn = 'y' order by date desc limit #{startNum},
+		#{postPerPage}
 	</select>
 
 	<select id="readFreeBoard" resultType="FreeBoard">
 		select * from freeboard
 		where boardno=#{boardno}
 	</select>
-	
+
 	<select id="readFile" resultType="AttachFileVO">
-		select * from attachfile where freeboardNo =#{freeboardNo}
+		select * from attachfile where
+		freeboardNo =#{freeboardNo}
 	</select>
 
 	<select id="listAllReportBoard" resultType="ReportBoard">
@@ -42,13 +44,10 @@
 	</select>
 
 
-
-	
-
-
 	<update id="removeFreeBoard">
 		update freeboard set deleteyn = 'N'
-		where boardno=#{boardno}
+		where
+		boardno=#{boardno}
 
 	</update>
 
@@ -87,7 +86,8 @@
 
 	<select id="countLikeCheck" resultType="int">
 		select count(*)
-		from recommend
+		from
+		recommend
 		where userId=#{userId} and freeBoardNo = #{freeboardNo}
 	</select>
 
@@ -100,7 +100,98 @@
 	<insert id="insertAttachFile">
 		insert into attachfile(freeboardNo, originFile,
 		thumbnailFile, notImageFile)
-		values(#{freeboardNo}, #{originFile}, #{thumbnailFile}, #{notImageFile});
+		values(#{freeboardNo}, #{originFile},
+		#{thumbnailFile}, #{notImageFile});
+	</insert>
+
+	<update id="countLike">
+		update freeboard set likecount= likecount+1 where
+		boardno=#{boardno}
+	</update>
+
+	<update id="delLikeCount">
+		update freeboard set likecount= likecount-1 where
+		boardno=#{boardno}
+	</update>
+
+	<insert id="insertComment">
+		insert into freeboardcomment(boardno, commentwriter,
+		commentcontent)
+		values(#{boardno},#{commentwriter},#{commentcontent});
+	</insert>
+
+	<select id="readComment" resultType="FreeBoardComment">
+		select * from
+		freeboardcomment where boardno = #{boardno}
+	</select>
+
+	<update id="modiComment">
+		update freeboardcomment set
+		commentcontent=#{commentcontent} where commentno=#{commentno}
+	</update>
+
+	<delete id="delComment">
+		delete from freeboardcomment where
+		commentno=#{commentno};
+	</delete>
+
+	<select id="readReportBoard" resultType="ReportBoard">
+		select * from
+		reportboard where reportno=#{reportno}
+	</select>
+
+<select id="getSearchResultList" resultType="FreeBoard">
+		select * from freeboard where 1=1
+		<if test="searchtype=='title'">
+			and title like CONCAT('%', #{searchword}, '%')
+		</if>
+		<if test="searchtype=='writer'">
+			 and writer like CONCAT('%', #{searchword},'%')
+		</if>
+		<if test="searchtype=='content'">
+			 and content like CONCAT('%', #{searchword}, '%')
+		</if>
+		
+	</select>
+
+
+	<select id="getSearchResultCnt" resultType="int">
+		select count(*) from freeboard where 1=1
+		<if test="searchtype=='title'">
+			 and title like CONCAT('%', #{searchword}, '%')
+		</if>
+		<if test="searchtype=='writer'">
+			 and writer like CONCAT('%', #{searchword}, '%')
+		</if>
+		<if test="searchtype=='content'">
+			and content like CONCAT('%', #{searchword}, '%')
+		</if>
+		
+	</select>
+
+
+
+	<select id="totalPost" resultType="int">
+		select count(*) as totalCnt
+		from freeboard where deleteyn='Y';
+
+	</select>
+
+
+	<select id="getReadCount" resultType="PageView">
+		select * from pageview where ip_address=#{ip_address} and freeboardNo=#{freeboardNo}
+	</select>
+	
+	<update id="updateReadCount">
+		update freeboard set readcount=  readcount+1 where boardno=#{boardno};
+	</update>
+	
+	<update id="updateReadCountProcess">
+		update pageview set accessDate=#{accessDate} where ip_address=#{ip_address} and freeboardNo=#{freeboardNo}
+	</update>
+	
+	<insert id="insertReadCount">
+		insert into pageview(ip_address, freeboardNo)values(#{ip_address},#{freeboardNo})
 	</insert>
 </mapper>
 	

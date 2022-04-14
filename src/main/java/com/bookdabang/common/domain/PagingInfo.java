@@ -53,7 +53,7 @@ public class PagingInfo {
 	}
 
 	public void setTotalPage(int totalPage) {
-		// 전체 페이지 수 : 전체 글의 갯수 / 페이지당 보여줄 글의 갯수(나누어 떨어지지 않았다면 +1)
+		// 전체 페이지 수 : 전체 글의 개수 / 페이지당 보여줄 글의 개수(나누어 떨어지지 않았다면 +1)
 		// this.totalPage = (int)Math.ceil((double)totalPage/getPostPerPage());
 		if (totalPage % this.postPerPage != 0) {
 			this.totalPage = (totalPage / this.postPerPage) + 1;

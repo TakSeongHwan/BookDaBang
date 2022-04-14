@@ -26,10 +26,10 @@ import com.bookdabang.common.domain.CartVO;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.kmj.service.UserProductService;
+import com.bookdabang.ljs.service.LoginService;
 import com.bookdabang.tsh.domain.CartProdQttDTO;
 import com.bookdabang.tsh.domain.CartSelectDTO;
 import com.bookdabang.tsh.domain.CartViewDTO;
-import com.bookdabang.tsh.etc.StringToArray;
 import com.bookdabang.tsh.service.CartService;
 
 @RestController
@@ -40,24 +40,26 @@ public class UserCartController {
 	public CartService cService;
 	@Inject
 	public UserProductService pService;
-	
-	@RequestMapping(value="/count", method = RequestMethod.GET)
-	public ResponseEntity<Integer> countCart(HttpSession ses){
+	@Inject
+	public LoginService lService;
+
+	@RequestMapping(value = "/count", method = RequestMethod.GET)
+	public ResponseEntity<Integer> countCart(HttpSession ses) {
 		ResponseEntity<Integer> result = null;
 		CartSelectDTO dto = new CartSelectDTO();
-		MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember");
-		String userId = null;
-		String ipaddr = null;
-		if (loginMember != null) {
-			userId = loginMember.getUserId();
-		} else {
-			ipaddr = "211.197.18.247";
-		}
-		dto.setUserId(userId);
-		dto.setIpaddr(ipaddr);
 		try {
+			String userId = null;
+			String ipaddr = null;
+			MemberVO loginMember = lService.findLoginSess((String) ses.getAttribute("sessionId"));
+			if (loginMember != null) {
+				userId = loginMember.getUserId();
+			} else {
+				ipaddr = (String) ses.getAttribute("ipAddr");
+			}
+			dto.setUserId(userId);
+			dto.setIpaddr(ipaddr);
 			int cntCart = cService.countCart(dto);
-			result = new ResponseEntity<Integer>(cntCart,HttpStatus.OK);
+			result = new ResponseEntity<Integer>(cntCart, HttpStatus.OK);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,62 +67,46 @@ public class UserCartController {
 		}
 		return result;
 	}
-	@RequestMapping(value = "/cartByNo", method = RequestMethod.GET)
-	public ResponseEntity<List<CartViewDTO>> getCartByCartNo(@RequestParam String cartsNo) throws Exception {
+
+	@RequestMapping(value = "/cartByNo", method = RequestMethod.POST)
+	public ResponseEntity<List<CartViewDTO>> getCartByCartNo(@RequestBody List<Integer> cartNo) throws Exception {
 		ResponseEntity<List<CartViewDTO>> result = null;
-		List<Integer> cartNoLst = StringToArray.squareBracketInt(cartsNo);
-		List<CartVO> cartLst =  cService.selectCartByNo(cartNoLst);
+		System.out.println("cartsNo  = " + cartNo);
+		List<CartVO> cartLst = cService.selectCartByNo(cartNo);
 		List<CartViewDTO> cartView = new ArrayList<CartViewDTO>();
 		for (CartVO cart : cartLst) {
 			ProductVO product = pService.readProduct(cart.getProductNo());
 			CartViewDTO cv = new CartViewDTO(product.getProduct_no(), cart.getCartNo(), product.getTitle(),
-					product.getCover(), product.getSell_price(), cart.getProductQtt(),product.getStock());
+					product.getCover(), product.getSell_price(), cart.getProductQtt(), product.getStock());
 			cartView.add(cv);
 		}
-		if(cartLst == null) {
+		if (cartLst == null) {
 			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}else {
+		} else {
 			result = new ResponseEntity<List<CartViewDTO>>(cartView, HttpStatus.OK);
 		}
 		return result;
 	}
 
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
-	public ResponseEntity<List<CartViewDTO>> getCartById(HttpSession ses, String cartsNo) throws Exception {
+	public ResponseEntity<List<CartViewDTO>> getAllCart(HttpSession ses, String cartsNo) throws Exception {
 		ResponseEntity<List<CartViewDTO>> result = null;
 		try {
 			System.out.println(cartsNo);
 			List<CartVO> cartLst = null;
-			if (cartsNo == null) {
-				CartSelectDTO dto = new CartSelectDTO();
-
-				MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember");
-				String userId = null;
-				String ipaddr = null;
-				if (loginMember != null) {
-					userId = loginMember.getUserId();
-				} else {
-					ipaddr = "211.197.18.247";
-				}
-				dto.setUserId(userId);
-				dto.setIpaddr(ipaddr);
-				cartLst = cService.getAllCart(dto);
-
+			CartSelectDTO dto = new CartSelectDTO();
+			MemberVO loginMember = lService.findLoginSess((String) ses.getAttribute("sessionId"));
+			String userId = null;
+			String ipaddr = null;
+			if (loginMember != null) {
+				userId = loginMember.getUserId();
 			} else {
-				String[] cNos = cartsNo.split(",");
-				List<Integer> cartNo = new ArrayList<Integer>();
-				for (String no : cNos) {
-					cartNo.add(Integer.parseInt(no));
-				}
-				cartLst = cService.selectCartByNo(cartNo);
+				ipaddr = (String) ses.getAttribute("ipAddr");
 			}
-			List<CartViewDTO> cartView = new ArrayList<CartViewDTO>();
-			for (CartVO cart : cartLst) {
-				ProductVO product = pService.readProduct(cart.getProductNo());
-				CartViewDTO cv = new CartViewDTO(product.getProduct_no(), cart.getCartNo(), product.getTitle(),
-						product.getCover(), product.getSell_price(), cart.getProductQtt(),product.getStock());
-				cartView.add(cv);
-			}
+			dto.setUserId(userId);
+			dto.setIpaddr(ipaddr);
+			cartLst = cService.getAllCart(dto);
+			List<CartViewDTO> cartView = cService.getCartView(cartLst);
 			result = new ResponseEntity<List<CartViewDTO>>(cartView, HttpStatus.OK);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -175,32 +161,5 @@ public class UserCartController {
 		}
 		return result;
 	}
-	
-	@RequestMapping(value = "/loginCart", method = RequestMethod.POST)
-	public ResponseEntity<String> loginCart(HttpSession ses){
-		ResponseEntity<String> result = null;
 
-		MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember");
-		String userId = null;
-		String ipaddr = null;
-		if (loginMember != null) {
-			userId = loginMember.getUserId();
-			ipaddr = "211.197.18.247";
-			CartSelectDTO dto = new CartSelectDTO(userId, ipaddr);
-			try {
-				if(cService.loginCart(dto)== 0) {
-					result = new ResponseEntity<String>("success",HttpStatus.OK);
-				}else {
-					result = new ResponseEntity<String>("false",HttpStatus.OK);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				result = new ResponseEntity<String>("fail",HttpStatus.BAD_REQUEST);
-			}
-		} else {
-			result = new ResponseEntity<String>("false",HttpStatus.OK);
-		}
-		return result;
-	}
 }

@@ -188,7 +188,7 @@
 					<button class="button button-postComment button--active"
 						type="submit">저장</button>
 					<button class="button button-postComment button--active"
-						id="cancel" onclick="cancelFreeBoard();">취소</button>
+						id="cancel" type="button" onclick="cancelFreeBoard();">취소</button>
 
 				</div>
 			</form>

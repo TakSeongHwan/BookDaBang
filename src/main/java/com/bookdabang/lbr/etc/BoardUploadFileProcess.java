@@ -13,6 +13,8 @@ import javax.imageio.ImageIO;
 import org.imgscalr.Scalr;
 import org.springframework.util.FileCopyUtils;
 
+import com.bookdabang.common.etc.MediaConfirm;
+
 
 
 
@@ -22,12 +24,12 @@ public class BoardUploadFileProcess {
 	
 	
 	public BoardUploadFile uploadFileRename(String upPath, String originalFilename, byte[] file) throws IOException {
+		
 		UUID uuid = UUID.randomUUID();
 		String saveFileName = uuid.toString() + "_" + originalFilename; // 같은이름파일이여도 겹칠일이 없다..
 		String savePath = upPath + calculateSavePath(upPath); // 파일이 저장될 경로 계산
 		File target = new File(savePath + File.separator, saveFileName);
 		FileCopyUtils.copy(file, target); // 파일 저장
-		
 		
 		this.uploadFile.setOriginalFileName(((savePath + File.separator + saveFileName).substring(upPath.length())).replace(File.separator, "/"));
 		
