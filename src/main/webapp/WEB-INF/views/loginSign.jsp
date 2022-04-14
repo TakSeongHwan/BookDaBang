@@ -8,7 +8,7 @@
 </head>
 <script>
 let ses = "${ sessionId}"
-location.href="/ljs/?u=" + ses;
+location.href="/?u=" + ses;
 
 
 

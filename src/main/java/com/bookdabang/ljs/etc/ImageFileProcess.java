@@ -14,7 +14,7 @@ import org.imgscalr.Scalr;
 import org.springframework.util.FileCopyUtils;
 
 import com.bookdabang.lbr.etc.BoardUploadFile;
-import com.bookdabang.lbr.etc.MediaConfirm;
+import com.bookdabang.common.etc.MediaConfirm;
 
 public class ImageFileProcess {
 	

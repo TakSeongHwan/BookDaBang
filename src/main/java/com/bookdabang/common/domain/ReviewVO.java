@@ -2,7 +2,7 @@ package com.bookdabang.common.domain;
 
 import java.sql.Timestamp;
 
-public class Review {
+public class ReviewVO {
 	private int reviewNo; 
 	private String title; 
 	private String writer; 
@@ -13,12 +13,12 @@ public class Review {
 	private int productNo;
 	private int commentNum;
 	
-	public Review() {
+	public ReviewVO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Review(int reviewNo, String title, String writer, Timestamp writedate, String content, int grade,
+	public ReviewVO(int reviewNo, String title, String writer, Timestamp writedate, String content, int grade,
 			int recommendNum, int productNo, int commentNum) {
 		super();
 		this.reviewNo = reviewNo;

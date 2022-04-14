@@ -5,37 +5,52 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bookdabang.mapper.RefundMapper">
+	<!-- Refund 로그인유저 구매목록 출력 -->
+	<select id="refundList" resultType="Refund">
+		select * from refund where
+		userId = #{userId}
+	</select>
 	<!-- Refund 게시판 전체 출력 -->
 	<select id="selectAllRefund" resultType="Refund">
-		select * from refund order by refundNo
+		select * from refund
+		order by refundNo
 	</select>
-	
+	<!-- Refund 환불 체크 업데이트 -->
+	<update id="refundUpdate">
+		update refund set isRefund ='yes', refundProcessdate=now();
+	</update>
+	<!-- adsfxcv -->
+
 	<!-- Refund 게시판 한개 출력 -->
 	<select id="selectRefund" resultType="Refund">
-		select * from refund 
+		select * from refund
 		<choose>
 			<when test="userId != null">
 				where refundNo = #{refundNo}
 			</when>
 			<otherwise>
-				where refundNo = #{refundNo} and orderPwd = sha1(md5(#{orderPwd}))
+				where refundNo = #{refundNo} and orderPwd =
+				sha1(md5(#{orderPwd}))
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<!-- Refund 게시판 insert -->
 	<insert id="insertRefund">
-		insert into refund(orderNo,userId,productPhoto,comment,orderPwd) values(#{orderNo},#{userId},#{productPhoto},#{comment},#{orderPwd})  
+		insert into
+		refund(orderNo,userId,productPhoto,comment,orderPwd)
+		values(#{orderNo},#{userId},#{productPhoto},#{comment},#{orderPwd})
 	</insert>
-	
+
 	<!-- Refund 게시판 delete -->
 	<delete id="deleteRefund">
 		delete from refund where refundNo = #{refundNo}
 	</delete>
-	
-	<!-- 유저가  Refund 게시판 update -->
+
+	<!-- 유저가 Refund 게시판 update -->
 	<update id="updateRefundByUser">
-		update refund set productPhoto = #{productPhoto}, comment = #{comment} where refundNo = #{refundNo}
+		update refund set productPhoto = #{productPhoto},
+		comment = #{comment} where refundNo = #{refundNo}
 	</update>
-	
+
 </mapper>
