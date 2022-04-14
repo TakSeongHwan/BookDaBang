@@ -121,9 +121,11 @@ function loginOrNot() {
                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">게시판</a>
                    <ul class="dropdown-menu">
+                  		<li class="nav-item"><a class="nav-link" href="${contextPath }/notice/listAll">공지사항</a></li>
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">자유게시판</a></li>
-                        <li class="nav-item"><a class="nav-link" href="${contextPath }/cs/">고객센터게시판</a></li>
-                        <li class="nav-item"><a class="nav-link" href="${contextPath }/notice/listAll">공지사항</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">이벤트게시판</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath }/cs/">고객센터</a></li>
+                        
                         <!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->
                    </ul>
             </li>

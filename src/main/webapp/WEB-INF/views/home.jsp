@@ -22,9 +22,9 @@
 	$(function() {
 		let owl = $('#bestSellerCarousel');
 		owl.owlCarousel({
-			items : 4,
+			items : 8,
 			loop : true,
-			margin : 10,
+			margin : 20,
 			autoplay : true,
 			autoplayTimeout : 2000,
 			autoplayHoverPause : true
@@ -32,9 +32,9 @@
 
 		let owl2 = $('#randomCarousel');
 		owl2.owlCarousel({
-			items : 4,
+			items : 8,
 			loop : true,
-			margin : 10,
+			margin : 20,
 			autoplay : true,
 			autoplayTimeout : 2000,
 			autoplayHoverPause : true
@@ -44,18 +44,19 @@
 </script>
 <style>
 .owl-stage-outer{
-height: 400px;
+height: 250px;
+margin-top:20px;
 }
 .card-product__img>img{
 max-width:auto;
 min-width:auto;
-max-height:300px;
-min-height: 280px;
+max-height:150px;
+min-height: 150px;
 
 
 }
 .owl-item{
-	height: 400px;
+	height: 150px;
 
 }
 
@@ -64,7 +65,7 @@ text-overflow: ellipsis;
 overflow: hidden;
 white-space: nowrap;
   height: 25px;
-  width:165px;
+  width:130px;
 text-align: center;
 }
 .my-card-body{
@@ -81,7 +82,7 @@ visibility: hidden !important;
 <body>
 	<jsp:include page="userHeader.jsp"></jsp:include>
 
-
+	<section class="hero-banner">
 	<div class="container">
 		<div class="row no-gutters align-items-center pt-60px"
 			style="matgin-bottom: 10px;">
@@ -96,10 +97,14 @@ visibility: hidden !important;
 					<h4>Team Project</h4>
 					<h1>BookDaBang</h1>
 					<h5>2022.11 - 2022.05. goott Academy 6th classroom.</h5>
+					<a class="button button-hero" href="${contextPath}/product/list">See More</a>
 				</div>
 			</div>
 		</div>
-
+		</div>
+</section>
+	<section class="section">
+		<div class="container">
 		<div class="section-intro" style="margin-top: 100px;">
 			<h2>Best Sellers</h2>
 		</div>
@@ -133,9 +138,10 @@ visibility: hidden !important;
 			</div>
 		</div>
 		
-		
-		<div class="section-intro" style="margin-top: 100px;">
-			<h2>Random Recommendation</h2>
+	</div>
+		<div class="container">
+		<div class="section-intro" style="margin-top: 50px;">
+			<h2>Recommendation</h2>
 		</div>
 		<div class="owl-carousel owl-theme owl-loaded owl-drag"
 			id="randomCarousel">
@@ -164,9 +170,9 @@ visibility: hidden !important;
 				</div>
 			</div>
 		</div>
-		
+		</div>
+		</section>
 
-</div>
 	<jsp:include page="userFooter.jsp"></jsp:include>
 
 
