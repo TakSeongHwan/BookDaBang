@@ -20,7 +20,7 @@
 	
 	<!-- 관리자가 전체 order select -->
 	<select id="selectAllOrder" resultType="ProdOrder">
-		select * from prodOrder limit #{startNum},#{postPerPage}
+		select * from prodOrder order by orderNo desc limit #{startNum},#{postPerPage} 
 	</select>
 	
 	<!-- 관리자가 orderNo로 update -->
@@ -37,7 +37,59 @@
 	
 	<!-- Order confirm update -->
 	<update id="updateOrderCofirm">
-		update prodOrder set confirm= 'Y' where orderNo = #{orderNo} 
+		update prodOrder set confirm= '#{confirm}' where orderNo = #{orderNo} 
+	</update>
+	
+	<select id="orderCnt" resultType="int">
+		select count(*) from prodOrder where 1=1
+		<if test="searchType != '' and  searchType != null">
+			<if test="searchType =='prodNo'">
+				and productNo like concat('%', #{searchWord}, '%')
+			</if>
+			<if test="searchType =='orderNo'">
+				and orderNo like concat('%', #{searchWord}, '%')
+			</if>
+			<if test="searchType =='userId'">
+				and userId like concat('%', #{searchWord}, '%')
+			</if>
+		</if>
+		
+		<if test="startSellDate != '' and endSellDate != null">
+			and orderDate between date(#{startSellDate}) and
+			date(#{endSellDate})
+		</if>
+	</select>
+
+	<select id="orderView" resultType="ProdOrder">
+		select * from prodOrder where 1=1 
+		<if test="searchType != '' and  searchType != null">
+			<if test="searchType =='prodNo'">
+				and productNo like concat('%', #{searchWord}, '%')
+			</if>
+			<if test="searchType =='orderNo'">
+				and orderNo like concat('%', #{searchWord}, '%')
+			</if>
+			<if test="searchType =='userId'">
+				and userId like concat('%', #{searchWord}, '%')
+			</if>
+			<if test="searchType=='title'">
+				and (productNo) in (select product_no from product where title like concat('%',#{searchWord},'%'))
+			</if>
+		</if>
+		
+		<if test="startSellDate != '' and endSellDate != null">
+			and orderDate between date(#{startSellDate}) and
+			date(#{endSellDate}) 
+		</if>
+		 order by orderNo desc limit #{startNum}, #{postPerPage} 
+	</select>
+	
+	<update id="updateOrderState">
+		update prodOrder set orderState_code = #{orderState}
+		<if test="orderState == 2">
+			, releaseDate = now()
+		</if>
+		where orderNo = #{orderNo}
 	</update>
 	
 </mapper>

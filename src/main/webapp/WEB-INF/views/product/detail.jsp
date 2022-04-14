@@ -85,7 +85,7 @@
 			return;
 		} else {
 			$(".comments-area").remove();
-			let url = "/comment/all/" + no;
+			let url = "/Rcomment/all/" + no;
 			console.log(url);
 			$.ajax({
 				url : url,
@@ -172,7 +172,7 @@
 		if (id) {
 			if (comment != "") {
 				let reviewNo = parseInt(rno);
-				let url = '/comment';
+				let url = '/Rcomment';
 				let sendData = JSON.stringify({
 					reviewNo : reviewNo, commenter : id, comment : comment
 				});
@@ -217,7 +217,7 @@
 				let step = parseInt(str.split(",")[2]);
 				let reforder = parseInt(str.split(",")[3]);
 				
-				let url = '/comment';
+				let url = '/Rcomment';
 				let sendData = JSON.stringify({
 					commenter : id, comment : comment, reviewNo : reviewNo,
 					ref : ref, step : step, reforder : reforder
@@ -352,6 +352,7 @@
  	background-color: #f1f6f7;
  }
  
+<<<<<<< HEAD
  .commenter {
  	text-align : left;
  	font-size: 20px;
@@ -415,6 +416,30 @@
  	font-size: 30px;
  }
  
+=======
+#qnaTable>thead>tr, #qnaTable>tbody>tr {
+	text-align :center;
+	
+}
+#qnaTable>thead>tr>th, #qnaTable>tbody>tr>td {
+	padding: 5px;
+	padding-top : 10px;
+	padding-bottom : 10px;
+	margin : 0px;
+	width: 100px;
+}
+
+#qnaPagingZone {
+	width: 700px;
+	margin: 0 auto;
+}
+
+.pagination {
+	width: 300px;
+	margin: 0 auto;
+}
+
+>>>>>>> 3909fb220075723b22f0a0f983a2e20838366a06
 </style>
 <head>
 <body>
@@ -611,98 +636,305 @@
 						</div>
 					</div>
 					<!-- Q&A 정보 content -->
+					<script>
+						let sessionId = "";
+						let userNickName = "";
+						let isbn = "${product.isbn}"
+						let product_qna = {
+								isbn : "",
+								writer : "",
+								content : "",
+								pwd : ""
+						}
+						
+						let pageNo = 1;
+						window.onload = function() {
+							sessionId = "${sessionId}";
+							getUserNickName(sessionId);
+							
+							ViewSelectQnA(3, pageNo);
+							console.log(isbn);
+							console.log(userNickName);
+						
+							
+							
+							
+														
+							$(document).on("click", "#writeQnA", function() {
+								let login = "${sessionId}";
+								console.log(login);
+								if(login == ""){
+								alert("로그인한 유저만 글을 작성할 수 있습니다");
+								location.href ="/login";
+								} else {
+								
+								$("#qnaContent").val("");
+								$("#pwd").val("");
+								$("#qnaContainer").toggle();
+								$("#qnaContentBox").toggle();
+								
+								
+								
+								}
+							});
+							
+							$(document).on("click", "#backTolist", function() {
+								$("#qnaContainer").toggle();
+								$("#qnaContentBox").toggle();
+							});
+							
+							
+							
+							
+						
+						
+						$(document).on("click", "#insertQnA", function() {
+							
+							product_qna.content = ($("#qnaContent").val());
+							product_qna.pwd = ($("#pwd").val());
+							product_qna.writer = "${sessionId}";
+							product_qna.isbn = "${product.isbn}";
+							console.log(product_qna);
+							
+							
+							url = "/prodQna/"  
+							$.ajax({
+								url : url,
+								dataType : "text",
+								type : "post",
+								data : product_qna,
+								success : function(data) {
+									
+									if(data == "success"){
+									alert("정상적으로 등록되었습니다");
+									location.reload();
+									} else {
+									alert("등록 안됨");
+									location.reload();
+									}
+								}
+
+							});
+							
+							
+						});
+						
+						$(document).on("click", ".deleteBtn", function() {
+							let index = $(".deleteBtn").index(this);
+							console.log($(".questionNo").eq(index).attr("id"));
+							let question_no = $(".questionNo").eq(index).attr("id");
+							
+							let url = "/prodQna/deleteQnA" 
+							$.ajax({
+								url : url,
+								dataType : "text",
+								type : "post",
+								data : {question_no : question_no},
+								success : function(data) {
+									
+									if(data == "success"){
+									alert("삭제 완뇨");
+									location.reload();
+									
+									} else {
+									alert("삭제 안됨 ㅠ");
+									
+									}
+								}
+
+							});
+							
+							
+						});
+							
+						
+						
+						}
+						
+						
+						function getUserNickName(sessionId) {
+							let url = "/prodQnARest/"+sessionId; 
+								$.ajax({
+									url : url,
+									dataType : "text",
+									type : "get",
+									success : function(data) {
+										userNickName = data;
+										console.log(data);
+											
+										}
+									});
+						}
+							
+						
+						function viewProdQnA(data) {
+							
+							$("#viewProdQnA").empty();
+							
+							$("#qnaPagingZone").empty();
+							let output = "";
+							$.each(data.qnaList, function(i, e) {
+								let writeDate = new Date(
+										+new Date(e.write_date) + 3240 * 10000)
+										.toISOString().split("T")[0];
+								if(e.ref_order < 1){
+								output += "<tr><td class='questionNo' style='width : 20px' id='"+e.question_no+"'>" + e.question_no + "</td>";
+								
+								if(e.pwd != null){
+									if(userNickName == e.writer){
+										output += "<td style ='text-align : left;width:500px'>" + e.content + "</td>";	
+									} else{
+										output += "<td style ='text-align : left;width:500px'><img src='/resources/img/etc/lock.png' width='18px'>비공개 글입니다.</td>";
+									}
+									
+								} else{
+									output += "<td style ='text-align : left;width:500px'>" + e.content + "</td>";
+								}
+								
+								let writer = e.writer.substr(0,2) + "**";
+								output += "<td>" + writer + "</td>";
+								
+								output +="<td>"+writeDate+"</td>"
+								let answerStatus = ""
+								if(e.answer_status == "wating"){
+									answerStatus ='<span class="badge bg-secondary" style="font-size : 12px">답변대기</span>';
+								}else{
+									answerStatus ='<span class="badge bg-primary" style="font-size : 12px">답변완료</span>';
+								}
+								output += '<td>' + answerStatus + '</td>'
+								output += '<td>'
+								
+								if(userNickName == e.writer){
+									output += "<span class='badge bg-danger deleteBtn' >삭제</span>";
+									} 
+								output+='</td>'
+								} else {
+									
+									output += "<tr><td></td>";
+									output += "<td style ='text-align : left;width:500px'>ㄴ<span class='badge bg-secondary' style='font-weight :300; background-color : #ccc!important'>답변</span>&nbsp&nbsp" +e.content+"</td>";
+									output += "<td></td>"
+									output += "<td>"+writeDate+"</td>";
+									output += "<td></td>";
+									
+								}	
+							});
+							let pagingoutput = '<nav aria-label="Page navigation"><ul class="pagination">'
+
+								if (pageNo != 1) {
+									pagingoutput += "<li class='page-item last'><a class='page-link' onclick='ViewSelectQnA(3,1)'><<</a></li>";
+									pagingoutput += "<li class='page-item last'><a class='page-link' onclick='ViewSelectQnA(3,"
+											+ (pageNo - 1)
+											+ ")'><</a></li>";
+								}
+								for (let i = data.pagingInfo.startNoOfCurPagingBlock; i <= data.pagingInfo.endNoOfCurPagingBlock; i++) {
+									if (pageNo == i) {
+										pagingoutput += "<li class='page-item active' onclick='ViewSelectQnA(3,"
+												+ i + ")'><a class='page-link'>" + i + "</a></li>";
+									} else {
+										pagingoutput += "<li class='page-item'><a class='page-link' onclick='ViewSelectQnA(3,"
+												+ i + ")'>" + i + "</a></li>";
+									}
+
+								}
+
+								if (pageNo < data.pagingInfo.totalPage) {
+									pagingoutput += "<li class='page-item last'><a class='page-link'  onclick='ViewSelectQnA(3,"
+											+ (pageNo + 1)
+											+ ")'>></a></li>";
+									pagingoutput += "<li class='page-item last' onclick='ViewSelectQnA(3,"
+											+ data.pagingInfo.totalPage
+											+ ")'><a class='page-link' >>></a></li>";
+								}
+
+								pagingoutput += '</ul></nav>'
+							
+							
+							
+							
+							
+							$("#viewProdQnA").append(output);
+							
+							$("#qnaPagingZone").append(pagingoutput);
+							
+						}
+						
+						function ViewSelectQnA(answerStatus, tmp) {
+
+							pageNo = tmp;
+
+							url = "/prodQnARest/list?pageNo=" + pageNo + "&answerStatus="+ answerStatus +"&isbn=" + isbn;
+							$.ajax({
+								url : url,
+								dataType : "json",
+								type : "get",
+								success : function(data) {
+									console.log(data);
+									if (answerStatus == 1) {
+										viewNotAnswer(data);
+									} else if (answerStatus == 2) {
+										viewAnswer(data);
+									} else {
+										viewProdQnA(data);
+									}
+
+								}
+
+							});
+						}
+						
+					</script>
+					<style>
+						#writeQnA:hover {
+							color: #000;
+						}
+					</style>
+					
+					<!-- Q&A 정보 content -->
 					<div class="tab-pane fade" id="contact" role="tabpanel"
 						aria-labelledby="contact-tab">
-						<div class="row">
-							<div class="col-lg-6">
-								<div class="comment_list">
-									<div class="review_item">
-										<div class="media">
-											<div class="d-flex">
-												<img src="img/product/review-1.png" alt="">
-											</div>
-											<div class="media-body">
-												<h4>Blake Ruiz</h4>
-												<h5>12th Feb, 2018 at 05:56 pm</h5>
-												<a class="reply_btn" href="#">Reply</a>
-											</div>
-										</div>
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing
-											elit, sed do eiusmod tempor incididunt ut labore et dolore
-											magna aliqua. Ut enim ad minim veniam, quis nostrud
-											exercitation ullamco laboris nisi ut aliquip ex ea commodo</p>
-									</div>
-									<div class="review_item reply">
-										<div class="media">
-											<div class="d-flex">
-												<img src="img/product/review-2.png" alt="">
-											</div>
-											<div class="media-body">
-												<h4>Blake Ruiz</h4>
-												<h5>12th Feb, 2018 at 05:56 pm</h5>
-												<a class="reply_btn" href="#">Reply</a>
-											</div>
-										</div>
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing
-											elit, sed do eiusmod tempor incididunt ut labore et dolore
-											magna aliqua. Ut enim ad minim veniam, quis nostrud
-											exercitation ullamco laboris nisi ut aliquip ex ea commodo</p>
-									</div>
-									<div class="review_item">
-										<div class="media">
-											<div class="d-flex">
-												<img src="img/product/review-3.png" alt="">
-											</div>
-											<div class="media-body">
-												<h4>Blake Ruiz</h4>
-												<h5>12th Feb, 2018 at 05:56 pm</h5>
-												<a class="reply_btn" href="#">Reply</a>
-											</div>
-										</div>
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing
-											elit, sed do eiusmod tempor incididunt ut labore et dolore
-											magna aliqua. Ut enim ad minim veniam, quis nostrud
-											exercitation ullamco laboris nisi ut aliquip ex ea commodo</p>
-									</div>
-								</div>
-							</div>
-							<div class="col-lg-6">
-								<div class="review_box">
-									<h4>Post a comment</h4>
-									<form class="row contact_form" action="contact_process.php"
-										method="post" id="contactForm" novalidate="novalidate">
-										<div class="col-md-12">
-											<div class="form-group">
-												<input type="text" class="form-control" id="name"
-													name="name" placeholder="Your Full name">
-											</div>
-										</div>
-										<div class="col-md-12">
-											<div class="form-group">
-												<input type="email" class="form-control" id="email"
-													name="email" placeholder="Email Address">
-											</div>
-										</div>
-										<div class="col-md-12">
-											<div class="form-group">
-												<input type="text" class="form-control" id="number"
-													name="number" placeholder="Phone Number">
-											</div>
-										</div>
-										<div class="col-md-12">
-											<div class="form-group">
-												<textarea class="form-control" name="message" id="message"
-													rows="1" placeholder="Message"></textarea>
-											</div>
-										</div>
-										<div class="col-md-12 text-right">
-											<button type="submit" value="submit" class="btn primary-btn">Submit
-												Now</button>
-										</div>
-									</form>
-								</div>
-							</div>
+						
+						<div class="container-xxl flex-grow-1 container-p-y">
+			<h4 class="fw-bold py-3 mb-4">
+				<span class="text-muted fw-light">Question &</span> Answer
+			</h4>
+						
+						<div id="qnaContainer">
+						<table class="table" id="qnaTable">
+							<thead>
+								<tr>
+									<th>글번호</th>
+									<th style="width: 700px; text-align: center" >내용</th>
+									<th>작성자</th>
+									<th>작성일</th>
+									<th>답변상태</th>
+									<th>비고</th>
+									
+								</tr>
+							</thead>
+							<tbody class="table-border-bottom-0" id="viewProdQnA">
+
+							</tbody>
+						</table>
+						
+						<div id="qnaPagingZone"></div>
+						<a class="button button--active button-contactForm" id="writeQnA" style="color : #fff;" >글 작성</a>
 						</div>
+						
+						
+						<div id="qnaContentBox" style="display : none">
+						<span style="font-size : 21px; line-height: 70px">Q&A를 작성하세요</span>
+						<div style ="float: right;  display : inline-block;">
+						<label class="form-label">비밀번호 입력(선택)</label>
+						<input type="text" class="form-control" id="pwd" placeholder="Password" aria-describedby="defaultFormControlHelp" style="width:200px; margin-bottom: 10px " />
+						</div>
+						<textarea class="form-control" id="qnaContent" id=index " rows="9"></textarea>
+						<a class="button button--active button-contactForm" id="backTolist" style="color : #fff; margin-top: 10px;">뒤로가기</a>
+						<a class="button button--active button-contactForm" id="insertQnA" style="color : #fff; margin-top: 10px;" >글등록</a>
+						
+						
+						</div>
+						</div>
+							
 					</div>
 					<!-- 교환/반품 정보 content -->
 					<div class="tab-pane fade" id="profile" role="tabpanel"

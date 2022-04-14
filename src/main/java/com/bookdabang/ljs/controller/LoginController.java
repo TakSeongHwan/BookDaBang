@@ -161,7 +161,7 @@ public class LoginController {
 				} 
 				
 
-				return "/loginSign";
+				return "loginSign";
 	}
 	
 

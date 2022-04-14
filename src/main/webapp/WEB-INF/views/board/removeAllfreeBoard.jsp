@@ -12,6 +12,7 @@
 	}
 
 </script>
+
 </head>
 <body>
 <jsp:include page="../managerHeader.jsp"></jsp:include>
@@ -31,7 +32,7 @@
 			<tbody>
 				<c:forEach var="board" items="${removeBoard }">
 					<tr onclick="readDelBoard(${board.boardno });">
-						<td>${board.boardno }</td>
+						<td id="td1">${board.boardno }</td>
 						<td>${board.writer }</td>
 						<td>${board.title }</td>
 						<td>${board.date }</td>

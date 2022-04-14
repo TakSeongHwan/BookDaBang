@@ -18,14 +18,24 @@
   	</select>
   	
   	<update id = "withdrawMember" >
-  	    update member set isDraw = 'Y' where userId=#{userId} 
+  	update member set isDraw = 'Y' where userId=#{userId} 
   	</update>
   	
 	<select id = "pointCheck" resultType="MemberPoint">
-		select * from memberpoint where userid=#{userId};
-	
+	select * from memberpoint where userid = #{userId} and point >0 order by pointWhen desc
 	</select>
 
+	<select id = "showRecentSeenProd" resultType ="RecentSeenProd">
+	select p.title, p.cover, r.* from product p join recentSeenProd r on (p.product_no = r.lastSeenProd) where r.userId  = #{userId} order by r.lastSeenDate desc;
+	</select>
+	
+	<update id = "updatePassword">
+	update member set userPwd = sha1(md5(#{pwd})) where userId= #{userId}
+	</update>
+	
+	<select id = "showOldPwd" resultType ="String">
+	select userPwd from member where userId = #{userId}
+	</select>
 
   	
   	

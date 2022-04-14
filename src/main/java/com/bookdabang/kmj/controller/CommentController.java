@@ -16,7 +16,7 @@ import com.bookdabang.common.domain.ReviewComment;
 import com.bookdabang.kmj.service.ReviewService;
 
 @RestController // 현재 클래스가 REST방식의 컨트롤러임을 명시 // rest방식은 쿼리스트링이 안먹는다
-@RequestMapping("/comment")
+@RequestMapping("/Rcomment")
 public class CommentController {
 	
 	@Inject

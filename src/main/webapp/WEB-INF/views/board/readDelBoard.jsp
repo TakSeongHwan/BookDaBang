@@ -21,7 +21,9 @@
 			success : function(data) {
 				console.log(data)
 				if(data == "success"){
-					location.href ="/board/removeAllFreeBoard";
+					alert("복구")
+				}else if(data == "fail") { 
+					alert("실패");
 				}
 			}
 		});
