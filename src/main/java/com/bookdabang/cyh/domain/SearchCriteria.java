@@ -8,14 +8,16 @@ public class SearchCriteria {
 	private String endRgDate;
 	private String startUpdate;
 	private String endUpDate;
+	private String start_endDate;
+	private String end_endDate;
 	private String display_status;
 	private String sales_status;
 	private String sortWord;
 	private String sortMethod;
 
 	public SearchCriteria(String searchWord, String searchType, String category_code, String startRgDate,
-			String endRgDate, String startUpdate, String endUpDate, String display_status, String sales_status,
-			String sortWord, String sortMethod) {
+			String endRgDate, String startUpdate, String endUpDate, String start_endDate, String end_endDate,
+			String display_status, String sales_status, String sortWord, String sortMethod) {
 		super();
 		this.searchWord = searchWord;
 		this.searchType = searchType;
@@ -24,6 +26,8 @@ public class SearchCriteria {
 		this.endRgDate = endRgDate;
 		this.startUpdate = startUpdate;
 		this.endUpDate = endUpDate;
+		this.start_endDate = start_endDate;
+		this.end_endDate = end_endDate;
 		this.display_status = display_status;
 		this.sales_status = sales_status;
 		this.sortWord = sortWord;
@@ -90,6 +94,22 @@ public class SearchCriteria {
 		this.endUpDate = endUpDate;
 	}
 
+	public String getStart_endDate() {
+		return start_endDate;
+	}
+
+	public void setStart_endDate(String start_endDate) {
+		this.start_endDate = start_endDate;
+	}
+
+	public String getEnd_endDate() {
+		return end_endDate;
+	}
+
+	public void setEnd_endDate(String end_endDate) {
+		this.end_endDate = end_endDate;
+	}
+
 	public String getDisplay_status() {
 		return display_status;
 	}
@@ -126,8 +146,9 @@ public class SearchCriteria {
 	public String toString() {
 		return "SearchCriteria [searchWord=" + searchWord + ", searchType=" + searchType + ", category_code="
 				+ category_code + ", startRgDate=" + startRgDate + ", endRgDate=" + endRgDate + ", startUpdate="
-				+ startUpdate + ", endUpDate=" + endUpDate + ", display_status=" + display_status + ", sales_status="
-				+ sales_status + ", sortWord=" + sortWord + ", sortMethod=" + sortMethod + "]";
+				+ startUpdate + ", endUpDate=" + endUpDate + ", start_endDate=" + start_endDate + ", end_endDate="
+				+ end_endDate + ", display_status=" + display_status + ", sales_status=" + sales_status + ", sortWord="
+				+ sortWord + ", sortMethod=" + sortMethod + "]";
 	}
 
 }

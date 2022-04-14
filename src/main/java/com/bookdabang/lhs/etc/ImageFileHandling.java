@@ -19,6 +19,7 @@ public class ImageFileHandling {
 		System.out.println(upPath+targetFile);
 		
 		File delFile = new File(upPath+targetFile.replace("/", File.separator));
+		System.out.println(upPath+targetFile.replace("/", File.separator));
 		if(delFile.delete()) {
 			result = true;
 		}else {

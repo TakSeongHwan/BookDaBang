@@ -54,28 +54,42 @@ public class LoginController {
 				// 만약 저장한 북다방 쿠키가 있다면.
 				
 				System.out.println(c.getValue());
-				MemberVO loginMember = service.findLoginSess(c.getValue());
-				
-				// null 예외가  뜬다 - 세션이 바뀌었음.
-				// 쿠키에 저장한 세션키와 DB에 저장한 세션키가 일치하지 않는 오류 발생함.
-				// 자동로그인을 체크하고 로그인 했을 경우 
-				// 자동로그인을 체크하지 않고 로그인 했을 경우
-				
+				MemberVO loginMember = service.findLoginSess(c.getValue()); // 일단 쿠키에 담긴 옛날 세션키로 멤버 담아와서
+					
 				System.out.println(loginMember.toString());
 				
-				if (loginMember != null) {
+				if (loginMember != null) {  // 멤버가 있으면
 					
-					model.addAttribute("loginMember", loginMember);
-					LoginDTO dto = new LoginDTO(loginMember.getUserId(), loginMember.getUserPwd(), true, ses.getId());
-					System.out.println(dto.toString());
-					int result = service.lastLogin(dto);
-					System.out.println("최종 로그인 시간 결과" + result);
+					LoginDTO dto = new LoginDTO(loginMember.getUserId(), loginMember.getUserPwd(), true, loginMember.getSessionId()); // DTO에 현재 세션키 넣어서 업데이트 해주고 || 옛날 세션 키 그대로 로그인
+					int result = service.lastLogin(dto); 
+					// 세션 아이디/ 최종 로그인 시간 업데이트 했으니까 쿠키에도 바꿔줘야됨 || 그냥 옛날 세션키로 계속 로그인 되게? - 그러면 시간만 업데이트 됨
 					
-					//response.sendRedirect("/ljs/mypage/");
+					// 일단 구 세션으로 로그인 하는걸로
+//					Cookie BookDBCook = new Cookie("BookDBCookie", loginMember.getSessionId()); // 북다방 쿠키에 세션키 저장 
+//					BookDBCook.setMaxAge(60 * 60 * 24); // 쿠키 만료시간을 2분으로 . 60*60*24*7
+//					BookDBCook.setPath("/");
+//					response.addCookie(BookDBCook);
+
+					System.out.println("최종 자동 로그인 시간 업데이트 결과" + result);
+					ses.setAttribute("sessionId", loginMember.getSessionId()); // 혼동 주의. 자동 로그인 시에는 쿠키에 있는(구) 세션키로 로그인.
+					
+					String prePage = request.getHeader("REFERER");
+					
+					if (prePage != null) {
+						
+						ses.setAttribute("prePage", prePage);
+						response.sendRedirect(prePage);
+						
+						System.out.println( "이전의" + prePage + "로 이동" );
+					} else {
+						response.sendRedirect("/");
+						System.out.println("이전 페이지 없어서 홈으로 보냈다");
+					}
+					
 				} 
 			} 
-
 		}
+		
 		System.out.println("쿠키 있니 없니");
 		return "loginPage";
 				
@@ -83,8 +97,15 @@ public class LoginController {
 	
 	
 	@RequestMapping(value="/login", method = RequestMethod.GET) 
-	public String login() {
+	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
 		
+		try {
+			loginPage(request, response, model);
+			
+		} catch (Exception e) {
+			System.out.println("쿠키 유무 판별 실패");
+			e.printStackTrace();
+		}
 		
 		
 		
@@ -92,18 +113,15 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/loginSign", method = RequestMethod.POST)
-	public String loginPage(LoginDTO dto, Model model, HttpSession ses) {
+	public String loginSign(LoginDTO dto, Model model, HttpSession ses) {
 	
 				System.out.println("로그인 첫걸음" + dto.toString());
-				dto.setSessionId(ses.getId());
-				System.out.println("세션 아이디 DTO에 넣었니?" + dto.getSessionId());
 				MemberVO loginMember = null;
-			
-				// 비밀번호가 틀렸을 때 어떻게 처리해야하나.
+
+				// 
 				try {
-					
+					// 만약 loginMember가 있으면
 					loginMember = service.login(dto);
-					
 					if (loginMember == null) {
 						
 						System.out.println("해당 멤버의 정보없습니다.");
@@ -112,10 +130,17 @@ public class LoginController {
 						
 					} else {
 						
-						model.addAttribute("loginMember", loginMember);
+						System.out.println("현재 세션아이디 :  " + ses.getId());
+						dto.setSessionId(ses.getId());
+						System.out.println("세션 아이디 DTO에 넣었니?" + dto.getSessionId());
+						int result = service.lastLogin(dto); // 세션 아이디/ 최종 로그인 시간 업데이트 후에
 						
-						int result = service.lastLogin(dto);
-						System.out.println(result);
+						
+						System.out.println("세션 값/ 로그인 시간 업데이트 결과 : " + result);
+						loginMember = service.login(dto);
+						
+						model.addAttribute("loginMember", loginMember); // 모델에 담아서 보낸다
+						
 						
 						 // 
 						System.out.println("로그인한 멤버 정보 : " + model.toString());
@@ -136,72 +161,29 @@ public class LoginController {
 				} 
 				
 
-				return "/loginSign";
+				return "loginSign";
 	}
 	
-	
-	
-		
-		@RequestMapping(value = "/mypage/", method = RequestMethod.GET)
-		public String memberinfo(@RequestParam("u") String sessionId, Model model) {
-			
-			MemberVO loginMember = null;
-			
-			try {
-				loginMember = service.findLoginSess(sessionId);
-				
-			} catch (Exception e) {
-				System.out.println("세션값으로 멤버 찾기 실패하였습니당");
-			}
-			
-			model.addAttribute("loginMember", loginMember);
-			
-					return "mypage/memberinfo";
-		}
-		
-		@RequestMapping(value = "withdrawMember.do", method = RequestMethod.POST)
-		@ResponseBody
-		public int withdrawMember(@RequestParam("ses") String memberSess) {
-			
-					System.out.println(memberSess + " 탈퇴시키러 여기에 올까요?");
-					
-					int result = 0;
-					try {
-						result = service.withdrawMember(memberSess);	 
-						
-					if(result == 1) {
-						System.out.println("탈퇴 성공하였습니다.");
-					}
-						
-					
-					} catch (Exception e) {
-						
-						e.printStackTrace();
-						System.out.println("탈퇴 실패하였습니다.");
-						
-					}
-					
-					return result;
-		}
+
 		
 		// 마이페이지를 눌렀는데 로그인이 안된 상태일때 이 요청으로 들어옴
 		// 인터셉터가 실행되도록 보내고, 여기서는 이전 경로 저장이 이루어지도록.
 		
 		@RequestMapping(value="/returnPrePage")
-		public String returnPrePage(HttpSession ses) {
+		public String returnPrePage(HttpSession ses, HttpServletRequest req) {
 			
 			System.out.println("마이페이지 경로 저장하자");
 			// 세션에 저장함
-			ses.setAttribute("prePage", "/");
+			
+			String prePage = req.getHeader("REFERER");
+			ses.setAttribute("prePage", prePage);
 			// 다시 로그인하러 보냄
 			return "redirect:/mypage/login";
 		}
 
 		@RequestMapping(value="/logout", method=RequestMethod.GET)
 		public void logout(HttpSession session, HttpServletResponse resp, HttpServletRequest req) throws Exception {
-			String sessionId = (String)session.getAttribute("sessionId");
 			
-			if (sessionId == null) {
 				
 				Cookie BookDBCook = new Cookie("BookDBCookie", null);
 				BookDBCook.setMaxAge(0); // 유효시간을 0으로 설정
@@ -209,7 +191,7 @@ public class LoginController {
 				resp.addCookie(BookDBCook);
 				session.invalidate();
 
-			}
+			
 		
 			// return?
 			resp.sendRedirect("/ljs/");

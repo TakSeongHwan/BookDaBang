@@ -6,7 +6,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -18,21 +20,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bookdabang.common.domain.AttachFileVO;
-import com.bookdabang.common.domain.Notice;
+import com.bookdabang.common.domain.BoardSearch;
+import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.NoticeVO;
+import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.VisitorIPCheck;
 import com.bookdabang.common.etc.IPCheck;
 import com.bookdabang.common.service.IPCheckService;
 import com.bookdabang.lhs.etc.ImageFileHandling;
 import com.bookdabang.lhs.etc.UploadFileProcess;
 import com.bookdabang.lhs.service.NoticeService;
+import com.bookdabang.ljs.service.LoginService;
 
 @Controller
 @RequestMapping("/notice/*")
@@ -43,57 +51,87 @@ public class NoticeController {
 	
 	@Inject
 	IPCheckService ipService;
+	
+	@Inject
+	private LoginService loginService;
 
 	private List<AttachFileVO> fileList = new ArrayList<AttachFileVO>();
 
 	@RequestMapping("listAll")
-	public String notice(Model m) {
-		List<Notice> notice = new ArrayList<Notice>();
+	public String notice(Model m, HttpServletRequest request, @RequestParam(value="pageNo",required=false, defaultValue="1") String currPg,
+			@ModelAttribute BoardSearch bs) {
+		List<NoticeVO> notice = new ArrayList<NoticeVO>();
+
+		String sessionId = request.getSession().getId();
+	
+		
+		ResponseEntity<Map<String,String>> result = null;
+		MemberVO mv = null;
+		
+		int pageNo = 1;
+		if(!currPg.equals("") || currPg != null) {
+			pageNo = Integer.parseInt(currPg);
+		}
+		if(bs.getSearchWord() == null) {
+			bs.setSearchWord("");
+		}
+		if(bs.getSearchType() == null) {
+			bs.setSearchType("");
+		}
+		
+		
+		List<NoticeVO> list = new ArrayList<NoticeVO>();
+		PagingInfo pi = null;
+		System.out.println("검색 : "+bs);
 		try {
-			notice = service.entireNotice();
+			mv = loginService.findLoginSess(sessionId);
+			System.out.println(mv);
+			
+			if(mv != null) {
+			m.addAttribute("userId", mv.getUserId());
+			}
+			
+			Map<String,Object> map = service.entireNotice(pageNo, bs);
+			list = (List<NoticeVO>) map.get("notice");
+			pi = (PagingInfo) map.get("pagingInfo");
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		m.addAttribute("notice", notice);
+		
+		m.addAttribute("notice",list);
+		m.addAttribute("pagingInfo",pi);
 		return "notice/notice";
 	}
 
 	@RequestMapping("viewContent")
-	@Transactional
 	public void showNoticeContent(Model m, @RequestParam("no") int no, HttpServletRequest request) {
 		System.out.println(no);
-		Notice content = null;
+		NoticeVO content = null;
 		List<AttachFileVO> af = null;
 		String ipaddr = null;
-		try {
-			ipaddr = IPCheck.getIPAddr(request);
-			//System.out.println("세션에 넣어둔 ip가 잘 저장되어있나? "+request.getSession().getAttribute("ipAddr"));
-			Timestamp lastAccessTime = service.pageViewCheck(ipaddr, no);
 		
-			System.out.println(lastAccessTime);
-			if(lastAccessTime != null) {
-				
-				long lastAccessDate = lastAccessTime.getTime();
-				long currTime = System.currentTimeMillis();
-				
-				if(currTime - lastAccessDate > 1000 * 60*60*24) {//테스트중이라 1분 
-					if(service.updateAccessDate(ipaddr, no) == 1) {
-						service.viewCountIncrese(no);
-						System.out.println("조회수 올라감");
-					}
-				}else {
-					System.out.println("조회수 안올라감");
-				}
-			}else {
-				if(service.insertAccessDate(ipaddr, no) == 1) {
-					service.viewCountIncrese(no);
-					System.out.println("조회수 올라감");
-				}
+		String sessionId = request.getSession().getId();
+		System.out.println(sessionId);
+		
+		ResponseEntity<Map<String,String>> result = null;
+		MemberVO mv = null;
+		
+		try {
+			
+			mv = loginService.findLoginSess(sessionId);
+			System.out.println(mv);
+			if(mv != null) {
+			m.addAttribute("userId", mv.getUserId());
 				
 			}
 			
-			content = service.getContentByNo(no);
+			ipaddr = IPCheck.getIPAddr(request);
+			content = service.getContentByNo(ipaddr,no);
+			if(content.getImage().length() == 0) {
+				content.setImage(null);
+			}
 			af = service.getAttachFile(no);
 			if(af.size()<1) {
 				af = null;
@@ -103,6 +141,7 @@ public class NoticeController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		System.out.println(content);
 		
 		m.addAttribute("attachFile", af);
@@ -110,53 +149,138 @@ public class NoticeController {
 	}
 
 	@RequestMapping("viewNoticeWrite")
-	public String showNoticeWritePage() {
+	public String showNoticeWritePage(HttpServletRequest request, Model m) {
+		
+		String sessionId = request.getSession().getId();
+		System.out.println(sessionId);
+		
+		ResponseEntity<Map<String,String>> result = null;
+		MemberVO mv = null;
+	
+			try {
+				mv = loginService.findLoginSess(sessionId);
+				System.out.println(mv);
+				if(mv != null) {
+				m.addAttribute("userId", mv.getUserId());
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+		
 		return "/notice/insertNotice";
 
 	}
 
 	@RequestMapping(value = "insertNotice", method = RequestMethod.POST)
-	public String insertNotice(Notice n, RedirectAttributes rttr) {
-		
+	public String insertNotice(NoticeVO n, RedirectAttributes rttr) {
 	
-		int no = 0;
-		try {
-			no = service.getNoticeNo() + 1;
-			n.setNo(no);
-			
-			if(service.insertNotice(n) == 1) {
-				
-				for(AttachFileVO af : this.fileList) {
-					service.insertAttachFile(af, no);
+	
+			try {
+				int no = service.getNoticeNo() + 1;
+				n.setNo(no);
+				if(service.insertNotice(n) == 1) {
+					
+					for(AttachFileVO af : this.fileList) {
+						service.insertAttachFile(af, n.getNo() );
+					}
+					rttr.addFlashAttribute("result", "success");
 				}
-				rttr.addFlashAttribute("result", "success");
+			} catch (Exception e) {
+				rttr.addFlashAttribute("result", "fail");
+				e.printStackTrace();
 			}
-			
-				
-		
-		} catch (Exception e) {
-			rttr.addFlashAttribute("result", "fail");
-			e.printStackTrace();
-		}
-		
-		
-		
 		return "redirect:/notice/listAll";
 	}
 	
 	
 	@RequestMapping(value="updateNotice", method=RequestMethod.POST)
-	public void updateNotice() {
+	public String updateNotice(NoticeVO n, RedirectAttributes rttr, MultipartHttpServletRequest multipartRequest, HttpServletRequest request) {
 		
+		boolean newImageUploadCheck = Boolean.parseBoolean(request.getParameter("newImageUploadCheck"));
+		boolean newAttachUploadCheck = Boolean.parseBoolean(request.getParameter("newAttachUploadCheck"));
+	
+		ImageFileHandling ifhl = new ImageFileHandling();
+		UploadFileProcess ufp = new UploadFileProcess();
+		
+		String oldImgName = request.getParameter("oldImgName");
+		String[] oldAttachFileName = request.getParameterValues("deletedAttachFile");
+		
+		String upPathImg = request.getSession().getServletContext().getRealPath("resources/uploads/noticeBoardImg/");
+		String upPathAttach =  request.getSession().getServletContext().getRealPath("resources/uploads/attachFile");
+		
+		try {
+			if(newImageUploadCheck) {
+				String newImage = multipartRequest.getFile("newImgFile").getOriginalFilename();
+				if(newImage != null) {
+					n.setImage(newImage);
+					ifhl.fileUploading(newImage, upPathImg, multipartRequest.getFile("newImgFile").getBytes());
+					if(service.updateNewImageFile(newImage, n.getNo()) == 1) {						
+					}
+				}
+			}else {
+				System.out.println("새로운 이미지 등록 없음");
+			}
+			
+			if(newAttachUploadCheck) {
+				List<MultipartFile> list = multipartRequest.getFiles("newAttachFile");
+				AttachFileVO uploadFile = null;
+				if(list.size() > 0) {
+					for(MultipartFile mf : list) {
+						if (mf.getSize() > 0) {
+								uploadFile = ufp.uploadFileRename(upPathAttach, mf.getOriginalFilename(), mf.getBytes());
+								service.insertAttachFile(uploadFile, n.getNo());
+						}						
+					}
+				}
+			}else {
+				System.out.println("새로운 첨부파일 등록 없음");
+			}
+			if(oldImgName != null) {
+				ifhl.fileDelete(upPathImg, oldImgName);
+			}else {
+				System.out.println("이미지 변경 없음");
+			}	
+			if(oldAttachFileName != null) {
+				for(String fn : oldAttachFileName) {
+					int attachFileNo = 0;
+					
+						if(fn.split("/")[4].split("_")[0].equals("thumb")) {			
+							attachFileNo = service.getAfByThumbFn(fn);
+						}else {
+							attachFileNo = service.getAfByNoImgFn(fn);
+						}				
+						service.deleteOldAttachFile(attachFileNo);
+						ifhl.fileDelete(upPathAttach, fn);	
+				}
+			}else {
+				System.out.println("첨부파일 삭제 없음");
+			}
+			service.updateNoticeText(n);
+			rttr.addFlashAttribute("result", "success");	
+		} catch (Exception e) {
+			rttr.addFlashAttribute("result", "fail");
+			e.printStackTrace();
+		}
+		return "redirect:/notice/viewContent?no="+n.getNo();
 	}
 	
 	@RequestMapping("deleteNotice")
-	public String deleteNotice(@RequestParam int no, RedirectAttributes rttr) {
+	public String deleteNotice(@RequestParam int no, RedirectAttributes rttr, HttpServletRequest request) {
 		System.out.println("삭제할 게시물"+no);
+		
+		String upPathImg = request.getSession().getServletContext().getRealPath("resources/uploads/noticeBoardImg/");
+		String upPathAttach =  request.getSession().getServletContext().getRealPath("resources/uploads/attachFile");
+		
+		ImageFileHandling ifh = new ImageFileHandling();
+		
 		int result = 0;
 		try {
-			result = service.deleteNotice(no);
+			result = service.deleteNotice(no, upPathImg, upPathAttach);
 			if(result == 1) {
+
 				rttr.addFlashAttribute("result", "success");
 			}
 		} catch (Exception e) {
@@ -303,7 +427,7 @@ public class NoticeController {
 			
 			
 			for (AttachFileVO af : this.fileList) {
-				System.out.println("알 수 없지만");
+			
 				
 				if (af.getThumbnailFile() != null) {
 
@@ -315,12 +439,13 @@ public class NoticeController {
 				
 			}
 		}
-	
+		System.out.println(targetFile);
 		ifh.fileDelete(upPathImg, targetFile);
 		
 			result = new ResponseEntity<String>("success", HttpStatus.OK);
 		
 		return result;
 	}
+
 
 }

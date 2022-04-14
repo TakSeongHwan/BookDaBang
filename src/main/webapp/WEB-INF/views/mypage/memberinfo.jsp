@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="contextPath" value="<%=request.getContextPath() %>"></c:set>
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,7 +22,7 @@
 	href="../resources/vendors/owl-carousel/owl.theme.default.min.css">
 <link rel="stylesheet"
 	href="../resources/vendors/owl-carousel/owl.carousel.min.css">
-
+<link rel="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
 <link rel="stylesheet" href="../resources/css/style.css">
 <script src="../resources/vendors/jquery/jquery-3.2.1.min.js"></script>
 <script
@@ -35,30 +37,24 @@
 <script src="../resources/js/main.js"></script>
 </head>
 <script>
-//window.onload = function () {
 
-//	loginOrNot();
-	
-//}
+	function loginOrNot() {
+		// 세션 아이디 가져오란다.
+		//  로그인을 안했는데 왜 뜨지
+		// 로그인을 안해도 세션 ID 뜨는데?
+		let loginMember = "${ sessionId}";
+		console.log(loginMember);
 
+		if (loginMember != '') {
+			// 로그인 했을 때
+			console.log("로그인 했슈")
+			//location.href='/ljs/mypage/';
+		} else {
+			console.log("로그인 안했슈")
+			//location.href='/ljs/returnPrePage';
 
-function loginOrNot() {
-	// 세션 아이디 가져오란다.
-	//  로그인을 안했는데 왜 뜨지
-	// 로그인을 안해도 세션 ID 뜨는데?
-	let loginMember = "${ sessionId}";
-	console.log(loginMember);
-	
-	if (loginMember != '') {
-		// 로그인 했을 때
-		console.log("로그인 했슈")
-		//location.href='/ljs/mypage/';
-	} else {
-		location.href='/ljs/returnPrePage';
-		
-	 }
-}
-
+		}
+	}
 
 	function withdrawMember() {
 
@@ -67,28 +63,203 @@ function loginOrNot() {
 		let url = "withdrawMember.do";
 
 		$.ajax({
+					url : url,
+					dataType : "text",
+					type : "POST",
+					data : {
+						ses : ses
+					},
+					success : function(data) { // 통신 성공시 실행될 콜백 함수
+						console.log(data)
+						if (data == 1) {
+							console
+									.log(document.getElementById('confirm').innerHTML);
+							document.getElementById('confirm').innerHTML = "<p>탈퇴가 완료되었습니다. 삭제 후 30일 이내에 복구 신청시, 계정을 다시 사용하실 수 있습니다.</p>";
+							$(".yesButton").remove();
+
+							// 예 / 아니오를 모달창  확인 버튼 하나로 바꾸기.
+							document.getElementsByClassName('buttonCon')[0].innerHTML = "확인"
+						}
+
+					}
+				});
+	}
+	
+	function pointHistory() {
+		let ses = "${ sessionId}"; // 세션에 담긴 ID값 가져오라
+		let url = "${ contextPath}/mypage/viewPoint.do";	
+		$.ajax({
 			url : url,
-			dataType : "text",
-			type : "POST",
+			dataType : "json",
+			//contentType :"application/json; charset=utf-8", 
+			type : "GET",
 			data : {
 				ses : ses
 			},
 			success : function(data) { // 통신 성공시 실행될 콜백 함수
 				console.log(data)
-				if (data == 1) {
-					console.log(document.getElementById('confirm').innerHTML);
-					document.getElementById('confirm').innerHTML = "<p>탈퇴가 완료되었습니다. 삭제 후 30일 이내에 복구 신청시, 계정을 다시 사용하실 수 있습니다.</p>";
-					$(".yesButton").remove();
-					
-					// 예 / 아니오를 모달창  확인 버튼 하나로 바꾸기.
-					document.getElementsByClassName('buttonCon')[0].innerHTML = "확인"
-				}
-
+				$(".contentsBox").empty();
+				let output = '<h3> 포인트 적립 내역</h3><div class = "table-responsive"><table class="table"><thead><tr><th>Point</th><th>적립 사유</th><th>적립 일시</th></tr></thead><tbody>';
+				
+				$.each(data,function(i, e) {
+				//let date = new Date(e.pointWhen);
+				output += '<tr><td>'+ e.point + '</td><td>' + e.pointWhy + '</td><td>' + e.pointWhen + '</td></tr>'
+				})
+				output += '</tbody></table></div>'
+				$(".contentsBox").html(output);
+				}, error : function() {
 			}
-		});
+		});		
 	}
+	
+	function confirmModifyPwd() {
+		
+		let pwd1 = $("#pwd1").val();
+		let pwd2 =$("#pwd2").val();
+		let ses = "${ sessionId}"
+		let url = "${ contextPath}/mypage/changePassword.do"
+		console.log(url);
+		console.log(ses);
+		if (pwd1 == pwd2) {
+			console.log("비밀번호 일치함 ajax로 통신")
+			$.ajax({
+				url : url,
+				dataType : "json",
+				//contentType :"application/json; charset=utf-8", 
+				type : "POST",
+				data : {
+					ses : ses,
+					pwd1 : pwd1
+				},
+				success : function(data) { // 통신 성공시 실행될 콜백 함수
+					if (data == 1) {
+						$("#yesButton").remove();
+						$(".buttonCon").text('확인');
+						
+						$(".modal-footer").prepend("<p style = 'text-align : left;'>비밀번호 변경이 완료되었습니다.</p>");
+			
+					} else {
+						console.log("백단에서 뭔가가 잘못되었다.")
+					}
+				}
+			});	
+		} else {
+			let p = document.createElement("p")
+			p.innerText = "변경할 비밀번호와 확인이 다릅니다. 확인해주세요."
+			$("#pwdModi").append(p);
+		}
+	} 
+	
+	function confirmPwd(e) {
+		
+		let ses = "${ sessionId}"
+		
+		let oldPwd = document.getElementById('originalPwd').value; // 현재 모달창에 입력한 패스워드 - 계속 보내서 DB에 확인
+		//document.getElementById('correctOrNot').innerHTML = oldPwd;
+		
+		let url = "${ contextPath}/mypage/confirmPassword.do";
+		
+		$.ajax({
+					url : url,
+					dataType : "json", 
+					type : "POST",
+					data : {
+						ses : ses,
+						oldPwd : oldPwd
+					},
+					success : function(data) { // 통신 성공시 실행될 콜백 함수
+						
+						if (data == true) {
+							document.getElementById('correctOrNot').innerHTML = "<span style = 'color: green;'> ● 일치</span>";
+							document.getElementById("yesButton").onclick = confirmModifyPwd;
+							
+							
+						} else {
+							// 확인 버튼 안넘어가게 하기.
+							document.getElementById('correctOrNot').innerHTML = "<span style = 'color: red;'> ● 불일치</span>";
+							document.getElementById("yesButton").onclick = null;
+
+							
+						}
+						
+
+						}, error : function() {
+					}
+				});	
+	}
+	
+	function showMyPosts(e) {
+		
+		let ses = "${ sessionId}";
+		
+		
+		let url = "${ contextPath}/mypage/myposts/?u="+ ses;
+		
+		console.log(url);
+		
+		$.ajax({
+					url : url,
+					dataType : "json", 
+					type : "GET",
+					success : function(data) { // 통신 성공시 실행될 콜백 함수
+							console.log("내 게시물 조회 통신 성공");
+						}
+				});	
+
+	}
+	
+
+	function modifyInfo(e) {
+		
+			let url = "${ contextPath}/mypage/?u="+ "${ sessionId}";
+			console.log(url);
+			$.ajax({
+						url : url,
+						dataType : "json", 
+						type : "GET",
+						success : function(data) { // 통신 성공시 실행될 콜백 함수
+								console.log("통신 성공");
+							}
+					});	
+	}
+	
+	
+	
+	
+	window.onload = function () {
+		
+		
+		
+		
+		document.getElementById('originalPwd').addEventListener ("keyup", confirmPwd);
+		document.getElementById('modifyInfo').addEventListener ("click", modifyInfo);
+		document.getElementById('showAllMyPosts').addEventListener("click", showMyPosts);
+		
+		
+		    $('#pwdModi i').on('click',function(){
+		    	
+		        $('input').toggleClass('active');
+		        if($('input').hasClass('active')){
+		            $(this).attr('class',"fa fa-eye-slash fa-lg")
+		            .prev('input').attr('type',"text");
+		        } else{
+		            $(this).attr('class',"fa fa-eye fa-lg")
+		            .prev('input').attr('type','password');
+		        }	
+		    });
+		
+	}
+	
 </script>
 <style>
+
+div.pwdModi i{
+    position: absolute;
+    left: 75%;
+    top: 27px;
+    color: orange;
+}
+
 .deleteMember {
 	position: fixed;
 	top: 0;
@@ -239,15 +410,16 @@ function loginOrNot() {
 
 @media ( min-width : 800px) {
 	.col-lg-4 {
-	margin-left: -18%;
-}
+		margin-left: -18%;
+	}
 }
 
+.form-control {
+	display: flex;
+	width: 70%;
+}
 </style>
-
-
 <body>
-
 	<jsp:include page="../userHeader.jsp"></jsp:include>
 	<!-- ================ start banner area ================= -->
 
@@ -288,11 +460,7 @@ function loginOrNot() {
 							<h4 class="widget_title">Post Catgories</h4>
 							<div class="br"></div>
 							<ul class="list cat-list">
-								<li><a href="mypage/modifyinfo"
-									class="d-flex justify-content-between">
-										<p>회원 정보 수정</p>
-
-								</a></li>
+								<li><span id = "modifyInfo">회원 정보 수정</span></li>
 								<li><a href="#" class="d-flex justify-content-between">
 										<p>주문 현황</p>
 								</a></li>
@@ -300,17 +468,12 @@ function loginOrNot() {
 										<p>구매 내역</p>
 
 								</a></li>
-								<li><a href="#" class="d-flex justify-content-between">
-										<p>내 게시물 조회</p>
+								<li><span id = "showAllMyPosts">내 게시물 조회</span>
 								</a></li>
 								<li><a href="#" class="d-flex justify-content-between">
 										<p>내가 좋아요/신고한 게시물</p>
-
 								</a></li>
-								<li><a href="#" class="d-flex justify-content-between">
-										<p>적립금 조회</p>
-
-								</a></li>
+								<li onclick = "pointHistory();"><p>적립금 조회</p></li>
 								<li><a href="#" class="d-flex justify-content-between"
 									data-bs-toggle="modal" data-bs-target="#modalCenter">
 										<p>회원 탈퇴</p>
@@ -320,42 +483,16 @@ function loginOrNot() {
 						</aside>
 						<aside class="single_sidebar_widget popular_post_widget">
 							<h3 class="widget_title">최근 본 상품</h3>
+							<c:forEach items="${ recentSeenProd}" var="prod">
 							<div class="media post_item">
-								<img src="img/blog/popular-post/post1.jpg" alt="post">
+								<img style = 'width : 180px;' src="${prod.cover }" alt="post">
 								<div class="media-body">
-									<a href="blog-details.html">
-										<h3>Space The Final Frontier</h3>
-									</a>
-									<p>02 Hours ago</p>
+									<a href="http://localhost:8001/${contextPath }/product/detail?no=${prod.lastSeenProd}">
+									<h3>${prod.title}</h3></a>					
+									<p>${prod.lastSeenDate}</p>
 								</div>
-							</div>
-							<div class="media post_item">
-								<img src="img/blog/popular-post/post2.jpg" alt="post">
-								<div class="media-body">
-									<a href="blog-details.html">
-										<h3>The Amazing Hubble</h3>
-									</a>
-									<p>02 Hours ago</p>
-								</div>
-							</div>
-							<div class="media post_item">
-								<img src="img/blog/popular-post/post3.jpg" alt="post">
-								<div class="media-body">
-									<a href="blog-details.html">
-										<h3>Astronomy Or Astrology</h3>
-									</a>
-									<p>03 Hours ago</p>
-								</div>
-							</div>
-							<div class="media post_item">
-								<img src="img/blog/popular-post/post4.jpg" alt="post">
-								<div class="media-body">
-									<a href="blog-details.html">
-										<h3>Asteroids telescope</h3>
-									</a>
-									<p>01 Hours ago</p>
-								</div>
-							</div>
+							</div>			
+						</c:forEach>
 							<div class="media post_item">
 								<img src="img/blog/popular-post/post2.jpg" alt="post">
 								<div class="media-body">
@@ -369,44 +506,73 @@ function loginOrNot() {
 						</aside>
 					</div>
 				</div>
-				
-				<div class="col-lg-8 posts-list">
+
+				<div class="col-lg-8 posts-list contentsBox">
+					<h2>회원 정보 수정</h2>
 					<div class="single-post row">
-						<div class="col-lg-3  col-md-3">
-							<div id="testV" class="blog_info text-right">
-							 아이디 : ${loginMember.userId}
-							 비밀번호 : ${loginMember.userPwd }
-							 닉네임 : ${loginMember.nickName }
-							 이메일 : ${loginMember.userEmail } 
-							 전화번호 : ${loginMember.phoneNum }
-							
-							
-							
-							</div>
-							
-						</div>
-				</div>
-
-
-
+						아이디 : <input type="text" class="form-control"
+							value="${loginMember.userId}" />
+						비밀번호 : <input type="hidden" id ="password" value="${loginMember.userPwd }" />
+						<button data-bs-toggle="modal" data-bs-target="#modalPwd">비밀번호
+							변경</button>
+						이름 : <input type="text" class="form-control"
+							value="${loginMember.nickName }" /> 	
+						닉네임 : <input type="text" class="form-control"
+							value="${loginMember.nickName }" /> 
+						핸드폰 번호 : <input type="text" class="form-control" value="${loginMember.phoneNum}" />
+						이메일 : <input type="text" class="form-control" value="${loginMember.userEmail}" /> 
+						생일 : <div>"${loginMember.birth }" </div>
+						
+						주소 : 
+						
+					</div>
 					<!-- Modal -->
 					<div class="modal fade" id="modalCenter" tabindex="-1"
 						aria-hidden="true">
 						<div class="modal-dialog modal-dialog-centered" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
-									<h5 class="modal-title" id="modalCenterTitle">Modal title</h5>
-									
+									<h5 class="modal-title" id="modalCenterTitle">북다방 회원 탈퇴</h5>
 									<button type="button" class="btn-close" data-bs-dismiss="modal"
 										aria-label="Close"></button>
 								</div>
-								<div class="modal-body" id = "confirm">
-								<p>정말로 탈퇴하시겠습니까?</p>
+								<div class="modal-body" id="confirm">
+									<p>정말로 탈퇴하시겠습니까?</p>
 								</div>
 								<div class="modal-footer">
-									<button type="button" class="btn btn-outline-secondary yesButton"
-										 onclick = "withdrawMember();" >예</button>
-									<button type="button" class="btn btn-primary buttonCon" data-bs-dismiss="modal">아니오</button>
+									<button type="button"
+										class="btn btn-outline-secondary yesButton"
+										onclick="withdrawMember();">예</button>
+									<button type="button" class="btn btn-primary buttonCon"
+										data-bs-dismiss="modal">아니오</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- 비밀번호 변경 모달 -->
+					<div class="modal fade" id="modalPwd" tabindex="-1" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modalCenterTitle">비밀번호 변경</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal"
+										aria-label="Close"></button>
+								</div>
+								<div class="modal-body" id="pwdModi">
+									현재 비밀번호 : <input type = "password" class="form-control" id ="originalPwd" placeholder="현재 비밀번호를 입력해주세요." />
+								<i class="fa fa-eye fa-lg" ></i>
+									<span id="correctOrNot"></span>
+									변경할 비밀번호 :  <input type="text" class="form-control" id ="pwd1" placeholder="변경할 비밀번호를 입력해주세요." />
+									변경할 비밀번호 확인 :  <input type="text" class="form-control" id ="pwd2"  placeholder="변경할 비밀번호를 다시 확인해주세요." />
+									
+								</div>
+								<div class="modal-footer">
+									<button type="button"
+										class="btn btn-outline-secondary" id = "yesButton"
+										onclick="confirmModifyPwd(); ">확인</button>
+									<button type="button" class="btn btn-primary buttonCon"
+										data-bs-dismiss="modal">취소</button>
 								</div>
 							</div>
 						</div>

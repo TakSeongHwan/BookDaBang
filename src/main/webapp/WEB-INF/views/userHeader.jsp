@@ -17,7 +17,6 @@
 <link rel="stylesheet" href="${contextPath}/resources/vendors/owl-carousel/owl.carousel.min.css">
 <link rel="stylesheet" href="${contextPath}/resources/css/style.css">
 
-
 <!-- W3SCHOOL -->
  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -61,10 +60,10 @@ function loginOrNot() {
 	
 	if (loginMember != '') {
 		// 로그인 했을 때
-		console.log("로그인 했슈")
-		location.href='${contextPath }/mypage/?u=' + loginMember;
+		console.log("로그인 상태")
+		location.href='${contextPath }/mypage/memberinfo?u=' + loginMember;
 	} else {
-		alert("로그인이 되지 않았습니다.")
+		console.log("로그인이 되지 않았습니다.")
 		location.href='${contextPath }/login.html';
 		
 	 }
@@ -88,7 +87,6 @@ function loginOrNot() {
             <ul class="nav navbar-nav menu_nav ml-auto mr-auto">
                  <li class="nav-item active"><a class="nav-link" href="${contextPath}/">Home</a></li>
                  <li class="nav-item active"><a class="nav-link" href="${contextPath}/product/list">도서</a></li>
-                 <li class="nav-item active"><a class="nav-link" href="${contextPath}/notice/listAll">공지사항</a></li>
                  <!--  <li class="nav-item submenu dropdown">
                    <a href="/product/list" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">shop</a>               
@@ -110,10 +108,10 @@ function loginOrNot() {
             </li>
             <li class="nav-item submenu dropdown">
                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                     aria-expanded="false">Pages</a>
+                     aria-expanded="true">Pages</a>
                    <ul class="dropdown-menu">
-                        <li class="nav-item"><a class="nav-link" href="${contextPath}/login.html">Login</a></li>
-                        <li class="nav-item"><a class="nav-link" href="${contextPath}/member/registerMember">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">Register</a></li>
                         <!-- <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>  -->
                    </ul>
                  </li>
@@ -123,7 +121,11 @@ function loginOrNot() {
                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">게시판</a>
                    <ul class="dropdown-menu">
+                  		<li class="nav-item"><a class="nav-link" href="${contextPath }/notice/listAll">공지사항</a></li>
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">자유게시판</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">이벤트게시판</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath }/cs/">고객센터</a></li>
+                        
                         <!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->
                    </ul>
             </li>
@@ -133,7 +135,17 @@ function loginOrNot() {
               <li class="nav-item"><button><i class="ti-search"></i></button></li>
               <li class="nav-item"><form action="${contextPath }/cart/userCart" method="get"><button type="submit"><i class="ti-shopping-cart"></i><span class="nav-shop__circle" id ="cntCart"></span></button></form></li>
               <li class="nav-item"><button type="button" onclick="loginOrNot();"><img src="${contextPath }/resources/img/user_icon.png" style= "width:18px; height:17px;"/></button></li>
-              <li class="nav-item"><a class="button button-header" href="#">${ sessionId}  Login</a></li>
+              
+              <c:choose>
+              	
+              	<c:when test="${sessionId != null }">
+              	<li class="nav-item"><a class="button button-header" href="${contextPath }/logout">Logout</a></li>
+              	</c:when>
+              	<c:otherwise>
+              	<li class="nav-item"><a class="button button-header" href="${contextPath }/loginPage">Login</a></li>
+              		
+              	</c:otherwise>
+              </c:choose>
             </ul>
           </div>
         </div>

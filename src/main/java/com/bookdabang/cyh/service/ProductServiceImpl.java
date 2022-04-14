@@ -1,5 +1,6 @@
 package com.bookdabang.cyh.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,15 +11,26 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 
 import com.bookdabang.common.domain.CategoryVO;
+import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.PagingInfo;
+import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
-import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.common.persistence.ProductDAO;
+import com.bookdabang.cyh.domain.AnswerDTO;
+import com.bookdabang.cyh.domain.ProdInfo;
+import com.bookdabang.cyh.domain.ProdQnADTO;
+import com.bookdabang.cyh.domain.SearchCriteria;
+import com.bookdabang.cyh.domain.UpdateProdDTO;
+import com.bookdabang.cyh.etc.API_InputProcess;
+import com.bookdabang.ljs.persistence.LoginDAO;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 	@Inject
 	private ProductDAO pdao;
+
+	@Inject
+	private LoginDAO ldao;
 
 	@Override
 	public List<CategoryVO> getCategory() throws Exception {
@@ -26,64 +38,182 @@ public class ProductServiceImpl implements ProductService {
 
 	}
 
+	@Override
+	public Map<String, Object> conditionProdView(SearchCriteria sc, int pageno) throws Exception {
+
+		int totalPostCnt = pdao.conditionProdCnt(sc);
+		PagingInfo pi = pagingProcess(pageno, totalPostCnt);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("product", pdao.conditionProdView(sc, pi));
+		map.put("pagingInfo", pi);
+		return map;
+
+	}
+
+	@Override
+	public List<ProductVO> selectProdView(List<String> checkProd) throws Exception {
+
+		List<ProductVO> prodLst = new ArrayList<ProductVO>();
+		for (String prodNo : checkProd) {
+			prodLst.add(pdao.selectProdView(prodNo));
+		}
+
+		return prodLst;
+	}
+
+	@Override
+	public boolean updateSelectProd(List<UpdateProdDTO> list) throws Exception {
+		boolean result = true;
+		for (UpdateProdDTO prod : list) {
+			if (pdao.updateProd(prod) != 1) {
+				result = false;
+				break;
+			}
+
+		}
+
+		return result;
+	}
+
+	@Override
+	public boolean validationProdNo(String isbn) throws Exception {
+
+		boolean result = false;
+		if (pdao.validationProdNo(isbn) == 0) {
+			result = true;
+		}
+
+		return result;
+	}
+	
+	
 	
 
 	@Override
-	public Map<String, Object> conditionProdView(SearchCriteria sc, int pageno) throws Exception {
-		PagingInfo pi =pagingProcess(pageno, sc);
-		Map<String, Object> map  = new HashMap<String, Object>();
-		map.put("product", pdao.conditionProdView(sc,pi));
-		map.put("pagingInfo", pi);
-		return map;
+	public ProductVO getProdByISBN(String isbn) throws Exception {
 		
+		return pdao.selectProdView(isbn);
 	}
-	
+
 	@Override
-	public List<ProductVO> selectProdView(List<String> checkProd) throws Exception {
-		
-		List<ProductVO> prodLst = new ArrayList<ProductVO>();
-		for(String prodNo : checkProd) {
-			prodLst.add(pdao.selectProdView(prodNo));
-		}
-		
-		return prodLst;
+	public ProdInfo viewInfoByIsbn(String isbn) throws Exception {
+		API_InputProcess api = new API_InputProcess();
+		return api.apiInput(isbn);
+
 	}
-	
-	private PagingInfo pagingProcess(int pageNo, SearchCriteria sc) throws Exception {
+
+	@Override
+	public void deleteImage(String upPath, String deletePath) throws Exception {
+		System.out.println(upPath + deletePath.replace("/", File.separator));
+		File delFile = new File(upPath + deletePath.replace("/", File.separator));
+
+		delFile.delete();
+
+	}
+
+	@Override
+	public boolean insertAnswer(AnswerDTO answer) throws Exception {
+		boolean result = false;
+		if (pdao.insertAnswer(answer) == 1) {
+			if (pdao.updateAnserStatus(answer) == 1) {
+				result = true;
+			}
+		}
+
+		return result;
+	}
+
+//========================= QnA ===================================================
+	@Override
+	public String validSession(String sessionId) throws Exception {
+		MemberVO member = ldao.findLoginSess(sessionId);
+		return member.getNickName();
+	}
+
+	@Override
+	public boolean InsertQnA(ProdQnADTO dto) throws Exception {
+
+		boolean result = false;
+		MemberVO member = ldao.findLoginSess(dto.getWriter());
+		dto.setRef(pdao.getMaxquestionNo() + 1);
+		System.out.println(dto.getRef());
+		dto.setWriter(member.getNickName());
+
+		if (pdao.InsertQnA(dto) == 1) {
+			result = true;
+		}
+
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> selectProdQnA(int pageNo, int answerStatus, String isbn) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<ProductQnA> list = null;
+		int totalPostCnt = 0;
+		PagingInfo pi = null;
+
+		// 응답 안된 QnA
+		if (answerStatus == 1) {
+			totalPostCnt = pdao.getQnaCntofnotAnswer();
+			pi = pagingProcess(pageNo, totalPostCnt);
+			list = pdao.selectAllProdQnA_NoAnswer(pi);
+			// 응답이 된 QnA
+		} else if (answerStatus == 2) {
+			totalPostCnt = pdao.getQnaCntofAnswer();
+			pi = pagingProcess(pageNo, totalPostCnt);
+			list = pdao.selectAllProdQnA_Answer(pi);
+			// isbn 조회
+		} else {
+			if (isbn != "1") {
+				totalPostCnt = pdao.getQnaCnt(isbn);
+				pi = pagingProcess(pageNo, totalPostCnt);
+				list = pdao.selectProdQnAByISBN(pi, isbn);
+			}
+		}
+
+		map.put("pagingInfo", pi);
+		map.put("qnaList", list);
+
+		return map;
+
+	}
+
+	@Override
+	public boolean deleteQnA(int questionNo) throws Exception {
+		boolean result = false;
+		if (pdao.deleteQnA(questionNo) > 0) {
+			result = true;
+		}
+
+		return result;
+	}
+
+	// ========================= etc =================================
+
+	private PagingInfo pagingProcess(int pageNo, int totalPostCnt) throws Exception {
 		PagingInfo pi = new PagingInfo();
 		pi.setPostPerPage(10);
 		pi.setPageCntPerBlock(5);
-		
-		int totalPostCnt = pdao.conditionProdCnt(sc);
-		
-		
+
 		pi.setTotalPostCnt(totalPostCnt);
-		//�쟾泥� �럹�씠吏� �닔
+
 		pi.setTotalPage(pi.getTotalPostCnt());
-		// �쁽�옱 �럹�씠�젣�뿉�꽌 異쒕젰 �떆�옉�븷 湲�踰덊샇
+
 		pi.setStartNum(pageNo);
-		// �쟾泥� �럹�씠吏� 釉붾윮
+
 		pi.setTotalPagingBlock(pi.getTotalPage());
-		//�쁽�옱 �럹�씠吏� 釉붾윮
+
 		pi.setCurrentPagingBlock(pageNo);
-		//�쁽�옱 �럹�씠吏��뿉�꽌�쓽 �떆�옉 �럹�씠吏� 釉붾윮
+
 		pi.setStartNoOfCurPagingBlock(pi.getCurrentPagingBlock());
-		//�쁽�옱 �럹�씠吏��뿉�꽌�쓽 �걹 �럹�씠吏� 釉붾윮
+
 		pi.setEndNoOfCurPagingBlock(pi.getStartNoOfCurPagingBlock());
-		
+
 		System.out.println(pi.toString());
-		
+
 		return pi;
-		
+
 	}
-
-
-
-	
-	
-	
-	
-	
-	
 
 }
