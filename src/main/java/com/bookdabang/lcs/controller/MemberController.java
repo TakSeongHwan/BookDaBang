@@ -33,10 +33,18 @@ import org.json.simple.JSONObject;
 @Controller
 @RequestMapping("/member/*")
 public class MemberController {
+	
+	
 
 	@Inject
 	private MemberService service;
-
+	
+	@RequestMapping(value = "/listAll", method = RequestMethod.GET)
+	public String adminMember() {
+		return "/member/adminMember";
+		
+	}
+	
 	@RequestMapping(value = "/registerMember", method = RequestMethod.GET)
 	public void registerMember(MemberVO member, Model model, HttpServletRequest req) {
 		System.out.println(req.getContextPath());
@@ -67,6 +75,7 @@ public class MemberController {
 		}
 		System.out.println(result);
 		System.out.println("userId " + request.getParameter("userId"));
+		
 		return result;
 	}
 

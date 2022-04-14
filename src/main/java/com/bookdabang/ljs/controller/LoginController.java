@@ -194,7 +194,7 @@ public class LoginController {
 			
 		
 			// return?
-			resp.sendRedirect("/ljs/");
+			resp.sendRedirect("/");
 		}
 		
 		
