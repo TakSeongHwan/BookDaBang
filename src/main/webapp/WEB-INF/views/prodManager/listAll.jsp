@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <scirpt src="${contextPath}/resources/js/jQueryRotateCompressed.js">
 <meta charset="UTF-8">
 <title>상품 조회</title>

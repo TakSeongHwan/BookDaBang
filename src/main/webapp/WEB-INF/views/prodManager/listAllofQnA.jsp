@@ -323,7 +323,6 @@
 			</div>
 		</div>
 	</div>
-	<button onclick="location.href='/prodManager/login'">
 		
 	</button>
 	<jsp:include page="../managerFooter.jsp"></jsp:include>

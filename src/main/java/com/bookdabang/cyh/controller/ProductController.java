@@ -74,10 +74,16 @@ public class ProductController {
 		return;
 	}
 	
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public void login() throws Exception {
 	
+	@RequestMapping(value = "/SearchISBN", method = RequestMethod.GET)
+	public void SearchISBN() throws Exception {
+		
+		
 	}
+	
+	
+		
+	
 	
 
 }
