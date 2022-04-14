@@ -53,7 +53,7 @@ public class MyPageController {
 		model.addAttribute("loginMember", loginMember);
 		model.addAttribute("recentSeenProd", recSeenProd);
 		
-				return "mypage/memberinfo";
+		return "/mypage/memberinfo";
 	}
 	
 	

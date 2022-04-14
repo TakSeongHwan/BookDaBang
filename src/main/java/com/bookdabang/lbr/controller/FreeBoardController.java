@@ -336,7 +336,6 @@ public class FreeBoardController {
 	public String likeFreeBoard(@RequestParam("boardno") String boardno, @RequestParam("gubun") String gubun,
 			Recommend recommend) throws Exception {
 		int no = Integer.parseInt(boardno);
-
 		recommend.setFreeboardNo(no);
 		recommend.setUserId("cat");
 

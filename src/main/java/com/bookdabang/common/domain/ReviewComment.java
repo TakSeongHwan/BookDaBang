@@ -11,6 +11,7 @@ public class ReviewComment {
 	private int ref; 
 	private int step; 
 	private int reforder;
+	
 	public ReviewComment() {
 		super();
 		// TODO Auto-generated constructor stub

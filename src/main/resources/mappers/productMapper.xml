@@ -242,7 +242,45 @@
 	<!-- 강명진 -->
 	
 	<select id="selectAllProducts" resultType="ProductVO">
-		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' limit 9
+		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes'
+		<if test="sort == 1">
+			order by sales_count desc 
+		</if>
+		<if test="sort == 2">
+			order by pub_date desc 
+		</if>
+		<if test="sort == 3">
+			order by sell_price desc 
+		</if>
+		limit #{startNum},#{postPerPage}
+	</select>
+	
+	<select id="selectCategory" resultType="CategoryVO">
+		select c.*,count(*) as productCount from category c,product p where c.category_code = p.category_code
+		and display_status = 'yes' group by c.category_code
+	</select>
+	
+	<select id="selectProductsByCategory" resultType="ProductVO">
+		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' and
+		category_code = #{cno} 
+		<if test="sort == 1">
+			order by sales_count desc 
+		</if>
+		<if test="sort == 2">
+			order by pub_date desc 
+		</if>
+		<if test="sort == 3">
+			order by sell_price desc 
+		</if>
+		limit #{startNum},#{postPerPage}
+	</select>
+	
+	<select id="getTotalPost" resultType="int">
+		select count(*) as totalCnt from product where display_status = 'yes'
+	</select>
+	
+	<select id="getTotalPostByCategory" resultType="int">
+		select count(*) as totalCnt from product where display_status = 'yes' and category_code = #{cno} 
 	</select>
 	
 	<select id="selectProduct" resultType="ProductVO">

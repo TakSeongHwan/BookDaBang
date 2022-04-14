@@ -177,7 +177,7 @@ visibility: hidden !important;
 		</div>
 		</div>
 		</section>
-
+<%--
 <%
     String clientId = "_MSPMGBQvc3RTySfYdhS";//애플리케이션 클라이언트 아이디값";
     String clientSecret = "shRTidyY12";//애플리케이션 클라이언트 시크릿값";
@@ -219,6 +219,7 @@ visibility: hidden !important;
       System.out.println(e);
     }
   %>
+   --%>
 	<jsp:include page="userFooter.jsp"></jsp:include>
 
 

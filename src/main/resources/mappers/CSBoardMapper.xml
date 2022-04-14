@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookdabang.mapper.csBoardMapper">
+
+<select id = "showEntireCSBoard" resultType="CustomerService">
+select * from customer_service order by postNo desc
+</select>
+
+<select id = "readCSPost" resultType="CustomerService">
+select * from customer_service where postNo=#{postNo}
+</select>
+
+<insert id = "writeCSPost" >
+insert into customer_service (categoryCode, writer, postdate, title, contents) values(#{categoryCode}, #{writer}, #{postdate}, #{title}, #{contents});
+</insert>
+
+
+</mapper>
