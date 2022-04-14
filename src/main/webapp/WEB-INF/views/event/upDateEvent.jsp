@@ -32,7 +32,7 @@
 			},
 			error : function() {
 				alert("글 수정이 완료되었습니다.");
-				location.href = "${contextPath}/event/allEventList";
+				location.href = "${contextPath}/event/detailEvent?boardno=" + boardNo;
 
 			}
 		});

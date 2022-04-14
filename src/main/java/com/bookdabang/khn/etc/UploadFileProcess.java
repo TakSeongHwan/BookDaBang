@@ -17,10 +17,13 @@ import com.bookdabang.common.etc.MediaConfirm;
 
 public class UploadFileProcess {
 	private UploadFile uploadFile = new UploadFile();
-
+	// 파일저장 로직
+	// 1. 저장될 파일 이름처리_ UUID + 업로드된 파일명
+	// 2. 
+	
 	public UploadFile uploadFileRename(String upPath, String originalFileName, byte[] file) throws IOException {
 		UUID uuid = UUID.randomUUID();
-		String saveFileName = uuid.toString() + "_" + originalFileName;
+		String saveFileName = uuid.toString() + "_" + originalFileName; // uuid_파일네임 형식으로 저장
 		String savePath = upPath + calculateSavePath(upPath); // 파일이 저장될 경로 계산
 		File target = new File(savePath + File.separator, saveFileName);
 		FileCopyUtils.copy(file, target); // 파일 저장
