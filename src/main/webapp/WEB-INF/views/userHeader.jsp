@@ -69,6 +69,19 @@ function loginOrNot() {
 		
 	 }
 }
+function refund() {
+	let userRefund = "${ sessionId}";
+	
+	if (userRefund != '') {
+		// 로그인 했을 때
+		console.log("로그인 했슈")
+		location.href='${contextPath }/userRefundBoard/board/?sessionId=' + userRefund;
+	} else {
+		alert("로그인이 되지 않았습니다.")
+		location.href='${contextPath }/login.html';
+		
+	 }
+}
 
 </script>
 <body>
@@ -114,6 +127,7 @@ function loginOrNot() {
                    <ul class="dropdown-menu">
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/login.html">Login</a></li>
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/member/registerMember">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" onclick="refund();">환불/교환</a></li>
                         <!-- <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>  -->
                    </ul>
                  </li>
@@ -124,6 +138,7 @@ function loginOrNot() {
                      aria-expanded="false">게시판</a>
                    <ul class="dropdown-menu">
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">자유게시판</a></li>
+                        
                         <!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->
                    </ul>
             </li>
