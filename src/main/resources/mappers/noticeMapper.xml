@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bookdabang.mapper.NoticeMapper">
+	<select id="getEntireNotice" resultType="Notice">
+		select * from notice
+		order by no desc
+	</select>
+	<select id="readNotice" resultType="Notice">
+		select * from notice where no
+		= #{no}
+	</select>
+	<select id="getMaxNo" resultType="int">
+		select max(no) from notice
+	</select>
+	<insert id="insertNotice">
+		insert into notice(no, title, writer, content, image)
+		values(#{no},#{title},#{writer},#{content},#{image})
+	</insert>
+	<insert id="insertAttachFile">
+		insert into attachfile(noticeNo, originFile,
+		thumbnailFile, notImageFile)
+		values(#{noticeNo}, #{originF‎ile},
+		#{thumbnailFile}, #{notImageFile})
+	</insert>
+	<select id="getAttachFile" resultType="AttachFileVO">
+		select * from attachfile
+		where noticeNo=#{noticeNo}
+	</select>
+	<delete id="deleteNotice">
+		delete from notice where no=#{no}
+	</delete>
+	<insert id="insertReply">
+		insert into
+		notice_reply(boardNo,replyer,replyContent, ref, step, refOrder)
+		values(#{boardNo},#{replyer},#{replyContent}, #{ref}, #{step}, #{refOrder})
+	</insert>
+	<select id="getReply" resultType="NoticeReply">
+		select * from notice_reply where boardNo = #{boardNo} order by ref desc, step asc, refOrder desc
+	</select>
+	<select id="pageViewCheck" resultType="java.sql.Timestamp">
+		select max(accessDate) from pageview where ip_address = #{ip_address} and noticeNo = #{noticeNo}
+	</select>
+	<update id="viewCountIncrese">
+	update notice set viewCount = viewCount+1 where no = #{no}
+	</update>
+	<insert id="insertAccessDate">
+	insert into pageview(ip_address, noticeNo) values(#{ip_address}, #{noticeNo})
+	</insert>
+	<delete id="deleteReply">
+	delete from notice_reply where replyNo = #{replyNo}
+	</delete>
+	<update id="replyCountIncrese">
+	update notice set reply = reply+1 where no = #{no}
+	</update>
+	<select id="getReplyInfoByReplyNo" resultType="NoticeReply">
+	select * from notice_reply where replyNo = #{replyNo}
+	</select>
+	<update id="replyCountDecrease">
+	update notice set reply = reply-1 where no = #{no}
+	</update>
+	<update id="updateReply">
+	update notice_reply set replyContent = #{replyContent}, replyDate = now() where replyNo = #{replyNo} and replyer = #{replyer}
+	</update>
+	<select id="getMaxReplyNo" resultType="int">
+	select max(replyNo) from notice_reply
+	</select>
+	<update id="updateAccessDate">
+	update pageview set accessDate = now() where ip_address=#{ip_address} and noticeNo=#{noticeNo}
+	</update>
+</mapper>

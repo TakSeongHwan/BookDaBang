@@ -13,6 +13,6 @@
 		<package name="com.bookdabang.lbr.domain"/>
 		<package name="com.bookdabang.lcs.domain"/>
 		<package name="com.bookdabang.ljs.domain"/>
-		<package name="com.bookdabang.tsh.domain"/>
+		<package name="com.bookdabang.lhs.domain"/>
 	</typeAliases>
 </configuration>

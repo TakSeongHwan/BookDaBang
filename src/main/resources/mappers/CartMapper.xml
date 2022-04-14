@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.bookdabang.mapper.CartMapper" >
+	<!-- 유저가 사지않은 장바구니 출력 -->
+	<select id="getAllCart" resultType="CartVO">
+		select * from cart where 
+		<choose>
+			<when test="userId != null">
+				userId = #{userId}
+			</when>
+			<otherwise>
+				ipaddr = #{ipaddr}
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 유저가 사지않은 장바구니 개수 출력 -->
+	<select id="countCart" resultType="int">
+		select count(cartNo) as cntCart from cart where
+		<choose>
+			<when test="userId != null">
+				userId = #{userId}
+			</when>
+			<otherwise>
+				ipaddr = #{ipaddr}
+			</otherwise>
+		</choose>
+	</select>
+	<!-- 장바구니 가져오기 -->
+	<select id="selectCartByNo" resultType="CartVO">
+		select * from cart where cartNo = #{cartNo}
+	</select>
+		
+	<!-- 장바구니 상품개수 update -->
+	<update id="updateCartProdQtt" >
+		update cart set productQtt=#{productQtt} where cartNo=#{cartNo}
+	</update>
+	<!-- 비로그인 유저 로그인 했을때 장바구니 userId로 변경 -->
+	<update id="loginCart">
+		update cart set userId = #{userId}, ipaddr = null where ipaddr = #{ipaddr} 
+	</update>
+	
+	<!-- 장바구니 삭제 -->
+	<delete id="deleteCart">
+		delete from cart where cartNo = #{cartNo}
+	</delete>
+	
+	<!-- 장바구니 insert -->
+	<insert id="insertCart">
+		insert into cart(userId,ipaddr,productNo,productQtt) values(#{userId},#{ipaddr},#{productNo},#{productQtt})
+	</insert>
+	
+</mapper>

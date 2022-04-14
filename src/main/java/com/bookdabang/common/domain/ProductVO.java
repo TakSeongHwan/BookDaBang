@@ -3,7 +3,7 @@ package com.bookdabang.common.domain;
 import java.sql.Timestamp;
 
 public class ProductVO {
-	private int Product_no;
+	private int product_no;
 	private String title;
 	private String author;
 	private int price;
@@ -39,7 +39,7 @@ public class ProductVO {
 			String cover, String detail_description, String index, String inside_book, String author_introduce,
 			String pisOffdiscription, String isbn, String isbn13) {
 		super();
-		Product_no = product_no;
+		this.product_no = product_no;
 		this.title = title;
 		this.author = author;
 		this.price = price;
@@ -67,11 +67,11 @@ public class ProductVO {
 	}
 
 	public int getProduct_no() {
-		return Product_no;
+		return product_no;
 	}
 
 	public void setProduct_no(int product_no) {
-		Product_no = product_no;
+		this.product_no = product_no;
 	}
 
 	public String getTitle() {
@@ -268,7 +268,7 @@ public class ProductVO {
 
 	@Override
 	public String toString() {
-		return "ProductVO [Product_no=" + Product_no + ", title=" + title + ", author=" + author + ", price=" + price
+		return "ProductVO [product_no=" + product_no + ", title=" + title + ", author=" + author + ", price=" + price
 				+ ", sell_price=" + sell_price + ", publisher=" + publisher + ", category_code=" + category_code
 				+ ", description=" + description + ", pub_date=" + pub_date + ", stock=" + stock + ", rg_date="
 				+ rg_date + ", end_date=" + end_date + ", update_date=" + update_date + ", display_status="
@@ -277,5 +277,6 @@ public class ProductVO {
 				+ ", inside_book=" + inside_book + ", author_introduce=" + author_introduce + ", pisOffdiscription="
 				+ pisOffdiscription + ", isbn=" + isbn + ", isbn13=" + isbn13 + "]";
 	}
+
 
 }
