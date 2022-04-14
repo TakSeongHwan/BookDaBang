@@ -11,6 +11,7 @@
 <script>
 	let rno = 0;
 	let cno = 0;
+	let userId = "";
 	
 	$(function() {
 		priceReplace();
@@ -20,6 +21,8 @@
 		starMaker();
 		reviewStar();
 		reviewStatus();	
+	
+		getUserId();
 	});
 	
 	function priceReplace() {
@@ -105,7 +108,7 @@
 	}
 	
 	function parseComment(data,obj) {
-		let output = '<div class="comments-area" style="display:none;">';
+		let output = '<div class="comments-area" style="display:none;" >';
 		if (data != null) {
 			$.each(data, function(i, e) {
 				output += '<div class="comment-list" style="padding-bottom: 25px;">';
@@ -136,7 +139,8 @@
 		 output += '<button type="" class="button button--active button-contactForm" onclick="addComment(' + rno + ');" style="float:right;">댓글 작성</button></div>';
 		 
 		 $(obj).parent().after(output);
-		 $(".comments-area").slideDown(500);	 
+		 parseCommentOption();
+		 $(".comments-area").slideDown(500);
 	}
 	
 	function calcDate(rd) {
@@ -286,7 +290,7 @@
 		});	
 	}
 	
-	function showModal() {
+	function showAddModal() {
 		if ("${sessionId}") {
 			$(".newStar").css("font-weight", 100);
 			$("#msg").remove();
@@ -299,6 +303,7 @@
 	
 	function cancleModal() {
 		 $("#modalBack").fadeOut(400);
+		 $("#modalBack2").fadeOut(400);
 		 $('body').css("overflow", "scroll"); 
 	}
 	 
@@ -329,6 +334,75 @@
 		}
 	}
 	
+	function getUserId() {
+		let sessionId = "${sessionId}";
+		let url = "/review/" + sessionId; 
+		$.ajax({
+			url : url,
+			dataType : "text",
+			type : "get",
+			success : function(data) {
+				userId = data;
+				parseReviewOption(data);	
+			}
+		});
+	}
+	
+	function parseReviewOption(data) {
+		$(".reviewTitle").each(function(i, e) {
+			let output = '';
+			if (data == $(this).attr("value")) {
+				let starVal = $(this).parent().prev().attr("value");
+				output = '<div style="display: inline-block;"><a href="javascript:;" onclick="showModifyModal(this,'+starVal+');">';
+				output += '<i class="ti-pencil-alt" style="color:#384aeb;font-size:18px;"></i></a>' +
+				'<a><i class="ti-trash" style="color:#384aeb;font-size:18px;margin-left:5px;"></i></a></div>';
+			}
+			$(this).after(output);
+			console.log();
+			
+			
+		});
+		
+		
+	}
+	
+	function parseCommentOption() {
+		$(".commenter").each(function(i, e) {
+			let output = '';
+			if (userId == $(this).text()) {
+				output = '<div style="display: inline-block;">';
+				output += '<a><i class="ti-pencil-alt" style="color:#384aeb;font-size:18px;margin-left: 10px;"></i></a>' +
+				'<a><i class="ti-trash" style="color:#384aeb;font-size:18px;margin-left:5px;"></i></a></div>';
+			}
+			$(this).next().after(output);
+		});
+	}
+	
+	function showModifyModal(obj,starVal) {
+		$("#msg").remove();
+		$("#modalBack2").fadeIn(400);
+		$('body').css("overflow", "hidden");
+		$("#modifyTitle").val($(obj).parent().siblings("h4").text());
+		$("#modifyContent").text($(obj).parent().siblings("p").text());
+		console.log(starVal);
+		
+		$(".newStar").css("font-weight", 100);
+		for (let i = 6; i <= starVal+5; i++) {
+			$("#star" + i).css("font-weight", 900);
+		}
+		$("#starCount2").val(starVal);
+		
+		$(document).on("mouseover", ".newStar", function(){
+			let n = $(this).attr("id").split("star")[1];
+			$(".newStar").css("font-weight", 100);
+			for (let i = 6; i <= n; i++) {
+				$("#star" + i).css("font-weight", 900);
+			}
+			$("#starCount2").val(n-5);
+		});
+	}
+	
+	
 </script>
 <style>
  .reviewBtn {
@@ -352,7 +426,6 @@
  	background-color: #f1f6f7;
  }
  
-<<<<<<< HEAD
  .commenter {
  	text-align : left;
  	font-size: 20px;
@@ -394,7 +467,7 @@
  	margin-bottom: 5px;
  }
  
- #modalBack {
+ #modalBack, #modalBack2 {
  	position: fixed;
  	top:0; left: 0; bottom: 0; right: 0;
  	background:rgba(0,0,0,.3);
@@ -402,7 +475,7 @@
  	display: none;
  }
  
- #reviewModal {
+ #reviewModal, #modifyModal {
 		position: absolute;
   		top: 18%; left: 31%;
   		overflow: auto;
@@ -416,7 +489,7 @@
  	font-size: 30px;
  }
  
-=======
+
 #qnaTable>thead>tr, #qnaTable>tbody>tr {
 	text-align :center;
 	
@@ -439,7 +512,7 @@
 	margin: 0 auto;
 }
 
->>>>>>> 3909fb220075723b22f0a0f983a2e20838366a06
+
 </style>
 <head>
 <body>
@@ -595,7 +668,7 @@
 										</div>
 										<div>
 											<button type="submit" class="button button--active button-review"
-											style="float: right;" onclick="showModal()"> 리뷰 작성</button>
+											style="float: right;" onclick="showAddModal()"> 리뷰 작성</button>
 										</div>
 									</div>						
 								</div>
@@ -612,9 +685,8 @@
 													style="display: inline-block; float: left; margin-right: 25px;">														
 													</div>
 													<div style="display: inline-block;">
-														<h4 style="display: inline-block; margin-right: 20px">${review.title }</h4>
-														
-														
+														<h4 style="display: inline-block; margin-right: 20px"
+														class="reviewTitle" value="${review.writer }">${review.title }</h4>
 														<h5 style="float: right; margin-top: 1px">
 														${review.writer } | ${review.writedate}</h5>
 														<p style="width: 750px">${review.content }</p>
@@ -1034,6 +1106,47 @@
 				</form>
 			</div>
 		</div>
+		<!-- 리뷰 작성 모달창 끝 -->
+		<!-- 리뷰 수정 모달창 -->
+		<div id="modalBack2">
+			<div class="comment-form" id="modifyModal">
+				<h3 style="margin-bottom: 70px;">리뷰 수정</h3>
+				<form action="" method="">
+					<div class="form-group form-inline">
+						<div class="form-group col-lg-8 col-md-8 name">
+							<h4 style="margin-bottom: 15px;">제목 </h4>
+							<input type="text" class="form-control" id="modifyTitle" name = "title"
+								placeholder="Enter title" required=""
+								style="border-radius : 20px;">
+						</div>
+						<div class="form-group col-lg-4 col-md-4 rating_list">
+							<h4 style="margin-bottom: 15px;">등급 </h4>
+							<div>
+								<i class="fa fa-star newStar" id="star6" style="font-weight: 100"></i>
+								<i class="fa fa-star newStar" id="star7" style="font-weight: 100"></i>
+								<i class="fa fa-star newStar" id="star8" style="font-weight: 100"></i>
+								<i class="fa fa-star newStar" id="star9" style="font-weight: 100"></i>
+								<i class="fa fa-star newStar" id="star10" style="font-weight: 100"></i>
+							</div>
+							<input type="hidden" id ="starCount2" name ="grade">
+						</div>
+					</div>
+					<div class="form-group">
+						<h4 style="text-align: left; margin-bottom: 15px;">내용</h4>
+						<textarea class="form-control mb-10" rows="5" name="content"
+							placeholder="content" required="" id="modifyContent" 
+							style="border-radius : 20px;"></textarea>
+					</div>
+					
+					<button type="submit" class="button button--active"
+					 onclick="" style="margin: 25px;"> 수정하기 </button>
+					<button type="reset" class="button button--active"
+					 onclick="cancleModal()" style="margin: 25px;"> 취소하기 </button>
+				</form>
+			</div>
+		</div>
+		<!-- 리뷰 수정 모달창 끝 -->
+		
 
 		<!-- ================ Best Selling item  carousel ================= -->
 		<section class="section-margin calc-60px">
