@@ -56,7 +56,7 @@
 		
 		<if test="startSellDate != '' and endSellDate != null">
 			and orderDate between date(#{startSellDate}) and
-			date(#{endSellDate})
+			date(#{endSellDate})+1
 		</if>
 	</select>
 
@@ -70,17 +70,36 @@
 				and orderNo like concat('%', #{searchWord}, '%')
 			</if>
 			<if test="searchType =='userId'">
-				and userId like concat('%', #{searchWord}, '%')
+			<choose>
+				<when test="searchWord == null or searchWord == '비회원'">
+					and userId is null
+				</when>
+				<otherwise>
+					and userId like concat('%', #{searchWord}, '%')
+				</otherwise>
+			</choose>
+				
+				
 			</if>
 			<if test="searchType=='title'">
 				and (productNo) in (select product_no from product where title like concat('%',#{searchWord},'%'))
 			</if>
 		</if>
+		<choose>
+			<when test="startSellDate != '' and endSellDate != ''">
+				and orderDate between date(#{startSellDate}) and
+				date(#{endSellDate}) +1
+			</when>
+			<when test="startSellDate != '' and endSellDate == ''">
+				and orderDate between date(#{startSellDate}) and
+				now()
+			</when>
+			<when test="startSellDate == '' and endSellDate != ''">
+				and orderDate between '1999-01-01' and
+				date(#{endSellDate}) +1
+			</when>
+		</choose>
 		
-		<if test="startSellDate != '' and endSellDate != null">
-			and orderDate between date(#{startSellDate}) and
-			date(#{endSellDate}) 
-		</if>
 		 order by orderNo desc limit #{startNum}, #{postPerPage} 
 	</select>
 	

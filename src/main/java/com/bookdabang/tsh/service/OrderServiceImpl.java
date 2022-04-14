@@ -75,11 +75,7 @@ public class OrderServiceImpl implements OrderService{
 			ProdOrder ovo = new ProdOrder();
 			int cartno = Integer.parseInt(s);
 			CartVO cvo = cdao.selectCartByNo(cartno);
-			if(addrvo.getUserId() == null) {
-				ovo.setUserId("nonMember");
-			}else {
-				ovo.setUserId(addrvo.getUserId());
-			}
+			ovo.setUserId(addrvo.getUserId());
 			ovo.setProductNo(cvo.getProductNo());
 			ovo.setAddressNo(address_no);
 			ProductVO pvo = pdao.selectProduct(cvo.getProductNo());
@@ -106,6 +102,8 @@ public class OrderServiceImpl implements OrderService{
 		PagingInfo pi =pagingProcess(pageno, sc);
 		Map<String, Object> map  = new HashMap<String, Object>();
 		System.out.println(pi);
+		System.out.println(sc.getStartSellDate());
+		System.out.println(sc.getEndSellDate());
 		List<ProdOrder> orderLst = odao.orderView(sc,pi);
 		System.out.println(orderLst);
 		List<ManageOrderDTO> dto = new ArrayList<ManageOrderDTO>();
