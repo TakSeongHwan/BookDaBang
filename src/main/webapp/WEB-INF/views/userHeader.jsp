@@ -85,8 +85,10 @@ function loginOrNot() {
           </button>
           <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
             <ul class="nav navbar-nav menu_nav ml-auto mr-auto">
-                 <li class="nav-item active"><a class="nav-link" href="${contextPath}/">Home</a></li>
+                 <li class="nav-item active"><a class="nav-link" href="${contextPath}/">홈</a></li>
                  <li class="nav-item active"><a class="nav-link" href="${contextPath}/product/list">도서</a></li>
+                 <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">로그인</a></li>
+                 <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">회원가입</a></li>
                  <!--  <li class="nav-item submenu dropdown">
                    <a href="/product/list" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">shop</a>               
@@ -98,6 +100,7 @@ function loginOrNot() {
                         <li class="nav-item"><a class="nav-link" href="cart.html">Shopping Cart</a></li>
                    </ul>
              </li>-->
+             <!-- 
                  <li class="nav-item submenu dropdown">
                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">Blog</a>
@@ -106,15 +109,15 @@ function loginOrNot() {
                         <li class="nav-item"><a class="nav-link" href="single-blog.html">Blog Details</a></li>
                    </ul>
             </li>
+            
             <li class="nav-item submenu dropdown">
                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                     aria-expanded="true">Pages</a>
+                     aria-expanded="true">MyPages</a>
                    <ul class="dropdown-menu">
-                        <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">Login</a></li>
-                        <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">Register</a></li>
-                        <!-- <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>  -->
+                        
+                        <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>  
                    </ul>
-                 </li>
+                 </li> -->
                  <!-- <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>  -->
   				
   				 <li class="nav-item submenu dropdown">

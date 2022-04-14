@@ -22,11 +22,43 @@
 
 
 .footerContent{
-margin:auto;
-
+margin-right:auto;
+margin-left:auto;
 
 }
+.quickList{
+display: flex;
+margin:auto;
+}
+.quickList>ul{
 
+display: inline-block;
+width: 120px;
+margin: auto;
+
+}
+.quickList>ul>li{
+text-align: center;
+}
+.quickList>ul>li>a>img{
+
+width:50px;
+}
+.footer_title{
+
+text-align: center;
+
+}
+.quickManuText{
+color: #fff;
+text-align: center; 
+font-weight: bolder;
+}
+
+.contactUsIcon>img{
+width: 15px;
+text-align: center; 
+}
 </style>
 </head>
 <body>
@@ -55,22 +87,61 @@ margin:auto;
 					 -->
 					<div class="col-lg-3 col-md-6 col-sm-6 footerContent">
 						<div class="single-footer-widget tp_widgets">
-							<h4 class="footer_title">Quick Links</h4>
-							<span>
+							<h2 class="footer_title">Quick Links</h2>
+							<div class="quickList">
 							<ul class="list">
-								<li><a href="#">Home</a></li>
-								<li><a href="#">Shop</a></li>
-								<li><a href="#">Blog</a></li>
+							<li><a href="${contextPath }/">
+							<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickHome.png"/>
+							<div class="quickManuText">홈</div></a></li>
+							<li><a href="${contextPath }/product/list">
+							<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickProduct.png"/>
+							<div class="quickManuText">상품페이지</div></a></li>
+							<li><a href="${contextPath }/board/listAllFreeBoard">
+							<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickFreeboard.png"/>
+							<div class="quickManuText">자유게시판</div></a></li>
+							<li><a href="${contextPath }/">
+							<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickEvent.png"/>
+							<div class="quickManuText">이벤트게시판</div></a></li>
 								
 							</ul>
-							</span>
-							<span>
+					
 							<ul class="list">
-							<li><a href="#">Product</a></li>
-								<li><a href="#">Brand</a></li>
-								<li><a href="#">Contact</a></li>
+							<li>	
+							<c:choose>
+								<c:when test="${loginUser != null }">
+									<a href="${contextPath }/logout">
+									<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickLogin.png"/>
+									<div class="quickManuText">로그아웃</div></a>
+								</c:when>
+								<c:otherwise>
+									<a href="${contextPath }/login">
+									<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickLogin.png"/>
+									<div class="quickManuText">로그인</div></a>
+								</c:otherwise>
+							</c:choose>
+							</li>
+							<c:choose>
+								<c:when test="${loginUser != null }">
+									<li><a href="${contextPath }/mypage/">
+									<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickmyPage.png"/>
+									<div class="quickManuText">마이페이지</div></a></li>
+								</c:when>
+								<c:otherwise>
+									<li><a href="${contextPath }/member/registerMember">
+									<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickRegister.png"/>
+									<div class="quickManuText">회원가입</div></a></li>
+								
+								</c:otherwise>
+							</c:choose>
+
+							<li><a href="${contextPath }/cs/">
+							<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickCS.png"/>
+							<div class="quickManuText">고객센터</div></a></li>
+							<li><a href="${contextPath }/notice/listAll">
+							<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickNotice.png"/>
+							<div class="quickManuText">공지사항</div></a></li>
 							</ul>
-							</span>
+							</div>
 						</div>
 					</div>
 					<!-- 
@@ -88,24 +159,25 @@ margin:auto;
 						</div>
 					</div>
 					 -->
+
 					<div class="col-lg-3 col-md-6 col-sm-6 footerContent">
 						<div class="single-footer-widget tp_widgets">
 						
-							<h4 class="footer_title">Contact Us</h4>
+							<h2 class="footer_title">Contact Us</h2>
 							<div class="ml-40">
 								<p class="sm-head">
 									<span class="fa fa-location-arrow"></span>
-									Head Office
+									Goott Academy </br>
+									&nbsp;6th ClassRoom
 								</p>
-								<p>123, Main Street, Your City</p>
+								<p>Juho Tower 3F,</br>33 Siheung-daero 163-gil,</br>Guro-gu, Seoul</p>
 	
 								<p class="sm-head">
 									<span class="fa fa-phone"></span>
 									Phone Number
 								</p>
 								<p>
-									+123 456 7890 <br>
-									+123 456 7890
+								+82 02-837-9922
 								</p>
 	
 								<p class="sm-head">
@@ -113,8 +185,7 @@ margin:auto;
 									Email
 								</p>
 								<p>
-									free@infoexample.com <br>
-									www.infoexample.com
+								이한솔 lhshl246@gmail.com <br/>
 								</p>
 							</div>
 						</div>

@@ -8,6 +8,7 @@
 <%@ page import="java.io.BufferedReader" %>
 <%@ page import="java.io.InputStreamReader" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html>
@@ -134,7 +135,7 @@ visibility: hidden !important;
 										<a
 											href='${contextPath }/product/detail?no=${prod.product_no }'>${prod.title }</a>
 									</div>
-									<div class="card-product__price">${prod.sell_price }￦</div>
+									<div class="card-product__price"><fmt:formatNumber value="${prod.sell_price }" pattern="#,###" />원</div>
 								</div>
 							</div>
 						</div>
@@ -167,7 +168,7 @@ visibility: hidden !important;
 										<a
 											href='${contextPath }/product/detail?no=${random.product_no }'>${random.title }</a>
 									</div>
-									<div class="card-product__price">${random.sell_price }￦</div>
+									<div class="card-product__price"><fmt:formatNumber value="${random.sell_price }" pattern="#,###" />원</div>
 								</div>
 							</div>
 						</div>
