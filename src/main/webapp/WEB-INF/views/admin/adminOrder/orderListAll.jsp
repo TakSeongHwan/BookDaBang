@@ -323,6 +323,7 @@ th {
 					<option value="orderNo">주문번호</option>
 					<option value="prodNo">상품번호</option>
 					<option value="userId">아이디</option>
+					<option value="title">제품명</option>
 				</select>
 			</div>
 			<div class="searchZoon" style="height: 70px">

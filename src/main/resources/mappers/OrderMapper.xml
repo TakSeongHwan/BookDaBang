@@ -72,6 +72,9 @@
 			<if test="searchType =='userId'">
 				and userId like concat('%', #{searchWord}, '%')
 			</if>
+			<if test="searchType=='title'">
+				and (productNo) in (select product_no from product where title like concat('%',#{searchWord},'%'))
+			</if>
 		</if>
 		
 		<if test="startSellDate != '' and endSellDate != null">

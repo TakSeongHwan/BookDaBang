@@ -75,7 +75,11 @@ public class OrderServiceImpl implements OrderService{
 			ProdOrder ovo = new ProdOrder();
 			int cartno = Integer.parseInt(s);
 			CartVO cvo = cdao.selectCartByNo(cartno);
-			ovo.setUserId(addrvo.getUserId());
+			if(addrvo.getUserId() == null) {
+				ovo.setUserId("nonMember");
+			}else {
+				ovo.setUserId(addrvo.getUserId());
+			}
 			ovo.setProductNo(cvo.getProductNo());
 			ovo.setAddressNo(address_no);
 			ProductVO pvo = pdao.selectProduct(cvo.getProductNo());
