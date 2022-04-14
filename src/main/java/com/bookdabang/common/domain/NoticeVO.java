@@ -2,7 +2,7 @@ package com.bookdabang.common.domain;
 
 import java.sql.Timestamp;
 
-public class Notice {
+public class NoticeVO {
 	private int no; 
 	private String title; 
 	private String writer; 
@@ -12,12 +12,12 @@ public class Notice {
 	private int reply; 
 	private String image;
 	
-	public Notice() {
+	public NoticeVO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Notice(int no, String title, String writer, Timestamp writedDate, String content, int viewCount, int reply,
+	public NoticeVO(int no, String title, String writer, Timestamp writedDate, String content, int viewCount, int reply,
 			String image) {
 		super();
 		this.no = no;

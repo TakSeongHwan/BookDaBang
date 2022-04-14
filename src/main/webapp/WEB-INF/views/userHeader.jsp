@@ -17,7 +17,6 @@
 <link rel="stylesheet" href="${contextPath}/resources/vendors/owl-carousel/owl.carousel.min.css">
 <link rel="stylesheet" href="${contextPath}/resources/css/style.css">
 
-
 <!-- W3SCHOOL -->
  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -88,7 +87,6 @@ function loginOrNot() {
             <ul class="nav navbar-nav menu_nav ml-auto mr-auto">
                  <li class="nav-item active"><a class="nav-link" href="${contextPath}/">Home</a></li>
                  <li class="nav-item active"><a class="nav-link" href="${contextPath}/product/list">도서</a></li>
-                 <li class="nav-item active"><a class="nav-link" href="${contextPath}/notice/listAll">공지사항</a></li>
                  <!--  <li class="nav-item submenu dropdown">
                    <a href="/product/list" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">shop</a>               
@@ -123,8 +121,11 @@ function loginOrNot() {
                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">게시판</a>
                    <ul class="dropdown-menu">
+                  		<li class="nav-item"><a class="nav-link" href="${contextPath }/notice/listAll">공지사항</a></li>
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">자유게시판</a></li>
-                        <li class="nav-item"><a class="nav-link" href="${contextPath }/cs/">고객센터게시판</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">이벤트게시판</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath }/cs/">고객센터</a></li>
+                        
                         <!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->
                    </ul>
             </li>

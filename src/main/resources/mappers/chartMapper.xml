@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.bookdabang.mapper.ChartMapper">
+ <select id="getSalesCount" resultType="ProductVO">
+ select * from product where sales_count >= 90 limit 10
+ 
+ </select>
+  <select id="getRandomBook" resultType="ProductVO">
+ select * from product ORDER BY RAND() limit 10
+ </select>
+ <select id="getVisitorInfo" resultType="VisitorCountWithDateFormat">
+select DATE_FORMAT(accessdate,'%m') as monthSort ,count(ipaddr)as visitor from visitor_ipcheck group by monthSort order by accessdate asc
+ </select>
+ <insert id="autoInsertVisitor">
+ insert into visitor_ipcheck values(#{ipaddr},#{accessdate})
+ </insert>
+ 
+ </mapper>

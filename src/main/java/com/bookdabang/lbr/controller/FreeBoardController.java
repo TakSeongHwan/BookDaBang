@@ -8,12 +8,14 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,9 +25,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bookdabang.common.domain.AttachFileVO;
 import com.bookdabang.common.domain.FreeBoard;
+import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.Recommend;
 import com.bookdabang.common.domain.ReportBoard;
-
+import com.bookdabang.common.etc.IPCheck;
+import com.bookdabang.lbr.domain.Search;
 import com.bookdabang.lbr.etc.BoardUploadFile;
 import com.bookdabang.lbr.etc.BoardUploadFileProcess;
 import com.bookdabang.lbr.service.FreeBoardService;
@@ -40,36 +44,75 @@ public class FreeBoardController {
 	private List<BoardUploadFile> upfileLst = new ArrayList<BoardUploadFile>();
 
 	@RequestMapping(value = "listAllFreeBoard", method = RequestMethod.GET)
-	public void listAllFreeBoard(Model model) throws Exception {
-		System.out.println("글");
-		List<FreeBoard> lst = service.listAllBoards();
+	public void listAllFreeBoard(Model model,
+			@RequestParam(value = "pageNo", required = false, defaultValue = "1") String tmp,
+			@ModelAttribute Search search) throws Exception {
+
+		System.out.println(search.toString());
+
+		int pageNo = 1;
+		if (!tmp.equals("") || tmp != null) {
+			pageNo = Integer.parseInt(tmp);
+		}
+		if (search.getSearchword() == null) {
+			search.setSearchword("");
+		}
+
+		System.out.println(pageNo + "번글" + "검색어" + search.toString());
+		Map<String, Object> map = service.listAllBoards(pageNo, search);
+		List<FreeBoard> lst = (List<FreeBoard>) map.get("freeBoard");
+		PagingInfo paging = (PagingInfo) map.get("paging");
 		model.addAttribute("freeBoard", lst);
+		model.addAttribute("paging", paging);
 
 	}
 
 	@RequestMapping(value = "readFreeBoard", method = RequestMethod.GET)
-	public void readFreeBoard(@RequestParam("boardno") String boardno, Model model, Recommend recommend, ReportBoard reportBoard)
-			throws Exception {
-		
+	public void readFreeBoard(@RequestParam("boardno") String boardno, Model model, Recommend recommend,
+			ReportBoard reportBoard, HttpServletRequest request) throws Exception {
+
 		int no = Integer.parseInt(boardno);
 
 		recommend.setFreeboardNo(no);
 		recommend.setUserId("cat");
 
-//		reportBoard.setBoardno(no);
-//		reportBoard.setReportuser("cat");
+		reportBoard.setBoardno(no);
+		reportBoard.setReportuser("cat");
 		
-		Map<String, Object> resultMap = service.readFreeBoard(no);
+		String ipAddr = IPCheck.getIPAddr(request);
 		
-		FreeBoard freeBoard = (FreeBoard)resultMap.get("freeBoard");
-		List<AttachFileVO> fileLst = (List<AttachFileVO>)resultMap.get("fileLst");
+		Map<String, Object> resultMap = service.readFreeBoard(no,ipAddr);
+
+		FreeBoard freeBoard = (FreeBoard) resultMap.get("freeBoard");
+		List<AttachFileVO> fileLst = (List<AttachFileVO>) resultMap.get("fileLst");
 		System.out.println(freeBoard.toString());
 		model.addAttribute("freeBoard", freeBoard);
 		model.addAttribute("fileLst", fileLst);
 		model.addAttribute("check", this.service.countLikeCheck(recommend));
-		//model.addAttribute("reportCheck", this.service.countReportCheck(reportBoard));
+		model.addAttribute("reportCheck", this.service.countReportCheck(reportBoard));
 
 	}
+
+	
+	@RequestMapping(value = "modifyFreeBoard", method = RequestMethod.GET)
+	public void modiFreeBoard(Model model, @RequestParam("boardno") String boardno) throws Exception {
+
+		int no = Integer.parseInt(boardno);
+		
+		System.out.println(no + "번 수정하자");
+		Map<String, Object> resultMap = service.readFreeBoard(no);
+		FreeBoard freeBoard = (FreeBoard) resultMap.get("freeBoard");
+		List<AttachFileVO> fileLst = (List<AttachFileVO>) resultMap.get("fileLst");
+		model.addAttribute("freeBoard", freeBoard);
+		model.addAttribute("fileLst", fileLst);
+		
+		
+	}
+	
+
+	
+	
+
 
 	@RequestMapping(value = "removeAllfreeBoard", method = RequestMethod.GET)
 	public void removeAllFreeBoard(Model model) throws Exception {
@@ -94,7 +137,8 @@ public class FreeBoardController {
 	}
 
 	@RequestMapping(value = "insertReportBoard", method = RequestMethod.POST)
-	public void insertReportBoard(@RequestParam("boardno") String boardno, @RequestParam("why") String why ,ReportBoard reportBoard, RedirectAttributes ra) throws Exception {
+	public void insertReportBoard(@RequestParam("boardno") String boardno, @RequestParam("why") String why,
+			ReportBoard reportBoard, RedirectAttributes ra) throws Exception {
 		int no = Integer.parseInt(boardno);
 		reportBoard.setReportuser("cat");
 		reportBoard.setBoardno(no);
@@ -103,6 +147,7 @@ public class FreeBoardController {
 			ra.addFlashAttribute("result", "success");
 		} else {
 			ra.addFlashAttribute("result", "fail");
+			
 		}
 
 	}
@@ -111,11 +156,16 @@ public class FreeBoardController {
 //	public void readReportBoard(@RequestParam("boardno") String boardno, Model model) throws Exception {
 //		int no = Integer.parseInt(boardno);
 //		System.out.println(no + "신고게시판 글 자세히보자");
-//      
-	
+
+//		Map<String, Object> resultMap = service.readReportBoard(no);
 //		
+//		FreeBoard freeBoard =(FreeBoard)resultMap.get("freeBoard");
+//		ReportBoard reportBoard = (ReportBoard)resultMap.get("reportBoard");
 //		
-//
+//		model.addAttribute("freeBoard", freeBoard);
+//		model.addAttribute("reportBoard", reportBoard);
+//		System.out.println(resultMap.toString());
+
 //	}
 
 	@RequestMapping(value = "insertFreeBoard", method = RequestMethod.GET)
@@ -141,10 +191,10 @@ public class FreeBoardController {
 		int no = Integer.parseInt(boardno);
 		System.out.println(boardno + "번 삭제하자");
 		String result = null;
-		if(this.service.removeFreeBoard(no)) {
+		if (this.service.removeFreeBoard(no)) {
 			result = "success";
 		} else {
-			result="fail";
+			result = "fail";
 		}
 
 		return result;
@@ -156,9 +206,15 @@ public class FreeBoardController {
 		int no = Integer.parseInt(boardno);
 		System.out.println("복구시키장");
 
-		service.restorBoard(no);
+		
+		if (service.restorBoard(no)) {
+			ra.addFlashAttribute("result", "success");
+		} else {
+			ra.addFlashAttribute("result", "fail");
+			
+		}
 
-		return "/board/readDelBoard";
+		return "redirect:/board/removeAllFreeBoard";
 
 	}
 
@@ -214,6 +270,7 @@ public class FreeBoardController {
 					break;
 				}
 			}
+			
 
 			if (file.getNotImageFileName() != null) {
 				if (file.getNotImageFileName().equals(targetFile)) { // 이미지파일 아님
@@ -239,6 +296,9 @@ public class FreeBoardController {
 		System.out.println("현재파일리스트 :" + this.upfileLst.toString());
 		return result;
 	}
+	
+	
+	
 
 	@RequestMapping(value = "/cancelFreeBoard", method = RequestMethod.POST)
 	public @ResponseBody String cancelFreeBoard(HttpServletRequest req) {
@@ -258,6 +318,19 @@ public class FreeBoardController {
 
 		return "success";
 	}
+	
+	
+	
+
+	@RequestMapping(value = "updateFreeBoard", method = RequestMethod.POST)
+	public void updateFreeBoard(FreeBoard freeBoard, RedirectAttributes ra) throws Exception {
+		System.out.println(freeBoard.toString() + "자유게시판 수정해");
+		
+		
+
+		
+		
+	}
 
 	@RequestMapping(value = "likeFreeBoard", method = RequestMethod.POST)
 	public String likeFreeBoard(@RequestParam("boardno") String boardno, @RequestParam("gubun") String gubun,
@@ -269,9 +342,11 @@ public class FreeBoardController {
 		// 좋아요가 있는
 		if (gubun.equals("Y")) {
 			this.service.likeFreeBoard(recommend);
+			this.service.likeCount(no);
 			// 좋아요가 없는
 		} else {
 			this.service.unlikeFreeBoard(recommend);
+			this.service.delLikeCount(no);
 		}
 		return "/board/readFreeBoard";
 	}

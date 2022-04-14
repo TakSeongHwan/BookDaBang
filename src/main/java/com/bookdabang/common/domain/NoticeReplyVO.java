@@ -2,7 +2,7 @@ package com.bookdabang.common.domain;
 
 import java.sql.Timestamp;
 
-public class NoticeReply {
+public class NoticeReplyVO {
 	private int replyNo; 
 	private int boardNo; 
 	private String replyer; 
@@ -11,11 +11,11 @@ public class NoticeReply {
 	private int ref; 
 	private int step; 
 	private int refOrder;
-	public NoticeReply() {
+	public NoticeReplyVO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public NoticeReply(int replyNo, int boardNo, String replyer, String replyContent, Timestamp replyDate, int ref,
+	public NoticeReplyVO(int replyNo, int boardNo, String replyer, String replyContent, Timestamp replyDate, int ref,
 			int step, int refOrder) {
 		super();
 		this.replyNo = replyNo;

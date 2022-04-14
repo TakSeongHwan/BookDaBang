@@ -11,8 +11,10 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.AttachFileVO;
-import com.bookdabang.common.domain.Notice;
-import com.bookdabang.common.domain.NoticeReply;
+import com.bookdabang.common.domain.BoardSearch;
+import com.bookdabang.common.domain.NoticeVO;
+import com.bookdabang.common.domain.PagingInfo;
+import com.bookdabang.common.domain.NoticeReplyVO;
 
 @Repository
 public class NoticeDAOImpl implements NoticeDAO {
@@ -22,13 +24,26 @@ public class NoticeDAOImpl implements NoticeDAO {
 	private static String ns = "com.bookdabang.mapper.NoticeMapper";
 
 	@Override
-	public List<Notice> entireNotice() throws Exception {
+	public List<NoticeVO> entireNotice(PagingInfo pi) throws Exception {
 		// TODO Auto-generated method stub
-		return ses.selectList(ns + ".getEntireNotice");
+		return ses.selectList(ns + ".getEntireNotice", pi);
+	}
+	public List<NoticeVO> entireNotice(PagingInfo pi, BoardSearch bs) throws Exception {
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("searchType", bs.getSearchType());
+		map.put("searchWord", bs.getSearchWord());
+		map.put("startNum", pi.getStartNum());
+		map.put("postPerPage", pi.getPostPerPage());
+		
+		System.out.println(map.toString());
+		System.out.println(bs.toString());
+		
+		return ses.selectList(ns + ".getSearchResultList", map);
 	}
 
 	@Override
-	public Notice getContentByNo(int no) throws Exception {
+	public NoticeVO getContentByNo(int no) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectOne(ns+ ".readNotice",no);
 	}
@@ -40,7 +55,7 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 	@Override
-	public int insertNotice(Notice n) throws Exception {
+	public int insertNotice(NoticeVO n) throws Exception {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("no", n.getNo());
 		map.put("title", n.getTitle());
@@ -79,13 +94,13 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 	@Override
-	public int insertReply(NoticeReply reply) throws Exception {
+	public int insertReply(NoticeReplyVO reply) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.insert(ns+".insertReply",reply);
 	}
 
 	@Override
-	public List<NoticeReply> getAllReply(int boardNo) throws Exception {
+	public List<NoticeReplyVO> getAllReply(int boardNo) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectList(ns+".getReply",boardNo);
 	}
@@ -126,7 +141,7 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 	@Override
-	public NoticeReply getBoardNoByReplyNo(int no) throws Exception {
+	public NoticeReplyVO getBoardNoByReplyNo(int no) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectOne(ns+".getReplyInfoByReplyNo",no);
 	}
@@ -138,7 +153,7 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 	@Override
-	public int updateReply(NoticeReply nr) throws Exception {
+	public int updateReply(NoticeReplyVO nr) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("boardNo", nr.getBoardNo());
 		map.put("replyNo", nr.getReplyNo());
@@ -160,6 +175,48 @@ public class NoticeDAOImpl implements NoticeDAO {
 		map.put("ip_address", ipaddr);
 		map.put("noticeNo",noticeNo);
 		return ses.update(ns+".updateAccessDate", map);
+	}
+
+	@Override
+	public int updateNewImageFile(String newImage, int noticeNo) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("image", newImage);
+		map.put("no",noticeNo);
+		return ses.update(ns+".updateNewImageFile", map);
+	}
+
+	@Override
+	public int getAfByNoImgFn(String notImageFile) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns+".selectAfByNoImgFn",notImageFile);
+	}
+
+	@Override
+	public int getAfByThumbFn(String thumbnailFile) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns+".selectAfByThumbFn",thumbnailFile);
+	}
+
+	@Override
+	public int deleteOldAttachFile(int attachFileNo) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.delete(ns+".deleteOldAttachFile",attachFileNo);
+	}
+
+	@Override
+	public int updateNoticeText(NoticeVO n) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.update(ns+".updateNoticeText",n);
+	}
+	@Override
+	public int getTotalPost() throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns+".getTotalPost");
+	}
+	@Override
+	public int getSearchResultCnt(BoardSearch bs) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns+".getSearchResultCnt",bs);
 	}
 
 
