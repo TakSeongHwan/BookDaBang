@@ -1,22 +1,14 @@
-<<<<<<< HEAD
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page session="false"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
 <c:set var="contextPath" value="<%=request.getContextPath()%>"></c:set>
-=======
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="false" %>
-<%@ page language="java" contentType="text/html;charset=UTF-8"
-    pageEncoding="UTF-8"%>
-    
-    <%@ page import="java.net.URLEncoder" %>
+<%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.net.URL" %>
 <%@ page import="java.net.HttpURLConnection" %>
 <%@ page import="java.io.BufferedReader" %>
 <%@ page import="java.io.InputStreamReader" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
->>>>>>> d48a44baec05c139fbb14dacc87f6ec88f61c116
+
 <!DOCTYPE html>
 <html>
 <head>
