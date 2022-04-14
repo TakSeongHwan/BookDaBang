@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>상품 추가</title>
+<title>상품 수정</title>
 
 
 
@@ -36,6 +36,18 @@
 	}
 
 	window.onload = function() {
+		let discount =(100-(${prod.sell_price/prod.price*100}));
+		
+		console.log(discount);
+		$("#discount").val(discount);
+		let pub_date = new Date(new Date('${prod.pub_date}') + 3240 * 10000).toISOString().split("T")[0];
+		let end_date = new Date(new Date('${prod.end_date}') + 3240 * 10000).toISOString().split("T")[0];
+		
+		let cover = '<img src="${prod.cover}"id="prodImg" style="margin : 8px;"  width="200px"/>';
+		$("#imgView").append(cover);
+		
+		$("#pub_date").val(pub_date);
+		$("#endDate").val(end_date);
 
 		$(window).on("beforeunload", callback);
 
@@ -230,10 +242,6 @@
 									+ '"readonly/>'
 							$("#addInfo").html(output);
 						});
-		
-		
-		
-		
 
 	}
 
@@ -332,7 +340,7 @@
 
 		console.log(product)
 
-		let url = "/prodRest/insert";
+		let url = "/prodRest/update";
 		$.ajax({
 			url : url,
 			dataType : "json",
@@ -360,7 +368,7 @@
 
 		<div class="container-xxl flex-grow-1 container-p-y">
 			<h4 class="fw-bold py-3 mb-4">
-				<span class="text-muted fw-light">상품 관리 /</span> 상품 등록
+				<span class="text-muted fw-light">상품 관리 /</span> 상품 수정
 			</h4>
 
 			<div class="row">
@@ -372,13 +380,13 @@
 								<label for="floatingInput" class="form-label"
 									style="display: block">상품번호 / ISBN</label> <input type="text"
 									class="form-control" id="isbn" placeholder="ISBN(상품번호)을 입력해주세요"
-									aria-describedby="defaultFormControlHelp" />
+									aria-describedby="defaultFormControlHelp" value="${prod.isbn}" />
 							</div>
 							<div class="mb-3">
 								<label for="floatingInput" class="form-label"
 									style="display: block">상품 명</label> <input type="text"
 									class="form-control" id="prodTitle" placeholder="상품 명을 입력해주세요"
-									aria-describedby="defaultFormControlHelp" />
+									aria-describedby="defaultFormControlHelp" value="${prod.title}" />
 							</div>
 							<div class="mb-3">
 								<label for="floatingInput" class="form-label"
@@ -386,20 +394,19 @@
 									class="form-control" id="price" placeholder="50,000"
 									aria-describedby="defaultFormControlHelp"
 									style="width: 500px; display: inline-block;"
-									onkeyup="inputNumberFormat(this)" />
-								<button type="button" class="btn btn-outline-primary"
-									id="applyDiscount">할인 적용</button>
-								<input type="text" class="form-control" id="discount"
+									onkeyup="inputNumberFormat(this)" value="${prod.price}" /> <input
+									type="text" class="form-control" id="discount"
 									placeholder="10%" aria-describedby="defaultFormControlHelp"
-									style="width: 80px; display: none;"
+									style="width: 80px; display: inline-block;"
 									onkeyup="inputNumberFormat(this)" />
 							</div>
-							<div class="mb-3" id="sellPriceBox" style="display: none">
+							<div class="mb-3" id="sellPriceBox">
 								<label for="floatingInput" class="form-label"
 									style="display: block">할인 가격</label> <input type="text"
 									class="form-control" id="sellPrice" placeholder=""
 									aria-describedby="defaultFormControlHelp"
-									style="width: 500px; display: inline-block;" readonly />
+									style="width: 500px; display: inline-block;" readonly
+									value="${prod.sell_price}" />
 							</div>
 							<div class="mb-3">
 								<label for="floatingInput" class="form-label"
@@ -407,7 +414,7 @@
 									class="form-control" id="stock" placeholder=""
 									aria-describedby="defaultFormControlHelp"
 									style="width: 100px; display: inline-block;"
-									onkeyup="inputNumberFormat(this)" />
+									onkeyup="inputNumberFormat(this)" value="${prod.stock}" />
 							</div>
 
 							<div id="defaultFormControlHelp" class="form-text">ISBN으로
@@ -439,7 +446,7 @@
 									</form>
 								</div>
 								<div id="imgView"
-									style="border: 1px solid #ccc; display: none; padding: 20px">
+									style="border: 1px solid #ccc; padding: 20px">
 									<label for="floatingInput" class="form-label"
 										style="display: block">상품 이미지</label>
 								</div>
@@ -459,17 +466,19 @@
 								<label for="floatingInput" class="form-label"
 									style="display: block">작가</label> <input type="text"
 									class="form-control" id="author" placeholder="작가"
-									aria-describedby="defaultFormControlHelp" readonly />
+									aria-describedby="defaultFormControlHelp" readonly
+									value="${prod.author}" />
 							</div>
 							<div class="mb-3">
 								<label for="floatingInput" class="form-label"
 									style="display: block">출판사</label> <input type="text"
 									class="form-control" id="publisher" placeholder="출판사"
-									aria-describedby="defaultFormControlHelp" readonly /> <label
-									for="floatingInput" class="form-label" style="display: block">출판일</label>
-								<input type="date" class="form-control" id="pub_date"
+									aria-describedby="defaultFormControlHelp" readonly
+									value="${prod.publisher}" /> <label for="floatingInput"
+									class="form-label" style="display: block">출판일</label> <input
+									type="date" class="form-control" id="pub_date"
 									placeholder="출판일" aria-describedby="defaultFormControlHelp"
-									readonly style="width: 200px" />
+									readonly style="width: 200px" value="${prod.pub_date}" />
 							</div>
 
 						</div>
@@ -485,14 +494,23 @@
 								class="select2 form-select" style="width: 200px">
 								<option selected disabled hidden>카테고리 설정</option>
 								<c:forEach var="CategoryVO" items="${category}">
-									<option value="${CategoryVO.category_code}">
-										<c:out value="${CategoryVO.category_name}" /></option>
+									<c:choose>
+										<c:when
+											test="${prod.category_code == CategoryVO.category_code}">
+											<option selected value="${CategoryVO.category_code}">
+												<c:out value="${CategoryVO.category_name}" /></option>
+										</c:when>
+										<c:otherwise>
+											<option value="${CategoryVO.category_code}">
+												<c:out value="${CategoryVO.category_name}" /></option>
+										</c:otherwise>
+									</c:choose>
 								</c:forEach>
 							</select> <small class="text-light fw-semibold" style="margin-top: 10px">간략
 								설명 (1000자 이하)</small>
 							<div class="mb-3">
 								<div>
-									<textarea class="form-control" id="description" rows="3"></textarea>
+									<textarea class="form-control" id="description" rows="3">${prod.description}</textarea>
 								</div>
 								<div id="addInfo"></div>
 								<div class="mb-3">
@@ -511,7 +529,7 @@
 
 				<div class="col-md-6">
 					<div class="card mb-4">
-						<h5 class="card-header">상품 등록하기</h5>
+						<h5 class="card-header">상품 수정하기</h5>
 						<div class="card-body">
 
 							<div class="statusBox">
@@ -520,9 +538,16 @@
 									<label class="form-label">진열 상태</label> <select
 										id="display_status" class="select2 form-select"
 										style="width: 200px">
-										<option selected disabled hidden>진열상태 설정</option>
-										<option value="yes">진열</option>
-										<option value="no">진열안함</option>
+											<option value="yes">진열</option>
+										<c:choose>
+											<c:when test="${prod.display_status == 'no'}">
+												<option selected value="no">진열안함</option>
+											</c:when>
+											<c:otherwise>
+												<option value="no">진열안함</option>
+											</c:otherwise>
+										</c:choose>
+
 									</select>
 								</div>
 								<div class="salesStatus"
@@ -530,10 +555,25 @@
 									<label class="form-label">판매 상태</label> <select
 										id="sales_status" class="select2 form-select"
 										style="width: 200px">
-										<option selected disabled hidden>판매상태 설정</option>
 										<option value="sale">판매</option>
-										<option value="notSales">판매안함</option>
-										<option value="soldOut">품절</option>
+										
+											<c:choose>
+											<c:when test="${prod.sales_status == 'notSales'}">
+												<option selected value="notSales">판매안함</option>
+											</c:when>
+											<c:otherwise>
+												<option value="notSales">판매안함</option>
+											</c:otherwise>
+										</c:choose>
+										
+										<c:choose>
+											<c:when test="${prod.sales_status == 'soldOut'}">
+												<option selected value="soldOut">품절</option>
+											</c:when>
+											<c:otherwise>
+												<option value="soldOut">품절</option>
+											</c:otherwise>
+										</c:choose>
 									</select>
 								</div>
 							</div>
@@ -564,11 +604,10 @@
 								onclick="insertProduct()" style="margin-top: 20px">저장하기</button>
 							<button type="button" class="btn btn-primary"
 								onclick="insertProduct()" style="margin-top: 20px">상품
-								등록</button>
+								수정</button>
 						</div>
 					</div>
 				</div>
-
 
 
 
@@ -591,7 +630,7 @@
 						<div>
 							<ul class="nav nav-pills" style="width: 800px; margin: 0 auto">
 								<li class="nav-item"><a class="nav-link active"
-									data-bs-toggle="pill" href="#menu">목차 설정</a></li>
+									data-bs-toggle="pill" href="#menu1">목차 설정</a></li>
 								<li class="nav-item"><a class="nav-link"
 									data-bs-toggle="pill" href="#menu2" id="detailBtn">상세 설명</a></li>
 								<li class="nav-item"><a class="nav-link"
@@ -604,30 +643,31 @@
 
 							<!-- Tab panes -->
 							<div class="tab-content">
-								<div class="tab-pane container active" id=menu">
+								<div class="tab-pane container active" id="menu1">
 									<div>
-										<textarea class="form-control" id=index " rows="17"></textarea>
+										<textarea class="form-control" id=index " rows="17">${prod.index}</textarea>
 									</div>
 								</div>
 								<div class="tab-pane container fade" id="menu2">
 									<div>
-										<textarea class="form-control" id="detail_description" rows="17"></textarea>
+										<textarea class="form-control" id="detail_description"
+											rows="17">${prod.detail_description}</textarea>
 									</div>
 								</div>
 								<div class="tab-pane container fade" id="menu3">
 									<div>
-										<textarea class="form-control" id="author_introduce" rows="17"></textarea>
+										<textarea class="form-control" id="author_introduce" rows="17">${prod.author_introduce}</textarea>
 									</div>
 								</div>
 								<div class="tab-pane container fade" id="menu4">
 									<div>
-										<textarea class="form-control" id="inside_book" rows="17"></textarea>
+										<textarea class="form-control" id="inside_book" rows="17">${prod.inside_book}</textarea>
 									</div>
 								</div>
 								<div class="tab-pane container fade" id="menu5">
 									<div>
 										<textarea class="form-control" id="pisOffdiscription"
-											rows="17"></textarea>
+											rows="17">${prod.pisOffdiscription}</textarea>
 									</div>
 								</div>
 							</div>
