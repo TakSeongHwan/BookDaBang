@@ -1,9 +1,12 @@
 package com.bookdabang.ljs.service;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 
+import com.bookdabang.common.domain.MemberPoint;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.ljs.domain.LoginDTO;
 import com.bookdabang.ljs.persistence.LoginDAO;
@@ -43,6 +46,12 @@ public class LoginServiceImpl implements LoginService {
 		return mdao.findLoginSess(sessionId);
 	}
 
+
+	@Override
+	public List<MemberPoint> pointCheck(String userId) throws Exception {
+		
+		return mdao.pointCheck(userId);
+	}
 				
 				
 	}

@@ -61,7 +61,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 
 			// 자동로그인에 체크한 다음 로그인 했을 때
 			if (request.getParameter("autoLogin") != null) {
-				Cookie BookDBCook = new Cookie("BookDBCookie", ses.getId()); // 북다방 쿠키에 세션키 저장 
+				Cookie BookDBCook = new Cookie("BookDBCookie", loginMember.getSessionId()); // 북다방 쿠키에 세션키 저장 
 				BookDBCook.setMaxAge(60 * 60 * 24); // 쿠키 만료시간을 2분으로 . 60*60*24*7
 				BookDBCook.setPath("/");
 				response.addCookie(BookDBCook);
