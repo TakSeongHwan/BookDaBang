@@ -15,4 +15,7 @@ public interface ChartService {
 	public List<VisitorCountWithDateFormat> getVisitorInfo() throws Exception;
 
 	public int autoInsertVisitor(VisitorIPCheck vipc) throws Exception;
+
+	public VisitorIPCheck getTodayVisitor() throws Exception;
+
 }

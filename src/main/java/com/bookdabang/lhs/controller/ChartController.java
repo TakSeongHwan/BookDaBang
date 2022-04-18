@@ -52,21 +52,34 @@ public class ChartController {
 	public ResponseEntity<Map<String,String>> autoInsertVisitor(@RequestBody VisitorIPCheck vipc ) {
 		
 		ResponseEntity<Map<String,String>> result = null;
-		Map<String, String> map = new HashMap<String, String>();
-		System.out.println(vipc);
-		try {
-			if(service.autoInsertVisitor(vipc) == 1){
-				map.put("result", "success");
-				result = new ResponseEntity<Map<String,String>>(map, HttpStatus.OK);
-			}
-			
-		} catch (Exception e) {
-			result = new ResponseEntity<Map<String,String>>( HttpStatus.BAD_REQUEST);
-			e.printStackTrace();
-		}
+//		Map<String, String> map = new HashMap<String, String>();
+//		System.out.println(vipc);
+//		try {
+//			if(service.autoInsertVisitor(vipc) == 1){
+//				map.put("result", "success");
+//				result = new ResponseEntity<Map<String,String>>(map, HttpStatus.OK);
+//			}
+//			
+//		} catch (Exception e) {
+//			result = new ResponseEntity<Map<String,String>>( HttpStatus.BAD_REQUEST);
+//			e.printStackTrace();
+//		}
 		return result;
 		
 	}
+
+	@RequestMapping("getTodayVisitor")
+	public void getTodayVisitor() {
+		try {
+			VisitorIPCheck vipc = service.getTodayVisitor();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
+	public void productStatistics() {
+		
+	}
 	
 }

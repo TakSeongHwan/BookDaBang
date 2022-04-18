@@ -43,4 +43,10 @@ public class ChartServiceImpl implements ChartService {
 		return chartDAO.autoInsertVisitor(vipc);
 	}
 
+	@Override
+	public VisitorIPCheck getTodayVisitor() throws Exception {
+		// TODO Auto-generated method stub
+		return chartDAO.getTodayVisitor();
+	}
+
 }

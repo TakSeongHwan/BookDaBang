@@ -24,17 +24,23 @@
 .container {
 	margin-top: 20px;
 	margin-bottom: 20px;
+
 }
 .pagination{
 justify-content: center!important;
 }
-.input-group{
-justify-content: flex-start;
-margin-bottom: 20px;
+.searchType{
+bottom: 0px !important;
 
 }
-#selectSearchType{
+.searchWord{
 
+bottom: 6px;
+width:150px;
+margin-left: 5px;
+}
+.nice-select{
+height: 38px;
 }
 
 </style>
@@ -44,19 +50,22 @@ margin-bottom: 20px;
 	<div class="container mt-3">
 		<h1 style="margin: 20px; margin-bottom: 20px;">공 지 사 항</h1>
 
-		<form action="${contextPath}/notice/listAll" method="get">
-			<span id="selectSearchType"> <select name="searchType">
+		<form action="${contextPath}/notice/listAll" method="get" >
+		
+		<div style="display: flex;">
+			<span class="searchBar searchType"><select name="searchType" >
 					<option value="title">제목</option>
 					<option value="content">내용</option>
 
 			</select>
-			</span> <span class="input-group filter-bar-search"> <input
+			</span> 
+			<span class="input-group filter-bar-search searchBar searchWord"> <input
 				type="text" name="searchWord" />
 				<button type="submit">
 					<i class="ti-search"></i>
 				</button>
 			</span>
-
+</div>
 		</form>
 
 		<table class="table table-hover">
@@ -74,10 +83,10 @@ margin-bottom: 20px;
 				<c:forEach var="notice" items="${notice }">
 					<tr id="${notice.no}" onclick="showContent(this);">
 
-						<td>${notice.title}</td>
+						<td class="noticeContent" >${notice.title}</td>
 						<td>${notice.writer}</td>
-						<td><fmt:formatDate value="${notice.writedDate}"
-								pattern="yyyy-MM-dd HH:mm:ss" /></td>
+						<td class="noticeContent" ><fmt:formatDate value="${notice.writedDate}"
+								pattern="yyyy-MM-dd HH:mm" /></td>
 						<td>${notice.viewCount}</td>
 						<td>${notice.reply}</td>
 					</tr>

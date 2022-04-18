@@ -41,6 +41,12 @@ public class ChartDAOImpl implements ChartDAO {
 		// TODO Auto-generated method stub
 		return ses.insert(ns+".autoInsertVisitor",vipc);
 	}
+
+	@Override
+	public VisitorIPCheck getTodayVisitor() throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns+".getTodayVisitor");
+	}
 	
 	
 }

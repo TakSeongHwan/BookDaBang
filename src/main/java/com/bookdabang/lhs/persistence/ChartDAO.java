@@ -16,4 +16,6 @@ public interface ChartDAO {
 
 	public int autoInsertVisitor(VisitorIPCheck vipc) throws Exception;
 
+	public VisitorIPCheck getTodayVisitor() throws Exception;
+
 }

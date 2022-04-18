@@ -18,5 +18,8 @@ select DATE_FORMAT(accessdate,'%m') as monthSort ,count(ipaddr)as visitor from v
  <insert id="autoInsertVisitor">
  insert into visitor_ipcheck values(#{ipaddr},#{accessdate})
  </insert>
+ <select id="getTodayVisitor" resultType="VisitorIPCheck">
+ select ipaddr, DATE_FORMAT(accessdate,'%Y-%m-%d') as accessdate from visitor_ipcheck where accessdate = DATE_FORMAT(now(),'%Y-%m-%d')
+ </select>
  
  </mapper>

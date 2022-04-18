@@ -137,7 +137,7 @@ text-align: center;
 							<li><a href="${contextPath }/cs/">
 							<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickCS.png"/>
 							<div class="quickManuText">고객센터</div></a></li>
-							<li><a href="${contextPath }/notice/listAll">
+							<li><a href="${contextPath }/notice/listAll?pageNo=1">
 							<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickNotice.png"/>
 							<div class="quickManuText">공지사항</div></a></li>
 							</ul>
@@ -184,8 +184,15 @@ text-align: center;
 									<span class="fa fa-envelope"></span>
 									Email
 								</p>
-								<p>
+								<p style="font-size: 14px">
+								
+							  	김한나 hanna010510@gmail.com <br/>
+								이보련 leebo6198@gmail.com <br/>
+								이정선 jsjs21302@gmail.com <br/>
+								이최상 chltkd10@gmail.com <br/>
 								이한솔 lhshl246@gmail.com <br/>
+								최윤호 krke98ss@gmail.com <br/>
+							
 								</p>
 							</div>
 						</div>
