@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.common.domain.VisitorIPCheck;
+import com.bookdabang.lhs.domain.AdminProduct;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 
 public interface ChartService {
@@ -16,6 +17,10 @@ public interface ChartService {
 
 	public int autoInsertVisitor(VisitorIPCheck vipc) throws Exception;
 
-	public VisitorIPCheck getTodayVisitor() throws Exception;
+	public int getTodayVisitor() throws Exception;
+
+	public int getYesterdayVisitor() throws Exception;
+
+	public List<AdminProduct> getAdminProduct() throws Exception;
 
 }

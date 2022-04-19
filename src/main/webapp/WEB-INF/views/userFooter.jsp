@@ -185,13 +185,14 @@ text-align: center;
 									Email
 								</p>
 								<p style="font-size: 14px">
-								
+								강명진 ppiyace@gmail.com <br/>
 							  	김한나 hanna010510@gmail.com <br/>
 								이보련 leebo6198@gmail.com <br/>
 								이정선 jsjs21302@gmail.com <br/>
 								이최상 chltkd10@gmail.com <br/>
 								이한솔 lhshl246@gmail.com <br/>
 								최윤호 krke98ss@gmail.com <br/>
+								탁성환 xkrtjdghks33@naver.com
 							
 								</p>
 							</div>

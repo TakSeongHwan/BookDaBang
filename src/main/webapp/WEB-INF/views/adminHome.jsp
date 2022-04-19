@@ -24,6 +24,8 @@
 
 	$(function() {
 		drowLinearChart();
+		getTodayVisitor();
+		getYesterdayVisitor();
 	});
 	function insertVisitor() {
 
@@ -74,19 +76,25 @@
 				visitorChart(data);
 				console.log(data);
 				for (let i = 0; i < data.length; i++) {
+					
+					if(i+1 < data.length){
+						let diff = data[i].visitor - data[i + 1].visitor;
+						if (diff < 0) {
+							diff = -1 * diff;
+							console.log(diff)
+							$(".visitorDiff").html(diff);
+							$(".moreOrLess").html("많");
 
-					let diff = data[i].visitor - data[i + 1].visitor;
-					if (diff < 0) {
-						diff = -1 * diff;
-						console.log(diff)
-						$(".visitorDiff").html(diff);
-						$(".moreOrLess").html("많");
-
-					} else if (diff > 0) {
-						console.log(diff)
-						$(".visitorDiff").html(diff);
-						$(".moreOrLess").html("적");
+						} else if (diff > 0) {
+							console.log(diff)
+							$(".visitorDiff").html(diff);
+							$(".moreOrLess").html("적");
+						}else{
+							$("#currentMonthVisitor").html("이번달의 방문자 수는 지난달과 같습니다")
+						}
+						
 					}
+					
 				}
 
 			}
@@ -107,14 +115,14 @@
 
 		});
 
-		console.log(labels)
+		console.log(labels);
 
 		const data = {
 			labels : labels,
 			datasets : [ {
 				label : '월별 방문자수',
-				backgroundColor : 'rgb(255, 102, 102)',
-				borderColor : 'rgb(255, 102, 102)',
+				backgroundColor : '#03c3ec',
+				borderColor : '#03c3ec',
 				data : values,
 
 			} ]
@@ -144,16 +152,43 @@
 		$.ajax({
 			url : "${contextPath}/chart/getTodayVisitor",
 			dataType : "json",
-			async : false,
+			type:"GET",
 			success : function(data) {
 				console.log(data);
-
+				$("#todayVisitor").text(data.todayVisitor);
 			}
 
 		});
 	}
+	function getYesterdayVisitor() {
+		$.ajax({
+			url : "${contextPath}/chart/getYesterdayVisitor",
+			dataType : "json",
+			type:"GET",
+			success : function(data) {
+				console.log(data);
+				$("#yesterdayVisitor").text(data.yesterdayVisitor);
+				let diff = data.yesterdayVisitor - $("#todayVisitor").html();
+				let output = "";
+				console.log(diff);
+				if(diff > 0){
+					output = "<i class='text-danger fw-semibold bx bx-down-arrow-alt'>"+diff+"</i>"
+				}else if(diff < 0){
+					output = "<i class='text-success fw-semibold bx bx-up-arrow-alt'>"+diff+"</i>"
+				}else{
+					output = "<i class='text-secondary fw-semibold bx bx-minus'>"+diff+"</i>"
+				}
+				$("#diff").html(output);
+			}
+
+		});
+		
+		
+	}
+	
 </script>
 <style type="text/css">
+
 #myChart {
 	width: 350px !important;
 	height: 200px !important;
@@ -164,30 +199,68 @@
 }
 
 .visitorMain {
+	width:55%;
 	display: inline-block;
+	margin-top: 5%;
+	position: absolute;
+top:0px;
 }
 
-.visitorToday {
-	width: 33% !important;
+.smallCard {
+margin-top: 5%;
 	display: inline-block;
+	height: auto;
+	width: 40%;
+position: absolute;
+top:0px;
+right: 2%;
+}
+.visitorCountCard{
+text-align: center;
+font-size: 36px;
+justify-content: center;
+}
+.innerCard{
+margin-left : 2%;
+display: inline-block;
+}
+.cardMargin{
+margin-top:15px;
+}
+.mb-4{
+margin-right:auto;
+margin-right:left;
+width: 45%;
+display: inline-block;
+}
+#upperDiv{
+width:100%;
+height: auto;
+position: relative;
+}
+#currentMonthVisitor{
+width: 100%;
+margin: 5%;
 }
 </style>
 </head>
 
 <body>
 	<jsp:include page="managerHeader.jsp"></jsp:include>
-	<div class="chartContainer">
-
-		<div class="col-lg-8 mb-4 order-0 visitorMain">
+	<div class="container-xxl chartContainer">
+	<div id="upperDiv">
+		<div class="visitorMain" >
 			<div class="card">
 				<div class="d-flex align-items-end row">
-					<div class="col-sm-7">
-						<div class="card-body">
-
-							<p class="mb-4">
-								이달의 방문자 수는 지난달보다 <span class="fw-bold visitorDiff"></span>명 <span
+					<p id="currentMonthVisitor">
+								이번 달의 방문자 수는 지난달보다 <span class="fw-bold visitorDiff"></span>명 <span
 									class="moreOrLess"></span>습니다!
 							</p>
+					<div class="col-sm-7">
+				
+						<div class="card-body">
+
+							
 							<div id="visitorChart">
 								<canvas id="myChart"></canvas>
 							</div>
@@ -205,33 +278,55 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-12 mb-4 visitorToday">
-			<div class="card">
-				<div class="card-body">
-					<div
-						class="d-flex justify-content-between flex-sm-row flex-column gap-3"
-						style="position: relative;">
-						<div
-							class="d-flex flex-sm-column flex-row align-items-start justify-content-between">
-							<div class="card-title">
-								<h5 class="text-nowrap mb-2">Today's Visitor</h5>
-								<span class="badge bg-label-warning rounded-pill today"></span>
-							</div>
-						
-					</div>
-					<div></div>
-				</div>
-			</div>
-		</div>
-
-
+	
 		<!--    <div id="chart_div"></div> -->
 
 
 		<!--   <button type="button" onclick="insertVisitor();">방문자 인풋</button> -->
+	
+			<div class="smallCard" >
+				<div class="mb-4 ">
+                      <div class="card innerCard">
+                        <div class="card-body cardMargin">
+                  <div class="card-title d-flex align-items-start justify-content-between">
+                            <div class="avatar flex-shrink-0">
+                            
+                              <img src="${contextPath }/resources/img/chart/today.png" alt="chart success" class="rounded">
+                            </div>
+         
+                          </div>
+                          <span class="fw-semibold d-block mb-1">오늘의 방문자 수</span>
+                          	<h2 id="todayVisitor" class="visitorCountCard"></h2>
+                         <small id="diff"></small>
+                        </div>
+                      </div>
+                    </div>
+				
+				<div class="mb-4">
+                      <div class="card innerCard">
+                        <div class="card-body cardMargin">
+                   <div class="card-title d-flex align-items-start justify-content-between">
+                            <div class="avatar flex-shrink-0">
+                              <img src="${contextPath }/resources/img/chart/yesterday.png" alt="chart success" class="rounded">
+                            </div>
+         
+                          </div>
+                          <span class="fw-semibold d-block mb-1 ">어제의 방문자 수</span>
+                          	<h2 id="yesterdayVisitor" class="visitorCountCard"></h2>
+                    		<small><i class='text-warning fw-semibold bx bxs-invader'></i></small>
+                        </div>
+                      </div>
+                    </div>
+
+			</div>
+				
+	<div id="midDiv">
+	
+	</div>
+		</div>
 	</div>
 
-	</div>
+	
 	<jsp:include page="managerFooter.jsp"></jsp:include>
 </body>
 </html>

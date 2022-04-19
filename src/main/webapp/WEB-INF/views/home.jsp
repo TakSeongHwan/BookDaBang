@@ -111,6 +111,9 @@ padding-top: 10px;
 .owl-dots{
 visibility: hidden !important;
 }
+.owl-nav{
+visibility: hidden !important;
+}
 
 
 </style>

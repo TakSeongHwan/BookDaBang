@@ -18,8 +18,18 @@ select DATE_FORMAT(accessdate,'%m') as monthSort ,count(ipaddr)as visitor from v
  <insert id="autoInsertVisitor">
  insert into visitor_ipcheck values(#{ipaddr},#{accessdate})
  </insert>
- <select id="getTodayVisitor" resultType="VisitorIPCheck">
- select ipaddr, DATE_FORMAT(accessdate,'%Y-%m-%d') as accessdate from visitor_ipcheck where accessdate = DATE_FORMAT(now(),'%Y-%m-%d')
+ <select id="getTodayVisitor" resultType="int">
+select count(DATE_FORMAT(accessdate,'%Y-%m-%d')) from visitor_ipcheck where DATE_FORMAT(accessdate,'%Y-%m-%d') = (select DATE_FORMAT(now(),'%Y-%m-%d'))
  </select>
+ <select id="getYesterdayVisitor" resultType="int">
+ select count(DATE_FORMAT(accessdate,'%Y-%m-%d')) from visitor_ipcheck where DATE_FORMAT(accessdate,'%Y-%m-%d') = (select DATE_FORMAT(now()- interval 1 day,'%Y-%m-%d'))
+ </select>
+<select id="getProductInfo" resultType="AdminProduct">
+select p.*,c.category_name,count(r.reviewNo) as reviewCount
+from product as p 
+JOIN category as c on p.category_code = c.category_code 
+LEFT OUTER JOIN review as r on p.product_no = r.productNo
+group by p.product_no, r.productNo
+</select>
  
  </mapper>

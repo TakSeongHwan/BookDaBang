@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.common.domain.VisitorIPCheck;
+import com.bookdabang.lhs.domain.AdminProduct;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 
 @Repository
@@ -43,9 +44,21 @@ public class ChartDAOImpl implements ChartDAO {
 	}
 
 	@Override
-	public VisitorIPCheck getTodayVisitor() throws Exception {
+	public int getTodayVisitor() throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectOne(ns+".getTodayVisitor");
+	}
+
+	@Override
+	public int getYesterdayVisitor() throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns+".getYesterdayVisitor");
+	}
+
+	@Override
+	public List<AdminProduct> getAdminProduct() throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns+".getProductInfo");
 	}
 	
 	

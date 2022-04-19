@@ -69,17 +69,38 @@ public class ChartController {
 	}
 
 	@RequestMapping("getTodayVisitor")
-	public void getTodayVisitor() {
+	public ResponseEntity<Map<String,Integer>> getTodayVisitor() {
+		
+		ResponseEntity<Map<String,Integer>> result = null;
+		Map<String, Integer> map = new HashMap<String, Integer>();
 		try {
-			VisitorIPCheck vipc = service.getTodayVisitor();
+			int visitor = service.getTodayVisitor();
+			System.out.println(visitor);
+			map.put("todayVisitor",visitor);
+			result = new ResponseEntity<Map<String,Integer>>(map, HttpStatus.OK);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			result = new ResponseEntity<Map<String,Integer>>(HttpStatus.BAD_REQUEST);
 			e.printStackTrace();
 		}
+		return result;
+	}
+	@RequestMapping("getYesterdayVisitor")
+	public ResponseEntity<Map<String,Integer>> getYesterdayVisitor() {
+		
+		ResponseEntity<Map<String,Integer>> result = null;
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		try {
+			int visitor = service.getYesterdayVisitor();
+			System.out.println(visitor);
+			map.put("yesterdayVisitor",visitor);
+			result = new ResponseEntity<Map<String,Integer>>(map, HttpStatus.OK);
+		} catch (Exception e) {
+			result = new ResponseEntity<Map<String,Integer>>(HttpStatus.BAD_REQUEST);
+			e.printStackTrace();
+		}
+		return result;
 	}
 	
-	public void productStatistics() {
-		
-	}
+	
 	
 }

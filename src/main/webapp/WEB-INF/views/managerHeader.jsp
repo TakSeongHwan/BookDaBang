@@ -8,6 +8,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 <meta name="description" content="" />
+
 <!-- Favicon -->
 <link rel="icon" type="image/x-icon" href="${contextPath}/resources/assets/img/favicon/favicon.ico" />
 <!-- Fonts -->
@@ -29,6 +30,9 @@
 <link rel="stylesheet"
    href="${contextPath}/resources/assets/vendor/libs/apex-charts/apex-charts.css" />
 <!-- Page CSS -->
+
+
+
 <!-- Helpers -->
 <script src="${contextPath}/resources/assets/vendor/js/helpers.js"></script>
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
@@ -105,6 +109,11 @@
                   class="menu-link"> <i
                      class="menu-icon tf-icons bx bx-home-circle"></i>
                      <div data-i18n="Analytics">Dashboard</div>
+               </a></li>
+                 <li class="menu-item"><a href="${contextPath}/admin/adminStatistics/adminProductStatistics"
+                  class="menu-link"> <i
+                     class="menu-icon tf-icons bx bx-home-circle"></i>
+                     <div data-i18n="Analytics">상품 통계</div>
                </a></li>
 
                <!-- Layouts -->
