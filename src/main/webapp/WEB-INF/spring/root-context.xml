@@ -18,9 +18,9 @@
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName"
-			value="com.mysql.cj.jdbc.Driver"></property>
+			value="org.mariadb.jdbc.Driver"></property>
 		<property name="url"
-			value="jdbc:mysql://gootac6.cafe24.com:3306/gootac6?serverTimezone=Asia/Seoul&amp;useSSL=false"></property>
+			value="jdbc:mariadb://gootac6.cafe24.com:3306/gootac6?serverTimezone=Asia/Seoul&amp;useSSL=false"></property>
 		<property name="username" value="gootac6"></property>
 		<property name="password" value="gootac66!@"></property>
 	</bean>

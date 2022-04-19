@@ -148,9 +148,24 @@ public class UserCartController {
 	}
 
 	@RequestMapping(value = "/addCart", method = RequestMethod.POST)
-	public ResponseEntity<String> insertCart(@RequestBody CartVO cart) {
+	public ResponseEntity<String> insertCart(int productNo,int productQtt,HttpSession ses) {
 		ResponseEntity<String> result = null;
+		System.out.println(productNo);
 		try {
+			MemberVO loginMember = lService.findLoginSess((String) ses.getAttribute("sessionId"));
+			String userId = null;
+			String ipaddr = null;
+			CartVO cart = new CartVO();
+			cart.setProductQtt(productQtt);
+			cart.setProductNo(productNo);
+			if (loginMember != null) {
+				userId = loginMember.getUserId();
+				cart.setUserId(userId);
+			} else {
+				ipaddr = (String) ses.getAttribute("ipAddr");
+				cart.setIpaddr(ipaddr);
+			}
+			
 			if (cService.insertCart(cart) == 1) {
 				result = new ResponseEntity<String>("success", HttpStatus.OK);
 			}

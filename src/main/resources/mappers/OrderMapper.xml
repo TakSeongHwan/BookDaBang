@@ -111,4 +111,8 @@
 		where orderNo = #{orderNo}
 	</update>
 	
+	<select id="getNextOrderNo" resultType="int">
+		select max(orderNo)+1 from prodOrder
+	</select>
+	
 </mapper>
