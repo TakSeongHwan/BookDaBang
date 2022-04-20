@@ -788,6 +788,7 @@
 									}
 									
 								} else{
+									
 									output += "<td style ='text-align : left;width:500px'>" + e.content + "</td>";
 								}
 								
@@ -811,7 +812,15 @@
 								} else {
 									
 									output += "<tr><td></td>";
+									if(e.pwd != null){
+										if(userNickName == e.writer){
 									output += "<td style ='text-align : left;width:500px'>ㄴ<span class='badge bg-secondary' style='font-weight :300; background-color : #ccc!important'>답변</span>&nbsp&nbsp" +e.content+"</td>";
+										}  else {
+											output += "<td style ='text-align : left;width:500px; color : #ccc'>ㄴ<img src='/resources/img/etc/lock.png' width='18px'>비공개 답변입니다.</td>";
+										}
+										}else {
+											output += "<td style ='text-align : left;width:500px'>ㄴ<span class='badge bg-secondary' style='font-weight :300; background-color : #ccc!important'>답변</span>&nbsp&nbsp" +e.content+"</td>";	
+										}
 									output += "<td></td>"
 									output += "<td>"+writeDate+"</td>";
 									output += "<td></td>";

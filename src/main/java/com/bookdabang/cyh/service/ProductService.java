@@ -7,6 +7,7 @@ import com.bookdabang.common.domain.CategoryVO;
 import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.cyh.domain.AnswerDTO;
+import com.bookdabang.cyh.domain.InsertProdDTO;
 import com.bookdabang.cyh.domain.ProdInfo;
 import com.bookdabang.cyh.domain.ProdQnADTO;
 import com.bookdabang.cyh.domain.SearchCriteria;
@@ -26,6 +27,8 @@ public interface ProductService {
 	public ProductVO getProdByISBN(String isbn) throws Exception;
 
 	public ProdInfo viewInfoByIsbn(String isbn) throws Exception;
+	
+	public boolean insertProd(InsertProdDTO product) throws Exception;
 
 	public void deleteImage(String upPath, String deletePath) throws Exception;
 
@@ -41,5 +44,7 @@ public interface ProductService {
 
 
 	public boolean deleteQnA(int questionNo) throws Exception;
+
+	
 
 }

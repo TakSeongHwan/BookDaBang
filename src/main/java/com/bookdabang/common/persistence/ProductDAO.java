@@ -8,6 +8,7 @@ import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.cyh.domain.AnswerDTO;
+import com.bookdabang.cyh.domain.InsertProdDTO;
 import com.bookdabang.cyh.domain.ProdQnADTO;
 import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.cyh.domain.UpdateProdDTO;
@@ -28,8 +29,14 @@ public interface ProductDAO {
 	public ProductVO selectProdView(String prodNo) throws Exception;
 	// 선택된 상품 하나를 업데이트 (일괄)
 	public int updateProd(UpdateProdDTO prod) throws Exception;
+	
+	public int insertProd(InsertProdDTO product) throws Exception;
 	// isbn(상품번호) 유효성 확인
 	public int validationProdNo(String prodNo) throws Exception;
+	
+	// 글번호로 qna 비밀번호 가져옴
+	public String getPwdByQuesNo(int question_no);
+	
 	// 답글 insert
 	public int insertAnswer(AnswerDTO answer);
 	// Qna isnert

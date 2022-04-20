@@ -860,7 +860,7 @@ th {
 									name="sales_status" /> <label class="form-check-label"
 									for="defaultCheck3">판매중 </label></td>
 								<td><input class="form-check-input sales_status"
-									type="radio" value="notSale" id="defaultCheck3"
+									type="radio" value="notSales" id="defaultCheck3"
 									name="sales_status" /> <label class="form-check-label"
 									for="defaultCheck3">판매안함 </label></td>
 								<td><input class="form-check-input sales_status"

@@ -16,8 +16,15 @@ public class UploadImageProcess {
 		UUID uuid = UUID.randomUUID();
 		String saveFileName = uuid.toString() + "_" + orginalFileName;
 		String savePath = upPath + calculateSavePath(upPath); // 파일이 저장될 경로 계산
+		File file1 = new File(savePath);
+		 File[] flist =file1.listFiles();
+		if(flist.length > 0 ) {
+			DeleteFileProcess dfp = new DeleteFileProcess();
+			dfp.deleteFile(savePath);
+		}
 		File target = new File(savePath + File.separator, saveFileName);
 		FileCopyUtils.copy(file, target);
+		System.out.println(savePath);
 		
 		String imagePath = ((savePath +File.separator +saveFileName).substring(upPath.length())).replace(File.separator, "/");
 		
@@ -48,7 +55,6 @@ public class UploadImageProcess {
 		System.out.println(Arrays.toString(paths));
 		
 		if(new File(upPath + paths[paths.length-1]).exists()) {
-			// 해당 경로가 존재한다면 폴더를 생성할 필요가 없다.
 			return; // 호출한 곳으로 돌아감
 		} 
 		

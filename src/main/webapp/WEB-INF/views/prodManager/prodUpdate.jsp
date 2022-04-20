@@ -147,7 +147,7 @@
 							if (urlExists(searchVal) == "200") {
 								$("#imgView").show();
 								let img = '<img src="'+ searchVal + '"id="prodImg" style="margin : 8px"  width="200px"/>';
-								$("#imgView").append(img);
+								$("#imgView").html(img);
 							} else {
 								alert("존재하지 않는 url입니다");
 
@@ -179,7 +179,7 @@
 											console.log(data);
 											$("#imgView").show();
 											let img = '<img src="/resources/uploads'+ data + '" id="prodImg"  style="margin : 8px"/>';
-											$("#imgView").append(img);
+											$("#imgView").html(img);
 
 										},
 										error : function(data) {

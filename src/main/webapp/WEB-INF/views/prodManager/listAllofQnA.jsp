@@ -20,6 +20,7 @@
 			let index = $(".answerBtn").index(this);
 			let questionNo = $(".questionNo").eq(index).text();
 			let productNo = $(".productNo").eq(index).text();
+			let writer = $(".writer").eq(index).text();
 			$(".modal-title").html(questionNo + "번 글 답변");
 
 			$(document).on("click", "#insertAnswer", function() {
@@ -31,6 +32,7 @@
 					question_no : questionNo,
 					product_no : productNo,
 					content : answerContent,
+					writer : writer
 					
 				}
 
@@ -96,7 +98,7 @@
 									+ '</td>';
 							output += '<td style ="text-align :left">'
 									+ e.content + '</td>';
-							output += '<td>' + e.writer + '</td>';
+							output += '<td class="writer">' + e.writer + '</td>';
 							writeDate = new Date(
 									+new Date(e.write_date) + 3240 * 10000)
 									.toISOString().split("T")[0];

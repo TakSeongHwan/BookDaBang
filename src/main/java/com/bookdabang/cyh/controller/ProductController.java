@@ -82,6 +82,13 @@ public class ProductController {
 	}
 	
 	
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public void login() throws Exception {
+		
+		
+	}
+	
+	
 		
 	
 	

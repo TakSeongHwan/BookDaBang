@@ -44,7 +44,7 @@
 			
 		setTimeout(function() {
 			
-			$(".container3").html(searchText +"페이지로 이동합니다");
+			$(".container3").html("페이지로 이동합니다");
 			$(".container3").fadeIn(500);
 		},500);
 			

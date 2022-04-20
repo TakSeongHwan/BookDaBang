@@ -36,6 +36,10 @@
 	}
 
 	window.onload = function() {
+		
+		if(localStorage.getItem("saveFile") != null) {
+			retrieve(localStorage.getItem("saveFile"));
+		}
 
 		$(window).on("beforeunload", callback);
 
@@ -58,35 +62,43 @@
 				}
 			});
 		}
+		
+		
+		
+		
 
 		$("#applyDiscount").on("click", function() {
 			if ($("#price").val() != "") {
-				outputvaliableMsg("올바른 데이터입니다.", $("#discount"));
+				outputvaliableMsg("올바른 데이터입니다.", $("#priceBox"));
 				$("#applyDiscount").hide();
 				$("#discount").css("display", "inline-block");
 				$("#sellPriceBox").show();
 			} else {
-				outPutErrMessage("상품가격을 설정해주세요", $("#price"));
+				outPutErrMessage("상품가격을 설정해주세요.", $("#priceBox"));
 			}
 
 		});
 
 		$(document).on("blur", "#price", function() {
 			if ($("#price").val() == "") {
-				outPutErrMessage("공백ㄴ", $("#price"));
+				outPutErrMessage("상품가격을 설정해주세요.", $("#priceBox"));
 
 			}
 		});
+		
 		$("#discount").on("keyup", function() {
 
 			if (parseInt($("#discount").val()) < 100) {
-				outputvaliableMsg("올바른 데이터입니다.", $("#discount"));
+				outputvaliableMsg("올바른 데이터입니다.", $("#priceBox"));
 				let price = parseInt($("#price").val().replace(",", ""));
 				let discount = parseInt($("#discount").val()) / 100;
 
 				$("#sellPrice").val(price - (price * discount));
-			} else {
-				outPutErrMessage("할인율은 100이상일 수 없습니다", $("#discount"));
+			} else if(parseInt($("#discount").val()) >= 100){
+				$("#discount").val("");
+				outPutErrMessage("할인율은 100이상일 수 없습니다.", $("#priceBox"));
+			} else{
+				outPutErrMessage("잘못된 입력입니다.", $("#priceBox"));
 			}
 
 		});
@@ -95,7 +107,7 @@
 			let isbn = $("#isbn").val();
 
 			if (isbn == "") {
-				outPutErrMessage("상품번호는 공백일 수 없습니다", $("#price"));
+				outPutErrMessage("상품번호는 공백일 수 없습니다", $("#isbn"));
 			} else {
 
 				let url = "/prodRest/d";
@@ -125,6 +137,20 @@
 			}
 
 		});
+		
+		$("#prodTitle").blur(function() {
+			
+			let prodTitle = $("#prodTitle").val();
+			
+			if (prodTitle == "") {
+				outPutErrMessage("상품 명은 공백일 수 없습니다", $("#prodTitle"));
+			} else {
+				outputvaliableMsg("올바른 데이터입니다.", $("#prodTitle"));
+			}
+			
+		});
+		
+		
 
 		$(document)
 				.on(
@@ -135,7 +161,7 @@
 							if (urlExists(searchVal) == "200") {
 								$("#imgView").show();
 								let img = '<img src="'+ searchVal + '"id="prodImg" style="margin : 8px"  width="200px"/>';
-								$("#imgView").append(img);
+								$("#imagebox").append(img);
 							} else {
 								alert("존재하지 않는 url입니다");
 
@@ -167,7 +193,7 @@
 											console.log(data);
 											$("#imgView").show();
 											let img = '<img src="/resources/uploads'+ data + '" id="prodImg"  style="margin : 8px"/>';
-											$("#imgView").append(img);
+											$("#imagebox").html(img);
 
 										},
 										error : function(data) {
@@ -182,6 +208,7 @@
 				"change",
 				"#selectEndDate",
 				function() {
+					$("#endDate").val("");
 					now = new Date();
 					if ($("#selectEndDate").val() == "1year") {
 						let yearlater = new Date(now.setFullYear(now
@@ -204,6 +231,8 @@
 				});
 
 		$(document).on("change", "#endDate", function() {
+			  document.getElementById("selectEndDate").value = '마감날짜 설정'; 
+
 			product.end_date = $("#endDate").val();
 			console.log(product);
 		});
@@ -335,16 +364,92 @@
 		let url = "/prodRest/insert";
 		$.ajax({
 			url : url,
-			dataType : "json",
+			dataType : "text",
+			type : "post",
+			data : product,
+			success : function(data) {
+				if(data == "success"){
+					alert("등록 성공");
+				}else{
+					alert("등록 실패");
+				}
+			}
+
+		});				
+	}
+	
+	
+	function saveProduct() {
+
+		product.isbn = $("#isbn").val();
+		product.title = $("#prodTitle").val();
+		product.price = parseInt($("#price").val().replace(",", ""));
+		product.sell_price = parseInt($("#sellPrice").val().replace(",", ""));
+		product.author = $("#author").val();
+		product.publisher = $("#publisher").val();
+		product.cover = $("#prodImg").attr("src");
+		product.description = $("#description").val();
+		product.index = $("#index").val();
+		product.detail_description = $("#detail_description").val();
+		product.inside_book = $("#inside_book").val();
+		product.author_introduce = $("#author_introduce").val();
+		product.pisOffdiscription = $("#pisOffdiscription").val();
+		product.category_code = parseInt($("#category").val());
+		product.display_status = $("#display_status").val();
+		product.sales_status = $("#sales_status").val();
+		product.stock = parseInt($("#stock").val());
+		product.pub_date = $("#pub_date").val();
+
+		localStorage.setItem("saveFile", JSON.stringify(product));
+		alert("저장이 완료되었습니다.");
+
+		/* let url = "/prodRest/save";
+		$.ajax({
+			url : url,
+			dataType : "text",
 			type : "post",
 			data : product,
 			success : function(data) {
 				console.log(data);
 			}
 
-		});
+		}); */
+	}
+	
+	
+	function retrieve(data) {
+		alert("이전에 저장했던 상품이 있습니다 불러오시겠습니까?");
+		let saveFile = JSON.parse(data);
+		
+		$("#isbn").val(saveFile.isbn);
+		$("#prodTitle").val(saveFile.title);
+		$("#author").val(saveFile.author);
+		$("#price").val(saveFile.price);
+		$("#stock").val(saveFile.stock);		
+		$("#publisher").val(saveFile.publisher);
+		$("#description").val(saveFile.description);
+		$("#pub_date").val(saveFile.pub_date);
+		$("#applyDiscount").hide();
+		$("#discount").css("display", "inline-block");
+		$("#imgView").show();
+		$("#sellPriceBox").show();
+		let discount =(100-(saveFile.sell_price/saveFile.price*100));
+		$("#discount").val(discount);
+		$("#sellPrice").val(saveFile.sell_price);
+		$("#imagebox").html('<img src="'+saveFile.cover+'"  style="margin : 8px"  width="200px" id="prodImg"/>');
+		$("#index").val(saveFile.index);
+		$("#detail_description").val(saveFile.detail_description);
+		$("#author_introduce").val(saveFile.author_introduce);
+		$("#inside_book").val(saveFile.inside_book);
+		$("#pisOffdiscription").val(saveFile.pisOffdiscription);
+		
+		
+		
+		
+		
 
 	}
+	
 </script>
 <style>
 .addInfo {
@@ -357,11 +462,15 @@
 	<jsp:include page="../managerHeader.jsp"></jsp:include>
 	<div class="content-wrapper">
 		<!-- Content -->
-
+		
 		<div class="container-xxl flex-grow-1 container-p-y">
 			<h4 class="fw-bold py-3 mb-4">
 				<span class="text-muted fw-light">상품 관리 /</span> 상품 등록
 			</h4>
+			
+			<c:if test="${save != null}"> 
+				<button type="button" class="btn btn-primary"  onclick="retrieve();"  >불러오기</button>
+		</c:if>
 
 			<div class="row">
 				<div class="col-md-6">
@@ -380,12 +489,12 @@
 									class="form-control" id="prodTitle" placeholder="상품 명을 입력해주세요"
 									aria-describedby="defaultFormControlHelp" />
 							</div>
-							<div class="mb-3">
+							<div class="mb-3" id="priceBox">
 								<label for="floatingInput" class="form-label"
 									style="display: block">판매가격 설정</label> <input type="text"
 									class="form-control" id="price" placeholder="50,000"
 									aria-describedby="defaultFormControlHelp"
-									style="width: 500px; display: inline-block;"
+									style="width: 400px; display: inline-block;"
 									onkeyup="inputNumberFormat(this)" />
 								<button type="button" class="btn btn-outline-primary"
 									id="applyDiscount">할인 적용</button>
@@ -442,6 +551,7 @@
 									style="border: 1px solid #ccc; display: none; padding: 20px">
 									<label for="floatingInput" class="form-label"
 										style="display: block">상품 이미지</label>
+										<div id="imagebox"></div>
 								</div>
 								<div id="floatingInputHelp" class="form-text">상품 이미지는 하나만
 									등록할 수 있습니다</div>
@@ -459,17 +569,17 @@
 								<label for="floatingInput" class="form-label"
 									style="display: block">작가</label> <input type="text"
 									class="form-control" id="author" placeholder="작가"
-									aria-describedby="defaultFormControlHelp" readonly />
+									aria-describedby="defaultFormControlHelp"  />
 							</div>
 							<div class="mb-3">
 								<label for="floatingInput" class="form-label"
 									style="display: block">출판사</label> <input type="text"
 									class="form-control" id="publisher" placeholder="출판사"
-									aria-describedby="defaultFormControlHelp" readonly /> <label
+									aria-describedby="defaultFormControlHelp"  /> <label
 									for="floatingInput" class="form-label" style="display: block">출판일</label>
 								<input type="date" class="form-control" id="pub_date"
 									placeholder="출판일" aria-describedby="defaultFormControlHelp"
-									readonly style="width: 200px" />
+									 style="width: 200px" />
 							</div>
 
 						</div>
@@ -561,7 +671,7 @@
 
 
 							<button type="button" class="btn btn-primary"
-								onclick="insertProduct()" style="margin-top: 20px">저장하기</button>
+								onclick="saveProduct()" style="margin-top: 20px">저장하기</button>
 							<button type="button" class="btn btn-primary"
 								onclick="insertProduct()" style="margin-top: 20px">상품
 								등록</button>
@@ -604,9 +714,9 @@
 
 							<!-- Tab panes -->
 							<div class="tab-content">
-								<div class="tab-pane container active" id=menu">
+								<div class="tab-pane container active" id="menu">
 									<div>
-										<textarea class="form-control" id=index " rows="17"></textarea>
+										<textarea class="form-control" id="index" rows="17"></textarea>
 									</div>
 								</div>
 								<div class="tab-pane container fade" id="menu2">
