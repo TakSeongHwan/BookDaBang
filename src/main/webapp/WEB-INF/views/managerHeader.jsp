@@ -110,7 +110,7 @@
                      class="menu-icon tf-icons bx bx-home-circle"></i>
                      <div data-i18n="Analytics">Dashboard</div>
                </a></li>
-                 <li class="menu-item"><a href="${contextPath}/admin/adminStatistics/adminProductStatistics"
+                 <li class="menu-item"><a href="${contextPath}/admin/adminStatistics/adminProductStatistics?pageNo=1"
                   class="menu-link"> <i
                      class="menu-icon tf-icons bx bx-home-circle"></i>
                      <div data-i18n="Analytics">상품 통계</div>

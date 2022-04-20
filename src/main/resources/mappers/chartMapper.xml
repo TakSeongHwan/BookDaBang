@@ -30,6 +30,95 @@ from product as p
 JOIN category as c on p.category_code = c.category_code 
 LEFT OUTER JOIN review as r on p.product_no = r.productNo
 group by p.product_no, r.productNo
+<if test='sortType.equals("")'>
+ 	order by p.product_no asc
+ 	</if>
+ 	<if test='sortType.equals("category")'>
+ 		order by c.category_name asc
+ 	</if>
+ 	<if test='sortType.equals("isbn13")'>
+ 		order by p.isbn13 asc
+ 	</if>
+ 	<if test='sortType.equals("title")'>
+ 		order by p.title asc
+ 	</if>
+ 	<if test='sortType.equals("priceAsc")'>
+ 		order by p.price asc, p.sell_price asc
+ 	</if>
+ 	<if test='sortType.equals("priceDesc")'>
+ 		order by p.price desc, p.sell_price desc
+ 	</if>
+ 	<if test='sortType.equals("reviewDesc")'>
+ 		order by reviewCount desc
+ 	</if>
+ 	
+  limit #{startNum}, #{postPerPage} 	
 </select>
- 
+ <select id="getTotalPost" resultType="int">
+ 	select count(*) as totalCnt from product
+ 	
+ 	</select>
+ 	
+ 	<select id="getSearchResultCnt" resultType="int">
+ 	  select count(*) from product as p, category as c where p.category_code = c.category_code and
+ 	  <if test='searchType == "title"'>
+ 	  p.title like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType == "category"'>
+ 	  c.category_name like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType == "isbn13"'>
+ 	  p.isbn13 like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	</select>
+ 	
+ 	<select id="getSearchResultList" resultType="AdminProduct">
+ 	
+ 	select p.*,c.category_name,count(r.reviewNo) as reviewCount
+from product as p 
+JOIN category as c on p.category_code = c.category_code 
+LEFT OUTER JOIN review as r on p.product_no = r.productNo
+	where
+ 	  <if test='searchType == "title"'>
+ 	  p.title like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType == "category"'>
+ 	  c.category_name like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType == "isbn13"'>
+ 	  p.isbn13 like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ group by p.product_no, r.productNo
+ 	  <if test='sortType.equals("")'>
+ 	order by p.product_no asc
+ 	</if>
+ 	
+ 	<if test='sortType.equals("category")'>
+ 		order by c.category_name asc
+ 	</if>
+ 	<if test='sortType.equals("isbn13")'>
+ 		order by p.isbn13 asc
+ 	</if>
+ 	<if test='sortType.equals("title")'>
+ 		order by p.title asc
+ 	</if>
+ 	<if test='sortType.equals("priceAsc")'>
+ 		order by p.price asc, p.sell_price asc
+ 	</if>
+ 	<if test='sortType.equals("priceDesc")'>
+ 		order by p.price desc, p.sell_price desc
+ 	</if>
+ 	<if test='sortType.equals("reviewDesc")'>
+ 		order by reviewCount desc
+ 	</if>
+ 	
+  limit #{startNum}, #{postPerPage} 	
+ 	  
+ 	</select>
+ 	
+ 	<select id="getCategoryTotalSales" resultType="CategoryTotalSales">
+ 	 	select c.category_name, sum(p.sales_count)as totalSales from product as p, category as c where p.category_code = c.category_code group by c.category_name
+ 	 	order by totalSales desc
+ 	 	</select>
+ 	
  </mapper>

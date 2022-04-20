@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookdabang.common.domain.VisitorIPCheck;
+import com.bookdabang.lhs.domain.CategoryTotalSales;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 import com.bookdabang.lhs.service.ChartService;
 
@@ -101,6 +102,23 @@ public class ChartController {
 		return result;
 	}
 	
-	
+	@RequestMapping("getCategoryTotalSales")
+	public ResponseEntity<Map<String,Object>> getCategoryTotalSales() {
+		ResponseEntity<Map<String,Object>> result = null;
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		try {
+			List<CategoryTotalSales> cts = service.getCategoryTotalSales();
+			map.put("cts", cts);
+			result = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
+		} catch (Exception e) {
+			result = new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+			e.printStackTrace();
+		}
+		
+		
+		return result;
+		
+	}
 	
 }

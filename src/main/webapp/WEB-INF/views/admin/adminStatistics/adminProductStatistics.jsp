@@ -10,11 +10,22 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js" integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<title>Insert title here</title>
+<title>Admin Product Statistics</title>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
 
+$(function(){
+	
+	$("#sortType").change(function(){
+		location.href="${contextPath }/admin/adminStatistics/adminProductStatistics?pageNo=${param.pageNo}&sortType="+$("#sortType").val();
+		
+	});
+	
+})
+
+</script>
 
 <style>
 .ellipsis{
@@ -38,34 +49,41 @@ white-space: nowrap;
 <div class="container mt-3">
   <h2>상품 통계</h2>
   
-  <form action="" method="get"  style="margin-bottom: 10px;">
+  <form action="${contextPath }/admin/adminStatistics/adminProductStatistics?pageNo=1" method="get" style="margin-bottom: 1%;">
 		
 		<div style="display: flex;">
-			<div class="btn-group">
-                      <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        Primary
-                      </button>
-                      <ul class="dropdown-menu" style="">
-                        <li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>
-                        <li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>
-                        <li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>
-                        <li>
-                          <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="javascript:void(0);">Separated link</a></li>
-                      </ul>
-                    </div>
+	
+				<div class="input-group" style="width: 10%;">
+                            <select class="form-select" id="sortType" name="sortType">
+                             
+                              <option value="product_no" ${param.sortType == 'product_no' ? 'selected="selected"' : '' }>제품번호 순</option>
+                              <option value="category" ${param.sortType == 'category' ? 'selected="selected"' : '' }>카테고리 순</option>
+                              <option value="isbn13" ${param.sortType == 'isbn13' ? 'selected="selected"' : '' }>isbn13 순</option>
+                              <option value="title" ${param.sortType == 'title' ? 'selected="selected"' : '' }>제목 순</option>
+                              <option value="priceAsc" ${param.sortType == 'priceAsc' ? 'selected="selected"' : '' }>가격 낮은 순</option>
+                              <option value="priceDesc" ${param.sortType == 'priceDesc' ? 'selected="selected"' : '' }>가격 높은 순</option>
+                              <option value="reviewDesc" ${param.sortType == 'reviewDesc' ? 'selected="selected"' : '' }>리뷰 많은 순</option>
+                            </select>
+                          </div>
+        		 <div class="input-group" style="width: 10%;">
+                            <select class="form-select" id="inputGroupSelect02" name="searchType">
+                              <option selected="">Choose...</option>
+                              <option value="category" ${param.searchType == 'category' ? 'selected="selected"' : '' }>카테고리</option>
+                              <option value="isbn13" ${param.searchType == 'isbn13' ? 'selected="selected"' : '' }>isbn13</option>
+                              <option value="title" ${param.searchType == 'title' ? 'selected="selected"' : '' }>제목</option>
+                            </select>
+                          </div>
 			<div class="navbar-nav align-items-center">
                 <div class="nav-item d-flex align-items-center">
-                  <i class="bx bx-search fs-4 lh-0"></i>
-                  <input type="text" class="form-control border-1 " placeholder="Search..." aria-label="Search...">
+                  <input type="text" class="form-control border-1 " name="searchWord" placeholder="Search..." aria-label="Search...">
+                  <button type="submit" class="btn rounded-pill btn-outline-primary mrg2" style="width:40%;">검색</button>
                 </div>
               </div>
 </div>
 		</form>
   
  
-  <table class="table table-bordered table-light" style="table-layout: fixed;">
+  <table class="table table-striped" style="table-layout: fixed;">
     <thead>
       <tr id="theadTR">
         <th style="width:5%">제품번호</th>
@@ -101,6 +119,77 @@ white-space: nowrap;
     </c:forEach>
     </tbody>
   </table>
+  
+  <div class="demo-inline-spacing">
+                        <!-- Basic Pagination -->
+                        <nav aria-label="Page navigation">
+                       
+                          <ul class="pagination">
+			<c:if test="${param.pageNo>1 }">
+				<c:choose>
+					<c:when
+						test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord =='' || param.sortType == '' || param.sortType==null}">
+						<li class="page-item"><a class="page-link"
+							href="${contextPath }/admin/adminStatistics/adminProductStatistics?pageNo=${param.pageNo-1}">Previous</a></li>
+					</c:when>
+					<c:otherwise>
+						<li class="page-item"><a class="page-link"
+							href="${contextPath }/admin/adminStatistics/adminProductStatistics?pageNo=${param.pageNo-1}&searchType=${param.searchType}&searchWord=${param.searchWord}&sortType=${param.sortType}">Previous</a>
+					</c:otherwise>
+				</c:choose>
+			</c:if>
+			<c:forEach var="i" begin="${pagingInfo.startNoOfCurPagingBlock}"
+				end="${pagingInfo.endNoOfCurPagingBlock }" step="1">
+				<c:choose>
+					<c:when
+						test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''|| param.sortType == '' || param.sortType==null}">
+						<c:choose>
+							<c:when test="${param.pageNo== i}">
+								<li class="page-item active"><a class="page-link"
+									href="${contextPath }/admin/adminStatistics/adminProductStatistics?pageNo=${i}">${i}</a></li>
+							</c:when>
+							<c:otherwise>
+								<li class="page-item "><a class="page-link"
+									href="${contextPath }/admin/adminStatistics/adminProductStatistics?pageNo=${i}">${i}</a></li>
+							</c:otherwise>
+						</c:choose>
+					</c:when>
+					<c:otherwise>
+						<c:choose>
+							<c:when test="${param.page== i}">
+								<li class="page-item active"><a class="page-link"
+									href="${contextPath }/admin/adminStatistics/adminProductStatistics?pageNo=${i}&searchType=${param.searchType}&searchWord=${param.searchWord}&sortType=${param.sortType}">${i}</a></li>
+							</c:when>
+							<c:otherwise>
+								<li class="page-item "><a class="page-link"
+									href="${contextPath }/admin/adminStatistics/adminProductStatistics?pageNo=${i}&searchType=${param.searchType}&searchWord=${param.searchWord}&sortType=${param.sortType}">${i}</a></li>
+							</c:otherwise>
+						</c:choose>
+					</c:otherwise>
+				</c:choose>
+
+
+			</c:forEach>
+			<c:if test="${param.pageNo < pagingInfo.totalPage }">
+				<c:choose>
+					<c:when
+						test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''|| param.sortType == '' || param.sortType==null}">
+						<li class="page-item"><a class="page-link"
+							href="${contextPath }/admin/adminStatistics/adminProductStatistics?pageNo=${param.pageNo+1}">Next</a></li>
+					</c:when>
+					<c:otherwise>
+						<li class="page-item"><a class="page-link"
+							href="${contextPath }/admin/adminStatistics/adminProductStatistics?pageNo=${param.pageNo+1}&searchType=${param.searchType}&searchWord=${param.searchWord}&sortType=${param.sortType}">Next</a></li>
+
+					</c:otherwise>
+				</c:choose>
+			</c:if>
+		
+		</ul>
+
+                        </nav>
+                        <!--/ Basic Pagination -->
+                      </div>
 </div>
 
 
