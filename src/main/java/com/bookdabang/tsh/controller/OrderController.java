@@ -17,8 +17,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bookdabang.common.domain.AddressVO;
+import com.bookdabang.common.domain.CartVO;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.ProdOrder;
+import com.bookdabang.common.domain.ProductVO;
+import com.bookdabang.cyh.service.ProductService;
+import com.bookdabang.kmj.service.UserProductService;
 import com.bookdabang.ljs.service.LoginService;
 import com.bookdabang.tsh.domain.CartSelectDTO;
 import com.bookdabang.tsh.domain.CartViewDTO;
@@ -38,28 +42,40 @@ public class OrderController {
 	private CartService cService;
 	@Inject
 	private LoginService lService;
+	@Inject
+	private UserProductService pService;
 
-//	@RequestMapping(value = "/checkOut")
-//	public String checkout(HttpSession ses) throws Exception {
-//		System.out.println("GET방식 checkOut");
-//		CartSelectDTO dto = new CartSelectDTO();
-//		MemberVO loginMember = (MemberVO) ses.getAttribute("loginMember");
-//		String userId = null;
-//		String ipaddr = null;
-//		if (loginMember != null) {
-//			userId = loginMember.getUserId();
-//		} else {
-//			ipaddr = "211.197.18.247";
+	@RequestMapping(value = "/checkOut")
+	public String checkout(HttpSession ses, Model model) throws Exception {
+		System.out.println("GET방식 checkOut");
+		CartSelectDTO dto = new CartSelectDTO();
+		MemberVO loginMember = lService.findLoginSess((String) ses.getAttribute("sessionId"));
+		String userId = null;
+		String ipaddr = null;
+		if (loginMember != null) {
+			userId = loginMember.getUserId();
+		} else {
+			ipaddr = (String) ses.getAttribute("ipAddr");
+		}
+		dto.setUserId(userId);
+		dto.setIpaddr(ipaddr);
+		int cntCart = cService.countCart(dto);
+		System.out.println(cntCart);
+		if(cntCart < 1) {
+			return "redirect:/?cart=null";
+		}
+		List<Integer> cartNo = cService.allCartNo(dto);
+//		List<CartVO> cartLst = cService.selectCartByNo(cartNo);
+//		List<CartViewDTO> cartView = new ArrayList<CartViewDTO>();
+//		for (CartVO cart : cartLst) {
+//			ProductVO product = pService.readProduct(cart.getProductNo());
+//			CartViewDTO cv = new CartViewDTO(product.getProduct_no(), cart.getCartNo(), product.getTitle(),
+//					product.getCover(), product.getSell_price(), cart.getProductQtt(), product.getStock());
+//			cartView.add(cv);
 //		}
-//		dto.setUserId(userId);
-//		dto.setIpaddr(ipaddr);
-//		int cntCart = cService.countCart(dto);
-//		System.out.println(cntCart);
-//		if(cntCart < 1) {
-//			return "redirect:/?cart=null";
-//		}
-//		return "/order/checkOut";
-//	}
+		model.addAttribute("cartLst", cartNo);
+		return "/order/checkOut";
+	}
 	
 	@RequestMapping(value = "/checkOut", method = RequestMethod.POST)
 	public void postCheckout(@ModelAttribute ArrayList<CartViewDTO> dto,HttpServletRequest req, HttpSession ses,Model model) throws Exception{

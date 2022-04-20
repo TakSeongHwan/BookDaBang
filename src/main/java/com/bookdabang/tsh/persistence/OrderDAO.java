@@ -23,4 +23,6 @@ public interface OrderDAO {
 	public List<ProdOrder> orderView(SearchCriteria sc, PagingInfo pi) throws Exception;
 
 	public int updateOrderState(int orderState, int orderNo) throws Exception;
+
+	public int getNextOrderNo() throws Exception;
 }
