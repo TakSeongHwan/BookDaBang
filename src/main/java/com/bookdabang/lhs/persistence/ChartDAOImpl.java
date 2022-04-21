@@ -16,6 +16,7 @@ import com.bookdabang.common.domain.VisitorIPCheck;
 import com.bookdabang.lhs.domain.AdminPagingInfo;
 import com.bookdabang.lhs.domain.AdminProduct;
 import com.bookdabang.lhs.domain.CategoryTotalSales;
+import com.bookdabang.lhs.domain.RecentBestSeller;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 
 @Repository
@@ -100,6 +101,24 @@ public class ChartDAOImpl implements ChartDAO {
 	public List<CategoryTotalSales> getCategoryTotalSales() throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectList(ns+".getCategoryTotalSales");
+	}
+
+	@Override
+	public List<RecentBestSeller> getRecentBestSellerInSalesData() throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns+".getRecentBestSellerInSalesData");
+	}
+
+	@Override
+	public List<VisitorCountWithDateFormat> getWeekVisitor() throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns+".getWeekVisitor");
+	}
+
+	@Override
+	public List<ProductVO> getLessStock() throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns+".getLessStock");
 	}
 	
 	

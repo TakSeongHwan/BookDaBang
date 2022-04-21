@@ -3,11 +3,13 @@ package com.bookdabang.lhs.service;
 import java.util.List;
 import java.util.Map;
 
+import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.common.domain.BoardSearch;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.common.domain.VisitorIPCheck;
 import com.bookdabang.lhs.domain.AdminProduct;
 import com.bookdabang.lhs.domain.CategoryTotalSales;
+import com.bookdabang.lhs.domain.RecentBestSeller;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 
 public interface ChartService {
@@ -27,5 +29,12 @@ public interface ChartService {
 	public Map<String,Object> getAdminProduct(int pageNo, BoardSearch bs, String sortType) throws Exception;
 
 	public List<CategoryTotalSales> getCategoryTotalSales() throws Exception;
+
+	public List<RecentBestSeller> getRecentBestSellerInSalesData() throws Exception;
+
+	public List<VisitorCountWithDateFormat> getWeekVisitor() throws Exception;
+
+	public List<ProductVO> getLessStock() throws Exception;
+
 
 }

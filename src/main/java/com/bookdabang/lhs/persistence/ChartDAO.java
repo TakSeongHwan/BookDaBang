@@ -9,6 +9,7 @@ import com.bookdabang.common.domain.VisitorIPCheck;
 import com.bookdabang.lhs.domain.AdminPagingInfo;
 import com.bookdabang.lhs.domain.AdminProduct;
 import com.bookdabang.lhs.domain.CategoryTotalSales;
+import com.bookdabang.lhs.domain.RecentBestSeller;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 
 public interface ChartDAO {
@@ -34,5 +35,11 @@ public interface ChartDAO {
 	public int getSearchResultCnt(BoardSearch bs) throws Exception;
 
 	public List<CategoryTotalSales> getCategoryTotalSales() throws Exception;
+
+	public List<RecentBestSeller> getRecentBestSellerInSalesData() throws Exception;
+
+	public List<VisitorCountWithDateFormat> getWeekVisitor() throws Exception;
+
+	public List<ProductVO> getLessStock() throws Exception;
 
 }

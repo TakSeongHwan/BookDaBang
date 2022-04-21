@@ -62,4 +62,15 @@ public class AdminController {
 		}
 		
 	}
+	@RequestMapping("adminStatistics/visitorChartDetail")
+	public void visitorChartDetail() {
+		System.out.println("방문자 수 상세조회 페이지");
+	}
+	@RequestMapping("adminStatistics/salesDataDetail")
+	public void salesDataDetail() {
+		System.out.println("판매량 상세조회 페이지");
+	}
+	
+
+	
 }

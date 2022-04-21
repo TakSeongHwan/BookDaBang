@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookdabang.common.domain.VisitorIPCheck;
 import com.bookdabang.lhs.domain.CategoryTotalSales;
+import com.bookdabang.lhs.domain.RecentBestSeller;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 import com.bookdabang.lhs.service.ChartService;
 
@@ -121,4 +122,38 @@ public class ChartController {
 		
 	}
 	
+	@RequestMapping("getRecentBestSellerInSalesData")
+	public ResponseEntity<Map<String,Object>> getRecentBestSellerInSalesData() {
+		
+		ResponseEntity<Map<String,Object>> result = null;
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			List<RecentBestSeller> list = service.getRecentBestSellerInSalesData();
+			map.put("recentBestSeller", list);
+			result = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
+		} catch (Exception e) {
+			result = new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+			e.printStackTrace();
+		}
+		return result;
+		
+	}
+	@RequestMapping("getWeekVisitor")
+	public ResponseEntity<Map<String,Object>> getWeekVisitor(){
+		ResponseEntity<Map<String,Object>> result = null;
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			List<VisitorCountWithDateFormat> list = service.getWeekVisitor();
+			map.put("weekVisitor", list);
+			result = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
+		} catch (Exception e) {
+			result = new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+			e.printStackTrace();
+		}
+		
+		
+		return result;
+		
+		
+	}
 }

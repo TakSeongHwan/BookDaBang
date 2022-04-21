@@ -13,7 +13,7 @@
  select * from product ORDER BY RAND() limit 10
  </select>
  <select id="getVisitorInfo" resultType="VisitorCountWithDateFormat">
-select DATE_FORMAT(accessdate,'%m') as monthSort ,count(ipaddr)as visitor from visitor_ipcheck group by monthSort order by accessdate asc
+select DATE_FORMAT(accessdate,'%m') as dateSort ,count(ipaddr)as visitor from visitor_ipcheck group by dateSort order by accessdate asc
  </select>
  <insert id="autoInsertVisitor">
  insert into visitor_ipcheck values(#{ipaddr},#{accessdate})
@@ -120,5 +120,18 @@ LEFT OUTER JOIN review as r on p.product_no = r.productNo
  	 	select c.category_name, sum(p.sales_count)as totalSales from product as p, category as c where p.category_code = c.category_code group by c.category_name
  	 	order by totalSales desc
  	 	</select>
- 	
+ 	 	<select id="getRecentBestSellerInSalesData" resultType="RecentBestSeller">
+ 	 	select p.title, p.cover, sum(s.productqtt) as totalSalesCount, c.category_name from product as p join category as c on p.category_code = c.category_code
+		JOIN sales as s on p.product_no = s.product_no
+		group by p.product_no order by totalSalesCount desc
+ 	 	</select>
+ 	<select id="getWeekVisitor" resultType="VisitorCountWithDateFormat">
+ 	select DATE_FORMAT(accessdate,'%m-%d') as dateSort ,count(ipaddr)as visitor 
+ 	from visitor_ipcheck where DATE_FORMAT(accessdate,'%m-%d') 
+ 	between (select DATE_FORMAT(now()- interval 6 day,'%m-%d')) and DATE_FORMAT(now(),'%m-%d') 
+ 	group by dateSort order by dateSort asc
+ 	</select>
+ 	<select id="getLessStock" resultType="com.bookdabang.common.domain.ProductVO">
+ 	select * from product where stock &lt; 5
+ 	</select>
  </mapper>
