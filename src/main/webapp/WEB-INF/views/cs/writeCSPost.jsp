@@ -34,14 +34,9 @@ function savePost(){
 }
 
 function delFile(obj) {
-	console.log("지우기 되나요")
 	
 	let targetFile = ($(obj).parent().attr("id")); // 여기서 undifined 뜸.
-	
-	console.log(obj);
-	console.log(targetFile);
-	
-	
+
 	let url = "${ contextPath}/cs/delFile";
 
 	$.ajax({
@@ -55,7 +50,15 @@ function delFile(obj) {
 			console.log(data);
 			
 			if (data == "success") {
-				$(".fDropList").empty();
+				console.log(targetFile)
+				$(obj).remove();
+				$('a[href *="' + targetFile + '"]').remove();
+				
+				
+				
+				
+				
+				//$(".fDropList").empty();
 			}
 
 		}
@@ -101,23 +104,22 @@ $(function(){
 				console.log(data);
 				
 				let output="";
-				if (data.thumbnailFileName != null){
+				if (data.thumbnailFile != null){
 					  // 이미지 파일일 경우
                    	  
-					  output += "<img src='${ contextPath}/resources/cs_uploads" + data.thumbnailFileName + "' />";
-					  output += "<span id='" + data.thumbnailFileName + "'>";
+					  output += "<img src='${ contextPath}/resources/cs_uploads" + data.thumbnailFile + "' />";
+					  output += "<span id='" + data.thumbnailFile + "'>";
                    
-				} else if (data.notImageFileName != null) {
+				} else if (data.notImageFile != null) {
 					// 이미지 파일 아닐 경우
 					
 					
-                   let fn = data.notImageFileName.substring(data.notImageFileName.lastIndexOf("/")+1);
+                   let fn = data.notImageFile.substring(data.notImageFile.lastIndexOf("/")+1);
                    
-                   output += "<a href='${ contextPath}/resources/cs_uploads" + data.notImageFileName + "'>"+ fn + "</a>";
-                   output += "<span id='" + data.notImageFileName + "'>";
+                   output += "<a href='${ contextPath}/resources/cs_uploads" + data.notImageFile + "'>"+ fn + "</a>";
+                   output += "<span id='" + data.notImageFile + "'>";
                    
 				}
-				
 				
 				output += "<img src = '${ contextPath}/resources/img/board/close.png' onclick='delFile(this);'/></span>"
 					
@@ -171,7 +173,7 @@ $(function(){
 	<div class="container">
 		<div class="comment-form">
 			<h4 style="text-align: center;">고객센터 글 등록</h4>
-			<form method="post" action="${ contextPath}/cs/write.do" name="csWriteForm" >
+			<form method="post" action="/cs/writeon" name="csWriteForm" >
 				<div class="mb-3 mt-3">
 					<div class = "nice-select" tabindex="0" style = 'width : 250px; height :38px; margin-right : 25px;'>
 						<span class="current" >말머리 선택 </span>

@@ -70,16 +70,16 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 			// response.sendRedirect("/"); // index.jsp로 리다이렉트
 			String prePage = (String) ses.getAttribute("prePage");
 			System.out.println("로그인 이전 경로 : " + prePage);
-			ses.setMaxInactiveInterval(3600);
+			ses.setMaxInactiveInterval(-1);
 			
 	
 			if (prePage != null) {
 				System.out.println("이전 페이지");
-				//response.sendRedirect(prePage);
+				response.sendRedirect(prePage);
 				
 			} else {
 				System.out.println("홈으로");
-				//response.sendRedirect("/ljs/");
+				response.sendRedirect("/");
 				
 			}
 

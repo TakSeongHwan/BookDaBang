@@ -193,6 +193,16 @@
 	<insert id="insertReadCount">
 		insert into pageview(ip_address, freeboardNo)values(#{ip_address},#{freeboardNo})
 	</insert>
+	
+	<!-- 마이페이지 -->
+	<select id = "showMylike" resultType = "FreeBoard">
+	select f.boardno, f.title, f.content, f.writer, f.date, f.readcount from recommend r join freeboard f on (r.freeboardNo = f.boardno) where r.userid  = #{userId} and deleteyn = 'Y';
+	</select>
+	
+	<select id = "showPostFree" resultType ="FreeBoard">
+	select * from freeboard where deleteyn = 'y' and writer = #{writer} order by date desc
+	</select>
+	
 </mapper>
 	
 

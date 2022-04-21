@@ -236,7 +236,10 @@
 		update product_qna set answer_status = 'answer' where question_no = #{question_no}
 	</update>
 	
-	
+	<!-- 마이페이지 QnA -->
+	<select id="showMyQnA" resultType = "ProductQnA">
+		select * from product_qna where writer = #{writer}
+	</select>
 	
 	
 	<!-- 강명진 -->

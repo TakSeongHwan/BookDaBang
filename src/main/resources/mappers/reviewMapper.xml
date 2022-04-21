@@ -46,8 +46,14 @@
 		 where reviewNo = #{reviewNo}
 	</update>
 	
-	<insert id="insertReview">
+	<insert id="insertReview"> 
 		 insert into review(title,writer,content,grade,productNo)
 		 values (#{title},#{writer},#{content},#{grade},#{productNo})
 	</insert>
+	
+	<!-- 마이페이지 내 리뷰-->
+	<select id = "showMyReview" resultType = "ReviewVO" >
+	select * from review where writer = #{writer};
+	</select>
+	
 </mapper>
