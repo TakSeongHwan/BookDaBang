@@ -30,13 +30,11 @@
 <script>
 
 $(function() {
+	console.log("${sessionId}");
+	console.log("${ipAddr}");
     $.ajax({
         url :"/userCart/loginCart",
         type: "post",
-        data: {
-            userId : "${loginMember.userId}",
-            ipaddr : "211.197.18.247"
-        },
         success: function(data){
             console.log(data);
         }
@@ -68,7 +66,19 @@ function loginOrNot() {
 		
 	 }
 }
-
+function refund() {
+	let userRefund = "${ sessionId}";
+	
+	if (userRefund != '') {
+		// 로그인 했을 때
+		console.log("로그인 했슈")
+		location.href='${contextPath }/userRefundBoard/board/?sessionId=' + userRefund;
+	} else {
+		alert("로그인이 되지 않았습니다.")
+		location.href='${contextPath }/login.html';
+		
+	 }
+}
 </script>
 <body>
    <!--================ Start Header Menu Area =================-->
@@ -123,7 +133,9 @@ function loginOrNot() {
                    <ul class="dropdown-menu">
                   		<li class="nav-item"><a class="nav-link" href="${contextPath }/notice/listAll">공지사항</a></li>
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">자유게시판</a></li>
-                        <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">이벤트게시판</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath}/event/allEventList">이벤트게시판</a></li>
+                        <li class="nav-item"><a class="nav-link" href="${contextPath}/event/allBestList">베스트 게시글</a></li>
+                        <li class="nav-item"><a class="nav-link" onclick="refund();">환불/교환</a></li>
                         <li class="nav-item"><a class="nav-link" href="${contextPath }/cs/">고객센터</a></li>
                         
                         <!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->

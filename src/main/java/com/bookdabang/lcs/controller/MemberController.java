@@ -33,8 +33,6 @@ import org.json.simple.JSONObject;
 @Controller
 @RequestMapping("/member/*")
 public class MemberController {
-	
-	
 
 	@Inject
 	private MemberService service;

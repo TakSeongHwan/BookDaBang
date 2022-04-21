@@ -123,7 +123,13 @@
 
 		$.each(data.ManageOrder, function(i, e) {
 			output += '<tr><td>' + e.orderNo + '</td>';
-			output += '<td>' + e.userId + '</td>';
+			output += '<td>'; 
+			if(e.userId==null){
+				output += '비회원'
+			}else{
+				output += e.userId;
+			}
+			output += '</td>';
 			output += '<td>' + e.productNo + '</td>';
 			output += '<td><img src ="' + e.cover + '" width="50" /></td>';
 			output += '<td>' + e.title + '</td>';

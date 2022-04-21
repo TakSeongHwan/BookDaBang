@@ -70,6 +70,11 @@ public class OrderDAOImpl implements OrderDAO {
 		int result = ses.update(ns+".updateOrderState", param);
 		return result;
 	}
+
+	@Override
+	public int getNextOrderNo() throws Exception {
+		return ses.selectOne(ns+".getNextOrderNo");
+	}
 	
 	
 	
