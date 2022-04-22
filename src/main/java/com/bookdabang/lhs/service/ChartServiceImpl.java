@@ -1,6 +1,7 @@
 package com.bookdabang.lhs.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,8 @@ import com.bookdabang.lhs.domain.AdminPagingInfo;
 import com.bookdabang.lhs.domain.AdminProduct;
 import com.bookdabang.lhs.domain.CategoryTotalSales;
 import com.bookdabang.lhs.domain.RecentBestSeller;
+import com.bookdabang.lhs.domain.SalesChartDetail;
+import com.bookdabang.lhs.domain.SalesDataDetail;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 import com.bookdabang.lhs.persistence.ChartDAO;
 
@@ -141,6 +144,54 @@ public class ChartServiceImpl implements ChartService {
 	public List<ProductVO> getLessStock() throws Exception {
 		// TODO Auto-generated method stub
 		return chartDAO.getLessStock();
+	}
+
+	@Override
+	public Map<String,Object> getDetailChart(SalesChartDetail scd) throws Exception {
+		
+		System.out.println("?");
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		Map<String,Object> dtoMap = new HashMap<String, Object>();
+	
+		if(scd.getSearchType().equals("age")) {
+			Map<String,Integer> ageMap = new HashMap<String, Integer>();
+			ageMap.put("ten", 10);
+			ageMap.put("twent", 20);
+			ageMap.put("thirt",30);
+			ageMap.put("fourt",40);
+			ageMap.put("fifty",50);
+			ageMap.put("sixty",60);
+			ageMap.put("sevent",70);
+			ageMap.put("eight",80);
+			
+			dtoMap.put("SalesChartDetail", scd);
+			dtoMap.put("ageMap",ageMap);
+			Map<String,Object> result = chartDAO.getDetailChartAge(dtoMap);
+
+			map.put("result",result);
+			
+		}else if(scd.getSearchType().equals("category")) {
+			
+			map.put("result", chartDAO.getDetailChartCategory(scd));
+			
+		}else if(scd.getSearchType().equals("gender")) {
+			Map<String,String> genderMap = new HashMap<String, String>();
+			
+			genderMap.put("male", "male");
+			genderMap.put("female", "female");
+			
+			dtoMap.put("SalesChartDetail", scd);
+			dtoMap.put("genderMap",genderMap);
+			map.put("result",chartDAO.getDetailChartGender(dtoMap));
+			
+		}
+		
+	
+		
+		
+		
+		return map;
 	}
 
 }

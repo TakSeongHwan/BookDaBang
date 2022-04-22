@@ -1,6 +1,7 @@
 package com.bookdabang.lhs.persistence;
 
 import java.util.List;
+import java.util.Map;
 
 import com.bookdabang.common.domain.BoardSearch;
 
@@ -10,6 +11,8 @@ import com.bookdabang.lhs.domain.AdminPagingInfo;
 import com.bookdabang.lhs.domain.AdminProduct;
 import com.bookdabang.lhs.domain.CategoryTotalSales;
 import com.bookdabang.lhs.domain.RecentBestSeller;
+import com.bookdabang.lhs.domain.SalesChartDetail;
+import com.bookdabang.lhs.domain.SalesDataDetail;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 
 public interface ChartDAO {
@@ -41,5 +44,12 @@ public interface ChartDAO {
 	public List<VisitorCountWithDateFormat> getWeekVisitor() throws Exception;
 
 	public List<ProductVO> getLessStock() throws Exception;
+
+	public List<SalesDataDetail> getDetailChartCategory(SalesChartDetail scd) throws Exception;
+
+	public Map<String,Object> getDetailChartAge(Map<String, Object> map) throws Exception;
+
+	public Map<String, Object> getDetailChartGender(Map<String, Object> dtoMap) throws Exception;
+
 
 }

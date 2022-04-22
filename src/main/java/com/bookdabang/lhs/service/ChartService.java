@@ -10,6 +10,8 @@ import com.bookdabang.common.domain.VisitorIPCheck;
 import com.bookdabang.lhs.domain.AdminProduct;
 import com.bookdabang.lhs.domain.CategoryTotalSales;
 import com.bookdabang.lhs.domain.RecentBestSeller;
+import com.bookdabang.lhs.domain.SalesChartDetail;
+import com.bookdabang.lhs.domain.SalesDataDetail;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 
 public interface ChartService {
@@ -35,6 +37,8 @@ public interface ChartService {
 	public List<VisitorCountWithDateFormat> getWeekVisitor() throws Exception;
 
 	public List<ProductVO> getLessStock() throws Exception;
+
+	public Map<String,Object> getDetailChart(SalesChartDetail scd) throws Exception;
 
 
 }
