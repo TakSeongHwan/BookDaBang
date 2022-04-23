@@ -7,7 +7,7 @@
 
 	<select id="listAllFreeBoard" resultType="FreeBoard">
 		select * from freeboard
-		where deleteyn = 'y' order by date desc limit #{startNum},
+		where deleteyn = 'y' order by boardno desc limit #{startNum},
 		#{postPerPage}
 	</select>
 
@@ -23,12 +23,13 @@
 
 	<select id="listAllReportBoard" resultType="ReportBoard">
 		select * from
-		reportboard order by reportno desc
+		reportboard order by reportno desc limit #{startNum},
+		#{postPerPage}
 	</select>
 
 	<update id="insertReportBoard">
-		insert into reportboard(boardno, reportuser, why,
-		reportstatus) values(#{boardno},#{reportuser},#{why},#{reportstatus})
+		insert into reportboard(boardno, reportuser, why)
+		values(#{boardno},#{reportuser},#{why})
 	</update>
 
 	<insert id="insertFreeBoard">
@@ -53,7 +54,8 @@
 
 	<select id="removeAllFreeBoard" resultType="FreeBoard">
 		select * from
-		freeboard where deleteyn="N";
+		freeboard where deleteyn="N" order by boardno desc limit
+		#{startNum},#{postPerPage}
 	</select>
 
 
@@ -120,6 +122,11 @@
 		values(#{boardno},#{commentwriter},#{commentcontent});
 	</insert>
 
+	<update id="updateFreeboard">
+		update freeboard set title=#{title},
+		content=#{content}, modifydate=now() where boardno=#{boardno}
+	</update>
+
 	<select id="readComment" resultType="FreeBoardComment">
 		select * from
 		freeboardcomment where boardno = #{boardno}
@@ -140,35 +147,87 @@
 		reportboard where reportno=#{reportno}
 	</select>
 
-<select id="getSearchResultList" resultType="FreeBoard">
-		select * from freeboard where 1=1
-		<if test="searchtype=='title'">
-			and title like CONCAT('%', #{searchword}, '%')
+	<select id="getSearchResultList" resultType="FreeBoard">
+		select * from freeboard where deleteyn = 'y'
+		<if test="searchType=='title'">
+			and title like concat('%', #{searchWord}, '%')
 		</if>
-		<if test="searchtype=='writer'">
-			 and writer like CONCAT('%', #{searchword},'%')
+		<if test="searchType=='writer'">
+			and writer like concat('%', #{searchWord},'%')
 		</if>
-		<if test="searchtype=='content'">
-			 and content like CONCAT('%', #{searchword}, '%')
+		<if test="searchType=='content'">
+			and content like concat('%', #{searchWord}, '%')
 		</if>
-		
+		order by boardno desc limit #{startNum},#{postPerPage}
 	</select>
 
 
 	<select id="getSearchResultCnt" resultType="int">
-		select count(*) from freeboard where 1=1
-		<if test="searchtype=='title'">
-			 and title like CONCAT('%', #{searchword}, '%')
+		select count(*) from freeboard where deleteyn = 'y'
+		<if test="searchType=='title'">
+			and title like concat('%', #{searchWord}, '%')
 		</if>
-		<if test="searchtype=='writer'">
-			 and writer like CONCAT('%', #{searchword}, '%')
+		<if test="searchType=='writer'">
+			and writer like concat('%', #{searchWord}, '%')
 		</if>
-		<if test="searchtype=='content'">
-			and content like CONCAT('%', #{searchword}, '%')
+		<if test="searchType=='content'">
+			and content like concat('%', #{searchWord}, '%')
 		</if>
-		
+
 	</select>
 
+	<select id="getSearchReportResultList" resultType="ReportBoard">
+		select * from reportboard where
+		<if test="status=='처리중'">
+			reportstatus ='처리중'
+		</if>
+		<if test="status=='처리완료'">
+			reportstatus ='처리완료'
+		</if>
+		order by reportno desc limit #{startNum},#{postPerPage}
+	</select>
+
+
+	<select id="getSearchResultCntReport" resultType="int">
+		select count(*) from reportboard where
+		<if test="status=='처리중'">
+			reportstatus ='처리중'
+		</if>
+		<if test="status=='처리완료'">
+			reportstatus ='처리완료'
+		</if>
+
+	</select>
+
+
+	<select id="getListAllRemoveBoards" resultType="FreeBoard">
+		select * from freeboard where deleteyn = 'n'
+		<if test="searchType=='title'">
+			and title like concat('%', #{searchWord}, '%')
+		</if>
+		<if test="searchType=='writer'">
+			and writer like concat('%', #{searchWord},'%')
+		</if>
+		<if test="searchType=='content'">
+			and content like concat('%', #{searchWord}, '%')
+		</if>
+		order by boardno desc limit #{startNum},#{postPerPage}
+	</select>
+
+
+	<select id="getSearchResultCntRemove" resultType="int">
+		select count(*) from freeboard where deleteyn = 'n'
+		<if test="searchType=='title'">
+			and title like concat('%', #{searchWord}, '%')
+		</if>
+		<if test="searchType=='writer'">
+			and writer like concat('%', #{searchWord}, '%')
+		</if>
+		<if test="searchType=='content'">
+			and content like concat('%', #{searchWord}, '%')
+		</if>
+
+	</select>
 
 
 	<select id="totalPost" resultType="int">
@@ -177,22 +236,63 @@
 
 	</select>
 
+	<select id="removeTotalPost" resultType="int">
+		select count(*) as
+		totalCnt
+		from freeboard where deleteyn='N'
+
+	</select>
+
+	<select id="reportTotalPost" resultType="int">
+		select count(*) as
+		totalCnt
+		from reportboard
+
+	</select>
 
 	<select id="getReadCount" resultType="PageView">
-		select * from pageview where ip_address=#{ip_address} and freeboardNo=#{freeboardNo}
+		select * from pageview
+		where ip_address=#{ip_address} and freeboardNo=#{freeboardNo}
 	</select>
-	
+
 	<update id="updateReadCount">
-		update freeboard set readcount=  readcount+1 where boardno=#{boardno};
+		update freeboard set readcount= readcount+1 where
+		boardno=#{boardno};
 	</update>
-	
+
 	<update id="updateReadCountProcess">
-		update pageview set accessDate=#{accessDate} where ip_address=#{ip_address} and freeboardNo=#{freeboardNo}
+		update pageview set accessDate=#{accessDate} where
+		ip_address=#{ip_address} and freeboardNo=#{freeboardNo}
 	</update>
-	
+
 	<insert id="insertReadCount">
-		insert into pageview(ip_address, freeboardNo)values(#{ip_address},#{freeboardNo})
+		insert into pageview(ip_address,
+		freeboardNo)values(#{ip_address},#{freeboardNo})
 	</insert>
+
+	<update id="reportfreeBoard">
+		update freeboard set content='신고처리가 된 글입니다' where
+		boardno=#{boardno}
+	</update>
+
+	<update id="reportStatus">
+		update reportboard set reportstatus="처리완료" where
+		reportno=#{reportno}
+	</update>
+
+	<select id="userId" resultType="MemberVO">
+		select userId from member where
+		sessionId = #{sessionId}
+	</select>
+
+	<delete id="adminRemove">
+		delete from freeboard where boardno = #{boardno};
+	</delete>
+
+	<delete id="admindelAttach">
+		delete from attachfile where freeboardNo = #{freeboardNo};
+	</delete>
+
 </mapper>
 	
 

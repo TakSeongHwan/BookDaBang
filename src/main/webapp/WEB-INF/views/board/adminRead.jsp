@@ -5,17 +5,32 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<title>Insert title here</title>
 <script src="/resources/js/myLib.js"></script>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
 <script>
-	function restore(boardno) {
-		//console.log(boardno);
-		if(confirm(boardno + '번글을 복구하시겠습니까?') == true){
-		
-		let url = "/board/restoreBoard?boardno="+ boardno;
-		
+let boardno = '${freeBoard.boardno}';
+
+
+$(function() {
+   let notImgFiles = document.getElementsByClassName("notImgFile");
+   
+   $(".notImgFile").each(
+         function(i, tag) {
+            let tmpFileName = $(tag).attr("href");
+            // console.log(tmpFileName);
+            let fileName = tmpFileName.substring(tmpFileName
+                  .lastIndexOf("/") + 1);
+            $(tag).text(fileName);
+         });
+}); 
+
+function adminRemove() {
+	
+	 let url = "/board/adminRemove?boardno="+ boardno;
+	
+	 if(confirm(boardno + "번글을 삭제하시겠습니까?") == true){
 		$.ajax({
 			url : url,
 			dataType : "text", // 수신될 데이터 타입
@@ -23,33 +38,28 @@
 			success : function(data) {
 				console.log(data)
 				if(data == "success"){
-					alert("게시물이 복구되었습니다");
-					
-					
-					
-					location.href='/board/removeAllfreeBoard';
+					alert("게시물이 삭제되었습니다");
+					location.href="/board/adminFreeBoard";
 				}else if(data == "fail") { 
 					alert("실패");
 				}
 			}
 		});
 		}
-		
-		
-		
-	}
-</script>
-<style type="text/css">
-.container{
-margin-top: 40px;
 }
 
-</style>
-<title>Insert title here</title>
+</script>
+
+
 </head>
+<style>
+.container {
+	margin-top: 40px;
+}
+</style>
+
 <body>
 	<jsp:include page="../managerHeader.jsp"></jsp:include>
-
 	<div class="container">
 		<div class="comment-form">
 			<div class="mb-3 mt-3">
@@ -76,22 +86,30 @@ margin-top: 40px;
 						</div>
 
 					</div>
+
+
+					<c:if test="${fileLst != null}">
+						<div class="mb-3" style="float: left; margin-top: 20px;">
+							파일 :
+							<c:forEach var="file" items="${fileLst }">
+								<c:if test="${file.thumbnailFile != null }">
+									<img src="/resources/boardUploads${file.thumbnailFile }" />
+								</c:if>
+								<c:if test="${file.notImageFile != null}">
+
+									<a href="/resources/boardUploads${file.notImageFile }"
+										class="notImgFile"></a>
+								</c:if>
+							</c:forEach>
+						</div>
+					</c:if>
 				</div>
 			</div>
 		</div>
-		<div>
-			<button type="button" class="btn btn-primary active"
-				style="float: right; margin-left: 20px;" onclick="history.back();">목록보기
-			</button>
-			<button type="button" class="btn btn-primary active"
-				style="float: right;" onclick="restore(${freeBoard.boardno});">게시글
-				복원</button>
-
-		</div>
+	
+	<button type="button" class="btn btn-outline-primary" style="float: right; margin-left: 10px;" onclick="history.back();">목록</button>
+	<button type="button" class="btn btn-outline-danger" style="float: right;" onclick="adminRemove();">삭제하기</button>
 	</div>
-
-
-
 	<jsp:include page="../managerFooter.jsp"></jsp:include>
 </body>
 </html>
