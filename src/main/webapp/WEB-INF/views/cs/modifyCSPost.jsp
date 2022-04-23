@@ -70,6 +70,8 @@ function ifchange() {
 
 $(function(){
 	
+	console.log($("#content").val());
+	
 	$(".current").on("change", function() {
 		alert("!")
 	});
@@ -170,7 +172,8 @@ $(function(){
 
 	<div class="container">
 		<div class="comment-form">
-			<h4 style="text-align: center;">고객센터 글 등록</h4>
+			   
+   <h4>${csBoard.postNo}</h4>
 			<form method="post" action="${ contextPath}/cs/write.do" name="csWriteForm" >
 				<div class="mb-3 mt-3">
 					<div class = "nice-select" tabindex="0" style = 'width : 250px; height :38px; margin-right : 25px;'>
@@ -184,32 +187,47 @@ $(function(){
 							<input type ="hidden" id ="categoryCode" name ="categoryCode" value =""  /> 
 						</div>
 					<div style = 'margin-left : 20px;'>
-					 <label for="title" class="form-label"></label><input
+					 <label for="title" class="form-label"></label>
+					 <input
 						type="text" class="form-control" id="title"
-						placeholder="제목을 입력하세요" name="title" style = 'width : 65%'>
+						name="title" style = 'width : 65%' value='${csBoard.title}'  >
 						</div>
 					</div>
 				<div class="mb-3" style="display:flex; justify-content:center;">
-				
 					<label for="writer" class="form-label"> 작성자 : </label> <input
 						type="text" class="form-control" style = 'width : 45%; margin-left : 20px;' value =  " ${loginMember.nickName }" readonly />
 						<input type="hidden" id="writer" name="writer" value = "${ loginMember.userId}" />			
 				</div>
 			
 				<label for="content" class="form-label">내 용 :</label>
-				<textarea class="form-control" rows="10" id="content" name="contents"></textarea>
+				<textarea class="form-control" rows="10" id="content" name="contents" >${csBoard.contents}</textarea>
 				<div class="mb-3">
 					<button type="button" class="btn btn-default" onclick="openArea();">파일
 						업로드</button>
 					<div class="fileDrop">
 						<div class="fileContent">이 영역에 업로드 할 파일을 드래그 드롭 해 주세요!</div>
+						<div class="fDropList">
+		   	<c:if test="${attachLst != null}">
+				<div class="mb-3" style="float: left; margin-top: 20px;">
+					<c:forEach var="file" items="${attachLst }">
+						<c:if test="${file.thumbnailFile != null }">
+							<img src="/resources/cs_uploads${file.thumbnailFile }" />
+						</c:if>
+						<c:if test="${file.notImageFile != null}">
+						<a href="/resources/cs_uploads${file.notImageFile }"
+							class="notImgFile"></a>
+			</c:if>
+					</c:forEach>
+				</div>
+			</c:if>
+						</div>
 					</div>
-					<div class="fDropList"></div>
+					
 				</div>
 
 				<div class="btns">
 					<button class="button button-postComment button--active"
-						type="button" onclick="savePost();">저장</button>; 
+						type="button" onclick="savePost();">저장</button>
 					<button class="button button-postComment button--active"
 						id="cancel" onclick="cancelWriteCS();">취소</button>
 				</div>

@@ -16,6 +16,27 @@ margin-bottom: 20px;
 }
 
 </style>
+<script>
+
+function movePage(no) {
+	
+	let pno = no
+	
+	if ("${ sessionId}" != null ) {
+		
+		location.href="${ contextPath}/cs/readPost?no=" + no + "&u=${ sessionId}";
+		
+	} else {
+		
+		location.href="${ contextPath}/cs/readPost?no=" + no;
+		
+	}
+	
+	
+	
+}
+
+</script>
 </head>
 <body>
 <jsp:include page="../userHeader.jsp"></jsp:include>
@@ -33,7 +54,7 @@ margin-bottom: 20px;
     </thead>
     <tbody>
     <c:forEach var="csBoard" items="${boardList }">
-      <tr id="${csBoard.postNo}" onclick='location.href="${ contextPath}/cs/readPost?no=${csBoard.postNo}"'>
+      <tr id="${csBoard.postNo}" onclick='movePage(${csBoard.postNo});'>
         <td>${csBoard.postNo}</td>
         <td>${csBoard.categoryCode}</td>
         <td>${csBoard.title}</td>

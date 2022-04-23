@@ -148,7 +148,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 		int attachFile = dao.readFileNo() + 1; // 파일번호
 
 		for (BoardUploadFile file : uploadLst) {
-			dao.insertAttachFile(new AttachFileVO(attachFile, 0, ref, 0, 0, file.getOriginalFileName(),
+			dao.insertAttachFile(new AttachFileVO(attachFile, 0, ref, 0, 0, 0, file.getOriginalFileName(),
 					file.getThumbnailFileName(), file.getNotImageFileName()));
 
 		}

@@ -53,8 +53,6 @@ public interface ProductDAO {
 	
 	
 	
-	
-	
 	// 강명진
 	
 	// 전체 상품 가져오는 메서드 (카테고리,정렬,검색어 포함)
@@ -74,8 +72,6 @@ public interface ProductDAO {
 	
 	// Top 상품 가져오는 메서드
 	public List<ProductVO> selectTopProducts (String searchWord) throws Exception;
-	
-
 	
 	
 }

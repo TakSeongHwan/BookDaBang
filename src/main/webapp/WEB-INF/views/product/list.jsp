@@ -11,6 +11,42 @@
 	let cno = 0;
 	let sort = 0;
 	
+	function insertCart(no){
+		let url = "${contextPath}/userCart/addCart"
+		$.ajax({
+			url : url,
+			type : "post",
+			data : {
+				productNo : no,
+				productQtt : 1
+			},
+			success : function(data) {
+				console.log(data);
+			},
+			error : function(data){
+				console.log(data);
+			}
+		});
+	}
+	function goOrder(no){
+		let url = "${contextPath}/userCart/addCart"
+		$.ajax({
+			url : url,
+			type : "post",
+			data : {
+				productNo : no,
+				productQtt : 1
+			},
+			success : function(data) {
+				console.log(data);
+			},
+			error : function(data){
+				console.log(data);
+			}
+		});
+		location.href = "${contextPath}/order/checkOut"
+	}
+	
 	$(function() {
 		priceReplace();
 		
@@ -328,14 +364,10 @@
 														</a>
 													</li>
 													<li>
-														<a href="">
-															<button><i class="ti-shopping-cart"></i></button>
-														</a>
+														<button onclick="insertCart(${product.product_no})"><i class="ti-shopping-cart"></i></button>
 													</li>
 													<li>
-														<a href="">
-															<button><i class="ti-money"></i></button>
-														</a>
+														<button onclick="goOrder(${product.product_no})"><i class="ti-money"></i></button>
 													</li>
 												</ul>
 											</div>
