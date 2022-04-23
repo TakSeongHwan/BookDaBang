@@ -11,6 +11,15 @@ public class AttachFileVO {
 	private String notImageFile;
 
 	public AttachFileVO() {}
+	
+	public AttachFileVO(int reviewNo,int productNo, String originFile, String thumbnailFile, String notImageFile) {
+		super();
+		this.reviewNo = reviewNo;
+		this.productNo = productNo;
+		this.originFile = originFile;
+		this.thumbnailFile = thumbnailFile;
+		this.notImageFile = notImageFile;
+	}
 
 	public AttachFileVO(int attachFileNo, int noticeNo, int freeboardNo, int reviewNo, int productNo, String originFile,
 			String thumbnailFile, String notImageFile) {
@@ -54,7 +63,6 @@ public class AttachFileVO {
 	public void setProductNo(int productNo) {
 		this.productNo = productNo;
 	}
-
 
 	public String getOriginFile() {
 		return originFile;

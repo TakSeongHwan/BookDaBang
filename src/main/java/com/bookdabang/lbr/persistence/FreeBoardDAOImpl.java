@@ -14,7 +14,7 @@ import com.bookdabang.common.domain.FreeBoard;
 import com.bookdabang.common.domain.FreeBoardComment;
 import com.bookdabang.common.domain.PageView;
 import com.bookdabang.common.domain.PagingInfo;
-import com.bookdabang.common.domain.Recommend;
+import com.bookdabang.common.domain.RecommendVO;
 import com.bookdabang.common.domain.ReportBoard;
 import com.bookdabang.lbr.domain.Search;
 
@@ -122,19 +122,19 @@ public class FreeBoardDAOImpl implements FreeBoardDAO {
 	}
 
 	@Override
-	public int likeFreeBoard(Recommend recommend) throws Exception {
+	public int likeFreeBoard(RecommendVO recommend) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.insert(ns +".likeFreeBoard", recommend);
 	}
 
 	@Override
-	public int unlikeFreeBoard(Recommend recommend) throws Exception {
+	public int unlikeFreeBoard(RecommendVO recommend) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.delete(ns + ".unilkeFreeBoard",recommend);
 	}
 
 	@Override
-	public int countLikeCheck(Recommend recommend) throws Exception {
+	public int countLikeCheck(RecommendVO recommend) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectOne(ns + ".countLikeCheck", recommend);
 	}

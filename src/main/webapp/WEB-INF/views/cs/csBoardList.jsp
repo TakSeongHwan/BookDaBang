@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="contextPath" value="<%=request.getContextPath() %>"></c:set>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,17 +9,6 @@
 <title>고객센터</title>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script>
-$(function(){
-	
-});
-
-function showContent(obj){
-	let no = $(obj).attr("id");
-	location.href="/notice/viewContent?no="+no;
-}
-
-</script>
 <style>
 .container{
 margin-top:20px;
@@ -32,7 +22,7 @@ margin-bottom: 20px;
 <div class="container mt-3">
 	<h1 style="margin:20px; margin-bottom:20px;">고객센터</h1>
   <table class="table table-hover">
-    <thead style="background-color:#fafaff; color:#777">
+    <thead style="background-color:#fafaff;">
       <tr>
     		<th>No</th>
     		<th>말머리</th>
@@ -42,21 +32,19 @@ margin-bottom: 20px;
       </tr>
     </thead>
     <tbody>
-    <c:forEach var="notice" items="${notice }">
-      <tr id="${notice.no}" onclick="showContent(this);">
-       
-        <td>${notice.title}</td>
-        <td>${notice.writer}</td>
-         <td>${notice.writedDate}</td>
-        <td>${notice.viewCount}</td>
-        <td>${notice.reply}</td>
+    <c:forEach var="csBoard" items="${boardList }">
+      <tr id="${csBoard.postNo}" onclick='location.href="${ contextPath}/cs/readPost?no=${csBoard.postNo}"'>
+        <td>${csBoard.postNo}</td>
+        <td>${csBoard.categoryCode}</td>
+        <td>${csBoard.title}</td>
+        <td>${csBoard.writer}</td>
+        <td>${csBoard.postdate}</td>
       </tr>
      </c:forEach>
     </tbody>
-  </table>
-  <button class="button button-header" onclick="" style="" >글 작성</button>
-</div>
-
+  	</table>
+  	<button class="button button-header" onclick='location.href="${ contextPath}/cs/write?u=${ sessionId}"'>글쓰기</button>
+	</div>
 	<jsp:include page="../userFooter.jsp"></jsp:include>
 </body>
 </html>

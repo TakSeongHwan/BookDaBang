@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.bookdabang.common.domain.FreeBoard;
 import com.bookdabang.common.domain.FreeBoardComment;
-import com.bookdabang.common.domain.Recommend;
+import com.bookdabang.common.domain.RecommendVO;
 import com.bookdabang.common.domain.ReportBoard;
 import com.bookdabang.lbr.domain.Search;
 import com.bookdabang.lbr.etc.BoardUploadFile;
@@ -29,11 +29,11 @@ public interface FreeBoardService {
 
 	public boolean restorBoard(int no) throws Exception;
 
-	public boolean likeFreeBoard(Recommend recommend) throws Exception;
+	public boolean likeFreeBoard(RecommendVO recommend) throws Exception;
 
-	public boolean unlikeFreeBoard(Recommend recommend) throws Exception;
+	public boolean unlikeFreeBoard(RecommendVO recommend) throws Exception;
 
-	public int countLikeCheck(Recommend recommend) throws Exception;
+	public int countLikeCheck(RecommendVO recommend) throws Exception;
 	
 	public int countReportCheck(ReportBoard reportBoard) throws Exception;
 

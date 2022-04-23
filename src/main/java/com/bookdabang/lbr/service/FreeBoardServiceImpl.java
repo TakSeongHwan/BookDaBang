@@ -18,7 +18,7 @@ import com.bookdabang.common.domain.FreeBoard;
 import com.bookdabang.common.domain.FreeBoardComment;
 import com.bookdabang.common.domain.PageView;
 import com.bookdabang.common.domain.PagingInfo;
-import com.bookdabang.common.domain.Recommend;
+import com.bookdabang.common.domain.RecommendVO;
 import com.bookdabang.common.domain.ReportBoard;
 import com.bookdabang.common.etc.IPCheck;
 import com.bookdabang.lbr.domain.Search;
@@ -193,7 +193,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	}
 
 	@Override
-	public boolean likeFreeBoard(Recommend recommend) throws Exception {
+	public boolean likeFreeBoard(RecommendVO recommend) throws Exception {
 		boolean result = false;
 		int lf = dao.likeFreeBoard(recommend);
 
@@ -205,7 +205,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	}
 
 	@Override
-	public boolean unlikeFreeBoard(Recommend recommend) throws Exception {
+	public boolean unlikeFreeBoard(RecommendVO recommend) throws Exception {
 		boolean result = false;
 		int uf = dao.unlikeFreeBoard(recommend);
 
@@ -216,7 +216,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	}
 
 	@Override
-	public int countLikeCheck(Recommend recommend) throws Exception {
+	public int countLikeCheck(RecommendVO recommend) throws Exception {
 
 		return dao.countLikeCheck(recommend);
 	}

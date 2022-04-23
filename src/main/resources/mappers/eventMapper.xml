@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bookdabang.mapper.eventMapper">
+
+	<!-- Reading -->
+	<!-- 게시글 전체 조회 -->
+	<select id="allEventList" resultType="EventBoardVo">
+		select * from event_board 
+		order by boardNo desc
+	</select>
+	
+	<!-- 상세 게시글 조회 -->
+	<select id="readDetailEvent" resultType="EventBoardVo">
+		select * from event_board
+		where boardno = #{no}
+	</select>
+	
+	
+	<!-- Create -->
+	<!-- 게시글 등록 -->
+	<insert id="insertEvent">
+		insert into event_board
+		(title, eventStart, eventEnd, content, mainImg) values 
+		(#{title} , #{eventStart} , #{eventEnd}, #{content}, #{mainImg})
+	</insert>
+	
+	<insert id="insertReply">
+		insert into event_Reply
+		(boardNo, replywriter, content)
+	</insert>
+	
+	
+	<!-- Delete -->
+	<delete id="delEvent">
+		delete from event_board 
+		where boardNo = #{no}
+	</delete>
+	
+	
+	<!-- Delete -->
+	<update id="updateEvent">
+		update event_board
+		set title = #{title}, eventStart = #{eventStart}, eventEnd = #{eventEnd}, content = #{content}, mainImg=#{mainImg}
+		where boardNo = #{boardNo}
+	</update>
+	
+	<!-- ETC -->
+	<!-- 베스트 게시글 불러오기 -->
+	<select id="allBestList" resultType="FreeBoard">
+		select * from freeboard
+		where readcount > 5 order by date desc
+	</select>
+	
+	
+</mapper>
+	
+
+
+ 
+ 
