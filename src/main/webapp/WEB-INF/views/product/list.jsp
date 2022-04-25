@@ -11,42 +11,6 @@
 	let cno = 0;
 	let sort = 0;
 	
-	function insertCart(no){
-		let url = "${contextPath}/userCart/addCart"
-		$.ajax({
-			url : url,
-			type : "post",
-			data : {
-				productNo : no,
-				productQtt : 1
-			},
-			success : function(data) {
-				console.log(data);
-			},
-			error : function(data){
-				console.log(data);
-			}
-		});
-	}
-	function goOrder(no){
-		let url = "${contextPath}/userCart/addCart"
-		$.ajax({
-			url : url,
-			type : "post",
-			data : {
-				productNo : no,
-				productQtt : 1
-			},
-			success : function(data) {
-				console.log(data);
-			},
-			error : function(data){
-				console.log(data);
-			}
-		});
-		location.href = "${contextPath}/order/checkOut"
-	}
-	
 	$(function() {
 		priceReplace();
 		
@@ -119,7 +83,9 @@
 			output += '<div class="col-md-6 col-lg-4"><div class="card text-center card-product"><div class="card-product__img">';
 			output += '<img class="card-img" src="' + e.cover + '" alt="">';
 			output += '<ul class="card-product__imgOverlay"><li><a href="${contextPath}/product/detail?no=' + e.product_no +
-					'"><button><i class="ti-search"></i></button></a></li><li><button><i class="ti-shopping-cart"></i></button></li><li><button><i class="ti-money"></i></button></li></ul></div>';
+					'"><button><i class="ti-search"></i></button></a></li>';
+			output += '<li><button onclick="insertCart(' + e.product_no + ')"><i class="ti-shopping-cart"></i></button></li>';
+			output += '<li><button onclick="goOrder(' + e.product_no + ')"><i class="ti-money"></i></button></li></ul></div>';
 			output += '<div class="card-body"><p>' + e.author
 						+ ' | ' + e.publisher + '</p>';
 			output += '<h4 class="card-product__title"><a href="${contextPath}/product/detail?no=' + e.product_no
