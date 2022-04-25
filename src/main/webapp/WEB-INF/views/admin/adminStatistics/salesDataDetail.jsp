@@ -61,10 +61,10 @@
 					drawDetailCategoryChart(data);
 				}else if(data.ageResult != null){
 					console.log("나이!")
-					
+					drawDetailAgeChart(data);
 				}else if(data.genderResult != null){
 					console.log("성별!")
-		
+					drawDetailGenderChart(data);
 				}
 			},error: function(e){
 				console.log(e.responseText);
@@ -78,46 +78,187 @@
 		}
 		
 	}
-	function drawDetailCategoryChart(data){
-		console.log(data)
-		data = data.categoryResult;
-		$("#drawChart").empty();
-		let ctx = document.getElementById('drawChart');
-		let labels = [];
+	function drawDetailCategoryChart(parseData){
+		
+		
+		$("#drawChart").remove();
+		$("#drawChartDiv").html('<canvas id="drawChart" width="400px" height="400px"></canvas>');
+			
+		
+		parseData = parseData.categoryResult;
+	 let labels = [];
 		let chartData =[]; 
 		let backgroundColor=[];
 		
-
-		for(let i=0;i< data.length;i++){
-			labels.push(data[i].category_name);
-			chartData.push(data[i].totalSales);
-			backgroundColor.push('rgb('+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+')');
+		for(let i=0;i< parseData.length;i++){
+			labels.push(parseData[i].category_name);
+			chartData.push(parseData[i].totalSales);
+		backgroundColor.push('rgba('+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+',0.5)');
 		}
 		console.log(labels);
 		console.log(chartData);
 		console.log(backgroundColor);
-		let myChart = new Chart(ctx,{
-			type:'bar',
-			data : {
-				labels : labels,
-				dataset:[{
-					label:"카테고리별 판매량",
-					data : chartData,
-					backgroundColor: backgroundColor,
-				
-				
-				}],
+		let data = {
+				  labels: labels,
+				  datasets: [{
+				    label: '카테고리별 판매량',
+				    backgroundColor: backgroundColor,
+				    borderColor: backgroundColor,
+				    data: chartData,
+				    borderWidth:1
+				  }]
+				};
 		
-				
-				
-				
-				
-			}
-			
-			
-		});
-		
+		let config = {
+				  type: 'bar',
+				  data,
+				  options: {
+					  
+					  responsive : true,
+						plugins : {
+							legend : {
+								display : true,
+								position : 'bottom',
+							}
+						},scales: {
+				            y: {
+				                beginAtZero: true
+				            }
+				        }
+					  
+					  
+				  }
+				};
 	
+			
+			  let myChart = new Chart(
+					    document.getElementById('drawChart'),
+					    config
+					  );
+		
+	}
+	function drawDetailAgeChart(parseData){
+
+		
+		$("#drawChart").remove();
+		$("#drawChartDiv").html('<canvas id="drawChart" width="400px" height="400px"></canvas>');
+			
+		
+		parseData = parseData.ageResult;
+		console.log(parseData);
+	 	let labels = [];
+		let chartData =[]; 
+		let backgroundColor=[];
+		for(let p in parseData){
+			labels.push(p+"대");
+			console.log(p)
+			if(p.length == 0){
+				chartData.push(0);
+				console.log("이 데이터는 비어있다")
+			}else{
+				chartData.push(p.length);
+			}
+			backgroundColor.push('rgba('+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+',0.5)');
+		}
+		
+		console.log(labels);
+		console.log(chartData);
+		console.log(backgroundColor);
+		let data = {
+				  labels: labels,
+				  datasets: [{
+				    label: '연령대별 판매량',
+				    backgroundColor: backgroundColor,
+				    borderColor: backgroundColor,
+				    data: chartData,
+				    borderWidth:1
+				  }]
+				};
+		
+		let config = {
+				  type: 'bar',
+				  data,
+				  options: {
+					  
+					  responsive : true,
+						plugins : {
+							legend : {
+								display : true,
+								position : 'bottom',
+							}
+						},scales: {
+				            y: {
+				                beginAtZero: true
+				            }
+				        }
+					  
+					  
+				  }
+				};
+	
+			
+			  let myChart = new Chart(
+					    document.getElementById('drawChart'),
+					    config
+					  );
+		
+	}
+	function drawDetailGenderChart(parseData){
+		$("#drawChart").remove();
+		$("#drawChartDiv").html('<canvas id="drawChart" width="400px" height="400px"></canvas>');
+			
+		
+		parseData = parseData.genderResult;
+	 let labels = [];
+		let chartData =[]; 
+		let backgroundColor=[];
+		
+		for(let i=0;i< parseData.length;i++){
+			labels.push(parseData[i].category_name);
+			chartData.push(parseData[i].totalSales);
+		backgroundColor.push('rgba('+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+',0.5)');
+		}
+		console.log(labels);
+		console.log(chartData);
+		console.log(backgroundColor);
+		let data = {
+				  labels: labels,
+				  datasets: [{
+				    label: '성별별 판매량',
+				    backgroundColor: backgroundColor,
+				    borderColor: backgroundColor,
+				    data: chartData,
+				    borderWidth:1
+				  }]
+				};
+		
+		let config = {
+				  type: 'bar',
+				  data,
+				  options: {
+					  
+					  responsive : true,
+						plugins : {
+							legend : {
+								display : true,
+								position : 'bottom',
+							}
+						},scales: {
+				            y: {
+				                beginAtZero: true
+				            }
+				        }
+					  
+					  
+				  }
+				};
+	
+			
+			  let myChart = new Chart(
+					    document.getElementById('drawChart'),
+					    config
+					  );
+		
 	}
 </script>
 
@@ -177,7 +318,7 @@
 		</div>
 		<div id="validDate"></div>
 		<div id="drawChartDiv" style="margin-top: 2%;">
-			<canvas id="drawChart"></canvas>
+			<canvas id="drawChart" width="400px" height="400px"></canvas>
 		
 		</div>
 	</div>

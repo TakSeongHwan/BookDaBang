@@ -143,31 +143,31 @@ public class ChartDAOImpl implements ChartDAO {
 		dtoMap.put("endDate",scd.getEndDate());
 		dtoMap.put("ageStart",ageMap.get("ten"));
 		dtoMap.put("ageEnd",ageMap.get("twent"));
-		resultMap.put("teenage", ses.selectList(ns+".getAge",dtoMap));
+		resultMap.put("10", ses.selectList(ns+".getAge",dtoMap));
 		
 		dtoMap.put("ageStart",ageMap.get("twent"));
 		dtoMap.put("ageEnd",ageMap.get("thirt"));
-		resultMap.put("twenty", ses.selectList(ns+".getAge",dtoMap)); 
+		resultMap.put("20", ses.selectList(ns+".getAge",dtoMap)); 
 		
 		dtoMap.put("ageStart",ageMap.get("thirt"));
 		dtoMap.put("ageEnd",ageMap.get("fourt"));
-		resultMap.put("thirty", ses.selectList(ns+".getAge",dtoMap));
+		resultMap.put("30", ses.selectList(ns+".getAge",dtoMap));
 		
 		dtoMap.put("ageStart",ageMap.get("fourt"));
 		dtoMap.put("ageEnd",ageMap.get("fifty"));
-		resultMap.put("forty", ses.selectList(ns+".getAge",dtoMap));
+		resultMap.put("40", ses.selectList(ns+".getAge",dtoMap));
 
 		dtoMap.put("ageStart",ageMap.get("fifty"));
 		dtoMap.put("ageEnd",ageMap.get("sixty"));
-		resultMap.put("sixty", ses.selectList(ns+".getAge",dtoMap));
+		resultMap.put("50", ses.selectList(ns+".getAge",dtoMap));
 		
 		dtoMap.put("ageStart",ageMap.get("sixty"));
 		dtoMap.put("ageEnd",ageMap.get("sevent"));
-		resultMap.put("seventy", ses.selectList(ns+".getAge",dtoMap));
+		resultMap.put("60", ses.selectList(ns+".getAge",dtoMap));
 		
 		dtoMap.put("ageStart",ageMap.get("sevent"));
 		dtoMap.put("ageEnd",ageMap.get("eight"));
-		resultMap.put("eighty", ses.selectList(ns+".getAge",dtoMap));
+		resultMap.put("70", ses.selectList(ns+".getAge",dtoMap));
 		
 		return resultMap;
 	}

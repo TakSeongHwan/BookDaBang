@@ -157,6 +157,7 @@ public class ChartServiceImpl implements ChartService {
 	
 		if(scd.getSearchType().equals("age")) {
 			Map<String,Integer> ageMap = new HashMap<String, Integer>();
+			Map<String,Object> result = new HashMap<String, Object>();
 			ageMap.put("ten", 10);
 			ageMap.put("twent", 20);
 			ageMap.put("thirt",30);
@@ -168,8 +169,15 @@ public class ChartServiceImpl implements ChartService {
 			
 			dtoMap.put("SalesChartDetail", scd);
 			dtoMap.put("ageMap",ageMap);
-			Map<String,Object> result = chartDAO.getDetailChartAge(dtoMap);
-
+			Map<String,Object> resultMap = chartDAO.getDetailChartAge(dtoMap);
+			for(int i = 0; i < resultMap.size(); i++) {
+				System.out.println((i+1)*10);
+				String key = (i+1)*10+"";
+				System.out.println(resultMap.get(key));
+			}
+			
+			
+			result = chartDAO.getDetailChartAge(dtoMap);
 			map.put("ageResult",result);
 			
 		}else if(scd.getSearchType().equals("category")) {
