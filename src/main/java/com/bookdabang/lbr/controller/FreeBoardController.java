@@ -29,10 +29,10 @@ import com.bookdabang.common.domain.FreeBoard;
 import com.bookdabang.common.domain.FreeBoardComment;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.PagingInfo;
-import com.bookdabang.common.domain.Recommend;
+import com.bookdabang.common.domain.RecommendVO;
 import com.bookdabang.common.domain.ReportBoard;
 import com.bookdabang.common.etc.IPCheck;
-import com.bookdabang.lbr.domain.ReportArray;
+
 import com.bookdabang.lbr.etc.BoardUploadFile;
 import com.bookdabang.lbr.etc.BoardUploadFileProcess;
 import com.bookdabang.lbr.service.FreeBoardService;
@@ -77,7 +77,7 @@ public class FreeBoardController {
 
 	// 자유게시판 글 자세히 보기
 	@RequestMapping(value = "readFreeBoard", method = RequestMethod.GET)
-	public void readFreeBoard(@RequestParam("boardno") String boardno, Model model, Recommend recommend,
+	public void readFreeBoard(@RequestParam("boardno") String boardno, Model model, RecommendVO recommend,
 			ReportBoard reportBoard, HttpServletRequest request) throws Exception {
 
 		HttpSession ses = request.getSession();
@@ -160,16 +160,16 @@ public class FreeBoardController {
 	// 신고게시판 전체보기(관리자)
 	@RequestMapping(value = "listAllReportBoard", method = RequestMethod.GET)
 	public void listAllReportBoard(Model model,
-			@RequestParam(value = "pageNo", required = false, defaultValue = "1") String tmp,@ModelAttribute ReportArray array) throws Exception {
+			@RequestParam(value = "pageNo", required = false, defaultValue = "1") String tmp,@ModelAttribute BoardSearch search) throws Exception {
 		System.out.println("신고게시판 글");
 		int pageNo = 1;
 		if (!tmp.equals("") || tmp != null) {
 			pageNo = Integer.parseInt(tmp);
 		} 
 		
-		System.out.println(array.toString());
 		
-		Map<String, Object> map = service.listAllReportBoards(pageNo,array);
+		
+		Map<String, Object> map = service.listAllReportBoards(pageNo,search);
 		List<ReportBoard> lst = (List<ReportBoard>) map.get("reportBoard");
 		PagingInfo paging = (PagingInfo) map.get("paging");
 
@@ -453,13 +453,13 @@ public class FreeBoardController {
 	// 게시판 글 좋아요
 	@RequestMapping(value = "likeFreeBoard", method = RequestMethod.POST)
 	public String likeFreeBoard(@RequestParam("boardno") String boardno, @RequestParam("gubun") String gubun,
-			Recommend recommend, HttpServletRequest request) throws Exception {
+			RecommendVO recommend, HttpServletRequest request) throws Exception {
 		int no = Integer.parseInt(boardno);
 		HttpSession ses = request.getSession();
 		// String userId = sessionId;
 		String userId = (String) ses.getAttribute("sessionId");
 		MemberVO mem = service.getUser(userId);
-
+		
 		recommend.setFreeboardNo(no);
 		recommend.setUserId(mem.getUserId());
 

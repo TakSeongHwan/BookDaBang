@@ -10,7 +10,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.CategoryVO;
-import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
@@ -23,9 +22,9 @@ import com.bookdabang.cyh.domain.UpdateProdDTO;
 public class ProductDAOImpl implements ProductDAO {
 
 	@Inject
-	private SqlSession ses; // SqlSessionTemplete 객체 주입
+	private SqlSession ses;
 
-	private static String ns = "com.bookdabang.mapper.productMapper"; // mapper의 namespace
+	private static String ns = "com.bookdabang.mapper.productMapper"; 
 	
 	// 최윤호
 
@@ -166,16 +165,32 @@ public class ProductDAOImpl implements ProductDAO {
 	
 
 	// 강명진
-
 	
-
-	
-
-	
-
 	@Override
-	public List<ProductVO> selectAllProducts() throws Exception {
-		return ses.selectList(ns + ".selectAllProducts");
+	public List<ProductVO> selectAllProducts(int cno,PagingInfo pi,int sort,String searchWord) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("cno", cno);
+		param.put("searchWord", searchWord);
+		param.put("sort", sort);
+		param.put("startNum", pi.getStartNum());
+		param.put("postPerPage", pi.getPostPerPage());
+		
+		return ses.selectList(ns + ".selectAllProducts",param);
+	}
+	
+	@Override
+	public List<CategoryVO> selectCategory(String searchWord) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("searchWord", searchWord);
+		return ses.selectList(ns + ".selectCategory",param);
+	}
+	
+	@Override
+	public int getTotalPost(int cno,String searchWord) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("cno", cno);
+		param.put("searchWord", searchWord);
+		return ses.selectOne(ns + ".getTotalPost",param);
 	}
 
 	@Override
@@ -184,8 +199,17 @@ public class ProductDAOImpl implements ProductDAO {
 	}
 
 	@Override
-	public List<ProductVO> selectTopProducts(int category) throws Exception {
-		return ses.selectList(ns + ".selectTopProducts", category);
+	public List<ProductVO> selectTopProducts(int cno) throws Exception {
+		return ses.selectList(ns + ".selectTopSaleProducts", cno);
 	}
+
+	@Override
+	public List<ProductVO> selectTopProducts(String searchWord) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("searchWord", searchWord);
+		return ses.selectList(ns + ".selectTopViewProducts", param);
+	}
+
+	
 
 }

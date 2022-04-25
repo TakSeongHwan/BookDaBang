@@ -19,7 +19,7 @@
 		$("#pwdOK").blur(function() {
 			let userPwd = $("#userPwd").val();
 			let userPwdOK = $("#pwdOK").val();
-			
+
 			if (userPwd == userPwdOK) {
 				userPwdCheck = true;
 				outputErrMsg($("#pwdOK"), "비밀번호가 맞습니다")
@@ -70,10 +70,10 @@
 				if (data == "success") {
 					nickCheck = true;
 					alert("사용할수 있는 닉네임 입니다")
-				
+
 				} else {
 					alert("중복되는 닉네임 입니다")
-	
+
 				}
 
 			}
@@ -83,7 +83,7 @@
 	function insertEmailCode() {
 		let userEmail = $("#userEmail").val();
 		let url = "/member/sendCode"
-		
+
 		$.ajax({
 			url : url,
 			dataType : "JSON",
@@ -107,18 +107,18 @@
 			data : {
 				confirmCode : confirmCode
 			},
-			success : function(data){
-				if(data.status == "success"){
+			success : function(data) {
+				if (data.status == "success") {
 					emailCheck = true;
 					alert("성공")
-				} else if(data.status == "fail"){
+				} else if (data.status == "fail") {
 					alert("실패")
 				}
 			}
 		});
 	}
 	function validate() {
-		if(idCheck && nickCheck && userPwdCheck && emailCheck){
+		if (idCheck && nickCheck && userPwdCheck && emailCheck) {
 			$("#register_form").submit();
 			return true;
 		} else {
@@ -127,7 +127,7 @@
 		}
 
 	}
-	
+
 	function outputErrMsg(obj, errMsg) {
 		$("#errorMsg").remove(); // 메세지 삭제
 		$("<div id='errorMsg'>").insertAfter(obj);
@@ -274,9 +274,8 @@ input[type=button]:hover {
 										onclick="insertEmailCode();">
 									<div>
 										<input type="text" class="form-control" id="emailConfirm"
-											placeholder="발송된 코드를 확인하여 입력하기"> <input
-											type="button" onclick="ConfirmCode();" id="confirmCode"
-											value="코드 인증">
+											placeholder="발송된 코드를 확인하여 입력하기"> <input type="button"
+											onclick="ConfirmCode();" id="confirmCode" value="코드 인증">
 									</div>
 								</div>
 								<div class="col-md-12 form-group">
@@ -286,21 +285,23 @@ input[type=button]:hover {
 										onblur="this.placeholder = 'Recommendation'">
 								</div>
 
-								<div class="form-check"
-									style="margin-right: 20px; margin-left: 15px; margin-bottom: 20px">
-									<input class="form-check-input" type="radio" name="gender"
-										id="gender" value="male"> <label
-										class="form-check-label" for="flexRadioDefault1"> 남자</label>
-								</div>
-								<div class="form-check" style="margin-letf: 20px">
-									<input class="form-check-input" type="radio" name="gender"
-										id="gender" value="female"> <label
-										class="form-check-label" for="flexRadioDefault2"> 여자 </label>
+								<div class="form-check">
+									<span style="margin-right: 30px;">
+										<input class="form-check-input" type="radio" name="gender"
+											id="gender" value="male"> <label
+											class="form-check-label" for="flexRadioDefault1"> 남자</label>
+									</span>
+									<span style="margin-left: 20px">
+										<input class="form-check-input" type="radio" name="gender"
+											id="gender" value="female"> <label
+											class="form-check-label" for="flexRadioDefault2"> 여자
+										</label>
+									</span>
 								</div>
 
-								<div class="col-md-12 form-group">
-									<button 
-										class="button button-register w-100" type="button" onclick="validate();">회원가입</button>
+								<div class="col-md-12 form-group" style="margin-top: 30px">
+									<button class="button button-register w-100" type="button"
+										onclick="validate();">회원가입</button>
 								</div>
 							</form>
 						</div>

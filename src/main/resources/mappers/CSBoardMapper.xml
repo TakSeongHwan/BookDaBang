@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookdabang.mapper.csBoardMapper">
+
+<select id = "showEntireCSBoard" resultType="CustomerService">
+select * from customer_service order by postNo desc
+</select>
+
+<select id = "readCSPost" resultType="CustomerService">
+select * from customer_service where postNo=#{postNo}
+</select>
+
+<insert id = "writeCSPost" >
+insert into customer_service (categoryCode, writer, postdate, title, contents) values(#{categoryCode}, #{writer}, now(), #{title}, #{contents})
+</insert>
+
+
+<select id = "showMyCS" resultType = "CustomerService">
+select * from customer_service where writer = #{userId}
+</select>
+
+<delete id = "deleteMyCS" parameterType = "java.util.List" >
+delete from customer_service where postNo in <foreach collection="list" item="postNo" open="(" close=")" separator= "," > #{postNo}</foreach>;
+</delete>
+
+<select id="attachFilesInCS" resultType = "AttachFileVO" >
+select attachfileNo, originFile, thumbnailFile, notImageFile from attachfile where csBoardNo = #{postNo}
+</select>
+
+<insert id="insertCSAttachFile">
+insert into attachfile(csBoardNo, originFile, thumbnailFile, notImageFile) values(#{csBoardNo}, #{originFile},#{thumbnailFile}, #{notImageFile})
+</insert>
+
+<select id="getNextNo" resultType = "int">
+select max(postno) as nextno from customer_service;
+</select>
+
+</mapper>

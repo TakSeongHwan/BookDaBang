@@ -17,9 +17,9 @@ import com.bookdabang.common.domain.FreeBoardComment;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.PageView;
 import com.bookdabang.common.domain.PagingInfo;
-import com.bookdabang.common.domain.Recommend;
+import com.bookdabang.common.domain.RecommendVO;
 import com.bookdabang.common.domain.ReportBoard;
-import com.bookdabang.lbr.domain.ReportArray;
+
 
 
 
@@ -132,19 +132,19 @@ public class FreeBoardDAOImpl implements FreeBoardDAO {
 	}
 
 	@Override
-	public int likeFreeBoard(Recommend recommend) throws Exception {
+	public int likeFreeBoard(RecommendVO recommend) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.insert(ns +".likeFreeBoard", recommend);
 	}
 
 	@Override
-	public int unlikeFreeBoard(Recommend recommend) throws Exception {
+	public int unlikeFreeBoard(RecommendVO recommend) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.delete(ns + ".unilkeFreeBoard",recommend);
 	}
 
 	@Override
-	public int countLikeCheck(Recommend recommend) throws Exception {
+	public int countLikeCheck(RecommendVO recommend) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectOne(ns + ".countLikeCheck", recommend);
 	}
@@ -305,12 +305,12 @@ public class FreeBoardDAOImpl implements FreeBoardDAO {
 
 
 	@Override
-	public List<ReportBoard> getListAllReportBoards(PagingInfo paging, ReportArray array) throws Exception {
+	public List<ReportBoard> getListAllReportBoards(PagingInfo paging,BoardSearch search) throws Exception {
 		Map<String, Object> param = new HashMap<String, Object>();
 		
 		
 		
-		param.put("status", array.getStatus());
+		
 		param.put("startNum", paging.getStartNum());
 		param.put("postPerPage", paging.getPostPerPage());
 		
@@ -319,9 +319,9 @@ public class FreeBoardDAOImpl implements FreeBoardDAO {
 
 
 	@Override
-	public int getSearchResultCntReport(ReportArray array) throws Exception {
+	public int getSearchResultCntReport(BoardSearch search) throws Exception {
 		// TODO Auto-generated method stub
-		 return ses.selectOne(ns + ".getSearchResultCntReport", array);
+		 return ses.selectOne(ns + ".getSearchResultCntReport", search);
 	}
 
 

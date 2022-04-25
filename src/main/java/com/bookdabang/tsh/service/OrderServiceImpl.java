@@ -1,7 +1,10 @@
 package com.bookdabang.tsh.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -11,15 +14,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bookdabang.common.domain.AddressVO;
 import com.bookdabang.common.domain.CartVO;
+import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.ProdOrder;
 import com.bookdabang.common.domain.ProductVO;
+import com.bookdabang.common.domain.Sales;
 import com.bookdabang.common.persistence.ProductDAO;
 import com.bookdabang.tsh.domain.CartViewDTO;
+import com.bookdabang.tsh.domain.ManageOrderDTO;
 import com.bookdabang.tsh.domain.OrderDTO;
 import com.bookdabang.tsh.domain.OrderInputDTO;
+import com.bookdabang.tsh.etc.SearchCriteria;
 import com.bookdabang.tsh.persistence.AddressDAO;
 import com.bookdabang.tsh.persistence.CartDAO;
 import com.bookdabang.tsh.persistence.OrderDAO;
+import com.bookdabang.tsh.persistence.SalesDAO;
 
 @Service
 public class OrderServiceImpl implements OrderService{
@@ -32,6 +40,27 @@ public class OrderServiceImpl implements OrderService{
 	private ProductDAO pdao;
 	@Inject
 	public AddressDAO adao;
+	@Inject
+	public SalesDAO sdao;
+	
+	private PagingInfo pagingProcess(int pageNo, SearchCriteria sc) throws Exception {
+		PagingInfo pi = new PagingInfo();
+		
+		pi.setPostPerPage(5);
+		pi.setPageCntPerBlock(5);
+		
+		int totalPostCnt = odao.allOrderCnt(sc);
+		pi.setTotalPostCnt(totalPostCnt);
+		pi.setTotalPage(pi.getTotalPostCnt());
+		pi.setStartNum(pageNo);
+		pi.setTotalPagingBlock(pi.getTotalPage());
+		pi.setCurrentPagingBlock(pageNo);
+		pi.setStartNoOfCurPagingBlock(pi.getCurrentPagingBlock());
+		pi.setEndNoOfCurPagingBlock(pi.getStartNoOfCurPagingBlock());
+		
+		return pi;
+		
+	}
 
 	@Override
 	public List<ProdOrder> selectOrder(OrderDTO odto) throws Exception {
@@ -59,10 +88,12 @@ public class OrderServiceImpl implements OrderService{
 			if(orderPwd!=null) {
 				ovo.setOrderPwd(orderPwd);
 			}
-//			cdao.deleteCart(cartno);
+			Sales sale = new Sales(0, odao.getNextOrderNo(), ovo.getProductNo(), ovo.getProductQtt(), ovo.getPrice(), null);
+			cdao.deleteCart(cartno);
 			ovo.setOrderBundle(orderBundle);
 			System.out.println(ovo);
 			odao.insertOrder(ovo);
+			sdao.insertSales(sale);
 		}
 		return orderBundle;
 	}
@@ -71,5 +102,33 @@ public class OrderServiceImpl implements OrderService{
 	public int updateOrderCofirm(int orderNo) throws Exception {
 		return odao.updateOrderCofirm(orderNo);
 	}
+
+	@Override
+	public Map<String, Object> selectAllOrder(SearchCriteria sc, int pageno) throws Exception {
+		PagingInfo pi =pagingProcess(pageno, sc);
+		Map<String, Object> map  = new HashMap<String, Object>();
+		System.out.println(pi);
+		System.out.println(sc.getStartSellDate());
+		System.out.println(sc.getEndSellDate());
+		List<ProdOrder> orderLst = odao.orderView(sc,pi);
+		System.out.println(orderLst);
+		List<ManageOrderDTO> dto = new ArrayList<ManageOrderDTO>();
+		for(ProdOrder o : orderLst) {
+			ProductVO p = pdao.selectProduct(o.getProductNo());
+			dto.add(new ManageOrderDTO(o.getOrderNo(), o.getUserId(), o.getProductNo(), o.getProductQtt(), o.getOrderState_code(), o.getOrderDate(), o.getAddressNo(), o.getReleaseDate(), o.getConfirm(), o.getPrice(), o.getOrderPwd(), o.getOrderBundle(), p.getTitle(), p.getCover()));
+		} 
+		map.put("ManageOrder", dto);
+		map.put("pagingInfo", pi);
+		return map;
+	}
+	
+	
+
+	@Override
+	public int updateOrderState(int orderState, int orderNo) throws Exception {
+		int result = odao.updateOrderState(orderState, orderNo); 
+		return result;
+	}
+
 	
 }

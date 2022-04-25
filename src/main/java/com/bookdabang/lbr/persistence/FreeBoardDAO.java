@@ -11,9 +11,9 @@ import com.bookdabang.common.domain.FreeBoardComment;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.PageView;
 import com.bookdabang.common.domain.PagingInfo;
-import com.bookdabang.common.domain.Recommend;
+import com.bookdabang.common.domain.RecommendVO;
 import com.bookdabang.common.domain.ReportBoard;
-import com.bookdabang.lbr.domain.ReportArray;
+
 
 
 
@@ -38,7 +38,7 @@ public interface FreeBoardDAO {
 	// 신고게시판 전체보기
 	public List<ReportBoard> getListAllReportBoards(PagingInfo paging)throws Exception;
 	
-	public List<ReportBoard> getListAllReportBoards(PagingInfo paging, ReportArray array)throws Exception;
+	public List<ReportBoard> getListAllReportBoards(PagingInfo paging,BoardSearch search )throws Exception;
 	// 게시글 신고하기
 	public int insertReportBoard(ReportBoard reportboard)throws Exception;
 	
@@ -58,11 +58,11 @@ public interface FreeBoardDAO {
 	
 	public int readFileNo() throws Exception;
 
-	public int likeFreeBoard(Recommend recommend)throws Exception;
+	public int likeFreeBoard(RecommendVO recommend)throws Exception;
 
-	public int unlikeFreeBoard(Recommend recommend)throws Exception;
+	public int unlikeFreeBoard(RecommendVO recommend)throws Exception;
 
-	public int countLikeCheck(Recommend recommend)throws Exception;
+	public int countLikeCheck(RecommendVO recommend)throws Exception;
 
 	public int countReportCheck(ReportBoard reportBoard)throws Exception;
 
@@ -101,7 +101,7 @@ public interface FreeBoardDAO {
 
 	public int removeTotal()throws Exception;
 
-	int getSearchResultCntReport(ReportArray array) throws Exception;
+	int getSearchResultCntReport(BoardSearch search) throws Exception;
 
 	public List<FreeBoard> getListAllRemoveBoards(PagingInfo paging, BoardSearch search) throws Exception;
 

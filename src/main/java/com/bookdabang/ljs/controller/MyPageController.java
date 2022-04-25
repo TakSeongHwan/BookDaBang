@@ -3,6 +3,7 @@ package com.bookdabang.ljs.controller;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.bookdabang.common.domain.CustomerService;
+import com.bookdabang.common.domain.FreeBoard;
 import com.bookdabang.common.domain.MemberPoint;
 import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.RecentSeenProd;
+import com.bookdabang.common.domain.ReviewVO;
 import com.bookdabang.ljs.domain.LoginDTO;
 import com.bookdabang.ljs.service.LoginService;
 import com.bookdabang.ljs.service.MyPageService;
@@ -32,7 +38,7 @@ public class MyPageController {
 	
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String memberinfo(@RequestParam("u") String sessionId, Model model) {
+	public String myPageHome(@RequestParam("u") String sessionId, Model model) {
 		
 		MemberVO loginMember = null;
 		System.out.println(sessionId);
@@ -53,23 +59,26 @@ public class MyPageController {
 		model.addAttribute("loginMember", loginMember);
 		model.addAttribute("recentSeenProd", recSeenProd);
 		
-				return "mypage/memberinfo";
+		
+		return "mypage/memberinfo";
 	}
 	
 	
 	
-	@RequestMapping(value = "viewPoint.do", method = RequestMethod.GET)
+	
+	
+	@RequestMapping(value = "viewPoint", method = RequestMethod.GET)
 	public ResponseEntity<List<MemberPoint>> pointCheck(@RequestParam("ses") String sessionId) {
-		System.out.println("위치 : Mypagecontroller, 접속한사람 : " +sessionId);
+		
 				MemberVO loginMember = null;
 				ResponseEntity<List<MemberPoint>> result = null;
 				List<MemberPoint> pointHistory = null;
-					try {				
+					try {
 						loginMember = service.findLoginSess(sessionId);
 						String userId = loginMember.getUserId();
 						pointHistory = service.pointCheck(userId);
 						result = new ResponseEntity<List<MemberPoint>>(pointHistory, HttpStatus.OK);
-						System.out.println(pointHistory.toString());
+						
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -79,7 +88,60 @@ public class MyPageController {
 				return result;
 	}
 	
-	@RequestMapping(value = "withdrawMember.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/pointTotal", method = RequestMethod.GET)
+	public ResponseEntity<List<MemberPoint>> viewPointTotal(@RequestParam("u") String sessionId) {
+		
+		MemberVO loginMember = null;
+		
+		ResponseEntity<List<MemberPoint>> result = null;
+		List<MemberPoint> myTotalPoint = null;
+		
+			try {
+				loginMember = service.findLoginSess(sessionId);
+				String userId = loginMember.getUserId();
+				myTotalPoint=  myPgService.showTotalPoint(userId);
+				result = new ResponseEntity<List<MemberPoint>>(myTotalPoint, HttpStatus.OK);
+				
+				
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+				result = new ResponseEntity<List<MemberPoint>>(HttpStatus.BAD_REQUEST);
+				System.out.println("전체 포인트 뷰 에러");
+			}
+			
+		
+		System.out.println(sessionId +"세션아이디 받아옴");
+		return result;
+ 
+		}
+	
+	
+	@RequestMapping(value = "mylike", method = RequestMethod.GET)
+	@ResponseBody
+	public List<FreeBoard> myLikeAndRe(@RequestParam("u") String sessionId) {
+		
+		MemberVO loginMember = null;
+		List<FreeBoard> lstMyLikeF = null;
+		try {
+			
+			loginMember = service.findLoginSess(sessionId);
+			String userId = loginMember.getUserId();
+			lstMyLikeF =  myPgService.showMyLike(userId);
+			
+			
+		} catch (Exception e) {	
+			System.out.println("자게 좋아요 통신 실패");
+			e.printStackTrace();
+		}
+		
+		return lstMyLikeF;
+				
+	}
+	
+	
+	
+	@RequestMapping(value = "withdrawMember", method = RequestMethod.POST)
 	@ResponseBody
 	public int withdrawMember(@RequestParam("ses") String memberSess) {
 		
@@ -118,7 +180,7 @@ public class MyPageController {
 		return rsProds;
 	}
 	
-	@RequestMapping(value = "changePassword.do", method = RequestMethod.POST)
+	@RequestMapping(value = "changePassword", method = RequestMethod.POST)
 	@ResponseBody
 	public int modifyPassword(@RequestParam("pwd1") String newPwd, @RequestParam("ses") String sessionId) {
 		int result = 0;
@@ -141,7 +203,7 @@ public class MyPageController {
 		return result;
 	}
 	
-	@RequestMapping(value = "confirmPassword.do", method = RequestMethod.POST)
+	@RequestMapping(value = "confirmPassword", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean confirmPassword(@RequestParam("oldPwd") String oldPwd, @RequestParam("ses") String sessionId) {
 		boolean result = false;
@@ -176,19 +238,24 @@ public class MyPageController {
 	
 	@RequestMapping(value = "/myposts", method = RequestMethod.GET)
 	@ResponseBody
-	public void showAllMyPosts(@RequestParam("u") String sessionId) {
+	public List<FreeBoard> showMyPostsFree(@RequestParam("u") String sessionId) {
 		
 		
 		System.out.println(sessionId);
 		
 			MemberVO loginMember = null;
+			List<FreeBoard> myPostsFree = null;
 			
 			try {
 				
 				loginMember = service.findLoginSess(sessionId);
 				String userId = loginMember.getUserId();
 				System.out.println(userId);
-				
+				// 유저아이디로 자유게시판 불러오기
+				  myPostsFree = myPgService.myFreeLst(userId);
+				  
+				  
+	
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -197,13 +264,120 @@ public class MyPageController {
 			} 
 			
 
-
+			return myPostsFree;
 		}
 	
 	
+	@RequestMapping(value = "/myreviews", method = RequestMethod.GET)
+	@ResponseBody
+	public List<ReviewVO> showMyReviews(@RequestParam("u") String sessionId) {
+		
+		System.out.println(sessionId);
+		
+			MemberVO loginMember = null;
+			List<ReviewVO> myReviews = null;
+			
+			try {
+				
+				loginMember = service.findLoginSess(sessionId);
+				String userId = loginMember.getUserId();
+				System.out.println(userId);
+				// 유저아이디로 자유게시판 불러오기
+				myReviews = myPgService.myReviewLst(userId);
+				  
+	
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				
+				System.out.println("통신 실패");
+			} 
+			
+
+			return myReviews;
+		}
 	
 	
-	//myposts/
+	@RequestMapping(value = "/myqna", method = RequestMethod.GET)
+	@ResponseBody
+	public List<ProductQnA> showMyQnA(@RequestParam("u") String sessionId) {
+		
+		System.out.println(sessionId);
+		
+			MemberVO loginMember = null;
+			List<ProductQnA> myQnAs = null;
+			
+			try {
+				
+				loginMember = service.findLoginSess(sessionId);
+				String userId = loginMember.getUserId();
+				System.out.println(userId);
+				// 유저아이디로 QnA게시판 불러오기
+				myQnAs = myPgService.myQnALst(userId);
+				  
+	
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				
+				System.out.println("통신 실패");
+			} 
+			
+
+			return myQnAs;
+		}
+	
+	
+	@RequestMapping(value = "/mycsposts", method = RequestMethod.GET)
+	@ResponseBody
+	public List<CustomerService> showMyCS(@RequestParam("u") String sessionId, Model model) {
+		
+		System.out.println("문의글 테스트 " + sessionId);
+		
+			MemberVO loginMember = null;
+			List<CustomerService> myCSPosts = null;
+					
+			try {
+				loginMember = service.findLoginSess(sessionId);
+				String userId = loginMember.getUserId();
+				System.out.println(userId);	
+				
+				myCSPosts = myPgService.myCSLst(userId);
+	
+				
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+			}
+			
+		
+			return myCSPosts;
+		}
+	
+	
+	@RequestMapping(value = "/delmycs", method = RequestMethod.GET)
+	@ResponseBody
+	public int delMyCS(@RequestParam(value = "postArr[]") List<Integer> postNo) {
+		
+		
+		int result = 0;
+				try {
+					
+					result = myPgService.delMyCSPosts(postNo);
+					
+				} catch (Exception e) {
+					
+					System.out.println("실패여유");
+					e.printStackTrace();
+				}
+		
+				
+		
+			return result;
+		}
+	
+
+	
 	
 //	@RequestMapping(value = "/", method = RequestMethod.GET)
 //	public void home(@RequestParam("ses") String sessionId) {

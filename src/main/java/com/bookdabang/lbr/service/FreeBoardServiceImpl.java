@@ -19,9 +19,9 @@ import com.bookdabang.common.domain.FreeBoardComment;
 import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.PageView;
 import com.bookdabang.common.domain.PagingInfo;
-import com.bookdabang.common.domain.Recommend;
+import com.bookdabang.common.domain.RecommendVO;
 import com.bookdabang.common.domain.ReportBoard;
-import com.bookdabang.lbr.domain.ReportArray;
+
 import com.bookdabang.lbr.etc.BoardUploadFile;
 import com.bookdabang.lbr.persistence.FreeBoardDAO;
 
@@ -37,10 +37,11 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
 		List<FreeBoard> lst = null;
 		if (search.getSearchWord()== null && search.getSearchType()== null || search.getSearchWord().equals("")) {
-
+			
 			lst = dao.getListAllFreeBoards(paging);
 		} else {
 			lst = dao.getListAllFreeBoards(paging, search);
+			
 			
 		}
 		 
@@ -55,11 +56,13 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 		return map;
 	}
 
+
+
 	private PagingInfo pagingProcess(int pageNo, BoardSearch search) throws Exception {
 		PagingInfo paging = new PagingInfo();
 
 		if (search.getSearchWord()== null && search.getSearchType()== null || search.getSearchWord().equals("")) {
-
+			
 			paging.setTotalPostCnt(dao.getTotalPost());
 			
 			paging.setTotalPostCnt(dao.removeTotal());
@@ -72,10 +75,10 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 			
 			
 		} 
+
 		
 		
-		
-		paging.setPostPerPage(7);
+		paging.setPostPerPage(5);
 		paging.setPageCntPerBlock(3);
 		
 		paging.setTotalPage(paging.getTotalPostCnt());
@@ -139,19 +142,19 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	}
 
 	@Override
-	public Map<String, Object> listAllReportBoards(int pageNo, ReportArray array) throws Exception {
+	public Map<String, Object> listAllReportBoards(int pageNo, BoardSearch search) throws Exception {
 		
-		PagingInfo paging = pagingProcess2(pageNo,array);
+		PagingInfo paging = pagingProcess(pageNo,search);
 		List<ReportBoard> lst = null;
-		lst = dao.getListAllReportBoards(paging);
 		
-		if (array.getStatus() == null) {
-
+		
+		if (search.getSearchWord()== null && search.getSearchType()== null || search.getSearchWord().equals("")) {
 			lst = dao.getListAllReportBoards(paging);
 		} else {
-			lst = dao.getListAllReportBoards(paging, array);
+			lst = dao.getListAllReportBoards(paging, search);
 			
 		}
+		
 		
 
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -167,57 +170,10 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	}
 
 
-	private PagingInfo pagingProcess2(int pageNo, ReportArray array) throws Exception {
-		PagingInfo paging = new PagingInfo();
-		
-		if (array.getStatus()==null) {
-
-			paging.setTotalPostCnt(dao.reportTotal());
-			
-		} else {
-
-			paging.setTotalPostCnt(dao.getSearchResultCntReport(array));
-			
-			
-		} 
-		
-		
-		
-		paging.setPostPerPage(7);
-		paging.setPageCntPerBlock(3);
-		
-		paging.setTotalPage(paging.getTotalPostCnt());
-		// 현재 페이지에서 출력 시작할 글번호
-		paging.setStartNum(pageNo);
-
-		// 전체 페이징 블럭 수
-		paging.setTotalPagingBlock(paging.getTotalPage());
-
-		// 현재 페이징 블럭
-		paging.setCurrentPagingBlock(pageNo);
-
-		// 현재 페이지에서의 시작 페이징블럭
-		paging.setStartNoOfCurPagingBlock(paging.getCurrentPagingBlock());
-
-		// 현재 페이지에서의 끝 페이징 블럭
-		paging.setEndNoOfCurPagingBlock(paging.getStartNoOfCurPagingBlock());
-		
-		System.out.println(paging.toString());
-		return paging;
-	}
+	
 
 	@Override
-	public boolean insertReportBoard(ReportBoard reportboard) throws Exception {
-		boolean result = false;
-		int rb = dao.insertReportBoard(reportboard);
-		if (rb == 1) {
-			result = true;
-		}
-		return result;
-	}
-
-	@Override
-	public boolean createFreeBoard(FreeBoard freeBoard, List<BoardUploadFile> uploadLst) throws Exception {
+	public boolean createFreeBoard(FreeBoard freeBoard, List<BoardUploadFile> uploadLst ) throws Exception {
 		boolean result = false;
 		int fb = dao.insertFreeBoard(freeBoard);
 		int ref = dao.getNextNo(); // 게시판번호
@@ -227,7 +183,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 		int attachFile = dao.readFileNo() + 1; // 파일번호
 
 		for (BoardUploadFile file : uploadLst) {
-			dao.insertAttachFile(new AttachFileVO(attachFile, 0, ref, 0, 0, file.getOriginalFileName(),
+			dao.insertAttachFile(new AttachFileVO(attachFile, 0, ref, 0, 0, 0, file.getOriginalFileName(),
 					file.getThumbnailFileName(), file.getNotImageFileName()));
 
 		}
@@ -295,7 +251,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	}
 
 	@Override
-	public boolean likeFreeBoard(Recommend recommend) throws Exception {
+	public boolean likeFreeBoard(RecommendVO recommend) throws Exception {
 		boolean result = false;
 		int lf = dao.likeFreeBoard(recommend);
 
@@ -307,7 +263,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	}
 
 	@Override
-	public boolean unlikeFreeBoard(Recommend recommend) throws Exception {
+	public boolean unlikeFreeBoard(RecommendVO recommend) throws Exception {
 		boolean result = false;
 		int uf = dao.unlikeFreeBoard(recommend);
 
@@ -318,7 +274,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	}
 
 	@Override
-	public int countLikeCheck(Recommend recommend) throws Exception {
+	public int countLikeCheck(RecommendVO recommend) throws Exception {
 
 		return dao.countLikeCheck(recommend);
 	}
@@ -455,6 +411,16 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 		int ad = dao.admindelAttach(boardno);
 
 		if (ad == 1) {
+			result = true;
+		}
+		return result;
+	}
+
+	@Override
+	public boolean insertReportBoard(ReportBoard reportboard) throws Exception {
+		boolean result = false;
+		int rb = dao.insertReportBoard(reportboard);
+		if (rb == 1) {
 			result = true;
 		}
 		return result;

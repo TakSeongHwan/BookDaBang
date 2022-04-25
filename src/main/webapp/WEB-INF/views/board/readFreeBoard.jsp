@@ -123,9 +123,11 @@ function insertComment() {
 	console.log(boardno, content);
 	let writer = userId;
 	if(userId == ''){
-		alert("로그인");
-		$("#commentContent").val('');
-	}else{
+		if(confirm("로그인이 필요합니다. 로그인 하시겠습니까?") == true){
+			$("#commentContent").val('');
+			location.href="/login";
+		}}
+	else{
 	let url = '/comment';
 	let sendData = JSON.stringify({
 		boardno : no, commentwriter : writer, commentcontent : content
@@ -205,7 +207,9 @@ function viewComment(data) {
  
 function showModiComment(cno) {
 	if(userId == ('')){
-		alert("로그인해쥬")
+		if(confirm('로그인이 필요합니다. 로그인하시겠습니까?') == true){
+		location.href="/login";
+		}
 	}else if(isConfirmUser(cno)){
 			$("#modiCommentDiv").insertAfter($("#" + cno));
 			$("#modifCommentNo").val(cno);
@@ -277,7 +281,9 @@ function rc(){
 function showDelComment(cno) {
 	
 if(userId == ('')){
-	alert("로그인해주")
+	if(confirm('로그인이 필요합니다. 로그인 하시겠습니까?') == true){
+	location.href="/login";
+	}
 }else{
 	if(isConfirmUser(cno)){
 	if(confirm('댓글을 삭제하시겠습니까?') == true){
@@ -360,14 +366,16 @@ function likeBoard(gubun){
 			success : function(data) {
 				console.log(data)
 				if(data == "success"){
-					alert("완료");
+					
 				}
 			}
 		});	
 		
 	} else{
-		alert("로그인을 해");
-		
+		if(confirm('로그인이 필요합니다. 로그인하시겠습니까?') == true){
+			location.href="/login";
+			//window.location.assign("/login");
+		}
 	}
 	
 	
@@ -506,7 +514,7 @@ function likeBoard(gubun){
 
 
 
-			
+
 
 
 			<button class="button button-postComment button--active"

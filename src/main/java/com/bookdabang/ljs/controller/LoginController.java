@@ -42,8 +42,11 @@ public class LoginController {
 	 */
 	@RequestMapping(value = "/loginPage", method = RequestMethod.GET)
 	public String loginPage(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+		
 		// 먼저 자동로그인 쿠키가 있는지 없는지부터 체크하기
 		HttpSession ses = request.getSession();
+		
+		returnPrePage(ses, request); // 경로 저장
 		
 		Cookie cookies[] = request.getCookies(); // 현재 저장된 쿠키들을 불러와서
 		
@@ -73,11 +76,11 @@ public class LoginController {
 					System.out.println("최종 자동 로그인 시간 업데이트 결과" + result);
 					ses.setAttribute("sessionId", loginMember.getSessionId()); // 혼동 주의. 자동 로그인 시에는 쿠키에 있는(구) 세션키로 로그인.
 					
-					String prePage = request.getHeader("REFERER");
+					String prePage = (String)ses.getAttribute("prePage");
 					
 					if (prePage != null) {
 						
-						ses.setAttribute("prePage", prePage);
+						//ses.setAttribute("prePage", prePage);
 						response.sendRedirect(prePage);
 						
 						System.out.println( "이전의" + prePage + "로 이동" );
@@ -88,6 +91,8 @@ public class LoginController {
 					
 				} 
 			} 
+			
+			
 		}
 		
 		System.out.println("쿠키 있니 없니");
@@ -99,14 +104,8 @@ public class LoginController {
 	@RequestMapping(value="/login", method = RequestMethod.GET) 
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
 		
-		try {
-			loginPage(request, response, model);
-			
-		} catch (Exception e) {
-			System.out.println("쿠키 유무 판별 실패");
-			e.printStackTrace();
-		}
 		
+		returnPrePage(request.getSession(), request);
 		
 		
 		return "login";
@@ -144,14 +143,9 @@ public class LoginController {
 						
 						 // 
 						System.out.println("로그인한 멤버 정보 : " + model.toString());
-					
-//						if (dto.isAutoLogin()) { // 자동 로그인에 체크되어 있다면.
-//							
 						
-//										/* 참고 코드*/							
-////							Timestamp loginlimit = new Timestamp(System.currentTimeMillis() + (1000 * 60 * 60 * 24)); //long type으로 하루
-////							service.keepLogin(new KeepLoginDTO(dto.getUserId(), ses.getId(), loginlimit));
-//						}
+						
+	
 						
 					}
 					
@@ -169,16 +163,12 @@ public class LoginController {
 		// 마이페이지를 눌렀는데 로그인이 안된 상태일때 이 요청으로 들어옴
 		// 인터셉터가 실행되도록 보내고, 여기서는 이전 경로 저장이 이루어지도록.
 		
-		@RequestMapping(value="/returnPrePage")
-		public String returnPrePage(HttpSession ses, HttpServletRequest req) {
+		public void returnPrePage(HttpSession ses, HttpServletRequest req) {
 			
-			System.out.println("마이페이지 경로 저장하자");
 			// 세션에 저장함
-			
 			String prePage = req.getHeader("REFERER");
 			ses.setAttribute("prePage", prePage);
-			// 다시 로그인하러 보냄
-			return "redirect:/mypage/login";
+			
 		}
 
 		@RequestMapping(value="/logout", method=RequestMethod.GET)
@@ -194,7 +184,7 @@ public class LoginController {
 			
 		
 			// return?
-			resp.sendRedirect("/ljs/");
+			resp.sendRedirect("/");
 		}
 		
 		

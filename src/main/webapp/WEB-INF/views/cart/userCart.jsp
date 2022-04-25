@@ -51,9 +51,9 @@
 		let chkbox = $(".chkbox");
 		for (let a = 0; a < chkbox.length; a++) {
 			if ($(chkbox[a]).is(":checked")) {
-				let total = parseInt($("#total" + $(chkbox[a]).val()).text()
-						.replace(",", "").replace("원", ""));
+				let total = parseInt($("#total" + $(chkbox[a]).attr("id")).text().replace("원","").replace(",",""));
 				subTotal += total;
+				
 			}
 		}
 		$("#subtotal").text(subTotal.toLocaleString() + "원");
@@ -72,21 +72,19 @@
 								.each(
 										data,
 										function(i, e) {
-											output += '<tr><td><input type="hidden" name = "cartNo" value='+e.cartNo+'><input type="checkbox" class="chkbox" onclick="chk();" name="checkCart" value = '
-													+ e.cartNo
-													+ ' checked /><div class="media"><div class="d-flex"><img src="'+e.cover+'" style="width: 150px"></div><div class="media-body"><input type="hidden" id= "cartNo'+e.cartNo+'" value="'+e.cartNo+'" /><p>'
+											output += '<tr><td><input type="hidden" name = "cartNo" value='+e.cartNo+'><input type="checkbox" class="chkbox" onclick="chk();" value="'+e.cartNo+'" name="checkCart" id="'+e.cartNo+'" checked /><div class="media"><div class="d-flex"><img src="'+e.cover+'" style="width: 150px"></div><div class="media-body"><input type="hidden" id= "cartNo'+e.cartNo+'" value="'+e.cartNo+'" /><p>'
 													+ e.title
 													+ '</p></div></div></td><td><h5 id = "sell'+e.cartNo+'">'
 													+ e.sell_price
 															.toLocaleString()
-													+ '원</h5></td><td><div class="product_count"><input type="hidden" id="stock'+e.cartNo+'" value="'+e.stock+'"/><input type="text" name="qty" id="prductQtt'+e.cartNo+'"maxlength="12" value="'+e.productQtt+'" title="Quantity:"class="input-text qty" disabled><button onclick="addQtt('
+													+ '원</h5></td><td><div class="product_count"><input type="hidden" id="stock'+e.cartNo+'" value="'+e.stock+'"/><input type="text" name="productQtt" id="prductQtt'+e.cartNo+'"maxlength="12" value="'+e.productQtt+'" title="Quantity:"class="input-text qty" disabled><button onclick="addQtt('
 													+ e.cartNo
 													+ ');"class="increase items-count" type="button"><i class="lnr lnr-chevron-up">+</i></button><button onclick="subQtt('
 													+ e.cartNo
 													+ ');"class="reduced items-count" type="button"><i class="lnr lnr-chevron-down">-</i></button></div></td><td><h5 id="total'+e.cartNo+'" class ="total">'
 													+ (parseInt(e.sell_price) * parseInt(e.productQtt))
 															.toLocaleString()
-													+ '원</h5></td></tr>';
+													+ '원</h5></td></tr><input type="hidden" name="cover" value="'+e.cover+'"/><input type="hidden" name="product_no" value="'+e.product_no+'"/><input type="hidden" name="sell_price" value="'+e.sell_price+'"/><input type="hidden" name="stock" value="'+e.stock+'"/><input type="hidden" name="title" value="'+e.title+'"/>';
 											sum += parseInt(e.sell_price)
 													* parseInt(e.productQtt);
 										})
