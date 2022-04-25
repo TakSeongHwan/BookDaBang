@@ -29,6 +29,8 @@ public interface ProductDAO {
 	public ProductVO selectProdView(String prodNo) throws Exception;
 	// 선택된 상품 하나를 업데이트 (일괄)
 	public int updateProd(UpdateProdDTO prod) throws Exception;
+	// 선택된 상품 하나를 삭제 (일괄)
+	public int deleteProd(String isbn) throws Exception;
 	
 	public int insertProd(InsertProdDTO product) throws Exception;
 	// isbn(상품번호) 유효성 확인

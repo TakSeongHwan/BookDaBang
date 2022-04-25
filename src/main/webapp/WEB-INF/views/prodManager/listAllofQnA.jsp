@@ -44,11 +44,30 @@
 					data : answer,
 					success : function(data) {
 						if (data == "success") {
-							alert("정상적으로 등록되었습니다");
-							location.reload();
+							
+							$(".alert").fadeIn(400);
+							$(".alert").html("답변이 정상적으로 등록되었습니다.");
+							setTimeout(function() {
+								$(".alert").fadeOut(500);	
+							},700);
+							
+							setTimeout(function() {
+								location.reload();
+							},1300);
+							
 						} else {
-							alert("등록 안됨");
-							location.reload();
+							
+							$(".alert").fadeIn(400);
+							$(".alert").html("답변이 등록되지 않았습니다.");
+							setTimeout(function() {
+								$(".alert").fadeOut(500);	
+							},700);
+							
+							setTimeout(function() {
+								location.reload();
+							},1300);
+							
+							
 						}
 					}
 
@@ -239,6 +258,18 @@
 	width: 300px;
 	margin: 0 auto;
 }
+
+.alert {
+	position: absolute;
+	width: 100%;
+	margin: 0 auto;
+	z-index: 3000;
+	hegiht: -50%;
+	opacity: 0.9;
+	text-align: center;
+	padding: 10px;
+	
+}
 </style>
 </head>
 <body>
@@ -327,6 +358,9 @@
 	</div>
 		
 	</button>
+	<div class="alert alert-primary" style="width:300px;  height:70px;position: fixed; margin: 0 auto; top:10%; left : 45%; line-height: 45px; display: none;">
+    
+  </div>
 	<jsp:include page="../managerFooter.jsp"></jsp:include>
 
 </body>

@@ -24,6 +24,8 @@
   <link rel="stylesheet" href="resources/resources/vendors/nice-select/nice-select.css">
   <link rel="stylesheet" href="resources/vendors/nouislider/nouislider.min.css">
   <link rel="stylesheet" href="resources/css/style.css">
+  
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
   <script src="resources/vendors/jquery/jquery-3.2.1.min.js"></script>
   <script src="resources/vendors/bootstrap/bootstrap.bundle.min.js"></script>
@@ -144,7 +146,14 @@ function displayWarn() {
 							</div>
 						</form>
 														<div>
-								 	<button style="background-color: #03c75a; color : #fff; width:300px; border:none; margin-top:10px; height : 45px; text-align:left; border-radius: 5px"><img src="/resources/img/etc/btnG_naver.png" width="40"><a href="<%=apiURL%>" style="text-decoration: none; color : #fff"><div style="width:230px; text-align: center; display: inline-block; line-height : 47px;">네이버 로그인</div></a></button>
+								 	<div id="button_area">
+        								<div id="naverIdLogin">
+        								<a id="naverIdLogin_loginButton">
+        					<button style="background-color: #03c75a; color : #fff; width:300px; border:none; margin-top:10px; height : 45px; text-align:left; border-radius: 5px"><img src="/resources/img/etc/btnG_naver.png" width="40"><div style="width:230px; text-align: center; display: inline-block; font-size: 16px; ">네이버 로그인</div></button>
+        								</a>
+        								</div>
+      								</div>
+      								
 								 	
 								 	<img src="/resources/img/etc/kakao_login_medium_wide.png" style="margin-top: 10px" >
 								 	
@@ -155,6 +164,113 @@ function displayWarn() {
 			</div>
 		</div>
 	</section>
+	
+<script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+
+
+
+
+
+
+
+
+  <script type="text/javascript">
+  
+  let naverMember = {
+		  userId : "",
+		  userPwd : "",
+		  nickName : "",
+		  userEmail  :"",
+		  isAdmin  :"",
+		  gender  :"",
+		  birth  :"",
+		  phoneNum  :"",
+		  memberWhen  :"",
+		  lastLogin  :"",
+		  isDraw :"",
+		  userName : "",
+		  sessionId: ""
+  }
+  
+  const naverLogin = new naver.LoginWithNaverId(
+   {
+    clientId: "_MSPMGBQvc3RTySfYdhS",
+    callbackUrl: "http://localhost:8085/login",
+    callbackHandle: true
+   
+    }
+   );
+  
+
+    naverLogin.init();
+    naverLogin.getLoginStatus(function (status) {
+      if (status) {
+          const nickName=naverLogin.user.getNickName();
+          const age=naverLogin.user.getAge();
+          const birthday=naverLogin.user.getBirthday();
+          console.log(naverLogin.user);
+			insertOutsider(naverLogin.user);
+          if(nickName===null||nickName===undefined ){
+            alert("별명이 필요합니다. 정보제공을 동의해주세요.");
+            naverLogin.reprompt();
+            return ;  
+         }else{
+          setLoginStatus();
+         }
+	}
+    });
+    console.log(naverLogin);
+
+    function setLoginStatus(){
+    
+      const button_area=document.getElementById('button_area');
+      button_area.innerHTML='<button id="btn_logout" style="background-color: #03c75a; color : #fff; width:300px; border:none; margin-top:10px; height : 45px; text-align:left; border-radius: 5px"><img src="/resources/img/etc/btnG_naver.png" width="40"><div style="width:230px; text-align: center; display: inline-block; font-size: 16px;">로그아웃</div></button>'
+    
+
+      const logout=document.getElementById('btn_logout');
+      logout.addEventListener('click',(e)=>{
+        naverLogin.logout();
+        
+		location.replace("http://localhost:8085/login");
+      });
+    }
+    
+    
+    function insertOutsider(user) {
+    	/*  userId = "",
+		  userPwd = "",
+		  nickName = ""
+		  userEmail  ="",
+		  isAdmin  ="",
+		  gender  ="",
+		  birth  ="",
+		  phoneNum  ="",
+		  memberWhen  ="",
+		  lastLogin  ="",
+		  isDraw ="",
+		  userName = "",
+		  sessionId= "" */
+    	
+    	naverMember.userId =user.id;
+    	naverMember.nickName = user.nickname;
+    	naverMember.nickEmail = user.email;
+    	naverMember.isAdmin = "N"
+    	if(user.gender== "M") {
+    		naverMember.gender = "male";	
+    	} else {
+    		naverMember.gender = "female";
+    	}
+    	naverMember.birth = user.birthyear + "-" +  user.birthday;
+    	naverMember.phoneNum = user.mobile;
+    	naverMember.userName = user.name;
+    	
+    	
+    	console.log(naverMember);
+    }
+    
+   
+
+  </script>
 	<!--================End Login Box Area =================-->
 <jsp:include page="userFooter.jsp"></jsp:include>
 

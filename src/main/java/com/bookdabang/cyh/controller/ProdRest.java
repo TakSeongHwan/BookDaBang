@@ -27,6 +27,7 @@ import com.bookdabang.cyh.domain.InsertProdDTO;
 import com.bookdabang.cyh.domain.ProdInfo;
 import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.cyh.domain.UpdateProdDTO;
+import com.bookdabang.cyh.domain.deleteProdDTO;
 import com.bookdabang.cyh.etc.UploadImageProcess;
 import com.bookdabang.cyh.service.ProductService;
 
@@ -54,9 +55,8 @@ public class ProdRest {
 		return result;
 	}
 
-	@RequestMapping(value = "/up", method = RequestMethod.POST)
-	public ResponseEntity<List<ProductVO>> updateListView(Model model,
-			@RequestParam(value = "checkBoxs[]") List<String> checkProd) {
+	@RequestMapping(value = "/selectView", method = RequestMethod.POST)
+	public ResponseEntity<List<ProductVO>> selectListView(Model model, @RequestParam(value = "checkBoxs[]") List<String> checkProd) {
 		ResponseEntity<List<ProductVO>> result = null;
 		try {
 			List<ProductVO> lst = service.selectProdView(checkProd);
@@ -68,6 +68,8 @@ public class ProdRest {
 		return result;
 
 	}
+	
+	
 
 	@RequestMapping(value = "/", method = RequestMethod.PUT)
 	public ResponseEntity<String> updateList(Model model, @RequestBody List<UpdateProdDTO> list) {
@@ -80,6 +82,28 @@ public class ProdRest {
 			} else {
 				result = new ResponseEntity<String>("fail", HttpStatus.OK);
 			}
+		} catch (Exception e) {
+			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		return result;
+
+	}
+	
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public ResponseEntity<Integer> deleteList(Model model, @RequestBody List<deleteProdDTO> list, HttpServletRequest req) {
+		System.out.println(list.toString());
+		String upPath = req.getSession().getServletContext().getRealPath("resources/uploads");
+		ResponseEntity<Integer> result = null;
+		
+		try {
+			 int deleteCount = service.deleteSelectProd(list ,upPath);
+			if(deleteCount > 0) {
+				result = new ResponseEntity<Integer>(deleteCount, HttpStatus.OK);
+			} else {
+				result = new ResponseEntity<Integer>(deleteCount, HttpStatus.OK);
+			}
+			 
 		} catch (Exception e) {
 			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
@@ -157,12 +181,10 @@ public class ProdRest {
 
 		if (imagePath != null) {
 			imagePath = imagePath.replaceAll("%2F", "/");
-			String deletePath = imagePath.split("uploads")[1];
-			System.out.println(imagePath);
 
 			String upPath = req.getSession().getServletContext().getRealPath("resources/uploads");
 			try {
-				service.deleteImage(upPath, deletePath);
+				service.deleteImage(upPath, imagePath);
 				result = new ResponseEntity(HttpStatus.OK);
 			} catch (Exception e) {
 				result = new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -193,27 +215,5 @@ public class ProdRest {
 		return result;
 	}
 	
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public ResponseEntity<String> saveProduct(Model model, @ModelAttribute InsertProdDTO product, HttpServletRequest req, HttpServletResponse rep) {
-		
-		Cookie saveProduct = new Cookie("saveProduct",product.getIsbn()); 
-		
-		saveProduct.setMaxAge(60 * 60 * 24); // 쿠키 만료시간을 2분으로 . 60*60*24*7
-		saveProduct.setPath("/prodManager/addProduct");
-		rep.addCookie(saveProduct);
-		
-		
-		ResponseEntity<String> result = null;
-
-		try {
-			
-			result = new ResponseEntity("success", HttpStatus.OK);
-			
-		} catch (Exception e) {
-			result = new ResponseEntity(HttpStatus.BAD_REQUEST);
-			e.printStackTrace();
-		}
-
-		return result;
-	}
+	
 }

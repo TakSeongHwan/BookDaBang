@@ -72,10 +72,13 @@ public class ProductDAOImpl implements ProductDAO {
 	public int updateProd(UpdateProdDTO prod) throws Exception {
 
 		return ses.update(ns + ".updateProd", prod);
+	}	
+	
+	@Override
+	public int deleteProd(String isbn) throws Exception {
+		
+		return ses.delete(ns + ".deleteProd", isbn);
 	}
-	
-	
-	
 
 	@Override
 	public int insertProd(InsertProdDTO product) throws Exception {

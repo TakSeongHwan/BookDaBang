@@ -16,12 +16,13 @@ public class UploadImageProcess {
 		UUID uuid = UUID.randomUUID();
 		String saveFileName = uuid.toString() + "_" + orginalFileName;
 		String savePath = upPath + calculateSavePath(upPath); // 파일이 저장될 경로 계산
-		File file1 = new File(savePath);
-		 File[] flist =file1.listFiles();
-		if(flist.length > 0 ) {
-			DeleteFileProcess dfp = new DeleteFileProcess();
-			dfp.deleteFile(savePath);
-		}
+		
+		/*
+		 * File file1 = new File(savePath); File[] flist =file1.listFiles();
+		 * if(flist.length > 0 ) { DeleteFileProcess dfp = new DeleteFileProcess();
+		 * dfp.deleteFile(savePath); }
+		 */
+		
 		File target = new File(savePath + File.separator, saveFileName);
 		FileCopyUtils.copy(file, target);
 		System.out.println(savePath);

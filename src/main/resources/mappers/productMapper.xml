@@ -156,8 +156,12 @@
 					order by end_date asc
 				</if>
 			</if>
-
 		</if>
+		<if test="sortMethod == ''">
+		order by rg_date desc
+		</if>
+		
+		
 		limit #{startNum}, #{postPerPage}
 	</select>
 	
@@ -165,13 +169,31 @@
 		select * from product where isbn = #{isbn}
 	</select>
 	<insert id="insertProd">
-		insert into product values(0,#{title},#{author},#{price},#{sell_price},#{publisher},#{category_code},#{description},#{pub_date},#{stock},now(),timestamp(#{end_date}),null,#{display_status},0,#{sales_status},0,#{cover},#{detail_description},#{author_introduce},#{index},#{inside_book},#{pisOffdiscription},#{isbn},null)
+		
+		<choose>
+			<when test="end_date == '' and pub_date == ''">
+			insert into product values(0,#{title},#{author},#{price},#{sell_price},#{publisher},#{category_code},#{description},null,#{stock},now(),null,null,#{display_status},0,#{sales_status},0,#{cover},#{detail_description},#{author_introduce},#{index},#{inside_book},#{pisOffdiscription},#{isbn},null)
+			</when>
+			<when test="end_date == ''">
+			insert into product values(0,#{title},#{author},#{price},#{sell_price},#{publisher},#{category_code},#{description},#{pub_date},#{stock},now(),null,null,#{display_status},0,#{sales_status},0,#{cover},#{detail_description},#{author_introduce},#{index},#{inside_book},#{pisOffdiscription},#{isbn},null)	
+			</when>
+			<when test="pub_date == ''">
+			insert into product values(0,#{title},#{author},#{price},#{sell_price},#{publisher},#{category_code},#{description},null,#{stock},now(),timestamp(#{end_date}),null,#{display_status},0,#{sales_status},0,#{cover},#{detail_description},#{author_introduce},#{index},#{inside_book},#{pisOffdiscription},#{isbn},null)
+			</when>
+			<otherwise>
+			insert into product values(0,#{title},#{author},#{price},#{sell_price},#{publisher},#{category_code},#{description},#{pub_date},#{stock},now(),timestamp(#{end_date}),null,#{display_status},0,#{sales_status},0,#{cover},#{detail_description},#{author_introduce},#{index},#{inside_book},#{pisOffdiscription},#{isbn},null)	
+			</otherwise>
+		</choose>
 	</insert>
 	
 	<update id = "updateProd">
 		update product set price=#{updatePrice}, stock =#{updateStock}, display_status = #{updateDisplay}, sales_status = #{updateSales}, update_date= now()
 		where isbn = #{prodNo}
 	</update>
+	
+	<delete id="deleteProd">
+		delete from product where isbn = #{isbn}
+	</delete>
 	
 	<select id="validationProdNo" resultType="int">
 		select count(*) from product where isbn = #{prodNo}

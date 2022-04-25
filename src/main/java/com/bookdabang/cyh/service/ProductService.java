@@ -12,6 +12,7 @@ import com.bookdabang.cyh.domain.ProdInfo;
 import com.bookdabang.cyh.domain.ProdQnADTO;
 import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.cyh.domain.UpdateProdDTO;
+import com.bookdabang.cyh.domain.deleteProdDTO;
 
 public interface ProductService {
 	public List<CategoryVO> getCategory() throws Exception;
@@ -21,6 +22,8 @@ public interface ProductService {
 	public List<ProductVO> selectProdView(List<String> checkProd) throws Exception;
 
 	public boolean updateSelectProd(List<UpdateProdDTO> list) throws Exception;
+	
+	public int deleteSelectProd(List<deleteProdDTO> list, String upPath) throws Exception;
 
 	public boolean validationProdNo(String isbn) throws Exception;
 	
