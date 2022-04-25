@@ -216,11 +216,37 @@ $(document).ready(function() {
                         class="menu-link">
                            <div data-i18n="Error">Error</div>
                      </a></li>
+                     
+                     
+                     
                      <li class="menu-item"><a
                         href="pages-misc-under-maintenance.html" class="menu-link">
                            <div data-i18n="Under Maintenance">Under Maintenance</div>
                      </a></li>
                   </ul></li>
+
+                  <li class="menu-item"><a href="javascript:void(0);"
+                  class="menu-link menu-toggle"> <i
+                     class="menu-icon tf-icons bx bx-detail"></i>
+                     <div data-i18n="Misc">자유게시판</div>
+               </a>
+                  <ul class="menu-sub">
+                     <li class="menu-item"><a href="${contextPath}/board/removeAllfreeBoard"
+                        class="menu-link">
+                           <div data-i18n="Error">삭제게시판</div>
+                     </a></li>
+                     <li class="menu-item"><a
+                        href="${contextPath}/board/listAllReportBoard"" class="menu-link">
+                           <div data-i18n="Under Maintenance">신고게시판</div>
+                     </a></li>
+                     <li class="menu-item"><a
+                        href="${contextPath}/board/adminFreeBoard" class="menu-link">
+                           <div data-i18n="Under Maintenance">자유게시판관리</div>
+                     </a></li>
+                  </ul></li>
+                  
+                  
+
                  <li class="menu-header small text-uppercase"><span
                   class="menu-header-text">주문관리</span></li>
                <li class="menu-item"><a href="javascript:void(0);"
@@ -243,6 +269,7 @@ $(document).ready(function() {
                            <div data-i18n="Connections">Connections</div>
                      </a></li>
                   </ul></li>
+
                <!-- Components -->
                <li class="menu-header small text-uppercase"><span
                   class="menu-header-text">Components</span></li>

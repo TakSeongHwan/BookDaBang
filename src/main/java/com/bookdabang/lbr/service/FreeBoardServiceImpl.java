@@ -6,22 +6,22 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bookdabang.common.domain.AttachFileVO;
+import com.bookdabang.common.domain.BoardSearch;
 import com.bookdabang.common.domain.FreeBoard;
 import com.bookdabang.common.domain.FreeBoardComment;
+import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.PageView;
 import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.RecommendVO;
 import com.bookdabang.common.domain.ReportBoard;
-import com.bookdabang.common.etc.IPCheck;
-import com.bookdabang.lbr.domain.Search;
+
 import com.bookdabang.lbr.etc.BoardUploadFile;
 import com.bookdabang.lbr.persistence.FreeBoardDAO;
 
@@ -32,37 +32,55 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	private FreeBoardDAO dao;
 
 	@Override
-	public Map<String, Object> listAllBoards(int pageNo, Search search) throws Exception {
+	public Map<String, Object> listAllBoards(int pageNo, BoardSearch search) throws Exception {
 		PagingInfo paging = pagingProcess(pageNo, search);
 
 		List<FreeBoard> lst = null;
-		if (search.getSearchtype() == null && search.getSearchtype() == null || search.getSearchtype().equals("")) {
-
+		if (search.getSearchWord()== null && search.getSearchType()== null || search.getSearchWord().equals("")) {
+			
 			lst = dao.getListAllFreeBoards(paging);
 		} else {
 			lst = dao.getListAllFreeBoards(paging, search);
+			
+			
 		}
-
+		 
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("freeBoard", lst);
 		map.put("paging", paging);
+		System.out.println(paging);
 
-		System.out.println(search.toString());	
+		
 		
 		return map;
 	}
 
-	private PagingInfo pagingProcess(int pageNo, Search search) throws Exception {
+
+
+	private PagingInfo pagingProcess(int pageNo, BoardSearch search) throws Exception {
 		PagingInfo paging = new PagingInfo();
 
-		if (search.getSearchtype() == null && search.getSearchword() == null || search.getSearchword().equals("")) {
-
+		if (search.getSearchWord()== null && search.getSearchType()== null || search.getSearchWord().equals("")) {
+			
 			paging.setTotalPostCnt(dao.getTotalPost());
+			
+			paging.setTotalPostCnt(dao.removeTotal());
+			
 		} else {
 
 			paging.setTotalPostCnt(dao.getSearchResultCnt(search));
-		}
+			
+			paging.setTotalPostCnt(dao.getSearchResultCntRemove(search));
+			
+			
+		} 
 
+		
+		
+		paging.setPostPerPage(5);
+		paging.setPageCntPerBlock(3);
+		
 		paging.setTotalPage(paging.getTotalPostCnt());
 		// 현재 페이지에서 출력 시작할 글번호
 		paging.setStartNum(pageNo);
@@ -78,7 +96,8 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
 		// 현재 페이지에서의 끝 페이징 블럭
 		paging.setEndNoOfCurPagingBlock(paging.getStartNoOfCurPagingBlock());
-
+		
+		System.out.println(paging.toString());
 		return paging;
 	}
 
@@ -123,22 +142,38 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	}
 
 	@Override
-	public List<ReportBoard> listAllReportBoards() throws Exception {
-		return dao.getListAllReportBoards();
-	}
-
-	@Override
-	public boolean insertReportBoard(ReportBoard reportboard) throws Exception {
-		boolean result = false;
-		int rb = dao.insertReportBoard(reportboard);
-		if (rb == 1) {
-			result = true;
+	public Map<String, Object> listAllReportBoards(int pageNo, BoardSearch search) throws Exception {
+		
+		PagingInfo paging = pagingProcess(pageNo,search);
+		List<ReportBoard> lst = null;
+		
+		
+		if (search.getSearchWord()== null && search.getSearchType()== null || search.getSearchWord().equals("")) {
+			lst = dao.getListAllReportBoards(paging);
+		} else {
+			lst = dao.getListAllReportBoards(paging, search);
+			
 		}
-		return result;
+		
+		
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("reportBoard", lst);
+		map.put("paging", paging);
+
+		
+		
+		return map;
+		
+		
+		
 	}
 
+
+	
+
 	@Override
-	public boolean createFreeBoard(FreeBoard freeBoard, List<BoardUploadFile> uploadLst) throws Exception {
+	public boolean createFreeBoard(FreeBoard freeBoard, List<BoardUploadFile> uploadLst ) throws Exception {
 		boolean result = false;
 		int fb = dao.insertFreeBoard(freeBoard);
 		int ref = dao.getNextNo(); // 게시판번호
@@ -170,10 +205,33 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	}
 
 	@Override
-	public List<FreeBoard> removeAllFreeBoard() throws Exception {
+	public Map<String, Object> removeAllFreeBoard(int pageNo, BoardSearch search) throws Exception {
 		// TODO Auto-generated method stub
-		return dao.removeAllFreeBoard();
+		
+		PagingInfo paging = pagingProcess(pageNo,search);
+		List<FreeBoard> lst = null;
+		
+		
+		if (search.getSearchWord()== null && search.getSearchType()== null || search.getSearchWord().equals("")) {
+
+			lst = dao.removeAllFreeBoard(paging);
+		} else {
+			lst = dao.getListAllRemoveBoards(paging, search);
+			
+		}
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("removeBoard", lst);
+		map.put("paging", paging);
+
+		
+		
+		return map;
+		
 	}
+	
+
+
 
 	@Override
 	public FreeBoard readDelBoard(int no) throws Exception {
@@ -238,7 +296,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
 		return dao.delLikeCount(no);
 	}
-
+	
 	@Override
 	public boolean insertComment(FreeBoardComment comment) throws Exception {
 		boolean result = false;
@@ -293,20 +351,91 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 		return resultMap;
 	}
 
-//	@Override
-//	public Map<String, Object> readReportBoard(int no) throws Exception {
-//		FreeBoard freeBoard = dao.readFreeBoard(no);
-//		ReportBoard reportBoard = dao.readReportBoard(no);
-//		Map<String, Object> resultMap = new HashMap<String, Object>();
-//		
-//		resultMap.put("freeBoard", freeBoard);
-//		resultMap.put("reportBoard", reportBoard);
-//		
-//		resultMap = dao.mreadReportBoard(resultMap);
-//		
-//
-//		return resultMap;
-//		
-//	}
+	@Override
+	public boolean reportfreeBoard(int board) throws Exception {
+		boolean result = false;
+
+		int dr = dao.reportfreeBoard(board);
+		if (dr == 1) {
+			result = true;
+		}
+		return result;
+	}
+
+	@Override
+	public boolean reportStatus(int report) throws Exception {
+		boolean result = false;
+
+		int ds = dao.reportStatus(report);
+		if (ds == 1) {
+			result = true;
+		}
+		return result;
+	}
+
+	@Override
+	public MemberVO getUser(String userId) throws Exception {
+		
+	
+
+		return dao.getUser(userId);
+	}
+
+	@Override
+	public ReportBoard readreportBoard(int reportNo) throws Exception {
+		return dao.readReportBoard(reportNo);
+		
+	}
+
+	@Override
+	public int updateFreeBoard(FreeBoard freeboard) throws Exception {
+		
+		return dao.updateFreeBoard(freeboard);
+	}
+
+	@Override
+	public boolean adminRemove(String boardno) throws Exception {
+		boolean result = false;
+		int ar = dao.adminRemove(boardno);
+
+		if (ar == 1) {
+			result = true;
+		}
+		return result;
+		
+	}
+
+	@Override
+	public boolean admindelAttach(String boardno) throws Exception {
+		boolean result = false;
+		int ad = dao.admindelAttach(boardno);
+
+		if (ad == 1) {
+			result = true;
+		}
+		return result;
+	}
+
+	@Override
+	public boolean insertReportBoard(ReportBoard reportboard) throws Exception {
+		boolean result = false;
+		int rb = dao.insertReportBoard(reportboard);
+		if (rb == 1) {
+			result = true;
+		}
+		return result;
+	}
+
+	
 
 }
+
+
+	
+
+
+	
+
+
+
+
