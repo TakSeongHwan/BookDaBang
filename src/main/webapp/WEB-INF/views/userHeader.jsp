@@ -28,7 +28,6 @@
     src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     
 <script>
-
 $(function() {
 	console.log("${sessionId}");
 	console.log("${ipAddr}");
@@ -175,7 +174,8 @@ function refund() {
 		output += '<img class="card-img" style="height: 150px;" src="' + list[i].cover + '" alt="">';
 		output += '<ul class="card-product__imgOverlay" style="width:150px; position:absolute; left:-24px;">' +
 				  '<li><a href="${contextPath}/product/detail?no=' + list[i].product_no + '"><button><i class="ti-search"></i></button></a></li>'
-			    + '<li><button><i class="ti-shopping-cart"></i></button></li><li><button><i class="ti-money"></i></button></li></ul></div>';
+			    + '<li><button class="searchArea" onclick="insertCart(' + list[i].product_no + ')"><i class="ti-shopping-cart searchArea"></i></button></li>'
+			    + '<li><button onclick="goOrder(' + list[i].product_no + ')"><i class="ti-money"></i></button></li></ul></div>';
 		output += '<div class="card-body" style="padding:5px; margin-top:17px;">' + 
 				  '<p style="padding-left:20px; padding-right:20px; max-height:50px; text-overflow:ellipsis; overflow:auto;">'
 		  		+ list[i].author + ' | ' + list[i].publisher + '</p>';
@@ -186,10 +186,56 @@ function refund() {
 		output += '<p class="card-product__price" style="vertical-align:top; font-size:18px;">' + price + '원</p>';
 		output += '</div></div></div>';
 		$("#preview").html(output);
-	}	
+	}
+	
+	function insertCart(no){
+		let url = "${contextPath}/userCart/addCart"
+		$.ajax({
+			url : url,
+			type : "post",
+			data : {
+				productNo : no,
+				productQtt : 1
+			},
+			success : function(data) {
+				console.log(data);
+				$("#cartBox").show();
+				setTimeout(function() {
+					$("#cartBox").fadeOut(1500);
+				}, 3000);
+			},
+			error : function(data){
+				console.log(data);
+			}
+		});
+	}
+	
+	function goOrder(no){
+		let url = "${contextPath}/userCart/addCart"
+		$.ajax({
+			url : url,
+			type : "post",
+			data : {
+				productNo : no,
+				productQtt : 1
+			},
+			success : function(data) {
+				console.log(data);
+			},
+			error : function(data){
+				console.log(data);
+			}
+		});
+		location.href = "${contextPath}/order/checkOut"
+	}
 	
 </script>
 <style>
+
+body{
+overflow-y:scroll; 
+}
+
 	#searchBox {
 		width: 635px;
 		background-color: white;
@@ -232,8 +278,13 @@ function refund() {
           </button>
           <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
             <ul class="nav navbar-nav menu_nav ml-auto mr-auto">
+
                  <li class="nav-item active"><a class="nav-link" href="${contextPath}/">Home</a></li>
-                 <li class="nav-item active"><a class="nav-link" href="${contextPath}/product/list?pageNo=1">도서</a></li>
+            <li class="nav-item active"><a class="nav-link" href="${contextPath}/product/list?pageNo=1">도서</a></li>
+                 <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">로그인</a></li>
+                 <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">회원가입</a></li>
+
+     
                  <!--  <li class="nav-item submenu dropdown">
                    <a href="/product/list" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">shop</a>               
@@ -245,6 +296,7 @@ function refund() {
                         <li class="nav-item"><a class="nav-link" href="cart.html">Shopping Cart</a></li>
                    </ul>
              </li>-->
+             <!-- 
                  <li class="nav-item submenu dropdown">
                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">Blog</a>
@@ -253,22 +305,22 @@ function refund() {
                         <li class="nav-item"><a class="nav-link" href="single-blog.html">Blog Details</a></li>
                    </ul>
             </li>
+            
             <li class="nav-item submenu dropdown">
                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                     aria-expanded="true">Pages</a>
+                     aria-expanded="true">MyPages</a>
                    <ul class="dropdown-menu">
-                        <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">Login</a></li>
-                        <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">Register</a></li>
-                        <!-- <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>  -->
+                        
+                        <li class="nav-item"><a class="nav-link" href="tracking-order.html">Tracking</a></li>  
                    </ul>
-                 </li>
+                 </li> -->
                  <!-- <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>  -->
   				
   				 <li class="nav-item submenu dropdown">
                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">게시판</a>
                    <ul class="dropdown-menu">
-                  		<li class="nav-item"><a class="nav-link" href="${contextPath }/notice/listAll">공지사항</a></li>
+                  		<li class="nav-item"><a class="nav-link" href="${contextPath }/notice/listAll?pageNo=1">공지사항</a></li>
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/board/listAllFreeBoard">자유게시판</a></li>
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/event/allEventList">이벤트게시판</a></li>
                         <li class="nav-item"><a class="nav-link" href="${contextPath}/event/allBestList">베스트 게시글</a></li>
@@ -304,6 +356,15 @@ function refund() {
    <!--================ End Header Menu Area =================-->
    
 	<div id = "searchBox" class="searchArea">
+	</div>
+
+	<div id="cartBox" class="searchArea" style="width: 290px; height: 140px; background-color: white; display: none; position: fixed;
+    	top: 15%; left: 42.4%; z-index: 15000; border: 1px solid #ccc; text-align: -webkit-center;">
+		<h5 class="searchArea" style="margin-top: 28px; margin-bottom: 20px;">장바구니에 담았습니다</h5>
+		<button class="button button-login" style="padding-left: 15px; padding-right: 15px;"
+		onclick="location.href='${contextPath}/cart/userCart'" >장바구니 가기</button>
+		<button class="button button-header searchArea" style="padding: 7px 15px 7px 15px; width: 70px; margin-left: 15px;"
+		onclick="$('#cartBox').hide();">닫기</button>
 	</div>
 	<!--================ End Header Menu Area =================-->
 	

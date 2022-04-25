@@ -22,7 +22,7 @@
 	
 	$(function() {
 		priceReplace();
-		quantity(1);
+		quantityChange(1);
 		infoReplace();
 		navColor();
 		starMaker();
@@ -35,6 +35,56 @@
 		parsePaging();
 	});
 	
+	function insertCart2(no){
+		let quantity = $("#sst").val();
+		console.log($("#sst").val());
+		let url = "${contextPath}/userCart/addCart"
+		$.ajax({
+			url : url,
+			type : "post",
+			data : {
+				productNo : no,
+				productQtt : quantity
+			},
+			success : function(data) {
+				console.log(data);
+				$("#sst").val(1);
+				quantityChange(1);
+				$("#cartBox").show();
+				setTimeout(function() {
+					$("#cartBox").fadeOut(1500);
+				}, 3000);
+			},
+			error : function(data){
+				console.log(data);
+			}
+		});
+		
+	}
+	
+	function goOrder2(no){
+		let quantity = $("#sst").val();
+		console.log(quantity);
+		let url = "${contextPath}/userCart/addCart"
+		$.ajax({
+			url : url,
+			type : "post",
+			data : {
+				productNo : no,
+				productQtt : quantity
+			},
+			success : function(data) {
+				$("#sst").val(1);
+				quantityChange(1);
+				console.log(data);
+			},
+			error : function(data){
+				console.log(data);
+			}
+		});
+		location.href = "${contextPath}/order/checkOut"
+	}
+	
 	function priceReplace() {
 		let sellPrice = $(".s_product_text h2").text().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
 		$(".s_product_text h2").text(sellPrice);
@@ -43,11 +93,10 @@
 		$("#listPrice").html(listPrice);
 	}
 	
-	function quantity(number) {
-		let q = number;
+	function quantityChange(quantity) {
 		let output = "";
-		if (q > 1) {
-			let price = String(${product.sell_price}*q);
+		if (quantity > 1) {
+			let price = String(${product.sell_price}*quantity);
 			price = price.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
 			output = "총 상품금액 : <h2 style='display:inline-block;'> " + price + " </h2>원";
 		}	
@@ -1159,12 +1208,12 @@
 								<label for="qty">Quantity:</label>
                                 <input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
                                     class="input-text qty" style="height: 40px;">
-                                <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++; quantity(result.value);"
+                                <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++; quantityChange(result.value);"
                                     class="increase items-count" type="button" style="top: -2px;">
                                     <i class="lnr lnr-chevron-up:before"><img src="//image.aladin.co.kr/img/shop/2018/icon_Aup.png" border="0"></i>
                                     
                                 </button>
-                                <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 1 ) result.value--;quantity(result.value);"
+                                <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 1 ) result.value--;quantityChange(result.value);"
                                     class="reduced items-count" type="button" style="bottom: -1.5px;">
                                     <i class="lnr lnr-chevron-down"><img src="//image.aladin.co.kr/img/shop/2018/icon_Adown.png" border="0"></i>
                                 </button>
@@ -1174,8 +1223,8 @@
 							
 							</div>
 							<div>
-								<a class="button button--active button-contactForm" href="#">장바구니 담기</a>&nbsp;
-								<a class="button button--active button-contactForm" href="#">바로구매</a>
+								<a class="button button--active button-contactForm" href="javascript:insertCart2(${product.product_no});">장바구니 담기</a>&nbsp;
+								<a class="button button--active button-contactForm" href="javascript:goOrder2(${product.product_no});">바로구매</a>
 							</div>
 							
 							<!--  <div class="card_area d-flex align-items-center">
@@ -1482,6 +1531,7 @@
 									}
 									
 								} else{
+									
 									output += "<td style ='text-align : left;width:500px'>" + e.content + "</td>";
 								}
 								
@@ -1505,7 +1555,15 @@
 								} else {
 									
 									output += "<tr><td></td>";
+									if(e.pwd != null){
+										if(userNickName == e.writer){
 									output += "<td style ='text-align : left;width:500px'>ㄴ<span class='badge bg-secondary' style='font-weight :300; background-color : #ccc!important'>답변</span>&nbsp&nbsp" +e.content+"</td>";
+										}  else {
+											output += "<td style ='text-align : left;width:500px; color : #ccc'>ㄴ<img src='/resources/img/etc/lock.png' width='18px'>비공개 답변입니다.</td>";
+										}
+										}else {
+											output += "<td style ='text-align : left;width:500px'>ㄴ<span class='badge bg-secondary' style='font-weight :300; background-color : #ccc!important'>답변</span>&nbsp&nbsp" +e.content+"</td>";	
+										}
 									output += "<td></td>"
 									output += "<td>"+writeDate+"</td>";
 									output += "<td></td>";
@@ -1889,14 +1947,10 @@
 										</a>
 									</li>
 									<li>
-										<a href="">
-											<button><i class="ti-shopping-cart"></i></button>
-										</a>
+										<button onclick="insertCart(${product.product_no})"><i class="ti-shopping-cart"></i></button>
 									</li>
 									<li>
-										<a href="">
-											<button><i class="ti-money"></i></button>
-										</a>
+										<button onclick="goOrder(${product.product_no})"><i class="ti-money"></i></button>
 									</li>
 								</ul>
 							</div>

@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <scirpt src="${contextPath}/resources/js/jQueryRotateCompressed.js">
 <meta charset="UTF-8">
 <title>상품 조회</title>
@@ -240,9 +241,6 @@
 
 		});
 
-		$(document).on("click", "#delProd", function() {
-
-		});
 
 		$(document)
 				.on(
@@ -289,6 +287,28 @@
 							updateProd(updateProdAry);
 
 						});
+		
+
+		$(document).on("click", "#delProd", function() {
+			let deleteProdAry = [];
+		
+			for (let i = 0; i < 10; i++) {
+				let deleteProd = {
+					prodNo : "",
+					imagePath : ""
+				}
+				if ($(".upProdCheck").eq(i).is(":checked")) {
+					deleteProd.prodNo = ($(".upProdCheck").eq(i).attr("id"));
+					deleteProd.imagePath = ($(".imagePath").eq(i).attr("src"));
+					
+					deleteProdAry.push(deleteProd);
+				}
+				
+				
+			}
+					
+			deleteProdList(deleteProdAry);
+				});
 		/*410 */
 
 		$(document)
@@ -312,7 +332,7 @@
 								}
 							}
 						});
-		updAllSales
+		
 		$(document)
 				.on(
 						"change",
@@ -359,7 +379,7 @@
 	}
 
 	function prodselectview(checkAry) {
-		$("#selectProdView").empty();
+		
 		let contextPath = $
 		{
 			contextPath
@@ -367,7 +387,7 @@
 		$("#selectProdView")
 				.html(
 						'<div style="position : absolute; left : 50%; top :50%; transform : translate(-50%, -50%)"><img src="/resources/img/etc/loading.gif" style="width : 100px" ></div>');
-		let url = "/prodRest/up";
+		let url = "/prodRest/selectView";
 
 		$.ajax({
 			url : url,
@@ -378,7 +398,6 @@
 			},
 			success : function(data) {
 				console.log(data);
-
 				selectProdView(data);
 			}
 
@@ -432,8 +451,7 @@
 	}
 
 	function searchView(data) {
-		$("#productView").empty();
-		$("#pagingZone").empty();
+		
 		let output = "";
 		let displayStatus = "";
 		let salesStatus = "";
@@ -475,9 +493,14 @@
 							output += '<td><div>' + rgDate + '</div>';
 							output += '<div style="color : #ccc">' + upDate
 									+ '</div></td>';
-							endDate = new Date(
-									+new Date(e.end_date) + 3240 * 10000)
-									.toISOString().split("T")[0];
+							if(e.end_date == null){
+								endDate = "제한 없음"
+							}else{
+								endDate = new Date(
+										+new Date(e.end_date) + 3240 * 10000)
+										.toISOString().split("T")[0];
+							}
+							
 							output += '<td>' + endDate + '</td>';
 							output += '<td>' + e.sales_count + '</td>';
 							output += '<td>' + e.read_count + '</td>';
@@ -546,14 +569,14 @@
 
 		pagingoutput += '</ul></nav>'
 
-		$("#pagingZone").append(pagingoutput);
+		$("#pagingZone").html(pagingoutput);
 
-		$("#productView").append(output);
+		$("#productView").html(output);
 
 	}
 
 	function selectProdView(data) {
-		$("#selectProdView").empty();
+		
 		let output = "";
 		$
 				.each(
@@ -561,7 +584,7 @@
 						function(i, e) {
 							output += '<tr><td> <input class="form-check-input upProdCheck"  type="checkbox" id="'+e.isbn+'" /></td>';
 							output += '<td>' + e.isbn + '</td>';
-							output += '<td><img src ="' + e.cover + '" width="50" /></td>';
+							output += '<td><img src ="' + e.cover + '" width="50" class ="imagePath"/></td>';
 							output += '<td>' + e.title + '</td>';
 							output += '<td style="font-size : 12px">'
 									+ ConversionOfcategory(e.category_code)
@@ -590,7 +613,7 @@
 						});
 		/* 210 */
 
-		$("#selectProdView").append(output);
+		$("#selectProdView").html(output);
 
 	}
 
@@ -613,9 +636,16 @@
 			success : function(data) {
 				console.log(data)
 				if (data == "success") {
-					alert("업데이트에 성공했군요");
-					/* prodselectview(checkAry); */
-					location.reload();
+					$(".alert").fadeIn(400);
+					$(".alert").html("상품이 정상적으로 수정되었습니다.");
+					setTimeout(function() {
+						$(".alert").fadeOut(500);	
+					},700);
+					
+					
+					setTimeout(function() {
+						location.reload();
+					},1300);
 				}
 
 			},
@@ -625,6 +655,39 @@
 			}
 
 		});
+	}
+	
+	function deleteProdList(deleteProdAry) {
+		let JsonDeleteProdAry = JSON.stringify(deleteProdAry);
+		console.log(deleteProdAry);
+		
+		let url = "/prodRest/delete";
+		$.ajax({
+			url : url,
+			dataType : "text",
+			type : "post",
+			headers : {
+				"content-type" : "application/json",
+				"X-HTTP-Method-Override" : "POST"
+			},
+			data : JsonDeleteProdAry,
+			success : function(data) {
+				if (data > 0) {
+					$(".alert").fadeIn(400);
+					$(".alert").html(data + " 개의 상품을 삭제했습니다.");
+					setTimeout(function() {
+						$(".alert").fadeOut(500);	
+					},700);
+					
+					
+					setTimeout(function() {
+						location.reload();
+					},1300);
+				}
+				
+			}
+
+		});  
 	}
 
 	function ConversionOfcategory(category_code) {
@@ -776,6 +839,17 @@ th {
 	transform: rotate(180deg);
 	transition: 0.5s;
 }
+
+.alert {
+	position: absolute;
+	width: 100%;
+	margin: 0 auto;
+	z-index: 3000;
+	hegiht: -50%;
+	text-align: center;
+	padding: 10px;
+	
+}
 </style>
 </head>
 <body>
@@ -859,7 +933,7 @@ th {
 									name="sales_status" /> <label class="form-check-label"
 									for="defaultCheck3">판매중 </label></td>
 								<td><input class="form-check-input sales_status"
-									type="radio" value="notSale" id="defaultCheck3"
+									type="radio" value="notSales" id="defaultCheck3"
 									name="sales_status" /> <label class="form-check-label"
 									for="defaultCheck3">판매안함 </label></td>
 								<td><input class="form-check-input sales_status"
@@ -1032,6 +1106,10 @@ th {
 				</div>
 			</div>
 		</div>
+		
+		<div class="alert alert-primary" style="width:300px;  height:70px;position: fixed; margin: 0 auto; top:10%; left : 45%; line-height: 45px; display: none;">
+    
+  </div>
 
 
 

@@ -14,6 +14,7 @@ import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.cyh.domain.AnswerDTO;
+import com.bookdabang.cyh.domain.InsertProdDTO;
 import com.bookdabang.cyh.domain.ProdQnADTO;
 import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.cyh.domain.UpdateProdDTO;
@@ -70,6 +71,18 @@ public class ProductDAOImpl implements ProductDAO {
 	public int updateProd(UpdateProdDTO prod) throws Exception {
 
 		return ses.update(ns + ".updateProd", prod);
+	}	
+	
+	@Override
+	public int deleteProd(String isbn) throws Exception {
+		
+		return ses.delete(ns + ".deleteProd", isbn);
+	}
+
+	@Override
+	public int insertProd(InsertProdDTO product) throws Exception {
+		
+		return ses.insert(ns + ".insertProd", product);
 	}
 
 	@Override
@@ -77,8 +90,14 @@ public class ProductDAOImpl implements ProductDAO {
 		
 		return ses.selectOne(ns + ".validationProdNo", prodNo);
 	}
+
 	
 	
+	@Override
+	public String getPwdByQuesNo(int question_no) {
+		
+		return ses.selectOne(ns + ".getQnAByQuesNo", question_no);
+	}
 
 	@Override
 	public int insertAnswer(AnswerDTO answer) {
@@ -203,12 +222,15 @@ public class ProductDAOImpl implements ProductDAO {
 		return ses.selectList(ns + ".selectTopSaleProducts", cno);
 	}
 
+
+
 	@Override
 	public List<ProductVO> selectTopProducts(String searchWord) throws Exception {
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("searchWord", searchWord);
 		return ses.selectList(ns + ".selectTopViewProducts", param);
 	}
+
 
 	
 
