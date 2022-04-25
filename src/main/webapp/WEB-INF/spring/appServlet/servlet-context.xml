@@ -37,6 +37,7 @@
 	<!-- 인터셉터 설정 -->
 	
 	<beans:bean id ="loginInterceptor" class="com.bookdabang.ljs.interceptor.LoginInterceptor"></beans:bean>
+	<beans:bean id ="authInterceptor" class="com.bookdabang.ljs.interceptor.AuthInterceptor"></beans:bean>
 	
 	
 	<!-- 인터셉터가 수행될 매핑 설정  -->
@@ -46,6 +47,13 @@
 			<mapping path="/loginSign"/> <!-- /member/loginPage 매핑이 요청되면 -->
 			<beans:ref bean="loginInterceptor"/><!-- request를 가로채 loginInterceptor 객체가 실행되도록 -->
 		</interceptor>
+		<interceptor>
+			<mapping path="/board/insertFreeBoard"/> <!-- 게시판 글 등록시 작동. -->
+			<mapping path="/cs/write"/> <!-- 마이페이지 접속시 작동. -->
+			<mapping path="/mypage/*"/> <!-- 마이페이지 접속시 작동. -->
+			<beans:ref bean="authInterceptor"/>
+		</interceptor>
+		
 
 	</interceptors>
 

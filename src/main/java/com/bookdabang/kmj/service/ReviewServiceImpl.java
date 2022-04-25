@@ -8,9 +8,13 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 
+import com.bookdabang.common.domain.AttachFileVO;
 import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.PagingInfo;
+import com.bookdabang.common.domain.RecommendVO;
 import com.bookdabang.common.domain.ReviewVO;
 import com.bookdabang.common.domain.ReviewComment;
+import com.bookdabang.kmj.etc.UploadFile;
 import com.bookdabang.kmj.persistence.ReviewDAO;
 import com.bookdabang.ljs.persistence.LoginDAO;
 
@@ -24,9 +28,47 @@ public class ReviewServiceImpl implements ReviewService {
 	private LoginDAO lDao;
 	
 	@Override
-	public List<ReviewVO> readAllReview(int prodNo) throws Exception {
-		List<ReviewVO> lst = rDao.selectAllReview(prodNo);
-		return lst;
+	public Map<String, Object> readAllReview(int prodNo,int pageNo) throws Exception {
+		PagingInfo pi = pagingProcess(prodNo,pageNo);
+		
+		List<ReviewVO> lst = rDao.selectAllReview(prodNo,pi);
+		List<AttachFileVO> lst2 = rDao.selectAllAttachFile(prodNo);
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("reviewList", lst);
+		resultMap.put("pagingInfo", pi);
+		resultMap.put("fileList", lst2);
+		
+		return resultMap;
+	}
+	
+	// 페이징 처리 작업 전담 메서드
+	private PagingInfo pagingProcess(int prodNo,int pageNo) throws Exception {
+		PagingInfo pi = new PagingInfo();
+
+		// 1페이지당 보여 줄 글의 개수 & 1개의 블럭에 보여줄 페이지 수
+		pi.setPostPerPage(5);
+		pi.setPageCntPerBlock(3);
+
+		// 전체 게시물 개수
+		pi.setTotalPostCnt(rDao.getTotalPost(prodNo));
+
+		// 전체 페이지 수
+		pi.setTotalPage(pi.getTotalPostCnt());
+		// 현재 페이지에서 출력 시작할 글번호
+		pi.setStartNum(pageNo);
+		// 전체 페이징 블럭
+		pi.setTotalPagingBlock(pi.getTotalPage());
+		// 현재 페이징 블럭
+		pi.setCurrentPagingBlock(pageNo);
+		// 현재 페이지에서의 시작 페이징블럭
+		pi.setStartNoOfCurPagingBlock(pi.getCurrentPagingBlock());
+		// 현재 페이지에서의 끝 페이징블럭
+		pi.setEndNoOfCurPagingBlock(pi.getStartNoOfCurPagingBlock());
+
+		System.out.println(pi.toString());
+
+		return pi;
 	}
 
 	@Override
@@ -36,7 +78,7 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public boolean addReply(ReviewComment comment) throws Exception {
+	public boolean addComment(ReviewComment comment) throws Exception {
 		// 세션아이디를 유저아이디로 변환
 		MemberVO member = lDao.findLoginSess(comment.getCommenter());
 		comment.setCommenter(member.getUserId());
@@ -66,18 +108,39 @@ public class ReviewServiceImpl implements ReviewService {
 		
 		return result;
 	}
-
+	
 	@Override
-	public boolean addRecommend(int reviewNo, int change) throws Exception {
-		boolean result = false;
-		if (rDao.updateRecommend(reviewNo,change) == 1 ) {
-			result = true;
+	public List<Integer> confirmRecommend(String userId) throws Exception {
+		List<Integer> result = null;
+		
+		if (rDao.selectRecommend(userId) != null) {
+			result = rDao.selectRecommend(userId);
 		}
+		
 		return result;
 	}
 
 	@Override
-	public boolean addReview(ReviewVO review) throws Exception {
+	public boolean changeRecommend (RecommendVO recommend) throws Exception {
+		boolean result = false;
+		
+		if (rDao.updateRecommend(recommend) == 1 ) {
+			if (recommend.getChange() == 1) {
+				if (rDao.insertRecommend(recommend) == 1) {
+					result = true;
+				}
+			} else if (recommend.getChange() == 2) {
+				if (rDao.deleteRecommend(recommend) == 1) {
+					result = true;
+				}
+			}
+		}
+		
+		return result;
+	}
+
+	@Override
+	public boolean addReview(ReviewVO review,List<UploadFile> upfileList) throws Exception {
 		// 세션아이디를 유저아이디로 변환
 		MemberVO member = lDao.findLoginSess(review.getWriter());
 		review.setWriter(member.getUserId());
@@ -88,7 +151,83 @@ public class ReviewServiceImpl implements ReviewService {
 			result = true;
 		}
 		
+		int reviewNo = rDao.selectReviewNo();
+		for (UploadFile file : upfileList) {
+			if (rDao.insertAttachFile(new AttachFileVO(reviewNo,review.getProductNo(),file.getOriginalFileName(),
+					file.getThumbnailFileName(), file.getNotImageFileName())) != 1) {
+				result = false;
+			}
+		}
+		
 		return result;
 	}
+
+	@Override
+	public boolean modifyReview(ReviewVO review,List<UploadFile> upfileList) throws Exception {
+		boolean result = false;
+		
+		if (rDao.updateReview(review) == 1) {
+			result = true;
+		}
+		
+		for (UploadFile file : upfileList) {
+			if (rDao.insertAttachFile(new AttachFileVO(review.getReviewNo(),review.getProductNo(),file.getOriginalFileName(),
+					file.getThumbnailFileName(), file.getNotImageFileName())) != 1) {
+				result = false;
+			}
+		}
+		
+		return result;
+	}
+
+	@Override
+	public boolean deleteReview(int reviewNo) throws Exception {
+		boolean result = false;
+		
+		if (rDao.deleteReview(reviewNo) == 1) {
+			result = true;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public boolean modifyComment(ReviewComment comment) throws Exception {
+		boolean result = false;
+		
+		if (rDao.updateComment(comment) == 1) {
+			result = true;
+		}
+	
+		return result;
+	}
+
+	@Override
+	public boolean deleteComment(ReviewComment comment) throws Exception {
+		boolean result = false;
+		
+		if (rDao.updateCommentNum2(comment.getReviewNo()) == 1) {
+			if (rDao.deleteComment(comment.getCommentNo()) == 1) {
+				result = true;
+			}
+		}
+		
+		return result;
+	}
+
+	@Override
+	public boolean deleteAttachFile(List<Integer> attachNoList) throws Exception {
+		boolean result = false;
+		
+		for (int attachFileNo : attachNoList) {
+			if (rDao.deleteAttachFile(attachFileNo) == 1) {
+				result = true;
+			}
+		}
+
+		return result;
+	}
+
+	
 
 }

@@ -9,18 +9,81 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <title>상품 상세페이지</title>
 <script>
+	let rPageNo = 1;
 	let rno = 0;
 	let cno = 0;
+	let modCno = 0;
+	let delCno = 0;
+	let userId = "";
+	let prevTitle = "";
+	let prevContent = "";
+	let prevGrade = "";
+	let prevAttach = "";
 	
 	$(function() {
 		priceReplace();
-		quantity(1);
+		quantityChange(1);
 		infoReplace();
 		navColor();
 		starMaker();
-		reviewStar();
 		reviewStatus();	
+		getUserId();
+		parseNotImgFile();
+		uploadFile("#reviewModal");
+		uploadFile("#modifyModal");
+		
+		parsePaging();
 	});
+	
+	function insertCart2(no){
+		let quantity = $("#sst").val();
+		console.log($("#sst").val());
+		let url = "${contextPath}/userCart/addCart"
+		$.ajax({
+			url : url,
+			type : "post",
+			data : {
+				productNo : no,
+				productQtt : quantity
+			},
+			success : function(data) {
+				console.log(data);
+				$("#sst").val(1);
+				quantityChange(1);
+				$("#cartBox").show();
+				setTimeout(function() {
+					$("#cartBox").fadeOut(1500);
+				}, 3000);
+			},
+			error : function(data){
+				console.log(data);
+			}
+		});
+		
+	}
+	
+	function goOrder2(no){
+		let quantity = $("#sst").val();
+		console.log(quantity);
+		let url = "${contextPath}/userCart/addCart"
+		$.ajax({
+			url : url,
+			type : "post",
+			data : {
+				productNo : no,
+				productQtt : quantity
+			},
+			success : function(data) {
+				$("#sst").val(1);
+				quantityChange(1);
+				console.log(data);
+			},
+			error : function(data){
+				console.log(data);
+			}
+		});
+		location.href = "${contextPath}/order/checkOut"
+	}
 	
 	function priceReplace() {
 		let sellPrice = $(".s_product_text h2").text().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
@@ -30,11 +93,10 @@
 		$("#listPrice").html(listPrice);
 	}
 	
-	function quantity(number) {
-		let q = number;
+	function quantityChange(quantity) {
 		let output = "";
-		if (q > 1) {
-			let price = String(${product.sell_price}*q);
+		if (quantity > 1) {
+			let price = String(${product.sell_price}*quantity);
 			price = price.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
 			output = "총 상품금액 : <h2 style='display:inline-block;'> " + price + " </h2>원";
 		}	
@@ -79,12 +141,11 @@
 	}
 	
 	function getComment(no,obj) { //$(".comments-area").length == 1 && rno != no
+		$(".comments-area").remove();
 		if (rno == no) {
-			$(".comments-area").remove();
 			rno = 0;
 			return;
 		} else {
-			$(".comments-area").remove();
 			let url = "/Rcomment/all/" + no;
 			console.log(url);
 			$.ajax({
@@ -105,7 +166,7 @@
 	}
 	
 	function parseComment(data,obj) {
-		let output = '<div class="comments-area" style="display:none;">';
+		let output = '<div class="comments-area" style="display:none;" >';
 		if (data != null) {
 			$.each(data, function(i, e) {
 				output += '<div class="comment-list" style="padding-bottom: 25px;">';
@@ -126,7 +187,7 @@
 					output += '<p class="date">' + writtenDate + '</p>';
 				}
 				
-				output += '<p class="comment">' + e.comment + '</p></div></div>';
+				output += '<p class="comment" value="' + e.commentNo +'">' + e.comment + '</p></div></div>';
 				output += '<div class="reply-btn"><a href="javascript:replyMaker(' + e.commentNo + ');" class="btn-reply text-uppercase">'
 				+ 'reply</a></div></div></div>';
 			});
@@ -136,7 +197,8 @@
 		 output += '<button type="" class="button button--active button-contactForm" onclick="addComment(' + rno + ');" style="float:right;">댓글 작성</button></div>';
 		 
 		 $(obj).parent().after(output);
-		 $(".comments-area").slideDown(500);	 
+		 parseCommentOption();
+		 $(".comments-area").slideDown(500);
 	}
 	
 	function calcDate(rd) {
@@ -149,14 +211,12 @@
 		return new Date(rd).toLocaleString();
 	}
 	
-	function replyMaker(no) {
-		//$(".comments-area").html().indexOf("replyForm") == -1) // $("#replyForm").length != 1
+	function replyMaker(no) { //$(".comments-area").html().indexOf("replyForm") == -1) // $("#replyForm").length != 1
+		$("#replyForm").remove();
 		if (cno == no) {
-			$("#replyForm").remove();
 			cno = 0;
 			return;
 		} else {
-			$("#replyForm").remove();
 			let output = '<div id= "replyForm"><hr/><textarea class="form-control" name="reply" id= "replyText" rows="3" placeholder="reply"></textarea>';
 			output += '<button class="button button--active button-contactForm" onclick="addReply(' + no +
 					')" style="float:right; width: 90px;">답글 작성</button></div>';	
@@ -189,11 +249,10 @@
 					success : function (data) {
 						console.log(data);
 						if(data == "success") {
-							alert("댓글 등록 성공");
-							location.reload();
-							
-						} else if(data == "fail") { 
-							alert("댓글등록실패");
+							changeCommentNum(1);
+							successAlert("* 댓글이 등록되었습니다 *");
+						} else if(data == "fail") {
+							failAlert("* 댓글 등록 실패 ! *");
 						}
 					}
 				});
@@ -235,10 +294,10 @@
 					success : function (data) {
 						console.log(data);
 						if(data == "success") {
-							alert("답글 등록 성공");
-							location.reload();
+							changeCommentNum(1);
+							successAlert("* 답글이 등록되었습니다 *");
 						} else if(data == "fail") { 
-							alert("답글등록실패");
+							failAlert("* 답글 등록 실패 ! *");
 						}
 					}
 				});
@@ -248,6 +307,19 @@
 		} else {
 			loginAlarm();
 		}
+	}
+	
+	function changeCommentNum(version) {
+		let n = $("button[value=" + rno + "]").text().split(" ")[1];
+		if (version == 1) {
+			++n;
+		} else if (version == 2) {
+			--n;
+		}
+		$("button[value=" + rno + "]").text("댓글 " + n);
+		$("button[value=" + rno + "]").click();
+		$("#createReview").focus();
+		
 	}
 	
 	function loginAlarm() {
@@ -264,52 +336,115 @@
 			output = "<div id ='msg' style='color:red; padding-bottom: 13px; margin-left: 10px;'>별점을 선택해주세요</div>";
 		}
 		
+		if (obj == "#commentModifyText") {
+			$("#commentModifyBtn").css("margin-top","65px");
+		} else {
+			$("#commentModifyBtn").css("margin-top","25px");
+		}
+		
 		$(obj).before(output);
 		$(obj).focus();
 	}
 	
-	function like(rno,obj) {
-		let url = "/review/like?no=" + rno + "&change=1";
+	function showLike() {
+		let url = "/review/showLike";
 		console.log(url);	
+		let sendData = JSON.stringify({
+			userId : userId
+		});
 		$.ajax({
 			url : url,
+			data : sendData,
 			dataType : "text",
-			type : "get",
-			success : function (data) { // 아직 미완성
-				console.log(data);	
-				if (data == "success") {
-					alert("좋아요 성공");	
-				} else if(data == "fail") { 
-					alert("좋아요 실패");
+			type : "post",
+			headers : {
+				"content-type" : "application/json",
+				"X-HTTP-Method-Override" : "POST"
+			},success : function (data) {
+				console.log(data);
+				if (data != null) {
+					$(".likeBtn").each(function () {
+						let reviewNo = $(this).next().attr("value");
+						if (data.indexOf(reviewNo) != -1) {
+							let newText = $(this).text().replace("♡","♥");
+							$(this).text(newText);
+							$(this).css("color", "red");
+						}
+					});
 				}
 			}
-		});	
+		});
 	}
 	
-	function showModal() {
+	function changeLike(obj) {
 		if ("${sessionId}") {
-			$(".newStar").css("font-weight", 100);
-			$("#msg").remove();
-			$("#modalBack").fadeIn(400);
-			$('body').css("overflow", "hidden");
+			let reviewNo = $(obj).next().attr("value");
+			let change = 1;
+			if ($(obj).text().indexOf("♥") != -1) {
+				change = 2;
+			}
+			let url = "/review/changeLike";
+			console.log(url);	
+			let sendData = JSON.stringify({
+				userId : userId, reviewNo : reviewNo, change: change
+			});
+			$.ajax({
+				url : url,
+				data : sendData,
+				dataType : "text",
+				type : "post",
+				headers : {
+					"content-type" : "application/json",
+					"X-HTTP-Method-Override" : "POST"
+				},success : function (data) {
+					console.log(data);	
+					if (data == "success") {
+						let newText = $(obj).text().split(" ")[0];
+						let n = $(obj).text().split(" ")[1];
+						if (change == 1) {
+							newText = newText.replace("♡","♥");
+							++n;
+							$(obj).css("color", "red");
+						} else if (change == 2) {
+							newText = newText.replace("♥","♡");
+							--n;
+							$(obj).css("color", "black");
+						}
+						$(obj).text(newText + " " + n);
+					} else if(data == "fail") { 
+						failAlert("* 좋아요 실패 ! *");
+					}
+				}
+			});
 		} else {
 			loginAlarm();
 		}
 	}
 	
-	function cancleModal() {
-		 $("#modalBack").fadeOut(400);
-		 $('body').css("overflow", "scroll"); 
+	function showAddModal() {
+		if ("${sessionId}") {
+			$(".newStar").css("font-weight", 100);
+			$("#msg").remove();
+			$("#modalBack").fadeIn(400);
+			$('body').css("overflow", "hidden");
+			reviewStar(1);
+		} else {
+			loginAlarm();
+		}
 	}
-	 
-	function reviewStar() {
+	
+	function reviewStar(starId) {
 		$(document).on("mouseover", ".newStar", function(){
 			let n = $(this).attr("id").split("star")[1];
 			$(".newStar").css("font-weight", 100);
-			for (let i = 1; i <= n; i++) {
+			for (let i = starId; i <= n; i++) {
 				$("#star" + i).css("font-weight", 900);
 			}
-			$("#starCount").val(n);
+			if (starId == 1) {
+				$("#starCount").val(n);
+			} else if (starId == 6) {
+				$("#starCount2").val(n-5);
+			}
 		});
 	}
 	
@@ -320,14 +455,552 @@
 		}
 	}
 	
+	function cancleModal(obj) {
+		if(obj == "#reviewModal") {
+			$("#modalBack").fadeOut(400);
+			$("#addFileBtn").text("추가하기");
+		} else {
+			$("#modalBack2").fadeOut(400);
+			$("#modiFileBtn").text("수정하기");
+		}
+		$('body').css("overflow", "scroll");
+		$(".fDropList").html("");
+		 $(".fileDrop").hide();
+		 $(obj).css("top","13%");
+		 $(obj).css("height","700px");
+	}
+	
 	function reviewStatus() {
-		let status = '${result}';
-		if(status == "success") {
-			alert("리뷰 등록 성공");
-		} else if (status == "fail") {
-			alert("리뷰 등록 실패");
+		let addStatus = '${addResult}';
+		let modifyStatus = '${modifyResult}';
+		let deleteResult = '${deleteResult}';
+		
+		if(addStatus == "success") {
+			$("#alertText1").text("* 리뷰가 등록되었습니다 *")
+		} else if (addStatus == "fail") {	
+			$("#alertText2").text("* 리뷰 등록 실패 ! *")
+		}
+		if(modifyStatus == "success") {
+			$("#alertText1").text("* 리뷰가 수정되었습니다 *")
+		} else if (modifyStatus == "fail") {
+			$("#alertText2").text("* 리뷰 수정 실패 ! *")
+		}
+		if(deleteResult == "success") {
+			$("#alertText1").text("* 리뷰가 삭제되었습니다 *")
+		} else if (deleteResult == "fail") {
+			$("#alertText2").text("* 리뷰 삭제 실패 ! *")
+		}
+		
+		if ($("#alertText1").text() != "") {
+			$("#successAlert").fadeIn(300);
+			$("#successAlert").fadeOut(5000);
+		} else if ($("#alertText2").text() != "") {
+			$("#failAlert").fadeIn(500);
+			$("#failAlert").fadeOut(7000);
 		}
 	}
+	
+	function successAlert(message) {
+		$("#alertText3").text(message);
+		$("#commentSuccessAlert").fadeIn(300);
+		$("#commentSuccessAlert").fadeOut(5000);
+	}
+	
+	function failAlert(message) {
+		$("#alertText4").text(message);
+		$("#commentFailAlert").fadeIn(500);
+		$("#commentFailAlert").fadeOut(7000);
+	}
+	
+	function getUserId() {
+		let sessionId = "${sessionId}";
+		if (sessionId) {
+			let url = "/review/" + sessionId; 
+			$.ajax({
+				url : url,
+				dataType : "text",
+				type : "get",
+				success : function(data) {
+					userId = data;
+					parseReviewOption(userId);
+					showLike();
+				}
+			});
+		}
+	}
+	
+	function parseReviewOption(userId) {
+		$(".reviewTitle").each(function(i, e) {
+			let output = '';
+			if (userId == $(this).next().attr("value")) {
+				let starVal = $(this).parent().prev().attr("value");
+				output = '<div style="display: inline-block;"><a href="javascript:;" onclick="showModifyModal(this,'+starVal+');">';
+				output += '<i class="ti-pencil-alt" style="color:#384aeb;font-size:18px;"></i></a>';
+				let reviewNo = $(this).attr("value");
+				output += '<a data-bs-toggle="modal" data-bs-target="#myModal" onclick="deleteModal(' + reviewNo + ');">' +
+						  '<i class="ti-trash" style="color:#384aeb;font-size:18px;margin-left:5px;"></i></a></div>';
+			}
+			$(this).after(output);
+		});
+	}
+	
+	function parseCommentOption() {
+		$(".commenter").each(function(i, e) {
+			let output = '';
+			if (userId == $(this).text()) {
+				output = '<div style="display: inline-block;">';
+				output += '<a onclick="showCommentModify(this);"><i class="ti-pencil-alt" style="color:#384aeb;font-size:18px;margin-left: 10px;"></i></a>';
+				let commentNo = $(this).siblings(".comment").attr("value");
+				output += '<a data-bs-toggle="modal" data-bs-target="#commentModal" onclick="deleteCommentModal(' + commentNo + ');">' +
+				'<i class="ti-trash" style="color:#384aeb;font-size:18px;margin-left:5px;"></i></a></div>';
+			}
+			$(this).next().after(output);
+		});
+	}
+	
+	function showModifyModal(obj,starVal) {
+		$("#modalBack2").fadeIn(400);
+		$('body').css("overflow", "hidden");
+		
+		// 수정할 리뷰정보 가져오기
+		prevTitle = $(obj).parent().siblings("h4").text();
+		prevContent = $(obj).parent().siblings("p").text();
+		prevGrade = starVal;
+		$("#modifyReviewNo").val($(obj).parent().siblings("h4").attr("value"));
+		$("#modifyTitle").val(prevTitle);
+		$("#modifyContent").text(prevContent);
+		$(".newStar").css("font-weight", 100);
+		for (let i = 6; i <= starVal+5; i++) {
+			$("#star" + i).css("font-weight", 900);
+		}
+		$("#starCount2").val(prevGrade);
+		
+		// 리뷰 수정 등급 변화이벤트
+		reviewStar(6);
+		
+		// 첨부파일 가져오기
+		let attachfile = $(obj).parent().siblings("div").html();
+		if (attachfile != null) {
+			attachfile = attachfile.replaceAll("thumbImgR","thumbImg");
+			attachfile = attachfile.replaceAll("notImgR","notImg");
+			$("#modifyModal .fDropList").append(attachfile);
+		}
+		$(".thumbImg:visible").each(function() {
+			prevAttach += $(this).attr('src');
+		});
+		$(".notImg:visible").each(function() {
+			prevAttach += $(this).attr('href');
+		});
+	}
+	
+	function modifyReview() {
+		let afterAttach = "";
+		$(".thumbImg:visible").each(function() {
+			afterAttach += $(this).attr('src');
+		});
+		$(".notImg:visible").each(function() {
+			afterAttach += $(this).attr('href');
+		});
+		
+		if (prevTitle == $("#modifyTitle").val() && prevContent == $("#modifyContent").val() &&
+			prevGrade == $("#starCount2").val() && prevAttach == afterAttach) {
+			$("#modifyAlert").fadeIn(1000);
+			$("#modifyAlert").fadeOut(1500);
+			return false;	
+			
+		} else if ($(".thumbImg:hidden").length != 0 || $(".notImg:hidden").length != 0){
+			return delPrevAttach(".thumbImg:hidden",".notImg:hidden");
+		}
+		
+	}
+	
+	function delPrevAttach(img,notImg) {
+		let attachArray = [];
+		attachArray.push("0,파일들");
+		
+		$(img).each(function(){
+			attachArray.push($(this).attr("value") + "," + $(this).attr("src").replace("/",""));
+        });
+        $(notImg).each(function(){
+			attachArray.push($(this).attr("value") + "," + $(this).attr("href").replace("/",""));
+        }); 
+        console.log(attachArray);
+		
+		let url = "/review/delPrevFile";
+		$.ajax({
+			url : url,
+			data : {
+				targetList : attachArray
+			},
+			dataType : "text",
+			type : "POST",
+			success : function(data) {
+				console.log(data);
+				if(data == "success") {
+					return true;
+				} else { 
+					alert("기존 파일 삭제실패");
+					return false;
+				}
+			}
+		});
+	}
+	
+	function deleteModal(reviewNo) {
+		$("#deleteNo").val(reviewNo);
+	}
+	
+	function deleteReview() {
+		let dno = $("#deleteNo").val();
+		console.log(dno);
+		let attach = $("h4[value=" + dno + "]").siblings(".attachfile");
+		if (attach.html().indexOf("<") != -1) {
+			return delPrevAttach(attach.children(".thumbImgR"), attach.children(".notImgR"));
+		}
+	}
+	
+	function showCommentModify(obj) {
+		let commentNo = $(obj).parent().next().attr("value");
+		// 이전 상태로 되돌리기
+		let prevComment2 = $("#commentModifyText").text();
+		$("#commentModifyText").parent().text(prevComment2);
+		$("#commentModifyText").remove();
+		$("#commentModifyBtn").remove();
+		
+		if (commentNo == modCno) {
+			modCno = 0;
+			return;
+		} else {
+			let prevComment = $(obj).parent().next().text();
+			let output = '<textarea type="text" class="form-control" required="" id="commentModifyText" rows="3" style="border-radius : 20px;">' + prevComment;
+			output += '</textarea>';
+			let output2 = '<button class="button button--active button-contactForm" id = "commentModifyBtn" onclick="modifyComment(' + commentNo + ')"' +
+						'style="float:right; width: 70px;padding: 10px; margin-top: 25px; border-radius: 5px;">댓글 수정</button>';
+						
+			$(obj).parent().next().html(output);
+			$("#"+commentNo).children(".reply-btn").children().after(output2);
+		}
+		modCno = commentNo;	
+	}
+	
+	function modifyComment(cno) {
+		let comment = $("#commentModifyText").val();
+		if (comment == $("#commentModifyText").text()) {
+			$("#modifyAlert").fadeIn(1000);
+			$("#modifyAlert").fadeOut(1500);
+		} else if (comment == "") {
+			validate("#commentModifyText",1);
+		} else {
+			let sendData = JSON.stringify({
+				commentNo : cno, comment : comment
+			});
+			let url = '/Rcomment/'+ cno;
+			$.ajax({
+				url : url,
+				data : sendData,
+				dataType : "text",
+				type : "put",
+				headers : {
+					"content-type" : "application/json",
+					"X-HTTP-Method-Override" : "POST"
+				},
+				success : function (data) {
+					console.log(data);	
+					if(data == "success") {
+						$("button[value=" + rno + "]").click();
+						$("#createReview").focus();
+						successAlert("* 댓글이 수정되었습니다 *");
+					} else if(data == "fail") { 
+						failAlert("* 댓글 수정 실패 ! *");
+					}
+				}
+			});
+		}
+	}
+	
+	function deleteCommentModal(commentNo) {
+		delCno = commentNo;
+	}
+	
+	function deleteComment() {	
+		let sendData = JSON.stringify({
+			commentNo : delCno, reviewNo : rno
+		});
+		let url = '/Rcomment/'+ delCno;  
+		$.ajax({
+			url : url,
+			data : sendData,
+			dataType : "text",
+			type : "delete",
+			headers : {
+				"content-type" : "application/json",
+				"X-HTTP-Method-Override" : "POST"
+			},
+			success : function (data) {
+				console.log(data);	
+				if(data == "success") {
+					$("#deleteCancle").click();
+					changeCommentNum(2);
+					successAlert("* 댓글이 삭제되었습니다 *");
+				} else if(data == "fail") { 
+					failAlert("* 댓글 삭제 실패 ! *");
+				}	
+			}
+		});
+	}
+	
+	function openArea() {
+		$(".fileDrop").toggle(300);
+		
+		if ($("#reviewModal").css("height") == "925px") {
+			$("#addFileBtn").text("추가하기");
+			$("#reviewModal").css("top","13%");
+			$("#reviewModal").css("height","700px");
+		} else {
+			$("#addFileBtn").text("접기");
+			$("#reviewModal").css("top","5%");
+			$("#reviewModal").css("height","925px");
+		}
+	}
+	
+	function modifyArea() {
+		$(".fileDrop").toggle(300);
+		
+		if ($("#modifyModal").css("height") == "925px") {
+			$("#modiFileBtn").text("수정하기");
+			$("#modifyModal").css("top","13%");
+			$("#modifyModal").css("height","700px");
+			$(".prevFileBtn").remove();
+		} else {
+			$("#modiFileBtn").text("접기");
+			$("#modifyModal").css("top","5%");
+			$("#modifyModal").css("height","925px");
+			
+			if ($(".fDropList").html() != null) {
+				let output = "<span class='prevFileBtn' onclick='tempDelete(this)'><img class='closeImg' src= '/resources/ImgClose.svg'/></span>";
+				$(".thumbImg:visible").after(output);
+				$(".notImg:visible").after(output);
+			}
+		}
+	}
+	
+	function tempDelete(obj) {
+		$(obj).prev().css("display","none");
+		$(obj).remove();
+	}
+	
+	function uploadFile(obj) {
+		$(obj + " .fileDrop").on("dropenter dragover", function(evt){
+			evt.preventDefault(); //영역에 드래그 될때는 이벤트 멈춤
+		});
+		
+		$(obj + " .fileDrop").on("drop", function(evt){
+			evt.preventDefault(); //이벤트가 전파되어 드롭된 파일이 웹브라우저에성 열리는 것을 방지
+			
+			let files = evt.originalEvent.dataTransfer.files; // 드랍된 파일을 얻어옴
+			console.log(files);
+			
+			let formData = new FormData(); //form 객체 생성
+			formData.append("upfile", files[0]); // form객체에 파일 첨부
+			
+			let url = "/review/uploadFile";
+			$.ajax({
+				url : url,
+				data : formData,
+				datatype : "json",
+				type : "post",
+				processData : false, // 전송 하는 데이터를 쿼리스트링 형태로 변환하지 않는다
+				contentType : false, // 기본값(application/x-www.from-urlencoded) 사용하지 않음
+				success : function(data) {
+					console.log(data);
+					let output = "";
+					
+					if (data.thumbnailFileName != null) {
+						// 이미지 파일이다
+						output += "<img class='thumbImg' src='${contextPath}/resources/uploads" + data.thumbnailFileName + "'/>"
+						output += "<span id='" + data.thumbnailFileName + "' onclick='deleteFile(this)'>";
+					} else if (data.notImageFileName != null) { // 이미지 파일 아님
+						let fn = data.notImageFileName.substring(data.notImageFileName.lastIndexOf("/") + 1);
+						output += "<a class='notImg' href='${contextPath}/resources/uploads" + data.notImageFileName + "'>" + fn + "</a>";
+						output += "<span id='" + data.notImageFileName + "' onclick='deleteFile(this)'>";
+					}
+
+					output += "<img class='closeImg' src= '${contextPath}/resources/img/review/ImgClose.svg'/></span>";
+
+					$(obj + " .fDropList").append(output);
+				},
+				error : function(e) {
+					console.log(e);
+					alert("파일업로드 실패");
+				}
+			});
+			
+		});
+	}
+	
+	function deleteFile(obj) {
+		let targetFile = $(obj).attr("id");
+		let url = "/review/deleteFile";
+		$.ajax({
+			url : url,
+			data : {
+				targetFile : targetFile
+			},
+			dataType : "text",
+			type : "POST",
+			success : function(data) {
+				console.log(data);
+				if (data == "success") {
+					$(obj).prev().remove();
+					$(obj).remove();
+				}
+			}
+		});
+	}
+	
+	function writeCancel(version) {
+		let url = "/review/writeCancel";
+		$.ajax({
+			url : url,
+			dataType : "text",
+			type : "POST",
+			success : function(data) {
+				console.log(data);
+				if (data == "success") {	
+					if (version == 1) {
+						cancleModal("#reviewModal");
+					} else if (version == 2) {
+						cancleModal("#modifyModal");
+					}
+				}
+			}
+		});
+	}
+	
+	function parseNotImgFile() {
+		$(".notImgR").each(function(i, tag) {
+			let tmpFileName = $(tag).attr("href");
+			let fileName = tmpFileName.substring(tmpFileName.lastIndexOf("/") + 1);
+			$(tag).text(fileName);
+		});
+	}
+	
+	function parsePaging(pagingInfo) {
+		let pInfo = "";
+		let startBlock = "";
+		let endBlock = "";
+		let totalPage = "";
+		
+		if (pagingInfo == null) {
+			pInfo = "${pagingInfo}";
+			startBlock = "${pagingInfo.startNoOfCurPagingBlock}";
+			endBlock = "${pagingInfo.endNoOfCurPagingBlock}";
+			totalPage = "${pagingInfo.totalPage}";
+		} else {
+			$(".pagination").empty();
+			pInfo = pagingInfo;
+			startBlock = pagingInfo.startNoOfCurPagingBlock;
+			endBlock = pagingInfo.endNoOfCurPagingBlock;
+			totalPage = pagingInfo.totalPage;
+		}
+		console.log(pInfo);
+		console.log(startBlock + ", " + endBlock + ", " + totalPage);
+		
+		let output = '';
+		if (rPageNo > 2) {
+			output += '<li class="page-item"><button onclick="getReview(1)"'
+				 + 'class="page-link" aria-label="Previous"><span aria-hidden="true">' +
+				'<span class="lnr lnr-chevron-left"><<</span></span></button></li>';
+		}
+		if (rPageNo > 1) {
+			output += '<li class="page-item"><button onclick="getReview(' + (rPageNo-1) +
+					')"class="page-link" aria-label="Previous"><span aria-hidden="true">' +
+					'<span class="lnr lnr-chevron-left"><</span></span></button></li>';
+		
+		}
+		for (let i = startBlock; i <= endBlock; i++) {
+			if (rPageNo == i) {
+				output += '<li class="page-item active"><button onclick="getReview(' + i + ')"class="page-link">' + i + '</button></li>';
+			} else {
+				output += '<li class="page-item"><button onclick="getReview(' + i + ')"class="page-link">' + i + '</button></li>';
+			}
+			
+		}
+		if (rPageNo < totalPage ) {
+			output += '<li class="page-item"><button onclick="getReview(' + ++rPageNo +
+					')"class="page-link" aria-label="Previous"><span aria-hidden="true">' +
+					'<span class="lnr lnr-chevron-left">></span></span></button></li>';
+		
+		}
+		if (rPageNo < totalPage) {
+			output += '<li class="page-item"><button onclick="getReview(' + totalPage +
+					')"class="page-link" aria-label="Previous"><span aria-hidden="true">' +
+					'<span class="lnr lnr-chevron-left">>></span></span></button></li>';
+		
+		}
+
+		$(".pagination").html(output);
+		//$(".filter-bar").attr("tabindex", -1).focus();
+	}
+	
+	function getReview(pageNo) {
+		rPageNo = pageNo;
+		let url = "/review/read?no=${param.no}&pageNo=" + rPageNo;
+		console.log(url);
+		$.ajax({
+			url : url,
+			dataType : "json",
+			type : "get",
+			success : function (data) {
+				console.log(data);	
+				if (data != null) {
+					parseReview(data.reviewList,data.fileList);
+					parsePaging(data.pagingInfo);
+					$("#createReview").focus();
+				}
+			},error : function() {
+				//parseComment(null,obj);
+			}
+		});	
+	}
+	
+	function parseReview(rList,fList) {
+		let output = "";
+		$.each(rList, function(i, review) {
+			output += '<div class="review_item"><div class="media"><div class="d-flex"><img src="" alt=""></div><div class="media-body">';
+			output += '<div class="star" value = "' + review.grade + '"style="display:inline-block; float:left; margin-right:25px;"></div>';
+			output += '<div style="display:inline-block; width:750px;"><h4 style="display:inline-block; margin-right:20px" class="reviewTitle"'
+					+ ' value="' + review.reviewNo + '">' + review.title + '</h4>';
+			let writeDate = new Date(review.writedate).toLocaleString();
+			output += '<h5 style="float:right; margin-top:1px" value="' + review.writer + '">' + review.writer + ' | ' + writeDate + '</h5>';
+			output += '<p>' + review.content + '</p><div class="attachfile">';
+			$.each(fList, function(i, file) {
+				if (review.reviewNo == file.reviewNo) {
+					if (file.thumbnailFile != null) {
+						output += "<img class='thumbImgR' src='${contextPath}/resources/uploads" + file.thumbnailFile + "' value='" + file.attachFileNo + "'/>";
+					} else if (file.notImageFile != null) {
+						output += "<a class='notImgR' href='${contextPath}/resources/uploads" + file.notImageFile + "' value='" + file.attachFileNo + "'></a>";
+					}
+				}
+			});
+			output += '</div></div><div style="display: inline-block; float: right; width: 100px;">';
+			output += '<button type="submit" class="button button-header reviewBtn likeBtn" style="padding:5px" onclick="changeLike(this)">'
+					+ '♡ ' + review.recommendNum + '</button>';
+			output += '<button class="button button-header reviewBtn" style="padding:8px" value="' + review.reviewNo + '" onclick="getComment('
+					+ review.reviewNo +',this)">댓글 ' + review.commentNum + '</button>';
+			output += '</div><hr style="border-style:dotted; margin-top:35px; margin-bottom:4px"/></div></div></div>';
+		});
+		
+		$(".review_list").html(output);
+		starMaker();
+		parseNotImgFile();
+		
+		if (userId) {
+			parseReviewOption(userId);
+			showLike();
+		}
+	}
+	
 	
 </script>
 <style>
@@ -352,7 +1025,6 @@
  	background-color: #f1f6f7;
  }
  
-<<<<<<< HEAD
  .commenter {
  	text-align : left;
  	font-size: 20px;
@@ -378,12 +1050,11 @@
  	border-radius: 20px;
  }
  
- .commenter{
+ .commenter, .date{
  	display: inline-block;
  }
  
  .date {
- 	display: inline-block;
  	margin-left: 14px;
  }
  
@@ -394,7 +1065,7 @@
  	margin-bottom: 5px;
  }
  
- #modalBack {
+ #modalBack, #modalBack2 {
  	position: fixed;
  	top:0; left: 0; bottom: 0; right: 0;
  	background:rgba(0,0,0,.3);
@@ -402,11 +1073,11 @@
  	display: none;
  }
  
- #reviewModal {
+ #reviewModal, #modifyModal {
 		position: absolute;
-  		top: 18%; left: 31%;
+  		top: 13%; left: 31%;
   		overflow: auto;
-  		width: 800px; height: 600px;
+  		width: 800px; height: 700px;
   		border-radius : 25px;
   		box-shadow : 10px 10px 10px 10px;
 }
@@ -416,7 +1087,7 @@
  	font-size: 30px;
  }
  
-=======
+
 #qnaTable>thead>tr, #qnaTable>tbody>tr {
 	text-align :center;
 	
@@ -439,7 +1110,63 @@
 	margin: 0 auto;
 }
 
->>>>>>> 3909fb220075723b22f0a0f983a2e20838366a06
+#successAlert, #failAlert, #modifyAlert,#commentSuccessAlert,#commentFailAlert {
+	width: 300px; text-align: center; display: none;
+	position: fixed; top: 19%; left: 42.8%;
+    z-index: 999;
+}
+
+#successAlert {
+	text-align: end;	
+}
+
+.fileDrop {
+	width : 100%;
+	height : 300px;
+	border : 1px dotted blue;
+	display : none;
+	background-color: white;
+    border-radius: 20px;
+}
+	
+.fileDrop .fileContent {
+	padding : 20px;
+	text-align : center;
+	margin : 10px auto;
+}
+
+.fDropList {
+	padding: 20px;
+	margin-top: 10px;
+	background-color: white;
+	border: 1px solid #384aeb;
+	border-radius: 20px;
+}
+
+.thumbImg,.notImg,.thumbImgR,.notImgR {
+	border: 1px dotted;
+	width: 100px; height: 100px;
+	margin-left: 7px;
+}
+
+.thumbImgR,.notImgR {
+	float: right;
+	text-align: center;
+}
+
+.notImg,.notImgR {
+	font-size: small;
+    line-break: anywhere;
+    padding-top: 7px;
+    vertical-align: middle;
+}
+
+.closeImg {
+	width: 20px;
+    margin-bottom: 100px;
+    margin-right: 7px;
+}
+
 </style>
 <head>
 <body>
@@ -481,12 +1208,12 @@
 								<label for="qty">Quantity:</label>
                                 <input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
                                     class="input-text qty" style="height: 40px;">
-                                <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++; quantity(result.value);"
+                                <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++; quantityChange(result.value);"
                                     class="increase items-count" type="button" style="top: -2px;">
                                     <i class="lnr lnr-chevron-up:before"><img src="//image.aladin.co.kr/img/shop/2018/icon_Aup.png" border="0"></i>
                                     
                                 </button>
-                                <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 1 ) result.value--;quantity(result.value);"
+                                <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 1 ) result.value--;quantityChange(result.value);"
                                     class="reduced items-count" type="button" style="bottom: -1.5px;">
                                     <i class="lnr lnr-chevron-down"><img src="//image.aladin.co.kr/img/shop/2018/icon_Adown.png" border="0"></i>
                                 </button>
@@ -496,8 +1223,8 @@
 							
 							</div>
 							<div>
-								<a class="button button--active button-contactForm" href="#">장바구니 담기</a>&nbsp;
-								<a class="button button--active button-contactForm" href="#">바로구매</a>
+								<a class="button button--active button-contactForm" href="javascript:insertCart2(${product.product_no});">장바구니 담기</a>&nbsp;
+								<a class="button button--active button-contactForm" href="javascript:goOrder2(${product.product_no});">바로구매</a>
 							</div>
 							
 							<!--  <div class="card_area d-flex align-items-center">
@@ -594,8 +1321,8 @@
 											</ul>							
 										</div>
 										<div>
-											<button type="submit" class="button button--active button-review"
-											style="float: right;" onclick="showModal()"> 리뷰 작성</button>
+											<button id ="createReview" class="button button--active button-review"
+											style="float: right;" onclick="showAddModal()"> 리뷰 작성</button>
 										</div>
 									</div>						
 								</div>
@@ -611,17 +1338,28 @@
 													<div class = "star"  value = "${review.grade }"
 													style="display: inline-block; float: left; margin-right: 25px;">														
 													</div>
-													<div style="display: inline-block;">
-														<h4 style="display: inline-block; margin-right: 20px">${review.title }</h4>
-														
-														
-														<h5 style="float: right; margin-top: 1px">
+													<div style="display: inline-block; width: 750px;">
+														<h4 style="display: inline-block; margin-right: 20px"
+														class="reviewTitle" value="${review.reviewNo }">${review.title }</h4>
+														<h5 style="float: right; margin-top: 1px" value="${review.writer}">
 														${review.writer } | ${review.writedate}</h5>
-														<p style="width: 750px">${review.content }</p>
+														<p>${review.content }</p>
+														<div class="attachfile">
+														<c:forEach var="file" items="${fileList }">
+															<c:if test="${review.reviewNo == file.reviewNo }">
+																<c:if test="${file.thumbnailFile != null}">
+																	<img class='thumbImgR' src='/resources/uploads${file.thumbnailFile}' value="${file.attachFileNo}"/>
+																</c:if>
+																<c:if test="${file.notImageFile != null}">
+																	<a class='notImgR' href='/resources/uploads${file.notImageFile}' value="${file.attachFileNo}"></a>
+																</c:if>
+															</c:if>
+														</c:forEach>
+														</div>
 													</div>
 													<div style="display: inline-block; float: right; width: 100px;">
-														<button type="submit" class="button button-header reviewBtn"
-														style="padding: 5px" onclick="like(${review.reviewNo},this)">♡ ${review.recommendNum}</button>
+														<button type="submit" class="button button-header reviewBtn likeBtn"
+														style="padding: 5px" onclick="changeLike(this)">♡ ${review.recommendNum}</button>
 														<button class="button button-header reviewBtn" style="padding: 8px" value="${review.reviewNo}"
 														onclick="getComment(${review.reviewNo},this)">댓글 ${review.commentNum}</button>
 													</div>
@@ -631,8 +1369,13 @@
 										</div>
 									</c:forEach>
 								</div>
+								
+								<nav class="blog-pagination justify-content-center d-flex" style="padding-bottom: 25px;">
+                          			<ul class="pagination" style="place-content: center;">
+                          			
+                          			</ul>
+                      			</nav>
 							</div>
-							
 						</div>
 					</div>
 					<!-- Q&A 정보 content -->
@@ -1007,7 +1750,7 @@
 		<div id="modalBack">
 			<div class="comment-form" id="reviewModal">
 				<h3 style="margin-bottom: 70px;">리뷰 작성</h3>
-				<form action="/review" method="post">
+				<form action="/review/add" method="post">
 					<div class="form-group form-inline">
 						<div class="form-group col-lg-8 col-md-8 name">
 							<h4 style="margin-bottom: 15px;">제목 </h4>
@@ -1030,19 +1773,158 @@
 					</div>
 					<div class="form-group">
 						<h4 style="text-align: left; margin-bottom: 15px;">내용</h4>
-						<textarea class="form-control mb-10" rows="5" name="content"
+						<textarea class="form-control mb-10" rows="4" name="content"
 							placeholder="content" required=""
 							style="border-radius : 20px;"></textarea>
 					</div>
 					<input type="hidden" name ="productNo" value="${product.product_no }">
+					<div class="form-group">
+						<h4 style="text-align: left; margin-bottom: 15px;">첨부파일</h4>
+						<button type="button" class="button button-header reviewBtn" id = "addFileBtn"
+						 style="padding: 8px" onclick="openArea();">추가하기</button>
+						<div class="fileDrop">
+							<div class="fileContent">이 영역에 업로드 할 파일을 드래그 드롭 해 주세요!</div>
+						</div>
+						<div class="fDropList"></div>
+					</div>
 					
 					<button type="submit" class="button button--active"
 					 onclick="return addReview();" style="margin: 25px;"> 작성하기 </button>
 					<button type="reset" class="button button--active"
-					 onclick="cancleModal()" style="margin: 25px;"> 취소하기 </button>
+					 onclick="writeCancel(1)" style="margin: 25px;"> 취소하기 </button>
 				</form>
 			</div>
 		</div>
+		<!-- 리뷰 작성 모달창 끝 -->
+		<!-- 리뷰 수정 모달창 -->
+		<div id="modalBack2">
+			<div class="comment-form" id="modifyModal">
+				<h3 style="margin-bottom: 50px;">리뷰 수정</h3>
+				<form action="/review/modify" method="post">
+					<div class="form-group form-inline">
+						<input type="hidden" id ="modifyReviewNo" name ="reviewNo">
+						<div class="form-group col-lg-8 col-md-8 name">
+							<h4 style="margin-bottom: 15px;">제목 </h4>
+							<input type="text" class="form-control" id="modifyTitle" name = "title"
+								placeholder="Enter title" required=""
+								style="border-radius : 20px;">
+						</div>
+						<div class="form-group col-lg-4 col-md-4 rating_list2">
+							<h4 style="margin-bottom: 15px;">등급 </h4>
+							<div>
+								<i class="fa fa-star newStar" id="star6" style="font-weight: 100"></i>
+								<i class="fa fa-star newStar" id="star7" style="font-weight: 100"></i>
+								<i class="fa fa-star newStar" id="star8" style="font-weight: 100"></i>
+								<i class="fa fa-star newStar" id="star9" style="font-weight: 100"></i>
+								<i class="fa fa-star newStar" id="star10" style="font-weight: 100"></i>
+							</div>
+							<input type="hidden" id ="starCount2" name ="grade">
+						</div>
+					</div>
+					<div class="form-group">
+						<h4 style="text-align: left; margin-bottom: 15px;">내용</h4>
+						<textarea class="form-control mb-10" rows="4" name="content"
+							placeholder="content" required=""  id="modifyContent" 
+							style="border-radius : 20px;"></textarea>
+					</div>
+					<input type="hidden" name ="productNo" value="${product.product_no }">
+					
+					<div class="form-group">
+						<h4 style="text-align: left; margin-bottom: 15px;">첨부파일</h4>
+						<button type="button" class="button button-header reviewBtn" id = "modiFileBtn"
+						 style="padding: 8px" onclick="modifyArea();">수정하기</button>
+						<div class="fileDrop">
+							<div class="fileContent">이 영역에 업로드 할 파일을 드래그 드롭 해 주세요!</div>
+						</div>
+						<div class="fDropList"></div>
+					</div>
+					
+					<button type="submit" class="button button--active"
+					 onclick="return modifyReview()" style="margin: 25px;"> 수정하기 </button>
+					<button type="reset" class="button button--active"
+					 onclick="writeCancel(2)" style="margin: 25px;"> 취소하기 </button>
+				</form>
+			</div>
+		</div>
+		<!-- 리뷰 수정 모달창 끝 -->
+		<!-- 리뷰 삭제 모달창 -->
+		<div class="modal fade" id="myModal">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<h3 class="modal-title" style="margin: 10px;font-size: 25px;">리뷰 삭제</h3>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					<!-- Modal body -->
+					<div class="modal-body" style="margin: 20px;text-align: center;">
+						<h4>해당 리뷰를 삭제하시겠습니까?</h4>
+						(한번 삭제한 리뷰는 복원이 불가합니다)
+					</div>
+					<!-- Modal footer -->
+					<div class="modal-footer" style="margin: 10px;">
+						<form action="/review/delete" method="post">
+							<input type="hidden" id="deleteNo" name="reviewNo">
+							<input type="hidden" name ="productNo" value="${product.product_no }">
+							<button type="submit" class="btn btn-danger" onclick="return deleteReview()">삭제하기</button>
+						</form>
+						<button type="button" class="btn btn-light"
+							data-bs-dismiss="modal">취소</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 리뷰 삭제 모달창 끝 -->
+		<!-- 댓글 삭제 모달창 -->
+		<div class="modal fade" id="commentModal">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<h3 class="modal-title" style="margin: 10px;font-size: 25px;">댓글 삭제</h3>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					<!-- Modal body -->
+					<div class="modal-body" style="margin: 20px;text-align: center;">
+						<h4>해당 댓글을 삭제하시겠습니까?</h4>
+						(한번 삭제한 댓글은 복원이 불가합니다)
+					</div>
+					<!-- Modal footer -->
+					<div class="modal-footer" style="margin: 10px;">
+						<button type="button" class="btn btn-danger" onclick="deleteComment();">삭제하기</button>
+						<button type="button" class="btn btn-light" id = "deleteCancle"
+							data-bs-dismiss="modal">취소</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 리뷰 삭제 모달창 끝 -->
+		
+		<!-- 알림들 -->
+		<div class="alert alert-warning" id ="modifyAlert">
+			<strong> * 변경된 사항이 없습니다 *</strong>
+			</br> 내용을 수정후에 눌러주세요
+		</div>
+
+		<div class="alert alert-primary alert-dismissible fade show" id="successAlert">
+			<button type="button" class="btn-close" data-bs-dismiss="alert" style="padding-top: 10px"></button>
+			<strong id = "alertText1"></strong>
+		</div>
+
+		<div class="alert alert-danger alert-dismissible fade show" id="failAlert">
+			<button type="button" class="btn-close" data-bs-dismiss="alert" style="padding-top: 10px"></button>
+			<strong id ="alertText2"></strong>
+		</div>
+		
+		<div class="alert alert-primary" id="commentSuccessAlert">
+			<strong id ="alertText3"></strong>
+		</div>
+		
+		<div class="alert alert-danger" id="commentFailAlert">
+			<strong id ="alertText4"></strong>
+		</div>
+		
+		<!-- 알림들 끝 -->
 
 		<!-- ================ Best Selling item  carousel ================= -->
 		<section class="section-margin calc-60px">
@@ -1065,14 +1947,10 @@
 										</a>
 									</li>
 									<li>
-										<a href="">
-											<button><i class="ti-shopping-cart"></i></button>
-										</a>
+										<button onclick="insertCart(${product.product_no})"><i class="ti-shopping-cart"></i></button>
 									</li>
 									<li>
-										<a href="">
-											<button><i class="ti-money"></i></button>
-										</a>
+										<button onclick="goOrder(${product.product_no})"><i class="ti-money"></i></button>
 									</li>
 								</ul>
 							</div>

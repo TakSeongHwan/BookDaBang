@@ -14,9 +14,7 @@ import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.cyh.domain.UpdateProdDTO;
 
 public interface ProductDAO {
-
-
-
+	
 	// 최윤호
 	
 	// 셀렉트 박스에 카테고리 VO 출력	
@@ -58,43 +56,31 @@ public interface ProductDAO {
 	public List<ProductQnA> selectAllProdQnA_Answer(PagingInfo pi) throws Exception;
 	
 	
-	
-	
 	//qna 삭제
 	public int deleteQnA(int questionNo);
 	
 	
 	
 	
-	
-	
 	// 강명진
 	
-	// 전체 상품 가져오는 메서드
-	public List<ProductVO> selectAllProducts (PagingInfo pi,int sort) throws Exception;
+	// 전체 상품 가져오는 메서드 (카테고리,정렬,검색어 포함)
+	public List<ProductVO> selectAllProducts (int cno,PagingInfo pi,int sort,String searchWord) throws Exception;
 	
-	// 카테고리 정보 가져오는 메서드
-	public List<CategoryVO> selectCategory() throws Exception;
+	// 카테고리 정보 가져오는 메서드 (검색어 포함)
+	public List<CategoryVO> selectCategory(String searchWord) throws Exception;
 	
-	// 전체 상품 가져오는 메서드 (카테고리 번호가 있을 경우)
-	public List<ProductVO> selectAllProducts (int cno,PagingInfo pi,int sort) throws Exception;
-	
-	// 전체 상품의 개수 가져오기
-	public int getTotalPost() throws Exception;
-	
-	// 전체 상품의 개수 가져오기 (카테고리 번호가 있을 경우)
-	public int getTotalPost(int cno) throws Exception;
-	
-	// 전체 카테고리 가져오는 메서드 - getCategory() 이용
+	// 전체 상품의 개수 가져오기 (카데고리,검색어 포함)
+	public int getTotalPost(int cno,String searchWord) throws Exception;
 	
 	// 한 상품 가져오는 메서드
 	public ProductVO selectProduct (int prodNo) throws Exception;
 	
 	// Top 상품 가져오는 메서드
-	public List<ProductVO> selectTopProducts (int category) throws Exception;
+	public List<ProductVO> selectTopProducts (int cno) throws Exception;
 	
-	
-	
+	// Top 상품 가져오는 메서드
+	public List<ProductVO> selectTopProducts (String searchWord) throws Exception;
 	
 	
 }
