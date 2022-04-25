@@ -1,6 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html;charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="java.security.SecureRandom" %>
+<%@ page import="java.math.BigInteger" %>
 <c:set var="contextPath" value="<%=request.getContextPath() %>"></c:set>
 <!DOCTYPE html>
 <html>
@@ -20,6 +24,8 @@
   <link rel="stylesheet" href="resources/resources/vendors/nice-select/nice-select.css">
   <link rel="stylesheet" href="resources/vendors/nouislider/nouislider.min.css">
   <link rel="stylesheet" href="resources/css/style.css">
+  
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
   <script src="resources/vendors/jquery/jquery-3.2.1.min.js"></script>
   <script src="resources/vendors/bootstrap/bootstrap.bundle.min.js"></script>
@@ -72,6 +78,18 @@ function displayWarn() {
 
 
 </script>
+
+<%
+    String clientId = "_MSPMGBQvc3RTySfYdhS";//애플리케이션 클라이언트 아이디값";
+    String redirectURI = URLEncoder.encode("http://127.0.0.1:8085", "UTF-8");
+    SecureRandom random = new SecureRandom();
+    String state = new BigInteger(130, random).toString();
+    String apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
+    apiURL += "&client_id=" + clientId;
+    apiURL += "&redirect_uri=" + redirectURI;
+    apiURL += "&state=" + state;
+    session.setAttribute("state", state);
+ %>
 <jsp:include page="userHeader.jsp"></jsp:include>
 	<section class="blog-banner-area" id="category">
 		<div class="container h-100">
@@ -123,21 +141,136 @@ function displayWarn() {
 							</div>
 							<div class="col-md-12 form-group">
 								<button type="submit" class="button button-login w-100" onclick="return displayWarn();">로그인 </button>
-								<div>
-								 	<button style="background-color: #03c75a; color : #fff; width:300px; border:none; margin-top:10px; height : 45px; line-height : 40px; text-align:left"><img src="/resources/img/etc/btnG_naver.png" width="40"><div style="width:250px; text-align: center; display: inline-block; color:#fff">네이버 로그인</div></button>
-								 	
-								 	<img src="/resources/img/etc/kakao_login_medium_wide.png" >
-								 	
-								 	
-								 </div>
+
 								<label for="forgotPwd"><a href="#">아이디/ 비밀번호 찾기</a></label>
 							</div>
 						</form>
+														<div>
+								 	<div id="button_area">
+        								<div id="naverIdLogin">
+        								<a id="naverIdLogin_loginButton">
+        					<button style="background-color: #03c75a; color : #fff; width:300px; border:none; margin-top:10px; height : 45px; text-align:left; border-radius: 5px"><img src="/resources/img/etc/btnG_naver.png" width="40"><div style="width:230px; text-align: center; display: inline-block; font-size: 16px; ">네이버 로그인</div></button>
+        								</a>
+        								</div>
+      								</div>
+      								
+								 	
+								 	<img src="/resources/img/etc/kakao_login_medium_wide.png" style="margin-top: 10px" >
+								 	
+								 	
+								 </div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
+	
+<script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+
+
+
+
+
+
+
+
+  <script type="text/javascript">
+  
+  let naverMember = {
+		  userId : "",
+		  userPwd : "",
+		  nickName : "",
+		  userEmail  :"",
+		  isAdmin  :"",
+		  gender  :"",
+		  birth  :"",
+		  phoneNum  :"",
+		  memberWhen  :"",
+		  lastLogin  :"",
+		  isDraw :"",
+		  userName : "",
+		  sessionId: ""
+  }
+  
+  const naverLogin = new naver.LoginWithNaverId(
+   {
+    clientId: "_MSPMGBQvc3RTySfYdhS",
+    callbackUrl: "http://localhost:8085/login",
+    callbackHandle: true
+   
+    }
+   );
+  
+
+    naverLogin.init();
+    naverLogin.getLoginStatus(function (status) {
+      if (status) {
+          const nickName=naverLogin.user.getNickName();
+          const age=naverLogin.user.getAge();
+          const birthday=naverLogin.user.getBirthday();
+          console.log(naverLogin.user);
+			insertOutsider(naverLogin.user);
+          if(nickName===null||nickName===undefined ){
+            alert("별명이 필요합니다. 정보제공을 동의해주세요.");
+            naverLogin.reprompt();
+            return ;  
+         }else{
+          setLoginStatus();
+         }
+	}
+    });
+    console.log(naverLogin);
+
+    function setLoginStatus(){
+    
+      const button_area=document.getElementById('button_area');
+      button_area.innerHTML='<button id="btn_logout" style="background-color: #03c75a; color : #fff; width:300px; border:none; margin-top:10px; height : 45px; text-align:left; border-radius: 5px"><img src="/resources/img/etc/btnG_naver.png" width="40"><div style="width:230px; text-align: center; display: inline-block; font-size: 16px;">로그아웃</div></button>'
+    
+
+      const logout=document.getElementById('btn_logout');
+      logout.addEventListener('click',(e)=>{
+        naverLogin.logout();
+        
+		location.replace("http://localhost:8085/login");
+      });
+    }
+    
+    
+    function insertOutsider(user) {
+    	/*  userId = "",
+		  userPwd = "",
+		  nickName = ""
+		  userEmail  ="",
+		  isAdmin  ="",
+		  gender  ="",
+		  birth  ="",
+		  phoneNum  ="",
+		  memberWhen  ="",
+		  lastLogin  ="",
+		  isDraw ="",
+		  userName = "",
+		  sessionId= "" */
+    	
+    	naverMember.userId =user.id;
+    	naverMember.nickName = user.nickname;
+    	naverMember.nickEmail = user.email;
+    	naverMember.isAdmin = "N"
+    	if(user.gender== "M") {
+    		naverMember.gender = "male";	
+    	} else {
+    		naverMember.gender = "female";
+    	}
+    	naverMember.birth = user.birthyear + "-" +  user.birthday;
+    	naverMember.phoneNum = user.mobile;
+    	naverMember.userName = user.name;
+    	
+    	
+    	console.log(naverMember);
+    }
+    
+   
+
+  </script>
 	<!--================End Login Box Area =================-->
 <jsp:include page="userFooter.jsp"></jsp:include>
 

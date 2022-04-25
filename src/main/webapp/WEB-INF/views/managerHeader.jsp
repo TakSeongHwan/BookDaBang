@@ -35,10 +35,45 @@
 
 <!-- Helpers -->
 <script src="${contextPath}/resources/assets/vendor/js/helpers.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="${contextPath}/resources/assets/js/config.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 <title>managerHearder</title>
+<script>
+
+
+
+$(document).ready(function() {
+	if (localStorage.getItem("saveFile") != null) {
+		let output = '<div class="saveCount">!</div>';
+		$("#productManager").append(output);
+		$("#addProduct").append(output);
+		
+		window.addEventListener('storage', function (evt) {
+	    	if(evt.newValue == null){
+	    		$(".saveCount").remove();
+	    	}
+	  }, false);
+		
+		
+	}
+	
+	
+});
+</script>
+<style>
+.saveCount {
+	background-color: #FCB773;
+	color : #fff;
+	display: inline-block;
+	width: 20px;
+	text-align: center;
+	border-radius: 50%;
+}
+</style>
 </head>
 <body>   
    <div class="layout-wrapper layout-content-navbar">
@@ -134,25 +169,25 @@
                <li class="menu-item"><a href="javascript:void(0);"
                   class="menu-link menu-toggle"> <i
                      class="menu-icon tf-icons bx bx-dock-top"></i>
-                     <div data-i18n="Account Settings" onclick="location.href='${contextPath}/prodManager/listAll'">상품 조회</div>
+                     <div data-i18n="Account Settings" id="productManager">상품 관리 </div>
                </a>
                   <ul class="menu-sub">
-                     <li class="menu-item"><a
-                        href="pages-account-settings-account.html" class="menu-link">
-                           <div data-i18n="Account">Account</div>
+                     <li class="menu-item" >
+                     <a onclick="location.href='${contextPath}/prodManager/listAll'" class="menu-link">
+                           <div data-i18n="Account">상품조회</div>
+                           </a>
+                     </a></li>
+                     
+                     <li class="menu-item"> <a onclick="location.href='${contextPath}/prodManager/addProduct'" class="menu-link">
+                           <div data-i18n="Notifications" id="addProduct">상품등록</div>
                      </a></li>
                      <li class="menu-item"><a
-                        href="pages-account-settings-notifications.html"
-                        class="menu-link">
-                           <div data-i18n="Notifications">Notifications</div>
-                     </a></li>
-                     <li class="menu-item"><a
-                        href="pages-account-settings-connections.html" class="menu-link">
-                           <div data-i18n="Connections">Connections</div>
+                       onclick="location.href='${contextPath}/prodManager/SearchISBN'" class="menu-link">
+                           <div data-i18n="Connections">상품수정</div>
                      </a></li>
                   </ul></li>
                <li class="menu-item"><a href="javascript:void(0);"
-                  class="menu-link menu-toggle" onclick="location.href='${contextPath}/prodManager/listAllofQnA?pageNo=1'"> <i
+                  class="menu-link menu-toggle" onclick="location.href='${contextPath}/prodManager/listAllofQnA'"> <i
                      class="menu-icon tf-icons bx bx-lock-open-alt"></i>
                      <div data-i18n="Authentications">상품 QnA</div>
                </a>
