@@ -28,6 +28,7 @@ import com.bookdabang.lhs.domain.CategoryTotalSales;
 import com.bookdabang.lhs.domain.RecentBestSeller;
 import com.bookdabang.lhs.domain.SalesChartDetail;
 import com.bookdabang.lhs.domain.SalesDataDetail;
+import com.bookdabang.lhs.domain.StartDateEndDate;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 import com.bookdabang.lhs.service.ChartService;
 
@@ -179,5 +180,22 @@ public class ChartController {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	@RequestMapping(value="getVisitorDetailChart", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> getVisitorDetailChart(@RequestBody StartDateEndDate sded) {
+		ResponseEntity<Map<String, Object>> result = null;
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			List<VisitorCountWithDateFormat> list = service.getVisitorDetailChart(sded);
+			map.put("visitorDetail", list);
+			result = new ResponseEntity<Map<String,Object>>(map,HttpStatus.OK);
+		} catch (Exception e) {
+			result = new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+			e.printStackTrace();
+		}
+		
+		return result;
+		
 	}
 }

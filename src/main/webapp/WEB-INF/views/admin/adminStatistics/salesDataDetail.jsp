@@ -29,7 +29,7 @@
 		let endDate = $("#endDate").val();
 		
 		if(startDate == "" || startDate == null){
-			startDate = "1970-01-01"
+			startDate = new Date('1970-01-01');
 		}
 		if(endDate == "" || endDate == null){
 			endDate = new Date();
@@ -40,7 +40,8 @@
 			startDate : startDate,
 			endDate : endDate
 		});
-		
+		if (new Date(startDate) <= new Date(endDate)) {
+			$("#validDate").empty();
 		let url = "${contextPath}/chart/getDetailChart"
 		
 		$.ajax({
@@ -53,13 +54,70 @@
 			},
 			data : sendData,
 			success : function(data) {
-				console.log(data);
+				console.log(data)
+
+				if(data.categoryResult != null){
+					console.log("카테고리!")
+					drawDetailCategoryChart(data);
+				}else if(data.ageResult != null){
+					console.log("나이!")
+					
+				}else if(data.genderResult != null){
+					console.log("성별!")
+		
+				}
 			},error: function(e){
 				console.log(e.responseText);
 			}
 
 		});
+		} else {
+			$("#validDate").empty();
+			let output = '<div class="alert alert-danger alert-dismissible" role="alert">시작일은 종료일보다 늦을 수 없습니다.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+			$("#validDate").html(output);
+		}
 		
+	}
+	function drawDetailCategoryChart(data){
+		console.log(data)
+		data = data.categoryResult;
+		$("#drawChart").empty();
+		let ctx = document.getElementById('drawChart');
+		let labels = [];
+		let chartData =[]; 
+		let backgroundColor=[];
+		
+
+		for(let i=0;i< data.length;i++){
+			labels.push(data[i].category_name);
+			chartData.push(data[i].totalSales);
+			backgroundColor.push('rgb('+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+')');
+		}
+		console.log(labels);
+		console.log(chartData);
+		console.log(backgroundColor);
+		let myChart = new Chart(ctx,{
+			type:'bar',
+			data : {
+				labels : labels,
+				dataset:[{
+					label:"카테고리별 판매량",
+					data : chartData,
+					backgroundColor: backgroundColor,
+				
+				
+				}],
+		
+				
+				
+				
+				
+			}
+			
+			
+		});
+		
+	
 	}
 </script>
 
@@ -89,7 +147,7 @@
 				<div style="height: auto; width:100%;">조회할 자료</div>
 				<select class="form-select" id="searchType"
 					name="searchType">
-					<option selected="">Choose...</option>
+				
 					<option value="category">카테고리</option>
 					<option value="age">연령대</option>
 					<option value="gender">성별</option>
@@ -117,6 +175,7 @@
 			<button type="button" class="btn btn-outline-primary" style="height: 38px;" onclick="getDetailChart();">검색</button>
 			</div>
 		</div>
+		<div id="validDate"></div>
 		<div id="drawChartDiv" style="margin-top: 2%;">
 			<canvas id="drawChart"></canvas>
 		

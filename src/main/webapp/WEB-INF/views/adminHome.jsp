@@ -137,6 +137,7 @@
 							output = "<i class='text-danger fw-semibold bx bx-down-arrow-alt'>"
 									+ diff + "</i>"
 						} else if (diff < 0) {
+							diff = diff*-1
 							output = "<i class='text-success fw-semibold bx bx-up-arrow-alt'>"
 									+ diff + "</i>"
 						} else {

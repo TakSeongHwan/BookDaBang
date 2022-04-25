@@ -21,6 +21,7 @@ import com.bookdabang.lhs.domain.CategoryTotalSales;
 import com.bookdabang.lhs.domain.RecentBestSeller;
 import com.bookdabang.lhs.domain.SalesChartDetail;
 import com.bookdabang.lhs.domain.SalesDataDetail;
+import com.bookdabang.lhs.domain.StartDateEndDate;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 import com.bookdabang.lhs.persistence.ChartDAO;
 
@@ -169,11 +170,11 @@ public class ChartServiceImpl implements ChartService {
 			dtoMap.put("ageMap",ageMap);
 			Map<String,Object> result = chartDAO.getDetailChartAge(dtoMap);
 
-			map.put("result",result);
+			map.put("ageResult",result);
 			
 		}else if(scd.getSearchType().equals("category")) {
 			
-			map.put("result", chartDAO.getDetailChartCategory(scd));
+			map.put("categoryResult", chartDAO.getDetailChartCategory(scd));
 			
 		}else if(scd.getSearchType().equals("gender")) {
 			Map<String,String> genderMap = new HashMap<String, String>();
@@ -183,7 +184,7 @@ public class ChartServiceImpl implements ChartService {
 			
 			dtoMap.put("SalesChartDetail", scd);
 			dtoMap.put("genderMap",genderMap);
-			map.put("result",chartDAO.getDetailChartGender(dtoMap));
+			map.put("genderResult",chartDAO.getDetailChartGender(dtoMap));
 			
 		}
 		
@@ -192,6 +193,12 @@ public class ChartServiceImpl implements ChartService {
 		
 		
 		return map;
+	}
+
+	@Override
+	public List<VisitorCountWithDateFormat> getVisitorDetailChart(StartDateEndDate sded) throws Exception {
+		// TODO Auto-generated method stub
+		return chartDAO.getVisitorDetailChart(sded);
 	}
 
 }

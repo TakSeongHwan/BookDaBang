@@ -167,4 +167,7 @@ LEFT OUTER JOIN review as r on p.product_no = r.productNo
 	order by sell_count desc, p.product_no asc limit 10
  	
  	 </select>
+ 	 <select id="getVisitorDetailChart" resultType="VisitorCountWithDateFormat">
+ 	 select DATE_FORMAT(accessdate,'%Y-%m-%d') as dateSort ,count(ipaddr)as visitor from visitor_ipcheck where accessdate between #{startDate} and #{endDate} group by DATE_FORMAT(accessdate,'%Y-%m-%d')
+ 	 </select>
  </mapper>

@@ -12,6 +12,7 @@ import com.bookdabang.lhs.domain.CategoryTotalSales;
 import com.bookdabang.lhs.domain.RecentBestSeller;
 import com.bookdabang.lhs.domain.SalesChartDetail;
 import com.bookdabang.lhs.domain.SalesDataDetail;
+import com.bookdabang.lhs.domain.StartDateEndDate;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 
 public interface ChartService {
@@ -39,6 +40,8 @@ public interface ChartService {
 	public List<ProductVO> getLessStock() throws Exception;
 
 	public Map<String,Object> getDetailChart(SalesChartDetail scd) throws Exception;
+
+	public List<VisitorCountWithDateFormat> getVisitorDetailChart(StartDateEndDate sded) throws Exception;
 
 
 }

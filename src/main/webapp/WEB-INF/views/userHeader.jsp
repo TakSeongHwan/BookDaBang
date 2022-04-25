@@ -238,12 +238,12 @@ overflow-y:scroll;
           <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
             <ul class="nav navbar-nav menu_nav ml-auto mr-auto">
 
-                 <li class="nav-item active"><a class="nav-link" href="${contextPath}/">홈</a></li>
-                 <li class="nav-item active"><a class="nav-link" href="${contextPath}/product/list">도서</a></li>
+                 <li class="nav-item active"><a class="nav-link" href="${contextPath}/">Home</a></li>
+            <li class="nav-item active"><a class="nav-link" href="${contextPath}/product/list?pageNo=1">도서</a></li>
                  <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">로그인</a></li>
                  <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">회원가입</a></li>
-                 <li class="nav-item active"><a class="nav-link" href="${contextPath}/">Home</a></li>
-                 <li class="nav-item active"><a class="nav-link" href="${contextPath}/product/list?pageNo=1">도서</a></li>
+
+     
                  <!--  <li class="nav-item submenu dropdown">
                    <a href="/product/list" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                      aria-expanded="false">shop</a>               

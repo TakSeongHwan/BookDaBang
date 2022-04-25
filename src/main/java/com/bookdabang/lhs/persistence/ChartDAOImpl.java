@@ -19,6 +19,7 @@ import com.bookdabang.lhs.domain.CategoryTotalSales;
 import com.bookdabang.lhs.domain.RecentBestSeller;
 import com.bookdabang.lhs.domain.SalesChartDetail;
 import com.bookdabang.lhs.domain.SalesDataDetail;
+import com.bookdabang.lhs.domain.StartDateEndDate;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 
 @Repository
@@ -188,6 +189,12 @@ public class ChartDAOImpl implements ChartDAO {
 		resultMap.put("female", ses.selectList(ns+".getGender",dtoMap));
 		
 		return resultMap;
+	}
+
+	@Override
+	public List<VisitorCountWithDateFormat> getVisitorDetailChart(StartDateEndDate sded) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns+".getVisitorDetailChart",sded);
 	}
 	
 	
