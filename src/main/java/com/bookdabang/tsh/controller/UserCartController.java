@@ -148,12 +148,55 @@ public class UserCartController {
 	}
 
 	@RequestMapping(value = "/addCart", method = RequestMethod.POST)
-	public ResponseEntity<String> insertCart(@RequestBody CartVO cart) {
+	public ResponseEntity<String> insertCart(int productNo,int productQtt,HttpSession ses) {
 		ResponseEntity<String> result = null;
+		System.out.println(productNo);
 		try {
+			MemberVO loginMember = lService.findLoginSess((String) ses.getAttribute("sessionId"));
+			String userId = null;
+			String ipaddr = null;
+			CartVO cart = new CartVO();
+			cart.setProductQtt(productQtt);
+			cart.setProductNo(productNo);
+			if (loginMember != null) {
+				userId = loginMember.getUserId();
+				cart.setUserId(userId);
+			} else {
+				ipaddr = (String) ses.getAttribute("ipAddr");
+				cart.setIpaddr(ipaddr);
+			}
+			
 			if (cService.insertCart(cart) == 1) {
 				result = new ResponseEntity<String>("success", HttpStatus.OK);
 			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "/loginCart", method = RequestMethod.POST)
+	public ResponseEntity<String> loginCart(HttpSession ses){
+		ResponseEntity<String> result = null;
+		String ipAddr = (String) ses.getAttribute("ipAddr");
+		System.out.println(ipAddr);
+		String sessionId = (String) ses.getAttribute("sessionId");
+		System.out.println(sessionId);
+		
+		try {
+			if(sessionId != null) {
+				MemberVO m = lService.findLoginSess(sessionId);
+				CartSelectDTO dto = new CartSelectDTO(m.getUserId(), ipAddr);
+				if (cService.loginCart(dto) == 1) {
+					
+					result = new ResponseEntity<String>("success", HttpStatus.OK);
+				}
+			}else {
+				result = new ResponseEntity<String>("success", HttpStatus.OK);
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

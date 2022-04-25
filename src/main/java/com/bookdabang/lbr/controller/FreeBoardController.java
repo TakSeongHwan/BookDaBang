@@ -26,7 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.bookdabang.common.domain.AttachFileVO;
 import com.bookdabang.common.domain.FreeBoard;
 import com.bookdabang.common.domain.PagingInfo;
-import com.bookdabang.common.domain.Recommend;
+import com.bookdabang.common.domain.RecommendVO;
 import com.bookdabang.common.domain.ReportBoard;
 import com.bookdabang.common.etc.IPCheck;
 import com.bookdabang.lbr.domain.Search;
@@ -68,7 +68,7 @@ public class FreeBoardController {
 	}
 
 	@RequestMapping(value = "readFreeBoard", method = RequestMethod.GET)
-	public void readFreeBoard(@RequestParam("boardno") String boardno, Model model, Recommend recommend,
+	public void readFreeBoard(@RequestParam("boardno") String boardno, Model model, RecommendVO recommend,
 			ReportBoard reportBoard, HttpServletRequest request) throws Exception {
 
 		int no = Integer.parseInt(boardno);
@@ -334,7 +334,7 @@ public class FreeBoardController {
 
 	@RequestMapping(value = "likeFreeBoard", method = RequestMethod.POST)
 	public String likeFreeBoard(@RequestParam("boardno") String boardno, @RequestParam("gubun") String gubun,
-			Recommend recommend) throws Exception {
+			RecommendVO recommend) throws Exception {
 		int no = Integer.parseInt(boardno);
 		recommend.setFreeboardNo(no);
 		recommend.setUserId("cat");

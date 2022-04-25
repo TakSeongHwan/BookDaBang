@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bookdabang.common.domain.AttachFileVO;
 import com.bookdabang.common.domain.CategoryVO;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.common.domain.ReviewVO;
-import com.bookdabang.common.domain.ReviewComment;
 import com.bookdabang.kmj.service.UserProductService;
 import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.kmj.service.ReviewService;
@@ -34,49 +36,40 @@ public class UserProductController {
 	
 	
 	@RequestMapping(value = "/list", method=RequestMethod.GET)
-	public void productList (Model model, @RequestParam(value="pageNo", required=false, defaultValue ="1") String tmp) throws Exception {
+	public void productList (Model model, @RequestParam("pageNo") int pageNo,
+			@RequestParam(value="searchWord", required=false, defaultValue ="") String searchWord) throws Exception {
 		// 상품 리스트
 		int cno = 0;
-		int pageNo = 1;
-		if (tmp.equals("") || tmp != null) {
-			pageNo = Integer.parseInt(tmp);
-		}
+		System.out.println(pageNo + "번 상품 리스트 페이지, 검색어 : " + searchWord);
 		
-		System.out.println(pageNo + "번 상품 리스트 페이지");
-		
-		Map<String, Object> map = pService.readAllProducts(cno,pageNo,0);
-		List<ProductVO> lst = (List<ProductVO>) map.get("productList"); // 업캐스팅해서 들어갔으니 다운캐스팅으로 빼줘야함
+		Map<String, Object> map = pService.readAllProducts(cno,pageNo,0,searchWord);
+		List<ProductVO> lst = (List<ProductVO>) map.get("productList");
 		PagingInfo pi = (PagingInfo)map.get("pagingInfo");
 		
 		// 카테고리 리스트
-		List<CategoryVO> lst2 = pService.readAllCategory();
+		List<CategoryVO> lst2 = pService.readAllCategory(searchWord);
 		
 		model.addAttribute("productList", lst);
 		model.addAttribute("pagingInfo", pi);
-		model.addAttribute("categoryList", lst2);	
+		model.addAttribute("categoryList", lst2);
 	}
 	
 	@RequestMapping(value = "/list/{cno}", method=RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> productListByCategory (@PathVariable("cno") int cno,
-			@RequestParam(value="pageNo", required=false, defaultValue ="1") String tmp,
-			@RequestParam("sort") String so) {
-		
-		int pageNo = 1;
-		if (tmp.equals("") || tmp != null) {
-			pageNo = Integer.parseInt(tmp);
-		}
-		
+			@RequestParam("pageNo") int pageNo, @RequestParam("sort") String so,
+			@RequestParam(value="searchWord", required=false, defaultValue ="") String searchWord) {
 		int sort = 0;
 		if (so.equals("") || so != null) {
 			sort = Integer.parseInt(so);
 		}
 		
 		System.out.println("카데고리 번호 : " + cno + "인 상품들의 " + pageNo + "번 페이지 정렬방법" + sort);
+		System.out.println("검색어 : " + searchWord);
 		
 		ResponseEntity<Map<String, Object>> result = null;
 		
 		try {
-			Map<String, Object> map = pService.readAllProducts(cno,pageNo,sort);
+			Map<String, Object> map = pService.readAllProducts(cno,pageNo,sort,searchWord);
 			List<ProductVO> lst = (List<ProductVO>) map.get("productList");
 			if(lst.size() < 1) {
 				lst = null;
@@ -92,26 +85,43 @@ public class UserProductController {
 	}
 	
 	@RequestMapping(value = "/detail", method=RequestMethod.GET)
-	public void productDetail (Model model , @RequestParam("no") String no) throws Exception {
-		int prodNo = Integer.parseInt(no);
-		
+	public void productDetail (Model model , @RequestParam("no") int prodNo,
+			@RequestParam(value="pageNo", required=false, defaultValue ="1") int pageNo) throws Exception {
 		System.out.println(prodNo + "번 상품 상세페이지");
 		
 		// 상품 상세정보
 		ProductVO product = pService.readProduct(prodNo);
 		
 		// top10 상품들
-		int category = product.getCategory_code();
-		List<ProductVO> lst = pService.readTopProducts(category);
+		int cno = product.getCategory_code();
+		List<ProductVO> lst = pService.readTopProducts(cno,"");
 		
-		// 해당 상품의 리뷰들
-		List<ReviewVO> lst2 = rService.readAllReview(prodNo);
+		// 해당 상품의 리뷰들(페이징,첨부파일 포함)
+		Map<String, Object> resultMap = rService.readAllReview(prodNo,pageNo);
+		List<ReviewVO> lst2 = (List<ReviewVO>) resultMap.get("reviewList");
+		PagingInfo pi = (PagingInfo) resultMap.get("pagingInfo");
+		List<AttachFileVO> lst3 = (List<AttachFileVO>) resultMap.get("fileList");
 		
 		model.addAttribute("product", product);
 		model.addAttribute("topList", lst);
 		model.addAttribute("reviewList", lst2);
-		
+		model.addAttribute("pagingInfo", pi);
+		model.addAttribute("fileList", lst3);
 	}
 	
-	
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public ResponseEntity<List<ProductVO>> searchProduct(@RequestParam("searchWord") String searchWord) {
+		System.out.println("검색어 : " + searchWord + " 자동완성리스트");
+		ResponseEntity<List<ProductVO>> result = null;
+		List<ProductVO> lst = null;
+		try {
+			lst = pService.readTopProducts(0,searchWord); 
+			result = new ResponseEntity<List<ProductVO>>(lst, HttpStatus.OK);	
+		} catch (Exception e) {
+			result = new ResponseEntity<List<ProductVO>>(lst, HttpStatus.BAD_REQUEST);	
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
 }

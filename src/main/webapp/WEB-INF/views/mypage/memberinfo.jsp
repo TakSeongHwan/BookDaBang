@@ -38,29 +38,90 @@
 </head>
 <script>
 
-	function loginOrNot() {
-		// 세션 아이디 가져오란다.
-		//  로그인을 안했는데 왜 뜨지
-		// 로그인을 안해도 세션 ID 뜨는데?
-		let loginMember = "${ sessionId}";
-		console.log(loginMember);
-
-		if (loginMember != '') {
-			// 로그인 했을 때
-			console.log("로그인 했슈")
-			//location.href='/ljs/mypage/';
-		} else {
-			console.log("로그인 안했슈")
-			//location.href='/ljs/returnPrePage';
-
-		}
+// 비밀번호 변경
+function confirmModifyPwd() {
+	
+	let pwd1 = $("#pwd1").val();
+	let pwd2 =$("#pwd2").val();
+	let ses = "${ sessionId}"
+	let url = "${ contextPath}/mypage/changePassword"
+	console.log(url);
+	console.log(ses);
+	if (pwd1 == pwd2) {
+		console.log("비밀번호 일치함 ajax로 통신")
+		$.ajax({
+			url : url,
+			dataType : "json",
+			//contentType :"application/json; charset=utf-8", 
+			type : "POST",
+			data : {
+				ses : ses,
+				pwd1 : pwd1
+			},
+			success : function(data) { // 통신 성공시 실행될 콜백 함수
+				if (data == 1) {
+					$("#yesButton").remove();
+					$(".buttonCon").text('확인');
+					
+					$(".modal-footer").prepend("<p style = 'text-align : left;'>비밀번호 변경이 완료되었습니다.</p>");
+		
+				} else {
+					console.log("백단에서 뭔가가 잘못되었다.")
+				}
+			}
+		});	
+	} else {
+		let p = document.createElement("p")
+		p.innerText = "변경할 비밀번호와 확인이 다릅니다. 확인해주세요."
+		$("#pwdModi").append(p);
 	}
+} 
+
+function confirmPwd(e) {
+	
+	let ses = "${ sessionId}"
+	
+	let oldPwd = document.getElementById('originalPwd').value; // 현재 모달창에 입력한 패스워드 - 계속 보내서 DB에 확인
+	//document.getElementById('correctOrNot').innerHTML = oldPwd;
+	
+	let url = "${ contextPath}/mypage/confirmPassword";
+	
+	$.ajax({
+				url : url,
+				dataType : "json", 
+				type : "POST",
+				data : {
+					ses : ses,
+					oldPwd : oldPwd
+				},
+				success : function(data) { // 통신 성공시 실행될 콜백 함수
+					
+					if (data == true) {
+						document.getElementById('correctOrNot').innerHTML = "<span style = 'color: green;'> ● 일치</span>";
+						document.getElementById("yesButton").onclick = confirmModifyPwd;
+						
+						
+					} else {
+						// 확인 버튼 안넘어가게 하기.
+						document.getElementById('correctOrNot').innerHTML = "<span style = 'color: red;'> ● 불일치</span>";
+						document.getElementById("yesButton").onclick = null;
+
+						
+					}
+					
+
+					}, error : function() {
+				}
+			});	
+}
+
+// 회원 삭제
 
 	function withdrawMember() {
 
 		let ses = "${ sessionId}"; // 세션에 담긴 ID값 가져오라
 
-		let url = "withdrawMember.do";
+		let url = "withdrawMember";
 
 		$.ajax({
 					url : url,
@@ -85,9 +146,10 @@
 				});
 	}
 	
-	function pointHistory() {
+// 사용한 적립금 조회
+	function pointUsed() {
 		let ses = "${ sessionId}"; // 세션에 담긴 ID값 가져오라
-		let url = "${ contextPath}/mypage/viewPoint.do";	
+		let url = "${ contextPath}/mypage/viewPointUsed";	
 		$.ajax({
 			url : url,
 			dataType : "json",
@@ -98,143 +160,400 @@
 			},
 			success : function(data) { // 통신 성공시 실행될 콜백 함수
 				console.log(data)
-				$(".contentsBox").empty();
-				let output = '<h3> 포인트 적립 내역</h3><div class = "table-responsive"><table class="table"><thead><tr><th>Point</th><th>적립 사유</th><th>적립 일시</th></tr></thead><tbody>';
-				
+				$(".infoBox").hide();
+				$(".mypostsBox").hide();
+				$(".pointBox").show();
+				let output = '<h3> 포인트 적립 내역</h3><div class = "board_filters"><ul><li onclick="totalPoint();">전체 내역</li><li>|</li><li onclick="pointHistory()";>적립내역</li><li>|</li><li onclick="pointUsed();">사용내역</li></ul></div><div class = "table-responsive"><table class="table"><thead><tr><th>Point</th><th>적립 사유</th><th>적립 일시</th></tr></thead><tbody>';
+				// pointUsed()
 				$.each(data,function(i, e) {
 				//let date = new Date(e.pointWhen);
 				output += '<tr><td>'+ e.point + '</td><td>' + e.pointWhy + '</td><td>' + e.pointWhen + '</td></tr>'
 				})
 				output += '</tbody></table></div>'
-				$(".contentsBox").html(output);
+				console.log(output);
+				
+				$(".pointBox").html(output);
 				}, error : function() {
 			}
 		});		
 	}
 	
-	function confirmModifyPwd() {
+	// 전체 적립금 조회
+	function totalPoint() {
 		
-		let pwd1 = $("#pwd1").val();
-		let pwd2 =$("#pwd2").val();
-		let ses = "${ sessionId}"
-		let url = "${ contextPath}/mypage/changePassword.do"
-		console.log(url);
-		console.log(ses);
-		if (pwd1 == pwd2) {
-			console.log("비밀번호 일치함 ajax로 통신")
-			$.ajax({
-				url : url,
-				dataType : "json",
-				//contentType :"application/json; charset=utf-8", 
-				type : "POST",
-				data : {
-					ses : ses,
-					pwd1 : pwd1
-				},
-				success : function(data) { // 통신 성공시 실행될 콜백 함수
-					if (data == 1) {
-						$("#yesButton").remove();
-						$(".buttonCon").text('확인');
-						
-						$(".modal-footer").prepend("<p style = 'text-align : left;'>비밀번호 변경이 완료되었습니다.</p>");
-			
-					} else {
-						console.log("백단에서 뭔가가 잘못되었다.")
-					}
-				}
-			});	
-		} else {
-			let p = document.createElement("p")
-			p.innerText = "변경할 비밀번호와 확인이 다릅니다. 확인해주세요."
-			$("#pwdModi").append(p);
-		}
-	} 
-	
-	function confirmPwd(e) {
-		
-		let ses = "${ sessionId}"
-		
-		let oldPwd = document.getElementById('originalPwd').value; // 현재 모달창에 입력한 패스워드 - 계속 보내서 DB에 확인
-		//document.getElementById('correctOrNot').innerHTML = oldPwd;
-		
-		let url = "${ contextPath}/mypage/confirmPassword.do";
-		
+		let ses = "${ sessionId}"; // 세션에 담긴 ID값 가져오라
+		let url = "${ contextPath}/mypage/pointTotal?u=" + ses;	
 		$.ajax({
-					url : url,
-					dataType : "json", 
-					type : "POST",
-					data : {
-						ses : ses,
-						oldPwd : oldPwd
-					},
-					success : function(data) { // 통신 성공시 실행될 콜백 함수
-						
-						if (data == true) {
-							document.getElementById('correctOrNot').innerHTML = "<span style = 'color: green;'> ● 일치</span>";
-							document.getElementById("yesButton").onclick = confirmModifyPwd;
-							
-							
-						} else {
-							// 확인 버튼 안넘어가게 하기.
-							document.getElementById('correctOrNot').innerHTML = "<span style = 'color: red;'> ● 불일치</span>";
-							document.getElementById("yesButton").onclick = null;
+			url : url,
+			dataType : "json",
+			//contentType :"application/json; charset=utf-8", 
+			type : "GET",
+			success : function(data) { // 통신 성공시 실행될 콜백 함수
+				console.log(data)
+				$(".pointBox").empty();
+				let output = '<h3><b> 포인트 전체 내역</b></h3><div class = "board_filters"><ul><li onclick="totalPoint();">전체</li><li>|</li><li onclick="pointHistory()";>적립</li><li>|</li><li onclick="pointUsed();">사용</li></ul></div><div class = "table-responsive"><table class="table"><thead><tr><th>Point</th><th>적립 사유</th><th>적립 일시</th></tr></thead><tbody>';
+				// pointUsed()
+				$.each(data,function(i, e) {
+				//let date = new Date(e.pointWhen);
+				output += '<tr><td>'+ e.point + '</td><td>' + e.pointWhy + '</td><td>' + e.pointWhen + '</td></tr>'
+				})
+				output += '</tbody></table></div>'
+				console.log(output);
+				
+				$(".pointBox").html(output);
 
-							
-						}
-						
-
-						}, error : function() {
-					}
-				});	
+				}, error : function() {
+			}
+		});		
+		
 	}
 	
-	function showMyPosts(e) {
+	/* 적립금 적립 내역 조회 */
+	
+	function pointHistory(e) {
+		let ses = "${ sessionId}"; // 세션에 담긴 ID값 가져오라
+		let url = "${ contextPath}/mypage/viewPoint";	
+		$.ajax({
+			url : url,
+			dataType : "json",
+			
+			type : "GET",
+			data : {
+				ses : ses
+			},
+			success : function(data) { // 통신 성공시 실행될 콜백 함수
+				console.log(data)
+				$(".infoBox").hide();
+				$(".mypostsBox").hide();
+				$(".pointBox").show();
+				let output = '<h3><b>포인트 적립 내역</b></h3><div class = "board_filters"><ul><li onclick="totalPoint();">전체</li><li>|</li><li onclick="pointHistory()";>적립</li><li>|</li><li onclick="pointUsed();">사용</li></ul></div><div class = "table-responsive"><table class="table"><thead><tr><th>적립 일시</th><th>Point</th><th>적립 사유</th></tr></thead><tbody>';
+				let sum = 0;
+				$.each(data,function(i, e) {
+				//let date = new Date(e.pointWhen);
+				output += '<tr><td>'+ e.pointWhen + '</td><td>' + e.point + '</td><td>' + e.pointWhy + '</td></tr>'
+				sum += e.point
+				})
+				output += '<tr><td>총 적립 포인트 : </td><td>' + sum +'</td><td></td></tr></tbody></table></div>'
+				console.log(output);
+				
+				$(".pointBox").html(output);
+				}, error : function() {
+			}
+		});		
+	}
+	
+
+	
+ /* 내 게시물 조회 */ 
+ 
+ 	function showMyPosts(e) {
+ 
+		$(".infoBox").hide();
+		$(".pointBox").hide();
+		$(".mypostsBox").show(); 
+		let output = '<h3> 내 게시물 조회 </h3><button type="button" class="btn btn-outline-light text-dark" data-bs-toggle="modal" data-bs-target="#modalDelete" >삭제 </button><div class = "board_filters"><ul><li><select onchange = "freeOrCS(this.value);"><option value="free"> 자유게시판 </option><option value = "cs">고객센터</option></select><span id="mypostlist" onclick="freeOrCS();"> 내 게시글 </span></li><li>|</li><li onclick="showMyReviews();">내가 남긴 리뷰</li><li>|</li><li onclick="showMyQnA();">내가 남긴 Q&A</li></ul></div><div class = "table-responsive"></div>';
+		$(".mypostsBox").html(output);
+
+		showMyAllPosts();
+		
+	}
+	
+	function showMyQnA() {
+		
+		
+		let ses = "${ sessionId}";
+		
+		let url = "${ contextPath}/mypage/myqna?u="+ ses;
+		
+		$.ajax({
+			url : url,
+			dataType : "json", 
+			type : "GET",
+			success : function(data) { // 통신 성공시 실행될 콜백 함수
+				console.log(data)
+				console.log("큐앤에이 성공");
+				$(".infoBox").hide();
+				$(".pointBox").hide();
+				$(".mypostsBox").show();
+				$(".table-responsive").empty();
+
+				let output = '<table class="table"><thead><tr><th></th><th>문의 상품</th><th>내용</th><th>글쓴이</th><th>날짜</th><th> 답변 상태</th></tr></thead><tbody>';
+				
+				$.each(data,function(i, e) {
+					//let date = new Date(e.pointWhen);
+					output +='<tr><td><input type = "checkbox" name = "PostNo" value="'+ e.question_no + '"></td><td>'+ e.question_no + '</td><td>' + e.content + '</td><td>' + e.writer + '</td><td>' + e.write_date + '</td><td>' + e.answer_status + '</td></tr>';
+					})
+					output += '</tbody></table><button type="button" class="btn btn-outline-light text-dark" id = "selectAll" onclick = "selectAll()"; > 전체선택 <img src="${ contextPath}/resources/img/check1.png" style = "width : 15px" ></button></div>'
+					console.log(output);
+					
+					$(".table-responsive").html(output);
+			
+				}, error : function () {
+					console.log("큐앤에이 실패");
+				}
+		});	
+
+	}
+	
+	
+	function showMyAllPosts() {
 		
 		let ses = "${ sessionId}";
 		
 		
-		let url = "${ contextPath}/mypage/myposts/?u="+ ses;
+		let url = "${ contextPath}/mypage/myposts?u="+ ses;
 		
+		
+		
+		$.ajax({
+			url : url,
+			dataType : "json", 
+			type : "GET",
+			success : function(data) { // 통신 성공시 실행될 콜백 함수
+				console.log(data)
+				$(".table-responsive").empty;
+				output = '<table class="table"><thead><tr><th></th><th>No</th><th>제목</th><th>글쓴이</th><th>날짜</th><th>조회수</th><th>추천수</th></tr></thead><tbody>'
+				
+				$.each(data,function(i, e) {
+				//let date = new Date(e.pointWhen);
+				output += '<tr><td><input type = "checkbox" name = "PostNo" value="'+ e.boardno + '"></td><td>' + e.boardno + '</td><td>' + e.title + '</td><td>' + e.writer + '</td><td>' + e.date + '</td><td>' + e.readcount + '</td><td>' + e.likecount + '</td></tr>';
+				
+				})
+				output += '</tbody></table><button type="button" class="btn btn-outline-light text-dark" id = "selectAll" onclick = "selectAll()"; > 전체선택 <img src="${ contextPath}/resources/img/check1.png" style = "width : 15px" ></button>'
+				
+				$(".table-responsive").html(output);
+				}
+		});	
+	}
+	
+	
+	/* 내가 쓴 댓글 | 추천한 글 */
+	
+ 	function showMyLike(e) {
+ 		 
+		$(".infoBox").hide();
+		$(".pointBox").hide();
+		$(".mypostsBox").show(); 
+		let output = '<h3> 내가 쓴 댓글 </h3><button type="button" class="btn btn-outline-light text-red" data-bs-toggle="modal" data-bs-target="#modalDelete">삭제 </button><div class = "board_filters"><ul><li><span id="mypostlist" onclick="freeOrCS();"> 내가 쓴 댓글 </span></li><li>|</li><li onclick="showMyLikeF();">내가 추천한 글</li></ul><button type="button" class="btn btn-outline-light text-dark"><img src="${ contextPath}/resources/img/alarm.png" style = "width : 16px" > 신고 처리 현황 </button></div><div class = "table-responsive"></div>';
+		$(".mypostsBox").html(output);
+
+		showMyLikeF();
+		
+	}
+ 	
+	function showMyLikeF() {
+		let ses = "${ sessionId}";
+
+		let url = "${ contextPath}/mypage/mylike?u="+ ses;
+
+		
+		$.ajax({
+			url : url,
+			dataType : "json", 
+			type : "GET",
+			success : function(data) { // 통신 성공시 실행될 콜백 함수
+				console.log(data)
+				$(".table-responsive").empty;
+				output = '<table class="table"><thead><tr><th></th><th>No</th><th>제목</th><th>글쓴이</th><th>날짜</th><th>조회수</th><th>추천수</th></tr></thead><tbody>'
+				
+				$.each(data,function(i, e) {
+				//let date = new Date(e.pointWhen);
+				output += '<tr><td><input type = "checkbox" name = "PostNo" value="'+ e.boardno + '"></td><td>' + e.boardno + '</td><td>' + e.title + '</td><td>' + e.writer + '</td><td>' + e.date + '</td><td>' + e.readcount + '</td></tr>';
+				
+				})
+				output += '</tbody></table><button type="button" class="btn btn-outline-light text-dark" id = "selectAll" onclick = "selectAll()"; > 전체선택 <img src="${ contextPath}/resources/img/check1.png" style = "width : 15px" ></button>'
+				
+				$(".table-responsive").html(output);
+				}
+		});	
+	}
+	
+ // 삭제 기능
+	function deletePosts() {
+	 
+		let deleteTr = $(".table tbody tr");
+		
+		
+		let postArr = []; // 배열 선언
+		let td = deleteTr.children();
+		let pno = 0;
+		 td.each(function(i) {
+			if (td.eq(i).children().prop("checked")) {
+					
+					postArr.push($(this).find('input').val());
+					console.log(postArr)
+			}
+		 });
+		
+			let url = "${ contextPath}/mypage/delmycs";
+			
+			$.ajax({
+				url : url,
+				dataType : "json", 
+				type : "GET",
+				data : {
+					postArr : postArr
+				},
+				success : function(data) { // 통신 성공시 실행될 콜백 함수
+					if (data != 0) {
+						$('#modalDelete').modal('hide');
+						showMyCSposts();
+					} else {
+						console.log("통신 실패");
+					}
+					}
+			});	
+		
+	};
+	
+	
+	
+	
+	function freeOrCS(value) {
+		
+		let val = value;
+		// 만약 value 가 없으면 select에서 읽어오게.
+		console.log(val); 
+		if (val == null) {
+			val = $(".board_filters").children().find('select').val();
+		}
+
+		if (val == "free") {
+			showMyAllPosts();
+			
+		} else if (val == "cs" ) {
+			showMyCSposts();
+			
+		}
+		
+		
+		
+	}
+	
+	function showMyCSposts() {
+		
+		let url = "${ contextPath}/mypage/mycsposts?u="+ "${ sessionId}";
+		
+		$.ajax({
+			url : url,
+			dataType : "json",
+			type : "GET",
+			success : function(data) { // 통신 성공시 실행될 콜백 함수
+				console.log(data)
+				$(".table-responsive").empty;
+				output = '<table class="table"><thead><tr><th></th><th>No</th><th>말머리</th><th>제목</th><th>글쓴이</th><th>날짜</th><th>답변상태</th></tr></thead><tbody>'
+				
+				$.each(data,function(i, e) {
+				//let date = new Date(e.pointWhen);
+				output += '<tr><td><input type = "checkbox" name = "PostNo" value="'+ e.postNo + '"></td><td>'+ e.postNo + '</td><td>' + e.categoryCode + '</td><td>' + e.title + '</td><td>' + e.writer + '</td><td>' + e.postdate + '</td><td>' + e.status + '</td></tr>';
+				
+				})
+				output += '</tbody></table><button type="button" class="btn btn-outline-light text-dark" id = "selectAll" onclick = "selectAll()"; > 전체선택 <img src="${ contextPath}/resources/img/check1.png" style = "width : 15px" ></button>'
+				console.log(output);
+				$(".table-responsive").html(output);
+				}
+		});	
+	}
+	
+	
+	
+
+
+	
+	
+	function showMyReviews(){
+		
+		let ses = "${ sessionId}";
+		let url = "${ contextPath}/mypage/myreviews?u="+ ses;
 		console.log(url);
-		
 		$.ajax({
 					url : url,
 					dataType : "json", 
 					type : "GET",
 					success : function(data) { // 통신 성공시 실행될 콜백 함수
-							console.log("내 게시물 조회 통신 성공");
+						console.log(data)
+						$(".table-responsive").empty();
+						let output = '<table class="table"><thead><tr><th></th><th>내가 준 평점</th><th>제목</th><th>내용</th><th>글쓴이</th><th>날짜</th><th> 받은 추천 수</th></tr></thead><tbody>';
+						
+						$.each(data, function(i, e) {
+							let starMark = "";	
+							
+							for (i=0; i < e.grade; i++) {
+								starMark += '<i class="fa fa-star" style="font-weight : 100px; color : #fbd600;"></i>&nbsp';
+							}	
+	
+						output +='<tr><td><input type = "checkbox" name = "PostNo" value="'+ e.reviewNo + '"></td><td><div class = "star"  style="display: inline-block; float: left; margin-right: 25px;">'+ starMark + '</div></td><td>' + e.title + '</td><td>' + e.content + '</td><td>' + e.writer + '</td><td>' + e.writedate + '</td><td>' + e.recommendNum + '</td></tr>';
+							//e.writedate
+	
+						})
+						output += '</tbody></table><button type="button" class="btn btn-outline-light text-dark" id = "selectAll" onclick = "selectAll()"; > 전체선택 <img src="${ contextPath}/resources/img/check1.png" style = "width : 15px" ></button>'
+						console.log(output);
+						
+						
+						$(".table-responsive").html(output);
+						
 						}
-				});	
-
+			});	
 	}
+	
 	
 
 	function modifyInfo(e) {
-		
-			let url = "${ contextPath}/mypage/?u="+ "${ sessionId}";
-			console.log(url);
-			$.ajax({
-						url : url,
-						dataType : "json", 
-						type : "GET",
-						success : function(data) { // 통신 성공시 실행될 콜백 함수
-								console.log("통신 성공");
-							}
-					});	
+	
+		$(".infoBox").show();
+		$(".pointBox").hide();
+		$(".mypostsBox").hide();
+	
 	}
 	
 	
+	function selectAll() {
+		
+		console.log("클릭 되나요?")
+		
+		if ($("input[type=checkbox]").prop("checked")) {
+			$("input[type=checkbox]").prop("checked", false);
+		} else {
+			$("input[type=checkbox]").prop("checked", true);
+		}
+		
+	}
+		
 	
 	
 	window.onload = function () {
 		
+
+		
+			let birthStr ="${ loginMember.birth}";
+			let userBirth = birthStr.split('-');
+			
+			
+			let year = userBirth[0];
+			let month = userBirth[1];
+			
+			let day = userBirth[2].split(' ');
+			
+			day = day[0];
+			console.log(year, month, day);
+			console.log("${ loginMember.birth}");
+			
+			
+			let birth = new Date(year, month, day);
+			
+			document.getElementById('userBirth').valueAsDate = birth;
+			
+			
+			
+			
 		
 		
-		
+		document.getElementById('showMyPoint').addEventListener("click", pointHistory);
 		document.getElementById('originalPwd').addEventListener ("keyup", confirmPwd);
 		document.getElementById('modifyInfo').addEventListener ("click", modifyInfo);
 		document.getElementById('showAllMyPosts').addEventListener("click", showMyPosts);
-		
+		document.getElementById('showMyLike').addEventListener("click", showMyLike);
+		//showMyLike
 		
 		    $('#pwdModi i').on('click',function(){
 		    	
@@ -252,6 +571,24 @@
 	
 </script>
 <style>
+
+#mypostlist {
+margin-left : 5px;
+
+}
+
+.board_filters li {
+list-style : none;
+float : left;
+margin : 10px;
+color : grey;
+
+}
+
+.board_filters {
+float : right;
+margin-bottom : 10px;
+}
 
 #pwdModi {
 
@@ -452,7 +789,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-4">
-					<div class="blog_right_sidebar">
+					<div class="blog_right_sidebar" style = 'margin-right : 120px'  >
 						<aside class="single_sidebar_widget author_widget">
 
 							<img class="author_img rounded-circle" src="img/blog/author.png"
@@ -461,7 +798,6 @@
 							<p>${loginMember.userName}고객님</p>
 							<div class="social_icon"></div>
 						</aside>
-
 						<aside class="single_sidebar_widget post_category_widget">
 							<h4 class="widget_title">Post Catgories</h4>
 							<div class="br"></div>
@@ -472,14 +808,11 @@
 								</a></li>
 								<li><a href="#" class="d-flex justify-content-between">
 										<p>구매 내역</p>
-
 								</a></li>
 								<li><span id = "showAllMyPosts">내 게시물 조회</span>
 								</a></li>
-								<li><a href="#" class="d-flex justify-content-between">
-										<p>내가 좋아요/신고한 게시물</p>
-								</a></li>
-								<li onclick = "pointHistory();"><p>적립금 조회</p></li>
+								<li><span id="showMyLike">내가 쓴 댓글  |  추천한 글</span></li>
+								<li><span id = "showMyPoint">적립금 조회</span></li>
 								<li><a href="#" class="d-flex justify-content-between"
 									data-bs-toggle="modal" data-bs-target="#modalCenter">
 										<p>회원 탈퇴</p>
@@ -506,6 +839,8 @@
 				</div>
 
 				<div class="col-lg-8 posts-list contentsBox">
+					<div class= "pointBox"></div>
+					<div class= "infoBox">
 					<h2>회원 정보 수정</h2>
 					<div class="single-post row">
 						아이디 : <input type="text" class="form-control"
@@ -519,11 +854,18 @@
 							value="${loginMember.nickName }" /> 
 						핸드폰 번호 : <input type="text" class="form-control" value="${loginMember.phoneNum}" />
 						이메일 : <input type="text" class="form-control" value="${loginMember.userEmail}" /> 
-						생일 : <div>"${loginMember.birth }" </div>
-
+						생일 : <input type = "date" id= "userBirth"  value= "${loginMember.birth }"  /> 
+ 						<button type="button"  class="button button-postComment" >수정</button>
+						</div>
 						
 					</div>
-					<!-- Modal -->
+					<div class = "mypostsBox">
+					
+					</div>
+					
+				</div>
+				
+				<!-- 탈퇴 Modal -->
 					<div class="modal fade" id="modalCenter" tabindex="-1"
 						aria-hidden="true">
 						<div class="modal-dialog modal-dialog-centered" role="document">
@@ -546,6 +888,30 @@
 							</div>
 						</div>
 					</div>
+
+				<!-- 게시글 삭제 확인 Modal -->
+					<div class="modal fade" id="modalDelete" tabindex="-1"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="btn-close" data-bs-dismiss="modal"
+										aria-label="Close"></button>
+								</div>
+								<div class="modal-body" id="deletePost">
+									<p>선택한 게시물을 삭제하시겠습니까?</p>
+								</div>
+								<div class="modal-footer">
+									<button type="button"
+										class="btn btn-outline-secondary yesButton"
+										onclick="deletePosts();">예</button>
+									<button type="button" class="btn btn-primary"
+										data-bs-dismiss="modal">아니오</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
 
 					<!-- 비밀번호 변경 모달 -->
 					<div class="modal fade" id="modalPwd" tabindex="-1" aria-hidden="true">
@@ -577,7 +943,6 @@
 							</div>
 						</div>
 					</div>
-				</div>
 			</div>
 		</div>
 

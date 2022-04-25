@@ -16,15 +16,8 @@ import com.bookdabang.common.service.IPCheckService;
 import com.bookdabang.common.service.IPCheckServiceImpl;
 
 public class IPCheck {
-	private static String ipAddr;
+   private static String ipAddr;
 
-	/**
-	 * @Method name : getIPAddr
-	 * @작성일 : 2022. 3. 25.
-	 * @작성자 : 이한솔
-	 * @변경이력 :
-	 * @Method 설명: IP주소를 체크하여 반환
-	 */
 
 	public static String getIPAddr(HttpServletRequest request) throws Exception {
 

@@ -16,6 +16,8 @@ public interface CartService {
 	
 	public List<CartViewDTO> getCartView(List<CartVO> cartLst) throws Exception;
 	
+	public List<Integer> allCartNo(CartSelectDTO dto) throws Exception;
+	
 	// 장바구니 제품 수량 증가
 	public int updateCart(CartProdQttDTO dto) throws Exception;
 	
@@ -30,4 +32,6 @@ public interface CartService {
 	public int countCart(CartSelectDTO dto) throws Exception;
 
 	public int loginCart(CartSelectDTO dto) throws Exception;
+
+	
 }

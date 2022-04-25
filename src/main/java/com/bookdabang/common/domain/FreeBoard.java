@@ -30,6 +30,17 @@ public class FreeBoard {
 		this.modifydate = modifydate;
 		this.likecount = likecount;
 	}
+	
+	public FreeBoard(int boardno, String writer, String title, String content, Timestamp date, int readcount) {
+		super();
+		this.boardno = boardno;
+		this.writer = writer;
+		this.title = title;
+		this.content = content;
+		this.readcount = readcount;
+		this.date = date;
+	}
+	
 	public int getBoardno() {
 		return boardno;
 	}

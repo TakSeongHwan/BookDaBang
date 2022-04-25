@@ -10,7 +10,7 @@
 </head>
 <script>
 window.onload = function () {
-	// 여기로 넘어온다는 건 쿠키가 없다는 뜻, 사용자 화면이 아닌 URL을 직접 쳐서 들어왔을 경우.
+	// 여기로 넘어온다는 건 쿠키가 없다는 뜻, 혹은 사용자 화면이 아닌 URL을 직접 쳐서 들어왔을 경우.
 	
 	let sessionId = "${ sessionId}"
 	

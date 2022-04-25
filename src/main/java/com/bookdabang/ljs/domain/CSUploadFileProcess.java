@@ -24,25 +24,34 @@ public class CSUploadFileProcess {
 		UUID uuid = UUID.randomUUID();
 		String saveFileName = uuid.toString() + "_" + originalFileName;
 		String savePath = upPath + calculateSavePath(upPath); // 파일이 저장될 경로 계산
+		
 		File target = new File(savePath + File.separator, saveFileName); // 파일을 저장하는 객체.
+		
+		System.out.println("프로세스 : 타겟 파일 잘 찍히나" + target.toString());
+		
 		FileCopyUtils.copy(file, target); // FileCopyUtils - 스프링에서 제공하는 객체. 파일 저장되는 코드.
+		
+		this.uploadFile.setOriginFile((savePath + File.separator + saveFileName).substring(upPath.length()).replace(File.separator, "/"));
+		
 		
 		// 썸네일(Thumbnail)을 만들자.
 		String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1); // 확장자 가져오기
+		
 		if(MediaConfirm.getMediaType(ext.toLowerCase()) != null) { // 이미지 파일이면
 			// 이미지 파일일 경우 -> 이미지 사이즈를 줄여 (섬네일 만드는) 반환하는 메소드 호출_ImgScalr 라이브러리 이용.
-			this.uploadFile.setOriginalFileName(savePath + File.separator + saveFileName);
+			
 			makeThumbnail(upPath, savePath, saveFileName);
 			
 		} else { // 이미지 파일이 아닐 경우
+			
 			String fileName = savePath + File.separator + saveFileName;
 			
-			this.uploadFile.setNotImageFileName(fileName.substring(upPath.length()).replace(File.separator, "/"));
+			this.uploadFile.setNotImageFile(fileName.substring(upPath.length()).replace(File.separator, "/"));
+			System.out.println("프로세스 : 이미지 파일 아닐 경우 이름 : " + this.uploadFile.getNotImageFile());
+			
 		}
 		 
 		// DB 테이블에 저장될 경로 + 이름이자, 태그에 사용될 경로 + 이름
-		System.out.println(this.uploadFile.toString());
-		
 		
 		return this.uploadFile;
 	}
@@ -72,7 +81,7 @@ public class CSUploadFileProcess {
 		// 썸네일 파일 저장
 		ImageIO.write(destFile, thumbnailImageFileName.substring(thumbnailImageFileName.lastIndexOf(".") + 1), newThumbnailFile);
 		
-		this.uploadFile.setThumbnailFileName(thumbnailImageFileName.substring(upPath.length()).replace(File.separator, "/"));
+		this.uploadFile.setThumbnailFile(thumbnailImageFileName.substring(upPath.length()).replace(File.separator, "/"));
 	}
 
 	public String calculateSavePath(String upPath) {
