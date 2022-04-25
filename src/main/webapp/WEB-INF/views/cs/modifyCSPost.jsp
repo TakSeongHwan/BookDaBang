@@ -10,6 +10,34 @@
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
+
+function delFile(obj) {
+	
+	let targetFile = ($(obj).parent().attr("id")); // 여기서 undifined 뜸.
+
+	let url = "${ contextPath}/cs/delFile";
+
+	$.ajax({
+		url : url,
+		data : {
+			targetFile : targetFile
+		},
+		dataType : "text", // 수신될 데이터 타입
+		type : "post",
+		success : function(data) {
+			console.log(data);
+			
+			if (data == "success") {
+				console.log(targetFile)
+				$(obj).remove();
+				$('a[href *="' + targetFile + '"]').remove();
+				
+			}
+
+		}
+	});
+}
+
 function openArea() {
 	$(".fileDrop").toggle();
 }
@@ -31,35 +59,6 @@ function savePost(){
 		csWriteForm.submit();
 		
 	}
-}
-
-function delFile(obj) {
-	console.log("지우기 되나요")
-	
-	let targetFile = ($(obj).parent().attr("id")); // 여기서 undifined 뜸.
-	
-	console.log(obj);
-	console.log(targetFile);
-	
-	
-	let url = "${ contextPath}/cs/delFile";
-
-	$.ajax({
-		url : url,
-		data : {
-			targetFile : targetFile
-		},
-		dataType : "text", // 수신될 데이터 타입
-		type : "post",
-		success : function(data) {
-			console.log(data);
-			
-			if (data == "success") {
-				$(".fDropList").empty();
-			}
-
-		}
-	});
 }
 
 function ifchange() {
@@ -208,16 +207,17 @@ $(function(){
 						<div class="fileContent">이 영역에 업로드 할 파일을 드래그 드롭 해 주세요!</div>
 						<div class="fDropList">
 		   	<c:if test="${attachLst != null}">
-				<div class="mb-3" style="float: left; margin-top: 20px;">
-					<c:forEach var="file" items="${attachLst }">
+			<div class="mb-3" style="float: left; margin-top: 20px;">
+			<c:forEach var="file" items="${attachLst }">
 						<c:if test="${file.thumbnailFile != null }">
 							<img src="/resources/cs_uploads${file.thumbnailFile }" />
+							<img src ='${ contextPath}/resources/img/board/close.png' onclick='delFile(this);'/>
 						</c:if>
 						<c:if test="${file.notImageFile != null}">
 						<a href="/resources/cs_uploads${file.notImageFile }"
 							class="notImgFile"></a>
-			</c:if>
-					</c:forEach>
+						</c:if>
+			</c:forEach>
 				</div>
 			</c:if>
 						</div>

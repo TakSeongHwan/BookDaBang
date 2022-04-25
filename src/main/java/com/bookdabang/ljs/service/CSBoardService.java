@@ -14,5 +14,9 @@ public interface CSBoardService {
 	public Map<String, Object> readCSBoard(int postNo) throws Exception, IOException;
 
 	public boolean writeCSPost(CustomerService csPost, List<CSUploadFile> upfileLst) throws Exception;
+
+	public int deleteCSPost(int postNo) throws Exception;
+	
+	public int deleteAttach(int postNo) throws Exception;
 	
 }

@@ -5,6 +5,8 @@ package com.bookdabang.ljs.controller;
 
 
 
+import java.util.HashMap;
+
 import javax.inject.Inject;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +37,33 @@ public class LoginController {
 	
 	@Inject
 	private LoginService service;
+	
+	@RequestMapping(value="/kakaoLogin", method=RequestMethod.GET)
+	public String kakaoLogin(@RequestParam(value = "code", required = false) String code, Model model) throws Exception {
+		
+		 		
+		System.out.println("받아온 코드" + code);
+        
+		// 위에서 만든 코드 아래에 코드 추가
+		String access_Token = service.getAccessToken(code);
+		
+		HashMap<String, Object> userInfo = service.getUserInfo(access_Token);
+		
+		MemberVO user = (MemberVO)userInfo.get("user");
+		String userImg = (String) userInfo.get("userImg");
+
+		model.addAttribute("user", user);
+		model.addAttribute("userImg", userImg);
+
+		System.out.println("카톡으로 가져온 유저 정보 : " + user.toString());
+		System.out.println(userImg);
+		
+		System.out.println("코드로 받아온 엑세스 토큰 access_Token : " + access_Token);
+        
+		return "kakaoLogin";
+		
+    	}
+	
 	
 	/**
 	 * Simply selects the home view to render by returning its name.

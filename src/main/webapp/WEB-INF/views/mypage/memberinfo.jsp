@@ -795,6 +795,7 @@ margin-bottom : 10px;
 							<img class="author_img rounded-circle" src="img/blog/author.png"
 								alt="">
 							<h4>환영합니다</h4>
+							
 							<p>${loginMember.userName}고객님</p>
 							<div class="social_icon"></div>
 						</aside>

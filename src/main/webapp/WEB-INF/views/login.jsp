@@ -29,6 +29,7 @@
   <script src="resources/vendors/jquery.ajaxchimp.min.js"></script>
   <script src="resources/vendors/mail-script.js"></script>
   <script src="resources/js/main.js"></script>
+  <script src= https://developers.kakao.com/sdk/js/kakao.js" ></script>
 <body>
 <script>
 
@@ -47,6 +48,13 @@ window.onload = function () {
 
 }
 
+function kakaoLogin() {
+		
+	
+location.href = "https://kauth.kakao.com/oauth/authorize?client_id=95a72bf8adefb359efc8431a1b86586d&redirect_uri=http://localhost:8001/kakaoLogin&response_type=code"
+
+
+}
 
 
 function getParameter(param) {
@@ -126,9 +134,8 @@ function displayWarn() {
 								<div>
 								 	<button style="background-color: #03c75a; color : #fff; width:300px; border:none; margin-top:10px; height : 45px; line-height : 40px; text-align:left"><img src="/resources/img/etc/btnG_naver.png" width="40"><div style="width:250px; text-align: center; display: inline-block; color:#fff">네이버 로그인</div></button>
 								 	
-								 	<img src="/resources/img/etc/kakao_login_medium_wide.png" >
-								 	
-								 	
+								 	<img src="/resources/img/etc/kakao_login_medium_wide.png" onclick = "kakaoLogin();">
+
 								 </div>
 								<label for="forgotPwd"><a href="#">아이디/ 비밀번호 찾기</a></label>
 							</div>

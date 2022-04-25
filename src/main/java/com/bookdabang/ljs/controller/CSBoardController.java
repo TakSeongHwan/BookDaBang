@@ -2,7 +2,6 @@ package com.bookdabang.ljs.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,6 @@ import com.bookdabang.ljs.domain.CSUploadFile;
 import com.bookdabang.ljs.domain.CSUploadFileProcess;
 import com.bookdabang.ljs.service.CSBoardService;
 import com.bookdabang.ljs.service.LoginService;
-import com.google.protobuf.Timestamp;
 
 
 
@@ -237,10 +235,20 @@ public class CSBoardController {
 	
 	
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
-	public void deleteCSPost(@RequestParam("no") int postNo, Model model) {
+	public String deleteCSPost(@RequestParam("no") int postNo, Model model) {
 		
+		int result = 0;
+		try {
+			
+			result = cservice.deleteCSPost(postNo);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		System.out.println("게시글 삭제하러 가자");
+		System.out.println(result + "게시글 삭제 완료");
+		return "redirect:/cs/";
 	}
 	
 	
@@ -269,7 +277,25 @@ public class CSBoardController {
 	}
 	
 	
-	
+	@RequestMapping(value = "/deleteAttach", method = RequestMethod.POST)
+	@ResponseBody
+	public void deleteAttach(@RequestParam("no") int postNo, Model model) {
+		
+		 System.out.println("삭제할 글 번호 가져오니?" + postNo);
+		
+		try {
+			
+			int result = cservice.deleteAttach(postNo);
+					
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("첨부파일 삭제 완료");
+		
+	}
 	
 	
 	

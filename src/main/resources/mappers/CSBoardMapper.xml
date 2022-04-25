@@ -38,4 +38,12 @@ insert into attachfile(csBoardNo, originFile, thumbnailFile, notImageFile) value
 select max(postno) as nextno from customer_service;
 </select>
 
+<delete id = "deleteCSPost">
+delete from customer_service where postNo = #{postNo}
+</delete>
+
+<delete id="deleteAttachFile">
+delete from attachfile where csBoardNo = #{postNo};
+</delete>
+
 </mapper>

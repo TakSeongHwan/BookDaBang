@@ -19,5 +19,9 @@ public interface CSBoardDAO {
 	public int insertAttachFile(CSUploadFile csFileAttached) throws Exception;
 	
 	public int getNextNo() throws Exception;
+
+	public int deleteCSPost(int postNo) throws Exception;
+	
+	public int deleteAttach (int postNo) throws Exception;
 	
 }

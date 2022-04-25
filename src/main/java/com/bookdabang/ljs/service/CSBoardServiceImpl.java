@@ -85,4 +85,16 @@ public class CSBoardServiceImpl implements CSBoardService {
 		return result;
 	}
 
+	@Override
+	public int deleteCSPost(int postNo) throws Exception {
+		 
+		return bdao.deleteCSPost(postNo);
+	}
+
+	@Override
+	public int deleteAttach(int postNo) throws Exception {
+	
+		return bdao.deleteAttach(postNo);
+	}
+
 }

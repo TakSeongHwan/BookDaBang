@@ -55,4 +55,16 @@ public class CSBoardDAOImpl implements CSBoardDAO {
 		return ses.selectOne(ns + ".getNextNo");
 	}
 
+	@Override
+	public int deleteCSPost(int postNo) throws Exception {
+		
+		return ses.delete(ns + ".deleteCSPost", postNo); 
+	}
+
+	@Override
+	public int deleteAttach(int postNo) throws Exception {
+
+		return ses.delete(ns + "deleteAttachFile", postNo);
+	}
+
 }
