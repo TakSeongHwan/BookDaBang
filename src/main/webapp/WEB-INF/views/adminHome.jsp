@@ -296,7 +296,7 @@
 		let linedata = {
 			labels : labels,
 			datasets : [ {
-				label : '일간 방문자수',
+				label : '일별 방문자수',
 				backgroundColor : '#a2b9ad',
 				borderColor : '#a2b9ad',
 				data : chartData,
@@ -492,7 +492,7 @@ margin-bottom: 5%;
 						<div class="col-sm-7" style="width: 100%;">
 						<div class="text-center text-sm-left" style="display: flex; justify-content: flex-end;">
 						<div style="margin: auto;">
-						<h5 class="card-title text-primary" id="visitorCheck">이번 달은 저번 달보다 <span id="diffVisitor"></span>명 더 <span id="moreOrLess"></span> 방문했습니다</h5>
+						<h5 class="card-title text-primary" id="visitorCheck">이번 달은 저번 달보다<br/> <span id="diffVisitor"></span>명 더 <span id="moreOrLess"></span> 방문했습니다</h5>
 						</div>
                         <div >
                           <img src="${contextPath }/resources/assets/img/illustrations/man-with-laptop-light.png" height="140" alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png" data-app-light-img="illustrations/man-with-laptop-light.png">

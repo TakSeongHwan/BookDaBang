@@ -192,9 +192,9 @@ public class ChartDAOImpl implements ChartDAO {
 	}
 
 	@Override
-	public List<VisitorCountWithDateFormat> getVisitorDetailChart(StartDateEndDate sded) throws Exception {
+	public List<VisitorCountWithDateFormat> getVisitorDetailChart(SalesChartDetail scd) throws Exception {
 		// TODO Auto-generated method stub
-		return ses.selectList(ns+".getVisitorDetailChart",sded);
+		return ses.selectList(ns+".getVisitorDetailChart",scd);
 	}
 	
 	

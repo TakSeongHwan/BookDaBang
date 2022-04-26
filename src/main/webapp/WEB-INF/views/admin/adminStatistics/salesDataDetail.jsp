@@ -73,7 +73,7 @@
 		});
 		} else {
 			$("#validDate").empty();
-			let output = '<div class="alert alert-danger alert-dismissible" role="alert">시작일은 종료일보다 늦을 수 없습니다.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+			let output = '<div class="alert alert-danger alert-dismissible" role="alert">유효하지 않은 날짜입니다<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
 			$("#validDate").html(output);
 		}
 		
@@ -82,18 +82,32 @@
 		
 		
 		$("#drawChart").remove();
-		$("#drawChartDiv").html('<canvas id="drawChart" width="400px" height="400px"></canvas>');
+		$("#drawChartDiv").html('<canvas id="drawChart" width="300px" height="300px"></canvas>');
 			
 		
 		parseData = parseData.categoryResult;
 	 let labels = [];
 		let chartData =[]; 
-		let backgroundColor=[];
+		let backgroundColor=[
+			
+			
+			'rgba(255, 105, 108,0.5)',
+			'rgba(255, 177, 105,0.5)',
+			'rgba(255, 105, 183,0.5)',
+			'rgba(105, 108, 255,0.5)',
+			'rgba(3, 195, 236,0.5)',
+			'rgba(44, 3, 236,0.5)',
+			'rgba(255, 171, 0,0.5)',
+			'rgba(236, 3, 78,0.5)',
+			'rgba(211, 255, 0,0.5)',
+			'rgba(0, 255, 171,0.5)'
+			
+			
+		];
 		
 		for(let i=0;i< parseData.length;i++){
 			labels.push(parseData[i].category_name);
 			chartData.push(parseData[i].totalSales);
-		backgroundColor.push('rgba('+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+',0.5)');
 		}
 		console.log(labels);
 		console.log(chartData);
@@ -141,24 +155,46 @@
 
 		
 		$("#drawChart").remove();
-		$("#drawChartDiv").html('<canvas id="drawChart" width="400px" height="400px"></canvas>');
+		$("#drawChartDiv").html('<canvas id="drawChart" width="300px" height="300px"></canvas>');
 			
 		
 		parseData = parseData.ageResult;
 		console.log(parseData);
 	 	let labels = [];
 		let chartData =[]; 
-		let backgroundColor=[];
+		let terminal = [];
+		let backgroundColor=[
+			
+			'rgba(255, 105, 108,0.5)',
+			'rgba(255, 177, 105,0.5)',
+			'rgba(255, 105, 183,0.5)',
+			'rgba(105, 108, 255,0.5)',
+			'rgba(3, 195, 236,0.5)',
+			'rgba(44, 3, 236,0.5)',
+			'rgba(236, 3, 78,0.5)'
+			
+			
+		];
 		for(let p in parseData){
 			labels.push(p+"대");
-			console.log(p)
-			if(p.length == 0){
-				chartData.push(0);
-				console.log("이 데이터는 비어있다")
-			}else{
-				chartData.push(p.length);
+			
+			
+			
+			if(parseData.hasOwnProperty(p)){
+				terminal.push(parseData[p]);
+				console.log(terminal);
 			}
-			backgroundColor.push('rgba('+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+',0.5)');
+		}
+		for(let i = 0; i<terminal.length; i++){
+			
+			if(terminal[i] != null){
+				chartData.push(terminal[i].length);
+				
+			}else{
+				chartData.push(0);
+				
+			}
+		
 		}
 		
 		console.log(labels);
@@ -205,19 +241,34 @@
 	}
 	function drawDetailGenderChart(parseData){
 		$("#drawChart").remove();
-		$("#drawChartDiv").html('<canvas id="drawChart" width="400px" height="400px"></canvas>');
+		$("#drawChartDiv").html('<canvas id="drawChart" width="300px" height="300px"></canvas>');
 			
 		
 		parseData = parseData.genderResult;
 	 let labels = [];
 		let chartData =[]; 
+		let terminal = [];
 		let backgroundColor=[];
 		
-		for(let i=0;i< parseData.length;i++){
-			labels.push(parseData[i].category_name);
-			chartData.push(parseData[i].totalSales);
-		backgroundColor.push('rgba('+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+','+Math.floor((Math.random()*255+1))+',0.5)');
+		for(let p in parseData){
+			labels.push(p);
+			terminal.push(parseData[p]);
+	
 		}
+		
+		for(let i = 0; i<terminal.length; i++){
+
+			if(terminal[i] != null){
+				chartData.push(terminal[i].length);
+				
+			}else{
+				chartData.push(0);
+				
+			}
+		}
+		backgroundColor.push('rgba(255, 105, 108,0.5)');
+		backgroundColor.push('rgba(105, 108, 255,0.5)');
+		
 		console.log(labels);
 		console.log(chartData);
 		console.log(backgroundColor);
@@ -317,8 +368,8 @@
 			</div>
 		</div>
 		<div id="validDate"></div>
-		<div id="drawChartDiv" style="margin-top: 2%;">
-			<canvas id="drawChart" width="400px" height="400px"></canvas>
+		<div id="drawChartDiv" class="card" style="margin: 2% 0%; ">
+			<canvas id="drawChart" width="300px" height="300px"></canvas>
 		
 		</div>
 	</div>

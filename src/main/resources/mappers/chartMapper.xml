@@ -168,6 +168,34 @@ LEFT OUTER JOIN review as r on p.product_no = r.productNo
  	
  	 </select>
  	 <select id="getVisitorDetailChart" resultType="VisitorCountWithDateFormat">
- 	 select DATE_FORMAT(accessdate,'%Y-%m-%d') as dateSort ,count(ipaddr)as visitor from visitor_ipcheck where accessdate between #{startDate} and #{endDate} group by DATE_FORMAT(accessdate,'%Y-%m-%d')
+ 	 select DATE_FORMAT(accessdate,
+ 	 <if test='searchType.equals("day")'>
+ 	 '%Y-%c-%d'
+ 	 </if>
+ 	 <if test='searchType.equals("week")'>
+ 	 '%Y-%c-%d %u'
+ 	 </if>
+ 	 <if test='searchType.equals("month")'>
+ 	 '%Y-%c'
+ 	 </if>
+ 	 <if test='searchType.equals("year")'>
+ 	 '%Y'
+ 	 </if>
+ 	 ) as dateSort ,count(ipaddr)as visitor from visitor_ipcheck 
+ 	 where accessdate between #{startDate} and #{endDate} 
+ 	 group by DATE_FORMAT(accessdate,
+ 	 <if test='searchType.equals("day")'>
+ 	 '%Y-%c-%d'
+ 	 </if>
+ 	 <if test='searchType.equals("week")'>
+ 		'%Y-%c-%d %u'
+ 	 </if>
+ 	 <if test='searchType.equals("month")'>
+ 	 '%Y-%c'
+ 	 </if>
+ 	 <if test='searchType.equals("year")'>
+ 	 '%Y'
+ 	 </if> 
+ 	 )
  	 </select>
  </mapper>

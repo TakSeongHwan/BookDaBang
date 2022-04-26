@@ -41,7 +41,7 @@ public interface ChartService {
 
 	public Map<String,Object> getDetailChart(SalesChartDetail scd) throws Exception;
 
-	public List<VisitorCountWithDateFormat> getVisitorDetailChart(StartDateEndDate sded) throws Exception;
+	public List<VisitorCountWithDateFormat> getVisitorDetailChart(SalesChartDetail scd) throws Exception;
 
 
 }

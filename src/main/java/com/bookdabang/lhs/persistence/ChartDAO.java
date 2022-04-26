@@ -52,7 +52,7 @@ public interface ChartDAO {
 
 	public Map<String, Object> getDetailChartGender(Map<String, Object> dtoMap) throws Exception;
 
-	public List<VisitorCountWithDateFormat> getVisitorDetailChart(StartDateEndDate sded) throws Exception;
+	public List<VisitorCountWithDateFormat> getVisitorDetailChart(SalesChartDetail scd) throws Exception;
 
 
 }

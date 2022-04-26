@@ -183,11 +183,12 @@ public class ChartController {
 	}
 	
 	@RequestMapping(value="getVisitorDetailChart", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> getVisitorDetailChart(@RequestBody StartDateEndDate sded) {
+	public ResponseEntity<Map<String, Object>> getVisitorDetailChart(@RequestBody SalesChartDetail scd) {
 		ResponseEntity<Map<String, Object>> result = null;
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
-			List<VisitorCountWithDateFormat> list = service.getVisitorDetailChart(sded);
+			System.out.println(scd);
+			List<VisitorCountWithDateFormat> list = service.getVisitorDetailChart(scd);
 			map.put("visitorDetail", list);
 			result = new ResponseEntity<Map<String,Object>>(map,HttpStatus.OK);
 		} catch (Exception e) {
