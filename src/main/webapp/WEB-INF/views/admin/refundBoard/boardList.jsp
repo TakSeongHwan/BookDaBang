@@ -16,20 +16,22 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <title>Insert title here</title>
 <script>
-	window.onload = function() {
-		$("#refunUpdate").click(function() {
-			let url = "refunUpdate"
+
+	function refundUpdate(refundNo){
+		let url = "refunUpdate"
 			$.ajax({
 				url : url,
 				type : "POST",
 				dataType : "text",
+				data : {
+					refundNo : refundNo
+				},
 				success : function(data) {
 					if(data == "success"){
 						location.reload();
 					}
 				}
 			});
-		});
 	}
 
 </script>
@@ -76,7 +78,7 @@
 								<c:when test="${Refund.isRefund !='yes' }">
 									<td>환불대기</td>
 									<td><button type="button" class="btn btn-secondary"
-											id="refunUpdate">환불</button></td>
+											id="refunUpdate" onclick="refundUpdate(${Refund.refundNo})">환불</button></td>
 								</c:when>
 								<c:otherwise>
 									<td>환불완료</td>

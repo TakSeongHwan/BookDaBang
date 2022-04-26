@@ -29,11 +29,11 @@ public class RefundController {
 		System.out.println(lst);
 	}
 	@RequestMapping(value = "/refunUpdate", method = RequestMethod.POST)
-	public ResponseEntity<String> refunUpdate(){
+	public ResponseEntity<String> refunUpdate(int refundNo){
 		ResponseEntity<String> result = null;
 		
 		try {
-			if (service.refundUpdate()) {
+			if (service.refundUpdate(refundNo)) {
 				result = new ResponseEntity<String>("success", HttpStatus.OK);
 			} else {
 				result = new ResponseEntity<String>("fail", HttpStatus.OK);

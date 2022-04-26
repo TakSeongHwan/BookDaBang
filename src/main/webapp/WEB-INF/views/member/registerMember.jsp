@@ -29,55 +29,62 @@
 		})
 	});
 	// 아이디 중복확인
-	function userIdCheck() {
+	function userIdCheck(value, dataName) {
 		let userId = $("#userId").val(); // id가 userId(text값)의 값을 가져온다
 		let url = "/member/userIdCheck";
+		if(userId != ""){
+			$.ajax({
+				url : url, // ajax와 통신할곳
+				dataType : "text", // 수신 받을 데이터의 타입
+				type : "POST",
+				data : {
+					userId : userId
+				},
+				success : function(data) {  // 통신 성공시 실행될 콜백 함수
+					console.log(data);
+					if (data == "success") {
+						idCheck = true;
+						alert("사용할수 있는 ID입니다")
 
-		$.ajax({
-			url : url, // ajax와 통신할곳
-			dataType : "text", // 수신 받을 데이터의 타입
-			type : "POST",
-			data : {
-				userId : userId
-			},
-			success : function(data) { // 통신 성공시 실행될 콜백 함수
-				console.log(data);
-				if (data == "success") {
-					idCheck = true;
-					alert("사용할수 있는 ID입니다")
+					} else{
+						alert("중복되는 ID입니다")
 
-				} else {
-					alert("중복되는 ID입니다")
-
+					}
 				}
-			}
 		});
+		}else{
+			alert("아이디를 입력해주세요");
+		}
 	}
 	// 닉네임 중복확인
 	function nickNameCheck() {
 		let nickName = $("#nickName").val();
 		let url = "/member/nickNameCheck"
+		if(nickName != ""){
+			$.ajax({
+				url : url,
+				dataType : "text",
+				type : "POST",
+				data : {
+					nickName : nickName
+				},
+				success : function(data) {
+					console.log(data)
+					if (data == "success") {
+						nickCheck = true;
+						alert("사용할수 있는 닉네임 입니다")
 
-		$.ajax({
-			url : url,
-			dataType : "text",
-			type : "POST",
-			data : {
-				nickName : nickName
-			},
-			success : function(data) {
-				console.log(data)
-				if (data == "success") {
-					nickCheck = true;
-					alert("사용할수 있는 닉네임 입니다")
+					} else {
+						alert("중복되는 닉네임 입니다")
 
-				} else {
-					alert("중복되는 닉네임 입니다")
+					}
 
 				}
-
-			}
-		});
+			});
+		} else {
+			alert("닉네임을 입력하세요")
+		}
+		
 	}
 	// 이메일 인증코드 받기
 	function insertEmailCode() {
@@ -92,7 +99,14 @@
 				userEmail : userEmail
 			},
 			success : function(data) {
+				if (data.status == "success") {
+					emailCheck = true;
+					alert("인증번호 전송 성공")
 
+				} else {
+					alert("인증번호 전송 실패")
+
+				}
 			}
 		});
 	}

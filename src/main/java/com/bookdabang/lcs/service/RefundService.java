@@ -7,9 +7,9 @@ import com.bookdabang.common.domain.Refund;
 
 public interface RefundService {
 
-	public List<Refund> refundList() throws Exception;
+	public List<Refund> refundList(String sessionId) throws Exception;
 	
 	public List<Refund> adminRefundList() throws Exception;
 	
-	public boolean refundUpdate() throws Exception;
+	public boolean refundUpdate(int refundNo) throws Exception;
 }

@@ -9,16 +9,23 @@ import org.springframework.stereotype.Service;
 
 import com.bookdabang.common.domain.Refund;
 import com.bookdabang.lcs.persistence.RefundDAO;
+import com.bookdabang.ljs.persistence.LoginDAO;
+import com.bookdabang.tsh.persistence.OrderDAO;
 
 @Service
 public class RefundServiceImpl implements RefundService{
 
 	@Inject 
 	private RefundDAO refundDAO;
+	@Inject
+	private LoginDAO loginDAO;
+	@Inject
+	private OrderDAO orderDAO;
 	
 	@Override
-	public List<Refund> refundList() throws Exception {
-		return refundDAO.refundList();
+	public List<Refund> refundList(String sessionId) throws Exception {
+		String userId = loginDAO.findLoginSess(sessionId).getUserId();
+		return refundDAO.refundList(userId);
 	}
 
 	@Override
@@ -27,9 +34,11 @@ public class RefundServiceImpl implements RefundService{
 	}
 
 	@Override
-	public boolean refundUpdate() throws Exception {
+	public boolean refundUpdate(int refundNo) throws Exception {
 		boolean result = false;
-		if(refundDAO.refundUpdate() == 1) {
+		if(refundDAO.refundUpdate(refundNo) == 1) {
+			int orderNo = refundDAO.getOrderNo(refundNo);
+			orderDAO.updateOrderState(5, orderNo);
 			result = true;
 		}
 		
