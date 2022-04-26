@@ -125,20 +125,34 @@ LEFT OUTER JOIN review as r on p.product_no = r.productNo
 		JOIN sales as s on p.product_no = s.product_no
 		group by p.product_no order by totalSalesCount desc
  	 	</select>
+ 	 	
  	<select id="getWeekVisitor" resultType="VisitorCountWithDateFormat">
  	select DATE_FORMAT(accessdate,'%m-%d') as dateSort ,count(ipaddr)as visitor 
  	from visitor_ipcheck where DATE_FORMAT(accessdate,'%m-%d') 
  	between (select DATE_FORMAT(now()- interval 6 day,'%m-%d')) and DATE_FORMAT(now(),'%m-%d') 
  	group by dateSort order by dateSort asc
  	</select>
+ 	
  	<select id="getLessStock" resultType="com.bookdabang.common.domain.ProductVO">
  	select * from product where stock &lt; 5
  	</select>
- 	<select id="getDetailChartCategory" resultType="CategoryTotalSales">
- 	select c.category_name, sum(s.productqtt) as totalSales 
+ 	
+ 	<select id="getDetailChartCategory" resultType="SalesDataDetail">
+ 	<!-- select c.category_name, sum(s.productqtt) as totalSales 
 	from product as p join category as c on p.category_code = c.category_code
 	LEFT OUTER JOIN sales as s on p.product_no = s.product_no
-	group by p.category_code
+	group by p.category_code -->
+	
+	 select p.product_no, c.category_name, p.title, p.author, p.price, p.sell_price, 
+	(select sum(s.productqtt) from sales as s, prodOrder as o
+	where s.orderNo = o.orderNo and s.product_no = p.product_no
+	group by s.product_no) as sell_count
+	from product as p, category as c, sales as s, prodOrder as o, member as m 
+	where p.category_code = c.category_code and s.product_no = p.product_no and s.orderNo = o.orderNo and o.userId = m.userId
+	and purchasetime between DATE_FORMAT(#{startDate},'%Y-%c-%d') and DATE_FORMAT(#{endDate},'%Y-%c-%d')
+	group by s.product_no
+	order by c.category_code asc,sell_count desc
+	
  	</select>
  	
  	<select id="getAge" resultType="SalesDataDetail">
@@ -149,9 +163,9 @@ LEFT OUTER JOIN review as r on p.product_no = r.productNo
 	from product as p, category as c, sales as s, prodOrder as o, member as m 
 	where p.category_code = c.category_code and s.product_no = p.product_no and s.orderNo = o.orderNo and o.userId = m.userId
 	and TIMESTAMPDIFF(YEAR, m.birth,now()) >= #{ageStart} and TIMESTAMPDIFF(YEAR, m.birth,now()) &lt; #{ageEnd}
-	and purchasetime between #{startDate} and #{endDate}
+	and purchasetime between DATE_FORMAT(#{startDate},'%Y-%c-%d') and DATE_FORMAT(#{endDate},'%Y-%c-%d')
 	group by s.product_no
-	order by sell_count desc, p.product_no asc limit 10
+	order by sell_count desc, p.product_no asc
  	</select>
  	
  	<select id="getGender" resultType="SalesDataDetail">
@@ -162,9 +176,9 @@ LEFT OUTER JOIN review as r on p.product_no = r.productNo
 	from product as p, category as c, sales as s, prodOrder as o, member as m 
 	where p.category_code = c.category_code and s.product_no = p.product_no and s.orderNo = o.orderNo and o.userId = m.userId
 	and m.gender = #{gender}
-	and purchasetime between #{startDate} and #{endDate}
+	and purchasetime between DATE_FORMAT(#{startDate},'%Y-%c-%d') and DATE_FORMAT(#{endDate},'%Y-%c-%d')
 	group by s.product_no
-	order by sell_count desc, p.product_no asc limit 10
+	order by sell_count desc, p.product_no asc
  	
  	 </select>
  	 <select id="getVisitorDetailChart" resultType="VisitorCountWithDateFormat">
@@ -173,7 +187,7 @@ LEFT OUTER JOIN review as r on p.product_no = r.productNo
  	 '%Y-%c-%d'
  	 </if>
  	 <if test='searchType.equals("week")'>
- 	 '%Y-%c-%d %u'
+ 	 '%Y-%c-%d'
  	 </if>
  	 <if test='searchType.equals("month")'>
  	 '%Y-%c'
@@ -182,13 +196,13 @@ LEFT OUTER JOIN review as r on p.product_no = r.productNo
  	 '%Y'
  	 </if>
  	 ) as dateSort ,count(ipaddr)as visitor from visitor_ipcheck 
- 	 where accessdate between #{startDate} and #{endDate} 
+ 	 where accessdate between DATE_FORMAT(#{startDate},'%Y-%c-%d') and DATE_FORMAT(#{endDate},'%Y-%c-%d')
  	 group by DATE_FORMAT(accessdate,
  	 <if test='searchType.equals("day")'>
  	 '%Y-%c-%d'
  	 </if>
  	 <if test='searchType.equals("week")'>
- 		'%Y-%c-%d %u'
+ 		'%Y-%c-%d'
  	 </if>
  	 <if test='searchType.equals("month")'>
  	 '%Y-%c'

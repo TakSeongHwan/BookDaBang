@@ -79,14 +79,27 @@
 		
 	}
 	function drawDetailCategoryChart(parseData){
-		
+		console.log(parseData)
 		
 		$("#drawChart").remove();
+		$("#modalBtn").remove();
+		$("#bestSellerModal").empty();
 		$("#drawChartDiv").html('<canvas id="drawChart" width="300px" height="300px"></canvas>');
 			
 		
 		parseData = parseData.categoryResult;
-	 let labels = [];
+	 let labels = [
+		 "철학, 심리학, 윤리학",
+		 "종교",
+		 "사회과학",
+		 "자연과학",
+		 "기술과학",
+		 "예술",
+		 "언어",
+		 "문학",
+		 "역사, 지리, 관광",
+		 "미분류"
+	 ];
 		let chartData =[]; 
 		let backgroundColor=[
 			
@@ -105,13 +118,40 @@
 			
 		];
 		
-		for(let i=0;i< parseData.length;i++){
-			labels.push(parseData[i].category_name);
-			chartData.push(parseData[i].totalSales);
+		for(let c in labels){
+			let output = ""
+			console.log(labels[c]);
+			let flag = 0;
+			let value = 0;
+			output += '<div style="margin-bottom:2%;">';
+			output += "<div style='font-weight:bold;'>"+labels[c]+"</div>"
+			for(let i=0;i< parseData.length;i++){
+				console.log(value);
+					if(parseData[i].category_name == labels[c]){
+						
+						if(i+1 < parseData.length){
+						if(flag < 3){
+							value += parseData[i].sell_count;
+
+
+							output+="<div>"+parseData[i].title+" : "+parseData[i].sell_count+"</div>"
+						
+							flag++;
+						}else{
+							value += parseData[i].sell_count;	
+						}
+
+				}
+			}
+			
+			
 		}
-		console.log(labels);
-		console.log(chartData);
-		console.log(backgroundColor);
+			output += '</div>';
+			$("#bestSellerModal").append(output);
+
+			chartData.push(value);
+		}
+			
 		let data = {
 				  labels: labels,
 				  datasets: [{
@@ -149,12 +189,14 @@
 					    document.getElementById('drawChart'),
 					    config
 					  );
-		
+		$("#buttonDiv").append('<button type="button" id="modalBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalScrollable" style="margin-left:2%; width:65%; height: 38px;">판매된 책 보기</button>');
 	}
 	function drawDetailAgeChart(parseData){
 
 		
 		$("#drawChart").remove();
+		$("#modalBtn").remove();
+		$("#bestSellerModal").empty();
 		$("#drawChartDiv").html('<canvas id="drawChart" width="300px" height="300px"></canvas>');
 			
 		
@@ -182,19 +224,35 @@
 			
 			if(parseData.hasOwnProperty(p)){
 				terminal.push(parseData[p]);
-				console.log(terminal);
+			
 			}
 		}
+		console.log(terminal);
+		
 		for(let i = 0; i<terminal.length; i++){
-			
+			let output = "";
+			let sellCount = 0;
+			let flag = 0;
+			output += '<div style="margin-bottom:2%;">';
+			output += "<div style='font-weight:bold;'>"+labels[i]+"</div>"
 			if(terminal[i] != null){
-				chartData.push(terminal[i].length);
+				for(let j = 0; j<terminal[i].length;j++){
+					if(flag < 3){
+						output+="<div>"+terminal[i][j].title+" : "+terminal[i][j].sell_count+"</div>"
+						flag++;
+					}
+					sellCount += terminal[i][j].sell_count;
+				}
+			
 				
+				chartData.push(sellCount);
 			}else{
 				chartData.push(0);
 				
 			}
-		
+			output += '</div>';
+			$("#bestSellerModal").append(output);
+
 		}
 		
 		console.log(labels);
@@ -237,10 +295,12 @@
 					    document.getElementById('drawChart'),
 					    config
 					  );
-		
+			  $("#buttonDiv").append('<button type="button" id="modalBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalScrollable" style="margin-left:2%; width:65%; height: 38px;">판매된 책 보기</button>');
 	}
 	function drawDetailGenderChart(parseData){
 		$("#drawChart").remove();
+		$("#modalBtn").remove();
+		$("#bestSellerModal").empty();
 		$("#drawChartDiv").html('<canvas id="drawChart" width="300px" height="300px"></canvas>');
 			
 		
@@ -255,16 +315,30 @@
 			terminal.push(parseData[p]);
 	
 		}
-		
+		let sellCount = 0;
 		for(let i = 0; i<terminal.length; i++){
-
+			let output = "";
+			let sellCount = 0;
+			let flag = 0;
+			output += '<div style="margin-bottom:2%;">';
+			output += "<div style='font-weight:bold;'>"+labels[i]+"</div>"
 			if(terminal[i] != null){
-				chartData.push(terminal[i].length);
+				for(let j = 0; j<terminal[i].length;j++){
+					if(flag < 3){
+						output+="<div>"+terminal[i][j].title+" : "+terminal[i][j].sell_count+"</div>"
+						flag++;
+					}
+					sellCount += terminal[i][j].sell_count;
+				}
+			
 				
+				chartData.push(sellCount);
 			}else{
 				chartData.push(0);
 				
 			}
+			output += '</div>';
+			$("#bestSellerModal").append(output);
 		}
 		backgroundColor.push('rgba(255, 105, 108,0.5)');
 		backgroundColor.push('rgba(105, 108, 255,0.5)');
@@ -309,7 +383,7 @@
 					    document.getElementById('drawChart'),
 					    config
 					  );
-		
+			  $("#buttonDiv").append('<button type="button" id="modalBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalScrollable" style="margin-left:2%; width:65%; height: 38px;">판매된 책 보기</button>');
 	}
 </script>
 
@@ -363,8 +437,8 @@
 					</div>
 				</div>
 			</div>
-			<div style="display: flex; align-items: flex-end;">
-			<button type="button" class="btn btn-outline-primary" style="height: 38px;" onclick="getDetailChart();">검색</button>
+			<div id="buttonDiv" style="display: flex; align-items: flex-end; width:50%;">
+			<button type="button" class="btn btn-outline-primary" style="height: 38px;width:30%;" onclick="getDetailChart();">검색</button>
 			</div>
 		</div>
 		<div id="validDate"></div>
@@ -373,6 +447,29 @@
 		
 		</div>
 	</div>
+
+<div class="modal fade" id="modalScrollable" tabindex="-1" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel3">판매량 TOP 3</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                             <div id="bestSellerModal" class="row">
+                                
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                Close
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+		
 
 	<jsp:include page="../../managerFooter.jsp"></jsp:include>
 </body>

@@ -75,21 +75,56 @@
 		 let labels = [];
 			let chartData =[]; 
 			let backgroundColor='rgb(255, 105, 108)';
+			let repackData = [];
+			let flag = 0;
+			let repackLabel = [];
+			let visitor = 0;
 			for(let i=0;i< parseData.length;i++){
 				if($("#searchType").val() == "week"){
-					let repackLabel = "";
-					let year = parseData[i].dateSort.split("-")[0];
-					let month = parseData[i].dateSort.split("-")[1];
-					let day = parseData[i].dateSort.split("-")[2]
-					let week = parseData[i].dateSort.split(" ")[1]; 
-					console.log(repackLabel);
+			
+				
+					if(flag==7){
+						repackData.push(repackLabel);
+						chartData.push(visitor);
+						console.log(repackLabel)
+						console.log(repackData)
+						repackLabel = [];
+						flag=0;
+						visitor = 0;
+					}else if(flag != 0 && i == parseData.length-1){
+						repackData.push(repackLabel);
+						chartData.push(visitor);
+					}
+					
+					repackLabel.push(parseData[i].dateSort);
+					visitor += parseData[i].visitor;
+			
+					
+					
+					flag++;
+				
 				}else{
 					labels.push(parseData[i].dateSort);
+					chartData.push(parseData[i].visitor);
 				}
 				
-				chartData.push(parseData[i].visitor);
+				
 			}
-			
+			console.log(chartData)
+			console.log(repackData);
+			if($("#searchType").val() == "week"){
+			for(let i = 0; i<repackData.length; i++){
+				
+				if(repackData[i].length != 7){
+					let j = repackData[i].length -1
+					labels.push(repackData[i][0] + " - "+repackData[i][j]);
+				}else{
+					labels.push(repackData[i][0] + " - "+repackData[i][6]);
+				}
+				
+				
+			}
+			}
 			let data = {
 					  labels: labels,
 					  datasets: [{
