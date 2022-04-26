@@ -22,6 +22,7 @@
 			},
 			success : function(data) {
 				console.log(data);
+				cartCount();
 			},
 			error : function(data){
 				console.log(data);
@@ -38,13 +39,12 @@
 				productQtt : 1
 			},
 			success : function(data) {
-				console.log(data);
+				location.href = "${contextPath}/order/checkOut"
 			},
 			error : function(data){
 				console.log(data);
 			}
 		});
-		location.href = "${contextPath}/order/checkOut"
 	}
 	
 	$(function() {

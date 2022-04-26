@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bookdabang.common.domain.CartVO;
 import com.bookdabang.common.domain.ProductVO;
@@ -50,6 +51,7 @@ public class CartServiceImpl implements CartService {
 			CartProdQttDTO dto = new CartProdQttDTO(existingCart.getCartNo(), existingCart.getProductQtt()+cart.getProductQtt());
 			result = dao.updateCart(dto);
 		}else {
+			cart.setCartNo(dao.nextCartNo());
 			result = dao.insertCart(cart);
 			
 		}
@@ -79,7 +81,21 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public int loginCart(CartSelectDTO dto) throws Exception {
+		CartSelectDTO checkCart = new CartSelectDTO();
+		checkCart.setIpaddr(dto.getIpaddr());
+		List<CartVO> ipLst = dao.getAllCart(checkCart);
+		List<CartVO> idLst = dao.getAllCart(dto);
+		for(CartVO ipCart : ipLst) {
+			for(CartVO idCart : idLst) {
+				if(ipCart.getProductNo() == idCart.getProductNo()) {
+					CartProdQttDTO cd = new CartProdQttDTO(idCart.getCartNo(), idCart.getProductQtt()+ipCart.getProductQtt());
+					dao.updateCart(cd);
+					dao.deleteCart(ipCart.getCartNo());
+				}
+			}
+		}
 		return dao.loginCart(dto);
 	}
 

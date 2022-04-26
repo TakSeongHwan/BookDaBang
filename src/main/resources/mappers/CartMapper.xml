@@ -18,6 +18,7 @@
 		</choose>
 	</select>
 	
+	<!-- productNo 장바구니  출력 -->
 	<select id="getProdCart" resultType="CartVO">
 		select * from cart where
 		<choose>
@@ -43,10 +44,12 @@
 			</otherwise>
 		</choose>
 	</select>
+	
 	<!-- 장바구니 가져오기 -->
 	<select id="selectCartByNo" resultType="CartVO">
 		select * from cart where cartNo = #{cartNo}
 	</select>
+	
 	
 	<select id="allCartNo" resultType="int">
 		select cartNo from cart where
@@ -76,7 +79,12 @@
 	
 	<!-- 장바구니 insert -->
 	<insert id="insertCart">
-		insert into cart(userId,ipaddr,productNo,productQtt) values(#{userId},#{ipaddr},#{productNo},#{productQtt})
+		insert into cart(cartNo,userId,ipaddr,productNo,productQtt) values(#{cartNo},#{userId},#{ipaddr},#{productNo},#{productQtt})
 	</insert>
+	
+	<!-- 다음 CartNo -->
+	<select id="nextCartNo" resultType="int">
+		select max(cartNo)+1 from cart
+	</select>
 	
 </mapper>
