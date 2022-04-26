@@ -20,14 +20,10 @@ public class UserProductServiceImpl implements UserProductService {
 	private ProductDAO dao;
 	
 	@Override
-	public Map<String, Object> readAllProducts(int cno, int pageNo, int sort) throws Exception {
-		PagingInfo pi = pagingProcess(pageNo,cno);
-		List<ProductVO> lst = null;
-		if (cno == 0) {
-			lst = dao.selectAllProducts(pi,sort);
-		} else {
-			lst = dao.selectAllProducts(cno,pi,sort);
-		}
+	public Map<String, Object> readAllProducts(int cno, int pageNo, int sort, String searchWord) throws Exception {
+		PagingInfo pi = pagingProcess(pageNo,cno,searchWord);
+		
+		List<ProductVO> lst = dao.selectAllProducts(cno,pi,sort,searchWord);
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("productList", lst);
@@ -37,7 +33,7 @@ public class UserProductServiceImpl implements UserProductService {
 	}
 	
 	// 페이징 처리 작업 전담 메서드
-	private PagingInfo pagingProcess(int pageNo, int cno) throws Exception {
+	private PagingInfo pagingProcess(int pageNo, int cno,String searchWord) throws Exception {
 		PagingInfo pi = new PagingInfo();
 		
 		// 1페이지당 보여 줄 글의 개수 & 1개의 블럭에 보여줄 페이지 수
@@ -45,11 +41,7 @@ public class UserProductServiceImpl implements UserProductService {
 		pi.setPageCntPerBlock(5);
 		
 		// 전체 게시물 개수
-		if (cno == 0) {
-			pi.setTotalPostCnt(dao.getTotalPost());
-		} else {
-			pi.setTotalPostCnt(dao.getTotalPost(cno));
-		}
+		pi.setTotalPostCnt(dao.getTotalPost(cno,searchWord));
 		
 		// 전체 페이지 수
 		pi.setTotalPage(pi.getTotalPostCnt());
@@ -70,8 +62,8 @@ public class UserProductServiceImpl implements UserProductService {
 	}
 	
 	@Override
-	public List<CategoryVO> readAllCategory() throws Exception {
-		List<CategoryVO> lst = dao.selectCategory();
+	public List<CategoryVO> readAllCategory(String searchWord) throws Exception {
+		List<CategoryVO> lst = dao.selectCategory(searchWord);
 		return lst;
 	}
 
@@ -82,13 +74,16 @@ public class UserProductServiceImpl implements UserProductService {
 	}
 
 	@Override
-	public List<ProductVO> readTopProducts(int category) throws Exception {
-		List<ProductVO> lst = dao.selectTopProducts(category);
+	public List<ProductVO> readTopProducts(int cno,String searchWord) throws Exception {
+		List<ProductVO> lst = null;
+		if (cno == 0) {
+			lst = dao.selectTopProducts(searchWord);
+		} else {
+			lst = dao.selectTopProducts(cno);
+		}
+		
 		return lst;
 	}
 
-	
-
-	
 
 }

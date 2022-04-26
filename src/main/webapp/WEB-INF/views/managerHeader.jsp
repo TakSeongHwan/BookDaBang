@@ -8,6 +8,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 <meta name="description" content="" />
+
 <!-- Favicon -->
 <link rel="icon" type="image/x-icon" href="${contextPath}/resources/assets/img/favicon/favicon.ico" />
 <!-- Fonts -->
@@ -29,12 +30,50 @@
 <link rel="stylesheet"
    href="${contextPath}/resources/assets/vendor/libs/apex-charts/apex-charts.css" />
 <!-- Page CSS -->
+
+
+
 <!-- Helpers -->
 <script src="${contextPath}/resources/assets/vendor/js/helpers.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="${contextPath}/resources/assets/js/config.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 <title>managerHearder</title>
+<script>
+
+
+
+$(document).ready(function() {
+	if (localStorage.getItem("saveFile") != null) {
+		let output = '<div class="saveCount">!</div>';
+		$("#productManager").append(output);
+		$("#addProduct").append(output);
+		
+		window.addEventListener('storage', function (evt) {
+	    	if(evt.newValue == null){
+	    		$(".saveCount").remove();
+	    	}
+	  }, false);
+		
+		
+	}
+	
+	
+});
+</script>
+<style>
+.saveCount {
+	background-color: #FCB773;
+	color : #fff;
+	display: inline-block;
+	width: 20px;
+	text-align: center;
+	border-radius: 50%;
+}
+</style>
 </head>
 <body>   
    <div class="layout-wrapper layout-content-navbar">
@@ -47,7 +86,7 @@
          </div>
          <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
             <div class="app-brand demo">
-               <a href="index.html" class="app-brand-link">
+               <a href="${contextPath}/admin" class="app-brand-link">
                    <span class="app-brand-logo demo">
                     <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg"
                         xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -91,7 +130,7 @@
                   </g>
                 </svg>
                </span> <span class="app-brand-text demo menu-text fw-bolder ms-2">관리자</span>
-               </a> <a href="javascript:void(0);"
+               </a> <a href="${contextPath}/admin"
                   class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
                   <i class="bx bx-chevron-left bx-sm align-middle"></i>
                </a>
@@ -100,41 +139,29 @@
             <div class="menu-inner-shadow"></div>
 
             <ul class="menu-inner py-1">
-               <!-- Dashboard -->
-               <li class="menu-item active"><a href="${contextPath}/admin"
-                  class="menu-link"> <i
-                     class="menu-icon tf-icons bx bx-home-circle"></i>
-                     <div data-i18n="Analytics">Dashboard</div>
-               </a></li>
+
 
                <!-- Layouts -->
                <li class="menu-item"><a href="javascript:void(0);"
                   class="menu-link menu-toggle"> <i
-                     class="menu-icon tf-icons bx bx-layout"></i>
-                     <div data-i18n="Layouts">Layouts</div>
+                     class="menu-icon tf-icons bx bx-home-circle"></i>
+                     <div data-i18n="Layouts">Dashboard</div>
                </a>
 
                   <ul class="menu-sub">
-                     <li class="menu-item"><a href="layouts-without-menu.html"
+                     <li class="menu-item active"><a href="${contextPath}/admin"
+                  class="menu-link">
+                     <div data-i18n="Analytics">DashBoard</div>
+               </a></li>
+                     <li class="menu-item"><a href="${contextPath}/admin/adminStatistics/visitorChartDetail"
                         class="menu-link">
-                           <div data-i18n="Without menu">Without menu</div>
+                           <div data-i18n="Without navbar">방문자 통계 상세조회</div>
                      </a></li>
-                     <li class="menu-item"><a href="layouts-without-navbar.html"
+                     <li class="menu-item"><a href="${contextPath}/admin/adminStatistics/salesDataDetail"
                         class="menu-link">
-                           <div data-i18n="Without navbar">Without navbar</div>
+                           <div data-i18n="Container">판매량 통계 상세조회</div>
                      </a></li>
-                     <li class="menu-item"><a href="layouts-container.html"
-                        class="menu-link">
-                           <div data-i18n="Container">Container</div>
-                     </a></li>
-                     <li class="menu-item"><a href="layouts-fluid.html"
-                        class="menu-link">
-                           <div data-i18n="Fluid">Fluid</div>
-                     </a></li>
-                     <li class="menu-item"><a href="layouts-blank.html"
-                        class="menu-link">
-                           <div data-i18n="Blank">Blank</div>
-                     </a></li>
+                    
                   </ul></li>
 
                <li class="menu-header small text-uppercase"><span
@@ -142,36 +169,36 @@
                <li class="menu-item"><a href="javascript:void(0);"
                   class="menu-link menu-toggle"> <i
                      class="menu-icon tf-icons bx bx-dock-top"></i>
-                     <div data-i18n="Account Settings" onclick="location.href='${contextPath}/prodManager/listAll'">상품 조회</div>
+                     <div data-i18n="Account Settings" id="productManager">상품 관리 </div>
                </a>
                   <ul class="menu-sub">
-                     <li class="menu-item"><a
-                        href="pages-account-settings-account.html" class="menu-link">
-                           <div data-i18n="Account">Account</div>
+                     <li class="menu-item" >
+                     <a onclick="location.href='${contextPath}/prodManager/listAll'" class="menu-link">
+                           <div data-i18n="Account">상품조회</div>
+                           </a>
+                     </a></li>
+                     
+                     <li class="menu-item"> <a onclick="location.href='${contextPath}/prodManager/addProduct'" class="menu-link">
+                           <div data-i18n="Notifications" id="addProduct">상품등록</div>
                      </a></li>
                      <li class="menu-item"><a
-                        href="pages-account-settings-notifications.html"
-                        class="menu-link">
-                           <div data-i18n="Notifications">Notifications</div>
-                     </a></li>
-                     <li class="menu-item"><a
-                        href="pages-account-settings-connections.html" class="menu-link">
-                           <div data-i18n="Connections">Connections</div>
+                       onclick="location.href='${contextPath}/prodManager/SearchISBN'" class="menu-link">
+                           <div data-i18n="Connections">상품수정</div>
                      </a></li>
                   </ul></li>
                <li class="menu-item"><a href="javascript:void(0);"
-                  class="menu-link menu-toggle" onclick="location.href='${contextPath}/prodManager/listAllofQnA?pageNo=1'"> <i
+                  class="menu-link menu-toggle"> <i
                      class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-                     <div data-i18n="Authentications">상품 QnA</div>
+                     <div data-i18n="Authentications">상품 리뷰/Q&A</div>
                </a>
                   <ul class="menu-sub">
                      <li class="menu-item"><a href="auth-login-basic.html"
                         class="menu-link" target="_blank">
-                           <div data-i18n="Basic">Login</div>
+                           <div data-i18n="Basic">상품 리뷰</div>
                      </a></li>
                      <li class="menu-item"><a href="auth-register-basic.html"
-                        class="menu-link" target="_blank">
-                           <div data-i18n="Basic">Register</div>
+                        class="menu-link" target="_blank" onclick="location.href='${contextPath}/prodManager/listAllofQnA'">
+                           <div data-i18n="Basic">Q&A</div>
                      </a></li>
                      <li class="menu-item"><a
                         href="auth-forgot-password-basic.html" class="menu-link"
@@ -189,11 +216,37 @@
                         class="menu-link">
                            <div data-i18n="Error">Error</div>
                      </a></li>
+                     
+                     
+                     
                      <li class="menu-item"><a
                         href="pages-misc-under-maintenance.html" class="menu-link">
                            <div data-i18n="Under Maintenance">Under Maintenance</div>
                      </a></li>
                   </ul></li>
+
+                  <li class="menu-item"><a href="javascript:void(0);"
+                  class="menu-link menu-toggle"> <i
+                     class="menu-icon tf-icons bx bx-detail"></i>
+                     <div data-i18n="Misc">자유게시판</div>
+               </a>
+                  <ul class="menu-sub">
+                     <li class="menu-item"><a href="${contextPath}/board/removeAllfreeBoard"
+                        class="menu-link">
+                           <div data-i18n="Error">삭제게시판</div>
+                     </a></li>
+                     <li class="menu-item"><a
+                        href="${contextPath}/board/listAllReportBoard"" class="menu-link">
+                           <div data-i18n="Under Maintenance">신고게시판</div>
+                     </a></li>
+                     <li class="menu-item"><a
+                        href="${contextPath}/board/adminFreeBoard" class="menu-link">
+                           <div data-i18n="Under Maintenance">자유게시판관리</div>
+                     </a></li>
+                  </ul></li>
+                  
+                  
+
                  <li class="menu-header small text-uppercase"><span
                   class="menu-header-text">주문관리</span></li>
                <li class="menu-item"><a href="javascript:void(0);"
@@ -216,6 +269,7 @@
                            <div data-i18n="Connections">Connections</div>
                      </a></li>
                   </ul></li>
+
                <!-- Components -->
                <li class="menu-header small text-uppercase"><span
                   class="menu-header-text">Components</span></li>
@@ -416,5 +470,8 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+    
+
+
 </body>
 </html>

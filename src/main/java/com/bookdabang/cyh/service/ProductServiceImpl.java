@@ -17,10 +17,12 @@ import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.common.persistence.ProductDAO;
 import com.bookdabang.cyh.domain.AnswerDTO;
+import com.bookdabang.cyh.domain.InsertProdDTO;
 import com.bookdabang.cyh.domain.ProdInfo;
 import com.bookdabang.cyh.domain.ProdQnADTO;
 import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.cyh.domain.UpdateProdDTO;
+import com.bookdabang.cyh.domain.deleteProdDTO;
 import com.bookdabang.cyh.etc.API_InputProcess;
 import com.bookdabang.ljs.persistence.LoginDAO;
 
@@ -76,6 +78,23 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
+	public int deleteSelectProd(List<deleteProdDTO> list, String upPath) throws Exception {
+
+		int result = 0;
+		for (deleteProdDTO dto : list) {
+			deleteImage(upPath, dto.getImagePath());
+
+			if (pdao.deleteProd(dto.getProdNo()) != 1) {
+				result = 0;
+				break;
+			}
+			result++;
+		}
+
+		return result;
+	}
+
+	@Override
 	public boolean validationProdNo(String isbn) throws Exception {
 
 		boolean result = false;
@@ -85,14 +104,21 @@ public class ProductServiceImpl implements ProductService {
 
 		return result;
 	}
-	
-	
-	
 
 	@Override
 	public ProductVO getProdByISBN(String isbn) throws Exception {
-		
+
 		return pdao.selectProdView(isbn);
+	}
+
+	@Override
+	public boolean insertProd(InsertProdDTO product) throws Exception {
+		boolean result = false;
+		if (pdao.insertProd(product) == 1) {
+			result = true;
+		}
+
+		return result;
 	}
 
 	@Override
@@ -103,17 +129,32 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public void deleteImage(String upPath, String deletePath) throws Exception {
-		System.out.println(upPath + deletePath.replace("/", File.separator));
-		File delFile = new File(upPath + deletePath.replace("/", File.separator));
+	public void deleteImage(String upPath, String imagePath) throws Exception {
 
-		delFile.delete();
+		if (imagePath.contains("http")) {
+			return;
+		} else {
+			String deletePath = imagePath.split("uploads")[1];
+			System.out.println(deletePath);
+			System.out.println(upPath + deletePath.replace("/", File.separator));
+			File delFile = new File(upPath + deletePath.replace("/", File.separator));
+			delFile.delete();
+		}
 
 	}
+
+//========================= QnA ===================================================
 
 	@Override
 	public boolean insertAnswer(AnswerDTO answer) throws Exception {
 		boolean result = false;
+		String pwd = pdao.getPwdByQuesNo(answer.getQuestion_no());
+
+		if (pwd != null) {
+			answer.setPwd(pwd);
+		}
+
+		System.out.println(answer.toString());
 		if (pdao.insertAnswer(answer) == 1) {
 			if (pdao.updateAnserStatus(answer) == 1) {
 				result = true;
@@ -123,7 +164,6 @@ public class ProductServiceImpl implements ProductService {
 		return result;
 	}
 
-//========================= QnA ===================================================
 	@Override
 	public String validSession(String sessionId) throws Exception {
 		MemberVO member = ldao.findLoginSess(sessionId);

@@ -29,8 +29,8 @@
 							formData.append("upfile", files[0]); // form객체에 파일 첨부
 
 							let url = "/board/uploadsFile";
-							$
-									.ajax({
+							
+									$.ajax({
 										url : url,
 										data : formData,
 										dataType : "json", // 수신될 데이터 타입
@@ -75,6 +75,7 @@
 
 	function delFile(obj) {
 		let targetFile = ($(obj).attr("id"));
+		console.log(targetFile); // 
 		let url = "/board/delFile";
 
 		$.ajax({
@@ -169,7 +170,7 @@
 				</div>
 				<div class="mb-3">
 					<label for="writer" class="form-label">작성자 :</label> <input
-						type="text" class="form-control" id="writer" name="writer" />
+						type="text" class="form-control" id="writer" name="writer" value="${userId }" readonly="readonly"/>
 				</div>
 				<label for="content" class="form-label">내 용 :</label>
 				<textarea class="form-control" rows="10" id="content" name="content"></textarea>

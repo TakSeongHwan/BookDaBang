@@ -75,11 +75,11 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 	
 			if (prePage != null) {
 				System.out.println("이전 페이지");
-				//response.sendRedirect(prePage);
+				response.sendRedirect(prePage);
 				
 			} else {
 				System.out.println("홈으로");
-				//response.sendRedirect("/ljs/");
+				response.sendRedirect("/");
 				
 			}
 
