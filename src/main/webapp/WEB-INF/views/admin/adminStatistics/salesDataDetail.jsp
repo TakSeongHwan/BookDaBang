@@ -29,7 +29,8 @@
 		let endDate = $("#endDate").val();
 		
 		if(startDate == "" || startDate == null){
-			startDate = new Date('1970-01-01');
+			startDate = new Date();
+			startDate.setDate(startDate.getDate() - 7);
 		}
 		if(endDate == "" || endDate == null){
 			endDate = new Date();
@@ -84,7 +85,7 @@
 		$("#drawChart").remove();
 		$("#modalBtn").remove();
 		$("#bestSellerModal").empty();
-		$("#drawChartDiv").html('<canvas id="drawChart" width="300px" height="300px"></canvas>');
+		$("#drawChartDiv").html('<canvas id="drawChart" style="margin:2%;" width="300vw", height="500vh"></canvas>');
 			
 		
 		parseData = parseData.categoryResult;
@@ -134,7 +135,7 @@
 							value += parseData[i].sell_count;
 
 
-							output+="<div>"+parseData[i].title+" : "+parseData[i].sell_count+"</div>"
+							output+="<div>"+parseData[i].title+" :  "+parseData[i].sell_count+"권</div>"
 						
 							flag++;
 						}else{
@@ -167,7 +168,7 @@
 				  type: 'bar',
 				  data,
 				  options: {
-					  
+					  maintainAspectRatio: false,
 					  responsive : true,
 						plugins : {
 							legend : {
@@ -189,7 +190,7 @@
 					    document.getElementById('drawChart'),
 					    config
 					  );
-		$("#buttonDiv").append('<button type="button" id="modalBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalScrollable" style="margin-left:2%; width:65%; height: 38px;">판매된 책 보기</button>');
+		$("#buttonDiv").append('<button type="button" id="modalBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalScrollable" style="margin-left:2%; width:35%; height: 38px;">판매된 책 보기</button>');
 	}
 	function drawDetailAgeChart(parseData){
 
@@ -197,7 +198,7 @@
 		$("#drawChart").remove();
 		$("#modalBtn").remove();
 		$("#bestSellerModal").empty();
-		$("#drawChartDiv").html('<canvas id="drawChart" width="300px" height="300px"></canvas>');
+		$("#drawChartDiv").html('<canvas id="drawChart" style="margin:2%;" width="300vw", height="500vh"></canvas>');
 			
 		
 		parseData = parseData.ageResult;
@@ -238,7 +239,7 @@
 			if(terminal[i] != null){
 				for(let j = 0; j<terminal[i].length;j++){
 					if(flag < 3){
-						output+="<div>"+terminal[i][j].title+" : "+terminal[i][j].sell_count+"</div>"
+						output+="<div>"+terminal[i][j].title+" :  "+terminal[i][j].sell_count+"권</div>"
 						flag++;
 					}
 					sellCount += terminal[i][j].sell_count;
@@ -273,7 +274,7 @@
 				  type: 'bar',
 				  data,
 				  options: {
-					  
+					  maintainAspectRatio: false,
 					  responsive : true,
 						plugins : {
 							legend : {
@@ -295,13 +296,13 @@
 					    document.getElementById('drawChart'),
 					    config
 					  );
-			  $("#buttonDiv").append('<button type="button" id="modalBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalScrollable" style="margin-left:2%; width:65%; height: 38px;">판매된 책 보기</button>');
+			  $("#buttonDiv").append('<button type="button" id="modalBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalScrollable" style="margin-left:2%; width:35%; height: 38px;">판매된 책 보기</button>');
 	}
 	function drawDetailGenderChart(parseData){
 		$("#drawChart").remove();
 		$("#modalBtn").remove();
 		$("#bestSellerModal").empty();
-		$("#drawChartDiv").html('<canvas id="drawChart" width="300px" height="300px"></canvas>');
+		$("#drawChartDiv").html('<canvas id="drawChart" style="margin:2%;" width="300vw", height="500vh"></canvas>');
 			
 		
 		parseData = parseData.genderResult;
@@ -325,7 +326,7 @@
 			if(terminal[i] != null){
 				for(let j = 0; j<terminal[i].length;j++){
 					if(flag < 3){
-						output+="<div>"+terminal[i][j].title+" : "+terminal[i][j].sell_count+"</div>"
+						output+="<div>"+terminal[i][j].title+" :  "+terminal[i][j].sell_count+"권</div>"
 						flag++;
 					}
 					sellCount += terminal[i][j].sell_count;
@@ -361,7 +362,7 @@
 				  type: 'bar',
 				  data,
 				  options: {
-					  
+					  maintainAspectRatio: false,
 					  responsive : true,
 						plugins : {
 							legend : {
@@ -383,7 +384,7 @@
 					    document.getElementById('drawChart'),
 					    config
 					  );
-			  $("#buttonDiv").append('<button type="button" id="modalBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalScrollable" style="margin-left:2%; width:65%; height: 38px;">판매된 책 보기</button>');
+			  $("#buttonDiv").append('<button type="button" id="modalBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalScrollable" style="margin-left:2%; width:35%; height: 38px;">판매된 책 보기</button>');
 	}
 </script>
 
@@ -405,9 +406,9 @@
 	<jsp:include page="../../managerHeader.jsp"></jsp:include>
 
 	<div class="container mt-3">
-		<h1 style="margin-top: 5%;">판매량 통계 상세조회</h1>
+		<h1 style="margin-top: 2%;">판매량 통계 상세조회</h1>
 
-		<div style="display: flex; margin-top: 5%;">
+		<div style="display: flex; margin-top: 2%;">
 
 			<div class="input-group" style="width: 10%;">
 				<div style="height: auto; width:100%;">조회할 자료</div>
@@ -438,12 +439,16 @@
 				</div>
 			</div>
 			<div id="buttonDiv" style="display: flex; align-items: flex-end; width:50%;">
-			<button type="button" class="btn btn-outline-primary" style="height: 38px;width:30%;" onclick="getDetailChart();">검색</button>
+			<button type="button" class="btn btn-outline-primary" style="height: 38px;width:20%;" onclick="getDetailChart();">검색</button>
 			</div>
 		</div>
+		<h6 style="margin-top:1%; margin-left:2%;">기간을 입력하지 않을 시, 최근 7일간의 판매량 자료를 출력합니다</h6>
 		<div id="validDate"></div>
-		<div id="drawChartDiv" class="card" style="margin: 2% 0%; ">
-			<canvas id="drawChart" width="300px" height="300px"></canvas>
+		<div class="card" style="margin: 5% 0%;">
+			<div id="drawChartDiv" style="width:80%; height:80%;">
+			<canvas id="drawChart" style="margin:2%;" width="300vw", height="500vh"></canvas>
+			</div>
+			
 		
 		</div>
 	</div>

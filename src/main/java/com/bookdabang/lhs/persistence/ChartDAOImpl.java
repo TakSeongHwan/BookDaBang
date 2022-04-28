@@ -19,6 +19,7 @@ import com.bookdabang.lhs.domain.CategoryTotalSales;
 import com.bookdabang.lhs.domain.RecentBestSeller;
 import com.bookdabang.lhs.domain.SalesChartDetail;
 import com.bookdabang.lhs.domain.SalesDataDetail;
+import com.bookdabang.lhs.domain.SalesDataWithDate;
 import com.bookdabang.lhs.domain.StartDateEndDate;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 
@@ -195,6 +196,24 @@ public class ChartDAOImpl implements ChartDAO {
 	public List<VisitorCountWithDateFormat> getVisitorDetailChart(SalesChartDetail scd) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectList(ns+".getVisitorDetailChart",scd);
+	}
+
+	@Override
+	public int getAllSalesData() throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns+".getAllSalesData");
+	}
+
+	@Override
+	public float getBookSalesMonth() throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns+".getBookSalesMonth");
+	}
+
+	@Override
+	public List<SalesDataWithDate> periodSalesDetail(StartDateEndDate sded) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns+".periodSalesDetail",sded);
 	}
 	
 	

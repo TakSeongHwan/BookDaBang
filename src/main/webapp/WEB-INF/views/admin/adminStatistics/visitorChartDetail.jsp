@@ -20,18 +20,27 @@
 	src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
 	$(function() {
-
+		
 	});
 	function getDetailChart() {
-		let startDate = new Date($("#startDate").val());
-		let endDate = new Date($("#endDate").val());
+		let startDate = $("#startDate").val();
+		let endDate = $("#endDate").val();
 		let searchType = $("#searchType").val();
 		console.log(searchType)
 		console.log(startDate);
 		console.log(endDate);
-		if (startDate <= endDate) {
+		
+		if(startDate == "" || startDate == null){
+			startDate = new Date();
+			startDate.setDate(startDate.getDate() - 7);
+			console.log(startDate);
+		}
+		if(endDate == "" || endDate == null){
+			endDate = new Date();
+		}
+		if (new Date(startDate) <= new Date(endDate)) {
 			$("#validDate").empty();
-			console.log("시작일이 종료일보다 작다")
+	
 
 			let sendData = JSON.stringify({
 				searchType : searchType,
@@ -69,12 +78,12 @@
 		
 
 		$("#myChart").remove();
-		$("#myChartDiv").html('<canvas id="myChart" width="300px" height="300px"></canvas>');
+		$("#myChartDiv").html('<canvas id="myChart" width="300vw", height="500vh" style="margin:2%;"></canvas>');
 		
 		parseData = parseData.visitorDetail;
 		 let labels = [];
 			let chartData =[]; 
-			let backgroundColor='rgb(255, 105, 108)';
+			let backgroundColor='rgb('+Math.floor(Math.random()*255+1)+', '+Math.floor(Math.random()*255+1)+', '+Math.floor(Math.random()*255+1)+')';
 			let repackData = [];
 			let flag = 0;
 			let repackLabel = [];
@@ -117,9 +126,9 @@
 				
 				if(repackData[i].length != 7){
 					let j = repackData[i].length -1
-					labels.push(repackData[i][0] + " - "+repackData[i][j]);
+					labels.push(repackData[i][0] + " ~ "+repackData[i][j]);
 				}else{
-					labels.push(repackData[i][0] + " - "+repackData[i][6]);
+					labels.push(repackData[i][0] + " ~ "+repackData[i][6]);
 				}
 				
 				
@@ -139,7 +148,7 @@
 					  type: 'line',
 					  data,
 					  options: {
-						  
+						  maintainAspectRatio: false,
 						  responsive : true,
 							plugins : {
 								legend : {
@@ -167,9 +176,9 @@
 <body>
 	<jsp:include page="../../managerHeader.jsp"></jsp:include>
 	<div class="container mt-3 ">
-		<h1 style="margin-top: 5%;">방문자 통계 상세조회</h1>
+		<h1 style="margin-top: 2%;">방문자 통계 상세조회</h1>
 
-		<div style="display: flex; margin-top: 5%;">
+		<div style="display: flex; margin-top: 2%;">
 			<div class="input-group" style="width: 10%;">
 				<div style="height: auto; width:100%;">단위</div>
 				<select class="form-select" id="searchType"
@@ -206,9 +215,12 @@
 					style="height: 38px;" onclick="getDetailChart();">검색</button>
 			</div>
 		</div>
+		<h6 style="margin-top:1%;  margin-left:2%;">기간을 입력하지 않을 시, 최근 7일간의 방문자 수를 출력합니다</h6>
 		<div id="validDate"></div>
-		<div id="myChartDiv" class="card" style="margin: 2% 0%; ">
-		<canvas id="myChart" width="300px" height="300px"></canvas>
+		<div class="card" style="margin: 2% 0%;">
+		<div id="myChartDiv" style="width:80%; height:80%;">
+		<canvas id="myChart" style="margin:2%;" width="300vw", height="500vh"></canvas>
+		</div>
 		</div>
 	</div>
 	<jsp:include page="../../managerFooter.jsp"></jsp:include>

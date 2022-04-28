@@ -161,7 +161,10 @@ $(document).ready(function() {
                         class="menu-link">
                            <div data-i18n="Container">판매량 통계 상세조회</div>
                      </a></li>
-                    
+                    <li class="menu-item"><a href="${contextPath}/admin/adminStatistics/allSalesDetail"
+                        class="menu-link">
+                           <div data-i18n="Container">총 매출 상세조회</div>
+                     </a></li>
                   </ul></li>
 
                <li class="menu-header small text-uppercase"><span

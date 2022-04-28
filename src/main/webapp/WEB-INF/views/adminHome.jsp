@@ -26,6 +26,8 @@
 		getYesterdayVisitor();
 		getCategoryTotalSales();
 		getWeekVisitor();
+		getSalesData();
+		getBookSalesMonth();
 
 	});
 
@@ -107,7 +109,29 @@
 		});
 
 	}
-
+	
+	function getBookSalesMonth() {
+		$.ajax({
+			url : "${contextPath}/chart/getBookSalesMonth",
+			dataType : "json",
+			type : "GET",
+			success : function(data) {
+				console.log(data);
+				$("#bookSalesMonth").text(data.bookSalesMonth.toLocaleString()+"권");
+			}
+		});
+	}
+	function getSalesData() {
+		$.ajax({
+			url : "${contextPath}/chart/getSalesData",
+			dataType : "json",
+			type : "GET",
+			success : function(data) {
+				console.log(data);
+				$("#allSalesData").text(data.allSales.toLocaleString());
+			}
+		});
+	}
 	function getTodayVisitor() {
 		$.ajax({
 			url : "${contextPath}/chart/getTodayVisitor",
@@ -183,7 +207,7 @@
 			datasets : [ {
 				label : '카테고리별 판매량',
 				data : data,
-				backgroundColor : [ '#ff3e1d', '#ffab00', '#71dd37', '#20c997',
+				backgroundColor : [ '#ff3e1d','#fd7e14', '#ffab00', '#71dd37',
 						'#03c3ec', '#007bff', '#696cff', '#6610f2', '#e83e8c' ],
 				hoverOffset : 9
 			} ]
@@ -216,21 +240,21 @@
 				color = "danger";
 				icon = "<i class='bx bx-dice-1'></i>";
 			} else if (i == 1) {
-				color = "warning";
+				color = "orange";
 				icon = "<i class='bx bx-dice-2'></i>";
 			} else if (i == 2){
-				color = "success";
+				color = "warning";
 				icon = "<i class='bx bx-dice-3'></i>";
 			} else if (i == 3){
-				color = "info";
+				color = "success";
 				icon = "<i class='bx bx-dice-4' ></i>";
 			}
 			 else if (i == 4){
-					color = "blue";
+					color = "info";
 					icon = "<i class='bx bx-dice-5' ></i>";
 				}
 			 else if (i == 5){
-					color = "primary";
+					color = "blue";
 					icon = "<i class='bx bx-dice-6' ></i>";
 				}
 			output += '<li class="d-flex mb-4 pb-1"><div class="avatar flex-shrink-0 me-3"><span class="avatar-initial rounded bg-label-'+color+'">'
@@ -322,6 +346,10 @@
 <style type="text/css">
 .chartContainer{
 margin-bottom: 5%;
+}
+.bg-label-orange{
+    background-color:#ffe8cc !important;
+    color: #fd7e14 !important;
 }
 .bg-label-blue{
     background-color:#dbecff !important;
@@ -468,7 +496,47 @@ margin-bottom: 5%;
 	<div class="container-xxl chartContainer">
 		<h1 style="margin-top: 5%;">DashBoard</h1>
 		<div id="upperDiv">
+		
 			<div class="visitorMain">
+			<div>
+					<div class="mb-4" style="display: flex; width: 100%; justify-content: space-around;">
+						<div class="card innerCard">
+							<div class="card-body">
+								<div class="card-title cardIcon">
+									<div class="avatar" style="margin: auto;">
+
+										<span class="avatar-initial rounded bg-label-primary">
+											<i class="bx bxs-user-pin"></i>
+										</span>
+
+									</div>
+								</div>
+								<span class="vCardElepsis">오늘 방문자 수</span>
+								<h2 id="todayVisitor" class="visitorCountCard">2</h2>
+								<small id="diff"><i class="text-danger fw-semibold bx bx-down-arrow-alt">4</i></small>
+							</div>
+						</div>
+						<div class="card innerCard">
+							<div class="card-body">
+								<div class="card-title d-flex align-items-start justify-content-between cardIcon">
+									<div class="avatar" style="margin: auto;">
+
+										<span class="avatar-initial rounded bg-label-secondary">
+											<i class="bx bxs-user-pin"></i>
+										</span>
+
+									</div>
+
+								</div>
+
+								<span class="vCardElepsis">전날 방문자 수</span>
+								<h2 id="yesterdayVisitor" class="visitorCountCard">6</h2>
+								<small><i class="text-warning fw-semibold bx bx-smile"></i></small>
+							</div>
+						</div>
+					</div>
+
+				</div>
 				<div class="card">
 			
 					<div class="d-flex align-items-end row">
@@ -515,47 +583,7 @@ margin-bottom: 5%;
 			<!--   <button type="button" onclick="insertVisitor();">방문자 인풋</button> -->
 
 			<div class="smallCard">
-				<div>
-					<div class="mb-4"
-						style="display: flex; width: 100%; justify-content: space-around;">
-						<div class="card innerCard">
-							<div class="card-body">
-								<div class="card-title cardIcon">
-									<div class="avatar" style="margin: auto;">
-
-										<span class="avatar-initial rounded bg-label-primary">
-											<i class='bx bxs-user-pin'></i>
-										</span>
-
-									</div>
-								</div>
-								<span class="vCardElepsis">오늘 방문자 수</span>
-								<h2 id="todayVisitor" class="visitorCountCard"></h2>
-								<small id="diff"></small>
-							</div>
-						</div>
-						<div class="card innerCard">
-							<div class="card-body">
-								<div
-									class="card-title d-flex align-items-start justify-content-between cardIcon">
-									<div class="avatar" style="margin: auto;">
-
-										<span class="avatar-initial rounded bg-label-secondary">
-											<i class='bx bxs-user-pin'></i>
-										</span>
-
-									</div>
-
-								</div>
-
-								<span class="vCardElepsis">전날 방문자 수</span>
-								<h2 id="yesterdayVisitor" class="visitorCountCard"></h2>
-								<small><i class='text-warning fw-semibold bx bx-smile'></i></small>
-							</div>
-						</div>
-					</div>
-
-				</div>
+				
 				<div id="orderStatistics">
 					<div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
 						<div class="card h-100">
@@ -597,6 +625,46 @@ margin-bottom: 5%;
 						
 					</div>
 				
+				</div>
+				<div>
+					<div class="mb-4"
+						style="display: flex; width: 100%; justify-content: space-around;">
+						<div class="card innerCard">
+							<div class="card-body">
+								<div class="card-title cardIcon">
+									<div class="avatar" style="margin: auto;">
+
+										<span class="avatar-initial rounded bg-label-danger">
+											<i class='bx bxs-dollar-circle'></i>
+										</span>
+
+									</div>
+								</div>
+								<span class="vCardElepsis">총 매출</span>
+								<h5 id="allSalesData"></h5>
+							</div>
+							<button type="button" class="btn btn-outline-danger" style="border-color:transparent; border-top-left-radius:0; border-top-right-radius:0;" onclick="location.href='/admin/adminStatistics/allSalesDetail'">더보기</button>
+						</div>
+						<div class="card innerCard">
+							<div class="card-body">
+								<div
+									class="card-title d-flex align-items-start justify-content-between cardIcon">
+									<div class="avatar" style="margin: auto;">
+
+										<span class="avatar-initial rounded bg-label-info">
+											<i class='bx bxs-book-alt'></i>
+										</span>
+
+									</div>
+
+								</div>
+
+								<span class="vCardElepsis">월 평균 판매량</span>
+								<h5 id="bookSalesMonth" class="visitorCountCard"></h5>
+							</div>
+						</div>
+					</div>
+
 				</div>
 			</div>
 		</div>
