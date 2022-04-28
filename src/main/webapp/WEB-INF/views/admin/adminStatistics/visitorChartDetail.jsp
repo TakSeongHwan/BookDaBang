@@ -20,7 +20,10 @@
 	src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
 	$(function() {
-		
+		if(${member.isAdmin != 'Y'}){
+			alert("잘못된 접근입니다!");
+			location.href=history.back();
+		}
 	});
 	function getDetailChart() {
 		let startDate = $("#startDate").val();

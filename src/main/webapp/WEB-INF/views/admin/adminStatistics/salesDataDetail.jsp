@@ -21,7 +21,10 @@
 
 <script>
 	$(function() {
-	
+		if(${member.isAdmin != 'Y'}){
+			alert("잘못된 접근입니다!");
+			location.href=history.back();
+		}
 	});
 	function getDetailChart(){
 		let searchType = $("#searchType").val();

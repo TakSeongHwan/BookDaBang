@@ -162,9 +162,10 @@ visibility: hidden !important;
 						<div class="owl-item active" style="margin-right: 30px;">
 							<div class="card text-center card-product">
 								<div class="card-product__img">
-
+										<a
+											href='${contextPath }/product/detail?no=${prod.product_no }'>
 									<img class="img-fluid prodImg" src="${prod.cover}" />
-
+										</a>
 								</div>
 								<div class="my-card-body">
 									<div class="card-product__title">
@@ -195,9 +196,10 @@ visibility: hidden !important;
 						<div class="owl-item active" style="margin-right: 30px;">
 							<div class="card text-center card-product">
 								<div class="card-product__img">
-
+										<a
+											href='${contextPath }/product/detail?no=${random.product_no }'>
 									<img class="img-fluid prodImg" src="${random.cover}" />
-
+										</a>
 								</div>
 								<div class="my-card-body">
 									<div class="card-product__title">
