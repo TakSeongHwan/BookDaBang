@@ -6,17 +6,21 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.AttachFileVO;
+import com.bookdabang.common.domain.BoardSearch;
 import com.bookdabang.common.domain.FreeBoard;
 import com.bookdabang.common.domain.FreeBoardComment;
+import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.PageView;
 import com.bookdabang.common.domain.PagingInfo;
-import com.bookdabang.common.domain.Recommend;
+import com.bookdabang.common.domain.RecommendVO;
 import com.bookdabang.common.domain.ReportBoard;
-import com.bookdabang.lbr.domain.Search;
+
+
 
 
 @Repository
@@ -27,38 +31,44 @@ public class FreeBoardDAOImpl implements FreeBoardDAO {
 	
 	private static String ns = "com.bookdabang.mapper.boardMapper";
 	
+	
+	
 	// 자유게시판 전체보기
 	@Override
 	public List<FreeBoard> getListAllFreeBoards(PagingInfo paging) throws Exception {
 		// TODO Auto-generated method stub
+		
 		return ses.selectList(ns + ".listAllFreeBoard",paging);
 	}
 	
 
 	@Override
-	public List<FreeBoard> getListAllFreeBoards(PagingInfo paging, Search search) {
+	public List<FreeBoard> getListAllFreeBoards(PagingInfo paging, BoardSearch search) {
 		Map<String, Object> param = new HashMap<String, Object>();
 		
-		param.put("Searchtype", search.getSearchtype());
-		param.put("Searchword", search.getSearchword());
-		param.put("StartNum", paging.getStartNum());
-		param.put("PostPerPage", paging.getPostPerPage());
+		
+		param.put("searchType", search.getSearchType());
+		param.put("searchWord", search.getSearchWord());
+		param.put("startNum", paging.getStartNum());
+		param.put("postPerPage", paging.getPostPerPage());
 		
 		return ses.selectList(ns + ".getSearchResultList", param);
 	}
 
 
 	@Override
-	public int getSearchResultCnt(Search search) throws Exception {
+	public int getSearchResultCnt(BoardSearch search) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectOne(ns + ".getSearchResultCnt", search);
 	}
 
 	// 신고게시판 전체보기
 	@Override
-	public List<ReportBoard> getListAllReportBoards() throws Exception {
+	public List<ReportBoard> getListAllReportBoards(PagingInfo paging) throws Exception {
+		
 		// TODO Auto-generated method stub
-		return ses.selectList(ns + ".listAllReportBoard");
+		
+		return ses.selectList(ns + ".listAllReportBoard",paging);
 	}
 
 	// 게시글 신고하기
@@ -96,9 +106,9 @@ public class FreeBoardDAOImpl implements FreeBoardDAO {
 	}
 
 	@Override
-	public List<FreeBoard> removeAllFreeBoard() throws Exception {
-		// TODO Auto-generated method stub
-		return ses.selectList(ns + ".removeAllFreeBoard");
+	public List<FreeBoard> removeAllFreeBoard(PagingInfo paging) throws Exception {
+		
+		return ses.selectList(ns + ".removeAllFreeBoard",paging);
 	}
 
 	@Override
@@ -122,19 +132,19 @@ public class FreeBoardDAOImpl implements FreeBoardDAO {
 	}
 
 	@Override
-	public int likeFreeBoard(Recommend recommend) throws Exception {
+	public int likeFreeBoard(RecommendVO recommend) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.insert(ns +".likeFreeBoard", recommend);
 	}
 
 	@Override
-	public int unlikeFreeBoard(Recommend recommend) throws Exception {
+	public int unlikeFreeBoard(RecommendVO recommend) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.delete(ns + ".unilkeFreeBoard",recommend);
 	}
 
 	@Override
-	public int countLikeCheck(Recommend recommend) throws Exception {
+	public int countLikeCheck(RecommendVO recommend) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectOne(ns + ".countLikeCheck", recommend);
 	}
@@ -250,6 +260,108 @@ public class FreeBoardDAOImpl implements FreeBoardDAO {
 		// TODO Auto-generated method stub
 		return ses.insert(ns + ".insertReadCount", view);
 	}
+
+
+	@Override
+	public int reportfreeBoard(int board) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.update(ns + ".reportfreeBoard",board);
+	}
+
+
+	@Override
+	public int reportStatus(int report) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.update(ns + ".reportStatus",report);
+	}
+
+
+	@Override
+	public MemberVO getUser(String userId) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + ".userId",userId);
+	}
+
+
+	@Override
+	public int updateFreeBoard(FreeBoard freeboard) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.update(ns + ".updateFreeboard",freeboard);
+	}
+
+
+	@Override
+	public int reportTotal() throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + ".reportTotalPost");
+	}
+
+
+	@Override
+	public int removeTotal() throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + ".removeTotalPost");
+	}
+
+
+	@Override
+	public List<ReportBoard> getListAllReportBoards(PagingInfo paging,BoardSearch search) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		
+		
+		
+		param.put("startNum", paging.getStartNum());
+		param.put("postPerPage", paging.getPostPerPage());
+		
+		return ses.selectList(ns + ".getSearchResultList", param);
+	}
+
+
+	@Override
+	public int getSearchResultCntReport(BoardSearch search) throws Exception {
+		// TODO Auto-generated method stub
+		 return ses.selectOne(ns + ".getSearchResultCntReport", search);
+	}
+
+
+	@Override
+	public List<FreeBoard> getListAllRemoveBoards(PagingInfo paging, BoardSearch search) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("searchType", search.getSearchType());
+		param.put("searchWord", search.getSearchWord());
+		param.put("startNum", paging.getStartNum());
+		param.put("postPerPage", paging.getPostPerPage());
+		
+		return ses.selectList(ns + ".getListAllRemoveBoards", param);
+	}
+
+
+	@Override
+	public int getSearchResultCntRemove(BoardSearch search) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + ".getSearchResultCntRemove", search);
+	}
+
+
+	@Override
+	public int adminRemove(String boardno) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.delete(ns + ".adminRemove", boardno);
+	}
+
+
+	@Override
+	public int admindelAttach(String boardno) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.delete(ns+".admindelAttach", boardno);
+	}
+
+
+
+
+
+
 
 
 

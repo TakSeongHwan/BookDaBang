@@ -33,6 +33,7 @@ public class VisitorCheckInterceptor extends HandlerInterceptorAdapter {
 			System.out.println("인터셉트 작동합니다" + ipaddr);
 	
 			Timestamp lastAccessTime = service.checkMaxAccessDate(ipaddr);
+			System.out.println(lastAccessTime);
 			long currentTime = System.currentTimeMillis();
 			
 			if(lastAccessTime != null) {

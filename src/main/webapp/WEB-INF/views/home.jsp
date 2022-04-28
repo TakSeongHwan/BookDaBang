@@ -8,6 +8,7 @@
 <%@ page import="java.io.BufferedReader" %>
 <%@ page import="java.io.InputStreamReader" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html>
@@ -21,32 +22,62 @@
 
 
 
-</head>
-
-
 <script>
 	$(function() {
-		let owl = $('#bestSellerCarousel');
-		owl.owlCarousel({
-			items : 8,
-			loop : true,
-			margin : 20,
-			autoplay : true,
-			autoplayTimeout : 2000,
-			autoplayHoverPause : true
-		});
+	
+		drawCarousel();
 
-		let owl2 = $('#randomCarousel');
-		owl2.owlCarousel({
-			items : 8,
-			loop : true,
-			margin : 20,
-			autoplay : true,
-			autoplayTimeout : 2000,
-			autoplayHoverPause : true
-		});
 		
 	});
+	function drawCarousel(){
+		let owl = $('#bestSellerCarousel');
+		let owl2 = $('#randomCarousel');
+		let data = {
+				items : 8,
+				loop : true,
+				margin : 20,
+				responsiveClass:true,
+			    responsive:{
+			        0:{
+			            items:1,
+			            nav:true
+			        },
+			        300:{
+			            items:2,
+			            nav:false
+			        },
+			        600:{
+			            items:4,
+			            nav:false
+			        },
+			        900:{
+			            items:6,
+			            nav:true,
+			           
+			        },
+			        1200:{
+			            items:8,
+			            nav:true,
+			            
+			        }
+			    },
+				autoplay : true,
+				autoplayTimeout : 2000,
+				autoplayHoverPause : true
+			};
+		
+		
+		owl.owlCarousel(data);
+		
+		owl2.owlCarousel(data);
+		
+		
+		
+	}
+	function resizeWidth(){
+		
+		width = window.innerWidth;
+	}
 </script>
 <style>
 .owl-stage-outer{
@@ -80,9 +111,15 @@ padding-top: 10px;
 .owl-dots{
 visibility: hidden !important;
 }
+.owl-nav{
+visibility: hidden !important;
+}
 
 
 </style>
+
+
+</head>
 
 
 <body>
@@ -134,7 +171,7 @@ visibility: hidden !important;
 										<a
 											href='${contextPath }/product/detail?no=${prod.product_no }'>${prod.title }</a>
 									</div>
-									<div class="card-product__price">${prod.sell_price }￦</div>
+									<div class="card-product__price"><fmt:formatNumber value="${prod.sell_price }" pattern="#,###" />원</div>
 								</div>
 							</div>
 						</div>
@@ -167,7 +204,7 @@ visibility: hidden !important;
 										<a
 											href='${contextPath }/product/detail?no=${random.product_no }'>${random.title }</a>
 									</div>
-									<div class="card-product__price">${random.sell_price }￦</div>
+									<div class="card-product__price"><fmt:formatNumber value="${random.sell_price }" pattern="#,###" />원</div>
 								</div>
 							</div>
 						</div>

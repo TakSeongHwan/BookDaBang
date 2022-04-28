@@ -13,10 +13,161 @@
  select * from product ORDER BY RAND() limit 10
  </select>
  <select id="getVisitorInfo" resultType="VisitorCountWithDateFormat">
-select DATE_FORMAT(accessdate,'%m') as monthSort ,count(ipaddr)as visitor from visitor_ipcheck group by monthSort order by accessdate asc
+select DATE_FORMAT(accessdate,'%m') as dateSort ,count(ipaddr)as visitor from visitor_ipcheck group by dateSort order by accessdate asc
  </select>
  <insert id="autoInsertVisitor">
  insert into visitor_ipcheck values(#{ipaddr},#{accessdate})
  </insert>
- 
+ <select id="getTodayVisitor" resultType="int">
+select count(DATE_FORMAT(accessdate,'%Y-%m-%d')) from visitor_ipcheck where DATE_FORMAT(accessdate,'%Y-%m-%d') = (select DATE_FORMAT(now(),'%Y-%m-%d'))
+ </select>
+ <select id="getYesterdayVisitor" resultType="int">
+ select count(DATE_FORMAT(accessdate,'%Y-%m-%d')) from visitor_ipcheck where DATE_FORMAT(accessdate,'%Y-%m-%d') = (select DATE_FORMAT(now()- interval 1 day,'%Y-%m-%d'))
+ </select>
+<select id="getProductInfo" resultType="AdminProduct">
+select p.*,c.category_name,count(r.reviewNo) as reviewCount
+from product as p 
+JOIN category as c on p.category_code = c.category_code 
+LEFT OUTER JOIN review as r on p.product_no = r.productNo
+group by p.product_no, r.productNo
+<if test='sortType.equals("")'>
+ 	order by p.product_no asc
+ 	</if>
+ 	<if test='sortType.equals("category")'>
+ 		order by c.category_name asc
+ 	</if>
+ 	<if test='sortType.equals("isbn13")'>
+ 		order by p.isbn13 asc
+ 	</if>
+ 	<if test='sortType.equals("title")'>
+ 		order by p.title asc
+ 	</if>
+ 	<if test='sortType.equals("priceAsc")'>
+ 		order by p.price asc, p.sell_price asc
+ 	</if>
+ 	<if test='sortType.equals("priceDesc")'>
+ 		order by p.price desc, p.sell_price desc
+ 	</if>
+ 	<if test='sortType.equals("reviewDesc")'>
+ 		order by reviewCount desc
+ 	</if>
+ 	
+  limit #{startNum}, #{postPerPage} 	
+</select>
+ <select id="getTotalPost" resultType="int">
+ 	select count(*) as totalCnt from product
+ 	
+ 	</select>
+ 	
+ 	<select id="getSearchResultCnt" resultType="int">
+ 	  select count(*) from product as p, category as c where p.category_code = c.category_code and
+ 	  <if test='searchType == "title"'>
+ 	  p.title like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType == "category"'>
+ 	  c.category_name like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType == "isbn13"'>
+ 	  p.isbn13 like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	</select>
+ 	
+ 	<select id="getSearchResultList" resultType="AdminProduct">
+ 	
+ 	select p.*,c.category_name,count(r.reviewNo) as reviewCount
+from product as p 
+JOIN category as c on p.category_code = c.category_code 
+LEFT OUTER JOIN review as r on p.product_no = r.productNo
+	where
+ 	  <if test='searchType == "title"'>
+ 	  p.title like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType == "category"'>
+ 	  c.category_name like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType == "isbn13"'>
+ 	  p.isbn13 like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ group by p.product_no, r.productNo
+ 	  <if test='sortType.equals("")'>
+ 	order by p.product_no asc
+ 	</if>
+ 	
+ 	<if test='sortType.equals("category")'>
+ 		order by c.category_name asc
+ 	</if>
+ 	<if test='sortType.equals("isbn13")'>
+ 		order by p.isbn13 asc
+ 	</if>
+ 	<if test='sortType.equals("title")'>
+ 		order by p.title asc
+ 	</if>
+ 	<if test='sortType.equals("priceAsc")'>
+ 		order by p.price asc, p.sell_price asc
+ 	</if>
+ 	<if test='sortType.equals("priceDesc")'>
+ 		order by p.price desc, p.sell_price desc
+ 	</if>
+ 	<if test='sortType.equals("reviewDesc")'>
+ 		order by reviewCount desc
+ 	</if>
+ 	
+  limit #{startNum}, #{postPerPage} 	
+ 	  
+ 	</select>
+ 	
+ 	<select id="getCategoryTotalSales" resultType="CategoryTotalSales">
+ 	 	select c.category_name, sum(p.sales_count)as totalSales from product as p, category as c where p.category_code = c.category_code group by c.category_name
+ 	 	order by totalSales desc
+ 	 	</select>
+ 	 	<select id="getRecentBestSellerInSalesData" resultType="RecentBestSeller">
+ 	 	select p.title, p.cover, sum(s.productqtt) as totalSalesCount, c.category_name from product as p join category as c on p.category_code = c.category_code
+		JOIN sales as s on p.product_no = s.product_no
+		group by p.product_no order by totalSalesCount desc
+ 	 	</select>
+ 	<select id="getWeekVisitor" resultType="VisitorCountWithDateFormat">
+ 	select DATE_FORMAT(accessdate,'%m-%d') as dateSort ,count(ipaddr)as visitor 
+ 	from visitor_ipcheck where DATE_FORMAT(accessdate,'%m-%d') 
+ 	between (select DATE_FORMAT(now()- interval 6 day,'%m-%d')) and DATE_FORMAT(now(),'%m-%d') 
+ 	group by dateSort order by dateSort asc
+ 	</select>
+ 	<select id="getLessStock" resultType="com.bookdabang.common.domain.ProductVO">
+ 	select * from product where stock &lt; 5
+ 	</select>
+ 	<select id="getDetailChartCategory" resultType="CategoryTotalSales">
+ 	select c.category_name, sum(s.productqtt) as totalSales 
+	from product as p join category as c on p.category_code = c.category_code
+	LEFT OUTER JOIN sales as s on p.product_no = s.product_no
+	group by p.category_code
+ 	</select>
+ 	
+ 	<select id="getAge" resultType="SalesDataDetail">
+     select p.product_no, c.category_name, p.title, p.author, p.price, p.sell_price, 
+	(select sum(s.productqtt) from sales as s, prodOrder as o
+	where s.orderNo = o.orderNo and s.product_no = p.product_no
+	group by s.product_no) as sell_count, TIMESTAMPDIFF(YEAR,m.birth,now()) as age, m.gender
+	from product as p, category as c, sales as s, prodOrder as o, member as m 
+	where p.category_code = c.category_code and s.product_no = p.product_no and s.orderNo = o.orderNo and o.userId = m.userId
+	and TIMESTAMPDIFF(YEAR, m.birth,now()) >= #{ageStart} and TIMESTAMPDIFF(YEAR, m.birth,now()) &lt; #{ageEnd}
+	and purchasetime between #{startDate} and #{endDate}
+	group by s.product_no
+	order by sell_count desc, p.product_no asc limit 10
+ 	</select>
+ 	
+ 	<select id="getGender" resultType="SalesDataDetail">
+ 	select p.product_no, c.category_name, p.title, p.author, p.price, p.sell_price, 
+	(select sum(s.productqtt) from sales as s, prodOrder as o
+	where s.orderNo = o.orderNo and s.product_no = p.product_no
+	group by s.product_no) as sell_count
+	from product as p, category as c, sales as s, prodOrder as o, member as m 
+	where p.category_code = c.category_code and s.product_no = p.product_no and s.orderNo = o.orderNo and o.userId = m.userId
+	and m.gender = #{gender}
+	and purchasetime between #{startDate} and #{endDate}
+	group by s.product_no
+	order by sell_count desc, p.product_no asc limit 10
+ 	
+ 	 </select>
+ 	 <select id="getVisitorDetailChart" resultType="VisitorCountWithDateFormat">
+ 	 select DATE_FORMAT(accessdate,'%Y-%m-%d') as dateSort ,count(ipaddr)as visitor from visitor_ipcheck where accessdate between #{startDate} and #{endDate} group by DATE_FORMAT(accessdate,'%Y-%m-%d')
+ 	 </select>
  </mapper>

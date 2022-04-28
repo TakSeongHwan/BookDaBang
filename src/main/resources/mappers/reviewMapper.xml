@@ -7,7 +7,7 @@
 <mapper namespace="com.bookdabang.mapper.ReviewMapper" >
 
 	<select id="selectAllReview" resultType="ReviewVO">
-		select * from review where productNo = #{prodNo}
+		select * from review where productNo = #{prodNo} order by writedate desc limit #{startNum},#{postPerPage}
 	</select>
 	
 	<select id="selectAllComments" resultType="ReviewComment">
@@ -35,6 +35,10 @@
 		  values (#{commenter},#{comment},#{reviewNo},#{ref},#{step} + 1, #{reforder} + 1)
 	</insert>
 	
+	<select id="selectRecommend" resultType="int">
+		select reviewNo from recommend where userId=#{userId} and reviewNo is not null
+	</select>
+	
 	<update id="updateRecommend">
 		update review set 
 		<if test="change == 1">
@@ -46,14 +50,64 @@
 		 where reviewNo = #{reviewNo}
 	</update>
 	
+	<insert id="insertRecommend">
+		 insert into recommend(userId,reviewNo) values (#{userId},#{reviewNo})
+	</insert>
+	
+	<delete id="deleteRecommend">
+		delete from recommend where userId = #{userId} and reviewNo = #{reviewNo}
+	</delete>
+	
 	<insert id="insertReview"> 
 		 insert into review(title,writer,content,grade,productNo)
 		 values (#{title},#{writer},#{content},#{grade},#{productNo})
 	</insert>
 	
+	<update id="updateReview">
+		update review set title = #{title}, content=#{content}, grade=#{grade} where reviewNo = #{reviewNo}
+	</update>
+	
+	<delete id="deleteReview">
+		delete from review where reviewNo = #{reviewNo}
+	</delete>
+	
+	<update id="updateComment">
+		update review_comment set comment = #{comment} where commentNo = #{commentNo}
+	</update>
+	
+	<delete id="deleteComment">
+		delete from review_comment where commentNo = #{commentNo}
+	</delete> 
+	
+	<update id="updateCommentNum2">
+		update review set commentNum = commentNum - 1 where reviewNo = #{reviewNo}
+	</update>
+	
+	<select id="selectReviewNo" resultType="int">
+		select max(reviewNo) as reviewNo from review
+	</select>
+	
+	<insert id="insertAttachfile">
+		 insert into attachfile(reviewNo,productNo,originFile,thumbnailFile,notImageFile)
+		 values (#{reviewNo},#{productNo},#{originFile},#{thumbnailFile},#{notImageFile})
+	</insert>
+	
+	<select id="selectAllAttachfile" resultType="AttachFileVO">
+		select * from attachfile where productNo = #{prodNo}
+	</select>
+	
+	<delete id="deleteAttachfile">
+		delete from attachfile where attachFileNo = #{attachFileNo}
+	</delete> 
+	
+	<select id="selectTotalPost" resultType="int">
+		select count(*) as totalCnt from review where productNo = #{prodNo}
+	</select>
+	
+
 	<!-- 마이페이지 내 리뷰-->
 	<select id = "showMyReview" resultType = "ReviewVO" >
-	select * from review where writer = #{writer};
+		select * from review where writer = #{writer}
 	</select>
 	
 </mapper>

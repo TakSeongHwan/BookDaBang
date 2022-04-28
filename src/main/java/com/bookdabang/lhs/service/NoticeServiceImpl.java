@@ -32,16 +32,13 @@ public class NoticeServiceImpl implements NoticeService {
 		PagingInfo pi = pagingProcess(pageNo, bs);
 		List<NoticeVO> list = new ArrayList<NoticeVO>();
 		System.out.println(bs.toString());
-		try {
+	
 			if(bs.getSearchWord().equals("") || bs.getSearchType().equals("")) {
 				list = noticeDAO.entireNotice(pi);
 			}else {
 				list = noticeDAO.entireNotice(pi,bs);
 			}
-		}catch (Exception e) {
-			// TODO: handle exception
-		}
-		
+
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("notice", list);
 		map.put("pagingInfo", pi);

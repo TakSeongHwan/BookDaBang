@@ -7,10 +7,12 @@ import com.bookdabang.common.domain.CategoryVO;
 import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.cyh.domain.AnswerDTO;
+import com.bookdabang.cyh.domain.InsertProdDTO;
 import com.bookdabang.cyh.domain.ProdInfo;
 import com.bookdabang.cyh.domain.ProdQnADTO;
 import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.cyh.domain.UpdateProdDTO;
+import com.bookdabang.cyh.domain.deleteProdDTO;
 
 public interface ProductService {
 	public List<CategoryVO> getCategory() throws Exception;
@@ -20,12 +22,16 @@ public interface ProductService {
 	public List<ProductVO> selectProdView(List<String> checkProd) throws Exception;
 
 	public boolean updateSelectProd(List<UpdateProdDTO> list) throws Exception;
+	
+	public int deleteSelectProd(List<deleteProdDTO> list, String upPath) throws Exception;
 
 	public boolean validationProdNo(String isbn) throws Exception;
 	
 	public ProductVO getProdByISBN(String isbn) throws Exception;
 
 	public ProdInfo viewInfoByIsbn(String isbn) throws Exception;
+	
+	public boolean insertProd(InsertProdDTO product) throws Exception;
 
 	public void deleteImage(String upPath, String deletePath) throws Exception;
 
@@ -41,5 +47,7 @@ public interface ProductService {
 
 
 	public boolean deleteQnA(int questionNo) throws Exception;
+
+	
 
 }

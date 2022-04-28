@@ -43,13 +43,13 @@ public class CommentController {
 	}
 	
 	@RequestMapping(value="", method=RequestMethod.POST)
-	public ResponseEntity<String> addReply(@RequestBody ReviewComment comment) { // @RequestBody 이게 json
+	public ResponseEntity<String> addComment(@RequestBody ReviewComment comment) { // @RequestBody 이게 json
 		System.out.println("댓글 등록 시작!" + comment.toString());
 		
 		ResponseEntity<String> result = null;
 		
 		try {
-			if (rService.addReply(comment)) {
+			if (rService.addComment(comment)) {
 				result = new ResponseEntity<String>("success", HttpStatus.OK);		
 			} else {
 				result = new ResponseEntity<String>("fail", HttpStatus.BAD_REQUEST);
@@ -59,7 +59,40 @@ public class CommentController {
 			e.printStackTrace();
 			result = new ResponseEntity<String>("fail", HttpStatus.BAD_REQUEST);
 		}
-		System.out.println(result);
+		
+		return result;
+	}
+	
+	@RequestMapping(value = "/{cno}", method = RequestMethod.PUT)
+	public ResponseEntity<String> modifyComment(@RequestBody ReviewComment comment){
+		System.out.println(comment.getCommentNo() + "번 댓글 수정 - " + comment.toString());
+		
+		ResponseEntity<String> result = null;
+		
+		try {
+			rService.modifyComment(comment);
+			result = new ResponseEntity<String>("success", HttpStatus.OK);	
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = new ResponseEntity<String>("fail", HttpStatus.BAD_REQUEST);
+		} 
+		
+		return result;
+	}
+	
+	@RequestMapping(value = "/{cno}", method = RequestMethod.DELETE) 
+	public ResponseEntity<String> deleteComment(@RequestBody ReviewComment comment){
+		System.out.println(comment.getCommentNo() + "번 댓글 삭제" + comment.toString());
+		ResponseEntity<String> result = null;
+		
+		try {
+			rService.deleteComment(comment);
+			result = new ResponseEntity<String>("success", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = new ResponseEntity<String>("fail", HttpStatus.BAD_REQUEST);
+		}
+		
 		return result;
 	}
 }
