@@ -42,6 +42,25 @@ function movePage(no) {
 <jsp:include page="../userHeader.jsp"></jsp:include>
 <div class="container mt-3">
 	<h1 style="margin:20px; margin-bottom:20px;">고객센터</h1>
+	<div>
+		<select>
+			<option>제목</option>
+			<option>제목 + 내용</option>
+			<option>글쓴이</option>
+			<option>말머리</option>
+		</select>
+		<div>
+			<div class="input-group filter-bar-search">
+				<input type="text" name = "searchword"  placeholder="검색" />
+					<div class = "input-group-append">
+						<button>
+						<i class = "ti-search">
+						</i>
+						</button>
+					</div>
+			</div>
+		</div>
+	</div>
   <table class="table table-hover">
     <thead style="background-color:#fafaff;">
       <tr>

@@ -68,7 +68,6 @@ public class CSBoardServiceImpl implements CSBoardService {
 		
 		for (CSUploadFile file : upfileLst) {
 			
-			
 			csfile.setCsBoardNo(ref);
 			csfile.setOriginFile(file.getOriginFile());
 			csfile.setThumbnailFile(file.getThumbnailFile());
@@ -76,6 +75,7 @@ public class CSBoardServiceImpl implements CSBoardService {
 			
 			System.out.println("파일 디비로 가져가는 놈" + csfile.toString());
 			fileResult = bdao.insertAttachFile(csfile);
+			
 		}
 		
 		if (resultInsert == 1 && fileResult==1) {

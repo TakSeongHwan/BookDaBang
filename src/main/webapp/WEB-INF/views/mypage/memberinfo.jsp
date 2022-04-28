@@ -845,7 +845,7 @@ margin-bottom : 10px;
 					<h2>회원 정보 수정</h2>
 					<div class="single-post row">
 						아이디 : <input type="text" class="form-control"
-							value="${loginMember.userId}" />
+							value="${loginMember.userId}" readonly/>
 						비밀번호 : <input type="hidden" id ="password" value="${loginMember.userPwd }" />
 						<button data-bs-toggle="modal" data-bs-target="#modalPwd">비밀번호
 							변경</button>

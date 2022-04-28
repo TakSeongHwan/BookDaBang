@@ -90,6 +90,7 @@ public class CSBoardController {
 		//가져오는거 까야됨 어떻게 까냐?
 		
 		System.out.println("다 가져왔니" + csPost.toString());
+		System.out.println("첨부파일도 가져오니" + attachLst);
 		model.addAttribute("csBoard", csPost);
 		model.addAttribute("attachLst", attachLst);
 		
@@ -147,7 +148,7 @@ public class CSBoardController {
 		System.out.println("파일사이즈" + upfile.getSize());
 		System.out.println("파일의 타입" + upfile.getContentType());
 		System.out.println("파일 구분자 : " + File.separator);
-
+		
 		String upPath = request.getSession().getServletContext().getRealPath("resources/cs_uploads"); // 파일을 올리기 위한 '서버' 상
 																									// 경로
 		System.out.println("파일이 업로드되는 실제 물리적 경로 : " + upPath); // 파일이 업로드되는 실제 경로.
@@ -164,6 +165,14 @@ public class CSBoardController {
 			try {
 				uploadFile = utp.uploadFileRename(upPath, upfile.getOriginalFilename(), upfile.getBytes());
 				System.out.println("업로드된 파일 이름이요" + uploadFile);
+				
+				//if ( postNo != null) {
+				
+				//	int no = Integer.parseInt(postNo);
+					
+				//	uploadFile.setCsBoardNo(no);
+				//}
+				
 				this.upfileLst.add(uploadFile);
 				result = new ResponseEntity<CSUploadFile>(uploadFile, HttpStatus.OK);
 
@@ -273,7 +282,8 @@ public class CSBoardController {
 		model.addAttribute("csBoard", csPost);
 		model.addAttribute("attachLst", attachLst);
 		
-			return "cs/modifyCSPost";
+		return "cs/modifyCSPost";
+		
 	}
 	
 	

@@ -326,10 +326,6 @@ public class FreeBoardController {
 	public void updateFreeBoard(FreeBoard freeBoard, RedirectAttributes ra) throws Exception {
 		System.out.println(freeBoard.toString() + "자유게시판 수정해");
 		
-		
-
-		
-		
 	}
 
 	@RequestMapping(value = "likeFreeBoard", method = RequestMethod.POST)

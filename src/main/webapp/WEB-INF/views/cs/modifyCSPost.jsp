@@ -11,38 +11,35 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
 
+let delLst = new Array();
+
 function delFile(obj) {
 	
-	let targetFile = ($(obj).parent().attr("id")); // 여기서 undifined 뜸.
-
-	let url = "${ contextPath}/cs/delFile";
-
-	$.ajax({
-		url : url,
-		data : {
-			targetFile : targetFile
-		},
-		dataType : "text", // 수신될 데이터 타입
-		type : "post",
-		success : function(data) {
-			console.log(data);
-			
-			if (data == "success") {
-				console.log(targetFile)
-				$(obj).remove();
-				$('a[href *="' + targetFile + '"]').remove();
-				
-			}
-
-		}
-	});
+	// 내가 몇번째를 선택해서 클릭했는지 알아야함.. - dom 을 이용 (parent의 class name.)
+	// $(obj).parent().attr("class");
+	
+	delLst.push($(obj).siblings("input").val());
+	$(obj).siblings().remove();
+	$(obj).remove();
+	
+	// 확인 눌렀을 때 글 삭제 arr 랑 글 번호 보내주면 됨
+	
+	console.log(delLst);
+	
 }
+
+
 
 function openArea() {
 	$(".fileDrop").toggle();
 }
 
 function savePost(){
+	
+	
+	let postNo = "${csBoard.postNo}";
+	
+	
 	
 	console.log($(".selected").text());
 	console.log($(".selected").data('value'));
@@ -61,35 +58,28 @@ function savePost(){
 	}
 }
 
-function ifchange() {
-	
-	console.log("왜 안되니..")
-	
-}
 
 $(function(){
 	
 	console.log($("#content").val());
-	
-	$(".current").on("change", function() {
-		alert("!")
-	});
-	
+		
 	 $(".fileDrop").on("dropenter dragover", function (evt){
 		evt.preventDefault();
 	});
 	 
+	 // 업로드한 파일 수정
 	 $(".fileDrop").on("drop", function (evt) {
+		 
 		 evt.preventDefault(); // 이벤트가 전파되어 드롭된 파일이 웹브라우저에서 열리는 것을 방지
 		 
 		 let files = evt.originalEvent.dataTransfer.files; // 드랍된 파일을 얻어옴
-		 console.log(files);
+		 
 		 
 		 let formData = new FormData(); // form 객체 생성
+		 
 		 formData.append("upfile", files[0]); // form 객체에 파일 첨부
-		 
+	
 		 let url = "${ contextPath}/cs/uploadFile";
-		 
 
 		 $.ajax({
 			 url : url,
@@ -110,8 +100,6 @@ $(function(){
                    
 				} else if (data.notImageFileName != null) {
 					// 이미지 파일 아닐 경우
-					
-					
                    let fn = data.notImageFileName.substring(data.notImageFileName.lastIndexOf("/")+1);
                    
                    output += "<a href='${ contextPath}/resources/cs_uploads" + data.notImageFileName + "'>"+ fn + "</a>";
@@ -126,6 +114,9 @@ $(function(){
 			}			 
 		 });
 	});
+	 
+	 
+	 
 });
 </script>
 <style>
@@ -206,25 +197,28 @@ $(function(){
 					<div class="fileDrop">
 						<div class="fileContent">이 영역에 업로드 할 파일을 드래그 드롭 해 주세요!</div>
 						<div class="fDropList">
-		   	<c:if test="${attachLst != null}">
-			<div class="mb-3" style="float: left; margin-top: 20px;">
-			<c:forEach var="file" items="${attachLst }">
+		   		<c:if test="${attachLst != null}">
+				<div class="mb-3" style="float: left; margin-top: 20px;">
+				<c:forEach var="file" items="${attachLst }" varStatus="status" >
+					<span class ="attachBox${status.index}">
+						<input type = "hidden"  id = "attachObj${status.index}" value="${file.originFile }" />
 						<c:if test="${file.thumbnailFile != null }">
 							<img src="/resources/cs_uploads${file.thumbnailFile }" />
 							<img src ='${ contextPath}/resources/img/board/close.png' onclick='delFile(this);'/>
 						</c:if>
 						<c:if test="${file.notImageFile != null}">
-						<a href="/resources/cs_uploads${file.notImageFile }"
-							class="notImgFile"></a>
+							<a href="/resources/cs_uploads${file.notImageFile }"
+							class="notImgFile">${file.notImageFile}</a>
+							<img src ='${ contextPath}/resources/img/board/close.png' onclick='delFile(this);'/>
 						</c:if>
-			</c:forEach>
+					</span>
+				</c:forEach>
 				</div>
-			</c:if>
-						</div>
+				</c:if>
 					</div>
-					
+					</div>					
 				</div>
-
+				<input type = "hidden" value = "" name = "cs_no">
 				<div class="btns">
 					<button class="button button-postComment button--active"
 						type="button" onclick="savePost();">저장</button>
