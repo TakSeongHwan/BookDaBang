@@ -351,6 +351,13 @@ overflow-y:scroll;
                         <!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->
                    </ul>
             </li>
+            	
+              	<c:if test="${loginMember.isAdmin == 'Y' }">
+                    <li class="nav-item"><a class="nav-link" href="${contextPath }/admin">관리자페이지</a></li>
+              	</c:if>
+              	
+            
+
             </ul>
 <!-- 마이페이지 -->
             <ul class="nav-shop">

@@ -22,8 +22,12 @@ $(function(){
 		location.href="${contextPath }/admin/adminStatistics/adminProductStatistics?pageNo=${param.pageNo}&sortType="+$("#sortType").val();
 		
 	});
+	if(${member.isAdmin != 'Y'}){
+		alert("잘못된 접근입니다!");
+		location.href=history.back();
+	}
 	
-})
+});
 
 </script>
 

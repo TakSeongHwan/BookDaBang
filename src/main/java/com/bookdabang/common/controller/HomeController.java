@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,11 +100,16 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value="admin", method=RequestMethod.GET)
-	public String exam2(Model m) {
+	public String exam2(Model m, HttpServletRequest request) {
+		
+		String sessionId = request.getSession().getId();
+		System.out.println(sessionId);
 		
 		try {
+			MemberVO member = service.findLoginSess(sessionId);
 			List<ProductVO> list = cService.getLessStock();
 			m.addAttribute("product",list);
+			m.addAttribute("member",member);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
