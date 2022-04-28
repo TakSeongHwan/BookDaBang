@@ -31,22 +31,43 @@
 $(function() {
 	console.log("${sessionId}");
 	console.log("${ipAddr}");
-    $.ajax({
-        url :"/userCart/loginCart",
-        type: "post",
-        success: function(data){
-            console.log(data);
-        }
-    });
-    $.ajax({
+	loginCart();
+    cartCount();
+    orderCheck();
+});
+function orderCheck(){
+	let queryString = location.href;
+	queryString = queryString.split("?")[1];
+	if(queryString != null){
+		queryString = queryString.split("orderBundle=")[1];
+		if(queryString != null){
+			queryString = queryString.split("&")[0];
+			if(queryString !="" && "${sessionId}" == ""){
+				alert("주문하신 주문 번들은 "+queryString+"입니다.");
+			}
+		}
+	}
+	
+}
+function loginCart(){
+	if("${sessionId}" != ""){
+		$.ajax({
+	        url :"/userCart/loginCart",
+	        type: "post",
+	        success: function(data){
+	        }
+	    });	
+	}
+}
+function cartCount(){
+	$.ajax({
         url: "/userCart/count",
         type: "GET",
         success: function(data){
-            console.log(data);
             $("#cntCart").text(data);
         }
     });
-})
+}
 
 function loginOrNot() {
 	// 세션 아이디 가져오란다.

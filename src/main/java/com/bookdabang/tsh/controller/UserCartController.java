@@ -42,7 +42,8 @@ public class UserCartController {
 	public UserProductService pService;
 	@Inject
 	public LoginService lService;
-
+	
+	// 장바구니 개수 
 	@RequestMapping(value = "/count", method = RequestMethod.GET)
 	public ResponseEntity<Integer> countCart(HttpSession ses) {
 		ResponseEntity<Integer> result = null;
@@ -68,6 +69,7 @@ public class UserCartController {
 		return result;
 	}
 
+	// cartNo로 데이터 가져옴
 	@RequestMapping(value = "/cartByNo", method = RequestMethod.POST)
 	public ResponseEntity<List<CartViewDTO>> getCartByCartNo(@RequestBody List<Integer> cartNo) throws Exception {
 		ResponseEntity<List<CartViewDTO>> result = null;
@@ -88,6 +90,7 @@ public class UserCartController {
 		return result;
 	}
 
+	// 모든 카트 가져옴
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	public ResponseEntity<List<CartViewDTO>> getAllCart(HttpSession ses, String cartsNo) throws Exception {
 		ResponseEntity<List<CartViewDTO>> result = null;
@@ -117,6 +120,7 @@ public class UserCartController {
 		return result;
 	}
 
+	// 카트no로 카트 업데이트
 	@RequestMapping(value = "/{cartNo}", method = RequestMethod.PUT)
 	public ResponseEntity<String> updateCart(@RequestBody CartProdQttDTO dto) {
 		ResponseEntity<String> result = null;
@@ -132,9 +136,11 @@ public class UserCartController {
 		return result;
 	}
 
+	// cartNo로 카트 삭제
 	@RequestMapping(value = "/{cartNo}", method = RequestMethod.DELETE)
-	public ResponseEntity<String> deleteCart(@PathVariable("rno") int cartNo) {
+	public ResponseEntity<String> deleteCart(@PathVariable("cartNo") int cartNo) {
 		ResponseEntity<String> result = null;
+		System.out.println(cartNo);
 		try {
 			if (cService.deleteCart(cartNo) == 1) {
 				result = new ResponseEntity<String>("success", HttpStatus.OK);
@@ -147,6 +153,7 @@ public class UserCartController {
 		return result;
 	}
 
+	// 카트 insert
 	@RequestMapping(value = "/addCart", method = RequestMethod.POST)
 	public ResponseEntity<String> insertCart(int productNo,int productQtt,HttpSession ses) {
 		ResponseEntity<String> result = null;
@@ -177,6 +184,7 @@ public class UserCartController {
 		return result;
 	}
 	
+	// 비로그인 장바구니 로그인 장바구니로 update
 	@RequestMapping(value = "/loginCart", method = RequestMethod.POST)
 	public ResponseEntity<String> loginCart(HttpSession ses){
 		ResponseEntity<String> result = null;
@@ -190,7 +198,6 @@ public class UserCartController {
 				MemberVO m = lService.findLoginSess(sessionId);
 				CartSelectDTO dto = new CartSelectDTO(m.getUserId(), ipAddr);
 				if (cService.loginCart(dto) == 1) {
-					
 					result = new ResponseEntity<String>("success", HttpStatus.OK);
 				}
 			}else {

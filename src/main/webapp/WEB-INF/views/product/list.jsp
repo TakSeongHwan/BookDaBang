@@ -10,7 +10,41 @@
 <script>
 	let cno = 0;
 	let sort = 0;
-	
+	function insertCart(no){
+		let url = "${contextPath}/userCart/addCart"
+		$.ajax({
+			url : url,
+			type : "post",
+			data : {
+				productNo : no,
+				productQtt : 1
+			},
+			success : function(data) {
+				console.log(data);
+				cartCount();
+			},
+			error : function(data){
+				console.log(data);
+			}
+		});
+	}
+	function goOrder(no){
+		let url = "${contextPath}/userCart/addCart"
+		$.ajax({
+			url : url,
+			type : "post",
+			data : {
+				productNo : no,
+				productQtt : 1
+			},
+			success : function(data) {
+				location.href = "${contextPath}/order/checkOut"
+			},
+			error : function(data){
+				console.log(data);
+			}
+		});
+	}
 	$(function() {
 		priceReplace();
 		

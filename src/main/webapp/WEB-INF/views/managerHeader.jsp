@@ -190,18 +190,18 @@ $(document).ready(function() {
                      </a></li>
                   </ul></li>
                <li class="menu-item"><a href="javascript:void(0);"
-                  class="menu-link menu-toggle" onclick="location.href='${contextPath}/prodManager/listAllofQnA'"> <i
+                  class="menu-link menu-toggle"> <i
                      class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-                     <div data-i18n="Authentications">상품 QnA</div>
+                     <div data-i18n="Authentications">상품 리뷰/Q&A</div>
                </a>
                   <ul class="menu-sub">
                      <li class="menu-item"><a href="auth-login-basic.html"
                         class="menu-link" target="_blank">
-                           <div data-i18n="Basic">Login</div>
+                           <div data-i18n="Basic">상품 리뷰</div>
                      </a></li>
                      <li class="menu-item"><a href="auth-register-basic.html"
-                        class="menu-link" target="_blank">
-                           <div data-i18n="Basic">Register</div>
+                        class="menu-link" target="_blank" onclick="location.href='${contextPath}/prodManager/listAllofQnA'">
+                           <div data-i18n="Basic">Q&A</div>
                      </a></li>
                      <li class="menu-item"><a
                         href="auth-forgot-password-basic.html" class="menu-link"
@@ -219,11 +219,37 @@ $(document).ready(function() {
                         class="menu-link">
                            <div data-i18n="Error">Error</div>
                      </a></li>
+                     
+                     
+                     
                      <li class="menu-item"><a
                         href="pages-misc-under-maintenance.html" class="menu-link">
                            <div data-i18n="Under Maintenance">Under Maintenance</div>
                      </a></li>
                   </ul></li>
+
+                  <li class="menu-item"><a href="javascript:void(0);"
+                  class="menu-link menu-toggle"> <i
+                     class="menu-icon tf-icons bx bx-detail"></i>
+                     <div data-i18n="Misc">자유게시판</div>
+               </a>
+                  <ul class="menu-sub">
+                     <li class="menu-item"><a href="${contextPath}/board/removeAllfreeBoard"
+                        class="menu-link">
+                           <div data-i18n="Error">삭제게시판</div>
+                     </a></li>
+                     <li class="menu-item"><a
+                        href="${contextPath}/board/listAllReportBoard"" class="menu-link">
+                           <div data-i18n="Under Maintenance">신고게시판</div>
+                     </a></li>
+                     <li class="menu-item"><a
+                        href="${contextPath}/board/adminFreeBoard" class="menu-link">
+                           <div data-i18n="Under Maintenance">자유게시판관리</div>
+                     </a></li>
+                  </ul></li>
+                  
+                  
+
                  <li class="menu-header small text-uppercase"><span
                   class="menu-header-text">주문관리</span></li>
                <li class="menu-item"><a href="javascript:void(0);"
@@ -246,6 +272,7 @@ $(document).ready(function() {
                            <div data-i18n="Connections">Connections</div>
                      </a></li>
                   </ul></li>
+
                <!-- Components -->
                <li class="menu-header small text-uppercase"><span
                   class="menu-header-text">Components</span></li>

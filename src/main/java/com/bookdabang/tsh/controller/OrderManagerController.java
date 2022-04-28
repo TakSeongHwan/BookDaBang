@@ -33,10 +33,12 @@ public class OrderManagerController {
 	
 
 	@RequestMapping(value = "/getAll/{pageno}",method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> getAllorder(Model model, @ModelAttribute SearchCriteria sc,
+	public ResponseEntity<Map<String, Object>> getAllorder(Model model, @RequestBody SearchCriteria sc,
 			@PathVariable("pageno") int pageno) {
 		ResponseEntity<Map<String, Object>> result = null;
-		System.out.println(sc);
+		if(sc.getOrderState() == 0 && sc.getConfirm() == "") {
+			sc.setAll(true);
+		}
 		Map<String, Object> map = null;
 		try {
 			map = oservice.selectAllOrder(sc, pageno);
@@ -75,7 +77,13 @@ public class OrderManagerController {
 	public ResponseEntity<String> updateConfirm(@RequestBody String confirm ,@PathVariable("orderNo") int orderNo){
 		ResponseEntity<String> result = null;
 		confirm = confirm.split("=")[1];
-		System.out.println(confirm);
+		System.out.println(orderNo + " " + confirm);
+		try {
+			oservice.updateOrderCofirm(orderNo,confirm);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		result = new ResponseEntity<String>("success",HttpStatus.OK);
 		return result;
 	}
