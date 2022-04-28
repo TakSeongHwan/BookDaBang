@@ -21,6 +21,7 @@ import com.bookdabang.lhs.domain.CategoryTotalSales;
 import com.bookdabang.lhs.domain.RecentBestSeller;
 import com.bookdabang.lhs.domain.SalesChartDetail;
 import com.bookdabang.lhs.domain.SalesDataDetail;
+import com.bookdabang.lhs.domain.SalesDataWithDate;
 import com.bookdabang.lhs.domain.StartDateEndDate;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 import com.bookdabang.lhs.persistence.ChartDAO;
@@ -157,6 +158,9 @@ public class ChartServiceImpl implements ChartService {
 	
 		if(scd.getSearchType().equals("age")) {
 			Map<String,Integer> ageMap = new HashMap<String, Integer>();
+			Map<String,Object> result = new HashMap<String, Object>();
+			Map<String,Object> repackMap = new HashMap<String, Object>();
+			
 			ageMap.put("ten", 10);
 			ageMap.put("twent", 20);
 			ageMap.put("thirt",30);
@@ -168,8 +172,23 @@ public class ChartServiceImpl implements ChartService {
 			
 			dtoMap.put("SalesChartDetail", scd);
 			dtoMap.put("ageMap",ageMap);
-			Map<String,Object> result = chartDAO.getDetailChartAge(dtoMap);
 
+			Map<String,Object> resultMap = chartDAO.getDetailChartAge(dtoMap);
+			
+			for(int i = 0; i < resultMap.size(); i++) {
+				System.out.println((i+1)*10);
+				String key = (i+1)*10+"";
+			
+				List<SalesDataDetail> list = (List<SalesDataDetail>)resultMap.get(key);
+				if(list.isEmpty()) {
+					list = null;
+				}
+				repackMap.put(key,list);
+				
+			}
+			System.out.println(repackMap);
+			
+			result = repackMap;
 			map.put("ageResult",result);
 			
 		}else if(scd.getSearchType().equals("category")) {
@@ -178,13 +197,33 @@ public class ChartServiceImpl implements ChartService {
 			
 		}else if(scd.getSearchType().equals("gender")) {
 			Map<String,String> genderMap = new HashMap<String, String>();
+			Map<String,Object> repackMap = new HashMap<String, Object>();
 			
 			genderMap.put("male", "male");
 			genderMap.put("female", "female");
 			
 			dtoMap.put("SalesChartDetail", scd);
 			dtoMap.put("genderMap",genderMap);
-			map.put("genderResult",chartDAO.getDetailChartGender(dtoMap));
+			
+			Map<String,Object> resultMap = chartDAO.getDetailChartGender(dtoMap);
+				String key1 = "male";
+				String key2 = "female";
+			
+				List<SalesDataDetail> list1 = (List<SalesDataDetail>)resultMap.get(key1);
+				List<SalesDataDetail> list2 = (List<SalesDataDetail>)resultMap.get(key2);
+				if(list1.isEmpty()) {
+					list1 = null;
+				}
+				if(list2.isEmpty()) {
+					list2 = null;
+				}
+				repackMap.put(key1,list1);
+				repackMap.put(key2,list2);
+		
+			System.out.println(repackMap);
+			
+			
+			map.put("genderResult",repackMap);
 			
 		}
 		
@@ -196,9 +235,27 @@ public class ChartServiceImpl implements ChartService {
 	}
 
 	@Override
-	public List<VisitorCountWithDateFormat> getVisitorDetailChart(StartDateEndDate sded) throws Exception {
+	public List<VisitorCountWithDateFormat> getVisitorDetailChart(SalesChartDetail scd) throws Exception {
 		// TODO Auto-generated method stub
-		return chartDAO.getVisitorDetailChart(sded);
+		return chartDAO.getVisitorDetailChart(scd);
+	}
+
+	@Override
+	public int getAllSalesData() throws Exception {
+		// TODO Auto-generated method stub
+		return chartDAO.getAllSalesData();
+	}
+
+	@Override
+	public float getBookSalesMonth() throws Exception {
+		// TODO Auto-generated method stub
+		return chartDAO.getBookSalesMonth();
+	}
+
+	@Override
+	public List<SalesDataWithDate> periodSalesDetail(StartDateEndDate sded) throws Exception {
+
+		return chartDAO.periodSalesDetail(sded);
 	}
 
 }

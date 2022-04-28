@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.ProdOrder;
 import com.bookdabang.tsh.domain.OrderDTO;
+import com.bookdabang.tsh.domain.OrderViewDTO;
 import com.bookdabang.tsh.etc.SearchCriteria;
 @Repository
 public class OrderDAOImpl implements OrderDAO {
@@ -33,9 +34,12 @@ public class OrderDAOImpl implements OrderDAO {
 	}
 
 	@Override
-	public int updateOrderCofirm(int orderNo) throws Exception {
+	public int updateOrderCofirm(int orderNo,String confirm) throws Exception {
 		// TODO Auto-generated method stub
-		return ses.update(ns+".updateOrderCofirm", orderNo);
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("orderNo", orderNo);
+		param.put("confirm", confirm);
+		return ses.update(ns+".updateOrderCofirm", param);
 	}
 
 	@Override
@@ -59,6 +63,9 @@ public class OrderDAOImpl implements OrderDAO {
 		param.put("searchWord", sc.getSearchWord());
 		param.put("startSellDate", sc.getStartSellDate());
 		param.put("endSellDate", sc.getEndSellDate());
+		param.put("orderState",sc.getOrderState());
+		param.put("confirm",sc.getConfirm());
+		param.put("all",sc.isAll());
 		return ses.selectList(ns + ".orderView", param);
 	}
 
@@ -73,7 +80,30 @@ public class OrderDAOImpl implements OrderDAO {
 
 	@Override
 	public int getNextOrderNo() throws Exception {
+		if(ses.selectOne(ns+".getNextOrderNo") == null) {
+			return 1;
+		}
 		return ses.selectOne(ns+".getNextOrderNo");
+	}
+
+	@Override
+	public List<OrderViewDTO> orderStatus(String userId,PagingInfo pi) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("userId",userId);
+		param.put("startNum",pi.getStartNum() );
+		param.put("postPerPage",pi.getPostPerPage());
+		return ses.selectList(ns+".orderStatus", param);
+	}
+
+	@Override
+	public List<OrderViewDTO> orderCheck(ProdOrder po) throws Exception {
+		return ses.selectList(ns+".orderCheck",po);
+	}
+
+	@Override
+	public int orderStatusCnt(String userId) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + ".orderStatusCnt",userId);
 	}
 	
 	

@@ -13,6 +13,7 @@ import com.bookdabang.lhs.domain.CategoryTotalSales;
 import com.bookdabang.lhs.domain.RecentBestSeller;
 import com.bookdabang.lhs.domain.SalesChartDetail;
 import com.bookdabang.lhs.domain.SalesDataDetail;
+import com.bookdabang.lhs.domain.SalesDataWithDate;
 import com.bookdabang.lhs.domain.StartDateEndDate;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 
@@ -52,7 +53,13 @@ public interface ChartDAO {
 
 	public Map<String, Object> getDetailChartGender(Map<String, Object> dtoMap) throws Exception;
 
-	public List<VisitorCountWithDateFormat> getVisitorDetailChart(StartDateEndDate sded) throws Exception;
+	public List<VisitorCountWithDateFormat> getVisitorDetailChart(SalesChartDetail scd) throws Exception;
+
+	public int getAllSalesData() throws Exception;
+
+	public float getBookSalesMonth() throws Exception;
+
+	public List<SalesDataWithDate> periodSalesDetail(StartDateEndDate sded) throws Exception;
 
 
 }

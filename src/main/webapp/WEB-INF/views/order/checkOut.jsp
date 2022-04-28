@@ -7,6 +7,7 @@
 <head>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js" type="text/javascript"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -32,27 +33,26 @@
 <script>
 	let addressNo = 0;
 	let cartsNo = "";
+	let title = "";
+	let loginMem = "";
+	let total = 0;
+	let IMP = window.IMP;
+    IMP.init("imp11845751");
 	function proceedToPay() {
 		let addr = $("#address");
-		console.log($("#first").val())
-		console.log(address.value)
-		console.log($("#f-option5").prop("checked"))
-		console.log($("#f-option6").prop("checked"))
-		console.log(telValidator($("#phoneNumber").val()));
 		if ($("#first").val().length > 0 && address.value != "") {
 			if (telValidator($("#phoneNumber").val())) {
 				if ($("#f-option5").prop("checked")
 						&& $("#f-option6").prop("checked")) {
 					if ("${sessionId}".length < 1) {
-						console.log($("#orderPwd").val())
 						if ($("#orderPwd").val() == "") {
 							alert("주문 비밀번호를 입력해주세요")
 							return;
 						} else {
-							insertOrder();
+							requestPay();
 						}
 					} else {
-						insertOrder();
+						requestPay();
 					}
 				} else {
 					alert("필수 동의를 해주세요");
@@ -82,6 +82,59 @@
 			$("#pwdDiv").append(output);
 		}
 	}
+	function requestPay() {
+		if(loginMem != ""){
+			IMP.request_pay({ // param
+		          pg: "html5_inicis",
+		          pay_method: "card",
+		          merchant_uid: "merchant_"+new Date().getTime,
+		          name : title,
+		          amount: total,
+		          buyer_email: loginMem.userEmail,
+		          buyer_name: loginMem.userName,
+		          buyer_tel: loginMem.phoneNum,
+		          buyer_addr: document.getElementById('address').value,
+		          buyer_postcode: document.getElementById('postcode').value
+		      }, function (rsp) {
+		    	  if(rsp.success){
+		    		  msg += '고유ID : ' + rsp.imp_uid;
+		    	      msg += '상점 거래ID : ' + rsp.merchant_uid;
+		    	      msg += '결제 금액 : ' + rsp.paid_amount;
+		    	      msg += '카드 승인번호 : ' + rsp.apply_num;
+		    		  alert("승인");
+		    		  insertOrder();
+		    	  }else{
+		    		  alert("실패");
+		    		  insertOrder();
+		    	  }
+		      });
+		}else{
+			IMP.request_pay({ // param
+		          pg: "html5_inicis",
+		          pay_method: "card",
+		          merchant_uid: "merchant_"+new Date().getTime,
+		          name : title,
+		          amount: total,
+		          buyer_name: document.getElementById('first').value,
+		          buyer_tel: document.getElementById('phoneNumber').value,
+		          buyer_addr: document.getElementById('address').value,
+		          buyer_postcode: document.getElementById('postcode').value
+		      }, function (rsp) {
+		    	  if(rsp.success){
+		    		  msg += '고유ID : ' + rsp.imp_uid;
+		    	      msg += '상점 거래ID : ' + rsp.merchant_uid;
+		    	      msg += '결제 금액 : ' + rsp.paid_amount;
+		    	      msg += '카드 승인번호 : ' + rsp.apply_num;
+		    		  alert("승인");
+		    		  insertOrder();
+		    	  }else{
+		    		  alert("실패");
+		    		  insertOrder();
+		    	  }
+		      });
+		}
+	      
+	    }
 
 	function insertOrder() {
 		let orderPwd = $("#orderPwd").val();
@@ -121,11 +174,15 @@
 
 	function getAddress() {
 		$.ajax({
-			url : "/address/all",
+			url : "${contextPath}/address/all",
 			type : "GET",
 			success : function(data) {
-				console.log(data);
-				parseAddress(data);
+				if(data != ""){
+					loginMem = data.loginMember;
+					if(data.addr != null){
+						parseAddress(data.addr);	
+					}
+				}
 			},
 			error : function(data) {
 			}
@@ -151,9 +208,8 @@
 			cartNo.push("${item1}")
 		</c:forEach>
 		cartNo = JSON.stringify(cartNo);
-		console.log(cartNo);
 		$.ajax({
-			url : "/userCart/cartByNo",
+			url : "${contextPath}/userCart/cartByNo",
 			type : "POST",
 			data : cartNo,
 			dataType: "json",
@@ -166,16 +222,16 @@
 	}
 
 	function parseOrderInfo(data) {
-		console.log(data);
 		sum = 0;
 		let output = '<li><h4>Product <span>Total</span></h4></li>';
 		$
 				.each(
 						data,
 						function(i, e) {
-							console.log(e);
+							
+							title += e.title+" ";
 							cartsNo += e.cartNo + ",";
-							console.log(cartsNo);
+							
 							output += '<li><div style="float:left; width:150px; height:25px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">'
 									+ e.title
 									+ '</div><span class="middle" style="margin-left:30px; width:30px; display:inline-block;">x'
@@ -189,29 +245,21 @@
 		output += '</ul><ul class="list list_2"><li><a href="javascript:void(0)">Total <span>'
 				+ sum.toLocaleString() + '원</span></a></li>'
 		$("#output").append(output);
+		total = sum;
 	}
 
 	function daumPostcode() {
 		new daum.Postcode({
 			oncomplete : function(data) {
-				// 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
-
-				// 각 주소의 노출 규칙에 따라 주소를 조합한다.
-				// 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
-				var addr = ''; // 주소 변수
-				
-
+				let addr = ''; // 주소 변수
 				//사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
 				if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
 					addr = data.roadAddress;
 				} else { // 사용자가 지번 주소를 선택했을 경우(J)
 					addr = data.jibunAddress;
 				}
-
-				// 우편번호와 주소 정보를 해당 필드에 넣는다.
 				document.getElementById('postcode').value = data.zonecode;
 				document.getElementById("address").value = addr;
-				// 커서를 상세주소 필드로 이동한다.
 				document.getElementById("detailAddress").focus();
 			}
 		}).open();

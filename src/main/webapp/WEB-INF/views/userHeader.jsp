@@ -31,22 +31,43 @@
 $(function() {
 	console.log("${sessionId}");
 	console.log("${ipAddr}");
-    $.ajax({
-        url :"/userCart/loginCart",
-        type: "post",
-        success: function(data){
-            console.log(data);
-        }
-    });
-    $.ajax({
+	loginCart();
+    cartCount();
+    orderCheck();
+});
+function orderCheck(){
+	let queryString = location.href;
+	queryString = queryString.split("?")[1];
+	if(queryString != null){
+		queryString = queryString.split("orderBundle=")[1];
+		if(queryString != null){
+			queryString = queryString.split("&")[0];
+			if(queryString !="" && "${sessionId}" == ""){
+				alert("주문하신 주문 번들은 "+queryString+"입니다.");
+			}
+		}
+	}
+	
+}
+function loginCart(){
+	if("${sessionId}" != ""){
+		$.ajax({
+	        url :"/userCart/loginCart",
+	        type: "post",
+	        success: function(data){
+	        }
+	    });	
+	}
+}
+function cartCount(){
+	$.ajax({
         url: "/userCart/count",
         type: "GET",
         success: function(data){
-            console.log(data);
             $("#cntCart").text(data);
         }
     });
-})
+}
 
 function loginOrNot() {
 	// 세션 아이디 가져오란다.
@@ -330,6 +351,13 @@ overflow-y:scroll;
                         <!-- <li class="nav-item"><a class="nav-link" href="single-blog.html"></a></li>  -->
                    </ul>
             </li>
+            	
+              	<c:if test="${loginMember.isAdmin == 'Y' }">
+                    <li class="nav-item"><a class="nav-link" href="${contextPath }/admin">관리자페이지</a></li>
+              	</c:if>
+              	
+            
+
             </ul>
 <!-- 마이페이지 -->
             <ul class="nav-shop">
