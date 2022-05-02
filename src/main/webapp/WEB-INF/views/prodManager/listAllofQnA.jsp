@@ -20,6 +20,7 @@
 			let index = $(".answerBtn").index(this);
 			let questionNo = $(".questionNo").eq(index).text();
 			let productNo = $(".productNo").eq(index).text();
+			let writer = $(".writer").eq(index).text();
 			$(".modal-title").html(questionNo + "번 글 답변");
 
 			$(document).on("click", "#insertAnswer", function() {
@@ -31,6 +32,7 @@
 					question_no : questionNo,
 					product_no : productNo,
 					content : answerContent,
+					writer : writer
 					
 				}
 
@@ -42,11 +44,30 @@
 					data : answer,
 					success : function(data) {
 						if (data == "success") {
-							alert("정상적으로 등록되었습니다");
-							location.reload();
+							
+							$(".alert").fadeIn(400);
+							$(".alert").html("답변이 정상적으로 등록되었습니다.");
+							setTimeout(function() {
+								$(".alert").fadeOut(500);	
+							},700);
+							
+							setTimeout(function() {
+								location.reload();
+							},1300);
+							
 						} else {
-							alert("등록 안됨");
-							location.reload();
+							
+							$(".alert").fadeIn(400);
+							$(".alert").html("답변이 등록되지 않았습니다.");
+							setTimeout(function() {
+								$(".alert").fadeOut(500);	
+							},700);
+							
+							setTimeout(function() {
+								location.reload();
+							},1300);
+							
+							
 						}
 					}
 
@@ -96,7 +117,7 @@
 									+ '</td>';
 							output += '<td style ="text-align :left">'
 									+ e.content + '</td>';
-							output += '<td>' + e.writer + '</td>';
+							output += '<td class="writer">' + e.writer + '</td>';
 							writeDate = new Date(
 									+new Date(e.write_date) + 3240 * 10000)
 									.toISOString().split("T")[0];
@@ -237,6 +258,18 @@
 	width: 300px;
 	margin: 0 auto;
 }
+
+.alert {
+	position: absolute;
+	width: 100%;
+	margin: 0 auto;
+	z-index: 3000;
+	hegiht: -50%;
+	opacity: 0.9;
+	text-align: center;
+	padding: 10px;
+	
+}
 </style>
 </head>
 <body>
@@ -323,9 +356,11 @@
 			</div>
 		</div>
 	</div>
-	<button onclick="location.href='/prodManager/login'">
 		
 	</button>
+	<div class="alert alert-primary" style="width:300px;  height:70px;position: fixed; margin: 0 auto; top:10%; left : 45%; line-height: 45px; display: none;">
+    
+  </div>
 	<jsp:include page="../managerFooter.jsp"></jsp:include>
 
 </body>

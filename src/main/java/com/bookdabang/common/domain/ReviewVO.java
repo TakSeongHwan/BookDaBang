@@ -106,9 +106,9 @@ public class ReviewVO {
 
 	@Override
 	public String toString() {
-		return "Review [reviewNo=" + reviewNo + ", title=" + title + ", writer=" + writer + ", writedate=" + writedate
+		return "ReviewVO [reviewNo=" + reviewNo + ", title=" + title + ", writer=" + writer + ", writedate=" + writedate
 				+ ", content=" + content + ", grade=" + grade + ", recommendNum=" + recommendNum + ", productNo="
-				+ productNo + ", commentNum=" + commentNum + "]";
+				+ productNo + ", commentNum=" + commentNum  + "]";
 	}
 	
 }

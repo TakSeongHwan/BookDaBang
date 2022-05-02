@@ -196,7 +196,6 @@ public class MemberServiceImpl implements MemberService {
 		PagingInfo paging = new PagingInfo();
 		paging.setTotalPostCnt(totalPostCnt);
 		paging.setTotalPage(paging.getTotalPostCnt());
-
 		// 현재 페이지에서 출력 시작할 글번호
 		paging.setStartNum(pageNo);
 		// 전체 페이징 블럭 수

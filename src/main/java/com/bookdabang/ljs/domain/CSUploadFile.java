@@ -1,42 +1,43 @@
 package com.bookdabang.ljs.domain;
 
 public class CSUploadFile {
-	private String originalFileName; // 원본 파일의 이름
-	private String thumbnailFileName; // 이미지 파일일 경우 썸네일 이미지 파일의 이름
-	private String notImageFileName; // 이미지 파일이 아닌 경우의 파일 이름.
 	
-	public CSUploadFile(String originalFileName, String thumbnailFileName, String notImageFileName) {
-		super();
-		this.originalFileName = originalFileName;
-		this.thumbnailFileName = thumbnailFileName;
-		this.notImageFileName = notImageFileName;
+	private int csBoardNo;
+	private String originFile; // 원본 파일의 이름
+	private String thumbnailFile; // 이미지 파일일 경우 썸네일 이미지 파일의 이름
+	private String notImageFile; // 이미지 파일이 아닌 경우의 파일 이름.\
+	
+	public int getCsBoardNo() {
+		return csBoardNo;
 	}
-	public CSUploadFile() {
-		// TODO Auto-generated constructor stub
+	public void setCsBoardNo(int csBoardNo) {
+		this.csBoardNo = csBoardNo;
 	}
-	public String getOriginalFileName() {
-		return originalFileName;
+	public String getOriginFile() {
+		return originFile;
 	}
-	public void setOriginalFileName(String originalFileName) {
-		this.originalFileName = originalFileName;
+	public void setOriginFile(String originFile) {
+		this.originFile = originFile;
 	}
-	public String getThumbnailFileName() {
-		return thumbnailFileName;
+	public String getThumbnailFile() {
+		return thumbnailFile;
 	}
-	public void setThumbnailFileName(String thumbnailFileName) {
-		this.thumbnailFileName = thumbnailFileName;
+	public void setThumbnailFile(String thumbnailFile) {
+		this.thumbnailFile = thumbnailFile;
 	}
-	public String getNotImageFileName() {
-		return notImageFileName;
+	public String getNotImageFile() {
+		return notImageFile;
 	}
-	public void setNotImageFileName(String notImageFileName) {
-		this.notImageFileName = notImageFileName;
+	public void setNotImageFile(String notImageFile) {
+		this.notImageFile = notImageFile;
 	}
 	@Override
 	public String toString() {
-		return "UploadFile [originalFileName=" + originalFileName + ", thumbnailFileName=" + thumbnailFileName
-				+ ", notImageFileName=" + notImageFileName + "]";
+		return "CSUploadFile [csBoardNo=" + csBoardNo + ", originFile=" + originFile + ", thumbnailFile="
+				+ thumbnailFile + ", notImageFile=" + notImageFile + "]";
 	}
+	
+	
 	
 	
 }

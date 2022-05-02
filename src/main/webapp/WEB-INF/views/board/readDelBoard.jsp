@@ -11,7 +11,9 @@
 
 <script>
 	function restore(boardno) {
-		console.log(boardno);
+		//console.log(boardno);
+		if(confirm(boardno + '번글을 복구하시겠습니까?') == true){
+		
 		let url = "/board/restoreBoard?boardno="+ boardno;
 		
 		$.ajax({
@@ -21,17 +23,28 @@
 			success : function(data) {
 				console.log(data)
 				if(data == "success"){
-					alert("복구")
+					alert("게시물이 복구되었습니다");
+					
+					
+					
+					location.href='/board/removeAllfreeBoard';
 				}else if(data == "fail") { 
 					alert("실패");
 				}
 			}
 		});
+		}
 		
 		
 		
 	}
 </script>
+<style type="text/css">
+.container{
+margin-top: 40px;
+}
+
+</style>
 <title>Insert title here</title>
 </head>
 <body>
@@ -39,27 +52,46 @@
 
 	<div class="container">
 		<div class="comment-form">
-			<h4>${freeBoard.boardno}</h4>
 			<div class="mb-3 mt-3">
-				<input type="text" class="form-control" id="title" name="title"
-					readonly="readonly" value=" 제목 : ${freeBoard.title}">
+				<div class="card mb-4">
+					<h4 class="card-header">${freeBoard.boardno}</h4>
+					<div class="card-body demo-vertical-spacing demo-only-element">
+						<div class="input-group">
+							<span class="input-group-text" id="basic-addon11">제목</span> <input
+								type="text" class="form-control" placeholder="Username"
+								aria-label="title" aria-describedby="basic-addon11"
+								value='${freeBoard.title}' readonly
+								style="background-color: white;" />
+
+						</div>
+						<div class="mb-3">
+							<input type="text" class="form-control" id="writer" name="writer"
+								readonly="readonly" value="작성자  : ${freeBoard.writer}"
+								style="background-color: white;" />
+						</div>
+						<div>
+							<textarea class="form-control" rows="10" id="content"
+								name="content" readonly="readonly"
+								style="background-color: white;">내용  : ${freeBoard.content }</textarea>
+						</div>
+
+					</div>
+				</div>
 			</div>
-			<div class="mb-3">
-				<input type="text" class="form-control" id="writer" name="writer"
-					readonly="readonly" value="작성자  : ${freeBoard.writer}" />
-			</div>
-			<textarea class="form-control" rows="10" id="content" name="content"
-				readonly="readonly">내용  : ${freeBoard.content }</textarea>
-				
-				
-				 <button type="button" class="btn btn-primary active" style="float: right; margin-top: 20px;" onclick="
-					 restore(${freeBoard.boardno});">게시글 복원</button>
+		</div>
+		<div>
+			<button type="button" class="btn btn-primary active"
+				style="float: right; margin-left: 20px;" onclick="history.back();">목록보기
+			</button>
+			<button type="button" class="btn btn-primary active"
+				style="float: right;" onclick="restore(${freeBoard.boardno});">게시글
+				복원</button>
+
 		</div>
 	</div>
-	
-	
-	
-	
+
+
+
 	<jsp:include page="../managerFooter.jsp"></jsp:include>
 </body>
 </html>

@@ -156,19 +156,44 @@
 					order by end_date asc
 				</if>
 			</if>
-
 		</if>
+		<if test="sortMethod == ''">
+		order by rg_date desc
+		</if>
+		
+		
 		limit #{startNum}, #{postPerPage}
 	</select>
 	
 	<select id="selectProdView" resultType="productVO">
 		select * from product where isbn = #{isbn}
 	</select>
+	<insert id="insertProd">
+		
+		<choose>
+			<when test="end_date == '' and pub_date == ''">
+			insert into product values(0,#{title},#{author},#{price},#{sell_price},#{publisher},#{category_code},#{description},null,#{stock},now(),null,null,#{display_status},0,#{sales_status},0,#{cover},#{detail_description},#{author_introduce},#{index},#{inside_book},#{pisOffdiscription},#{isbn},null)
+			</when>
+			<when test="end_date == ''">
+			insert into product values(0,#{title},#{author},#{price},#{sell_price},#{publisher},#{category_code},#{description},#{pub_date},#{stock},now(),null,null,#{display_status},0,#{sales_status},0,#{cover},#{detail_description},#{author_introduce},#{index},#{inside_book},#{pisOffdiscription},#{isbn},null)	
+			</when>
+			<when test="pub_date == ''">
+			insert into product values(0,#{title},#{author},#{price},#{sell_price},#{publisher},#{category_code},#{description},null,#{stock},now(),timestamp(#{end_date}),null,#{display_status},0,#{sales_status},0,#{cover},#{detail_description},#{author_introduce},#{index},#{inside_book},#{pisOffdiscription},#{isbn},null)
+			</when>
+			<otherwise>
+			insert into product values(0,#{title},#{author},#{price},#{sell_price},#{publisher},#{category_code},#{description},#{pub_date},#{stock},now(),timestamp(#{end_date}),null,#{display_status},0,#{sales_status},0,#{cover},#{detail_description},#{author_introduce},#{index},#{inside_book},#{pisOffdiscription},#{isbn},null)	
+			</otherwise>
+		</choose>
+	</insert>
 	
 	<update id = "updateProd">
 		update product set price=#{updatePrice}, stock =#{updateStock}, display_status = #{updateDisplay}, sales_status = #{updateSales}, update_date= now()
 		where isbn = #{prodNo}
 	</update>
+	
+	<delete id="deleteProd">
+		delete from product where isbn = #{isbn}
+	</delete>
 	
 	<select id="validationProdNo" resultType="int">
 		select count(*) from product where isbn = #{prodNo}
@@ -208,6 +233,10 @@
 		select max(question_no) from product_qna
 	</select>
 	
+	<select id="getQnAByQuesNo" resultType="String">
+		select pwd from product_qna where question_no = #{question_no}
+	</select>
+	
 	<insert id="insertProdQnA">
 	<choose>
 		<when test="pwd != '' and pwd != null">
@@ -230,19 +259,36 @@
 	
 	
 	<insert id="insertAnswer">
-		insert into product_qna values(0,#{product_no},null,now(), #{content}, 'answer', null,#{question_no},1,1);
+	<choose>
+		<when test="pwd != '' and pwd != null">
+		insert into product_qna values(0,#{product_no},#{writer},now(), #{content}, 'answer',#{pwd},#{question_no},1,1);
+		</when>
+		<otherwise>
+		insert into product_qna values(0,#{product_no},#{writer},now(), #{content}, 'answer', null,#{question_no},1,1);
+		</otherwise>
+		</choose>
 	</insert>
 	<update id="updateAnserStatus">
 		update product_qna set answer_status = 'answer' where question_no = #{question_no}
 	</update>
 	
-	
+	<!-- 마이페이지 QnA -->
+	<select id="showMyQnA" resultType = "ProductQnA">
+		select * from product_qna where writer = #{writer}
+	</select>
 	
 	
 	<!-- 강명진 -->
 	
 	<select id="selectAllProducts" resultType="ProductVO">
-		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes'
+		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' 
+		<if test="cno != 0 and cno != null">
+			and category_code = #{cno} 
+		</if>
+		<if test="searchWord != '' and  searchWord != null">
+			and title like concat('%', #{searchWord}, '%') or author like concat('%', #{searchWord}, '%') or
+			publisher like concat('%', #{searchWord}, '%') 
+		</if>
 		<if test="sort == 1">
 			order by sales_count desc 
 		</if>
@@ -257,39 +303,38 @@
 	
 	<select id="selectCategory" resultType="CategoryVO">
 		select c.*,count(*) as productCount from category c,product p where c.category_code = p.category_code
-		and display_status = 'yes' group by c.category_code
-	</select>
-	
-	<select id="selectProductsByCategory" resultType="ProductVO">
-		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' and
-		category_code = #{cno} 
-		<if test="sort == 1">
-			order by sales_count desc 
+		and display_status = 'yes' 
+		<if test="searchWord != '' and  searchWord != null">
+			and title like concat('%', #{searchWord}, '%') or author like concat('%', #{searchWord}, '%') or
+			publisher like concat('%', #{searchWord}, '%')  
 		</if>
-		<if test="sort == 2">
-			order by pub_date desc 
-		</if>
-		<if test="sort == 3">
-			order by sell_price desc 
-		</if>
-		limit #{startNum},#{postPerPage}
+		group by c.category_code
 	</select>
 	
 	<select id="getTotalPost" resultType="int">
-		select count(*) as totalCnt from product where display_status = 'yes'
-	</select>
-	
-	<select id="getTotalPostByCategory" resultType="int">
-		select count(*) as totalCnt from product where display_status = 'yes' and category_code = #{cno} 
+		select count(*) as totalCnt from product where display_status = 'yes' 
+		<if test="cno != 0 and cno != null">
+			and category_code = #{cno} 
+		</if>
+		<if test="searchWord != '' and  searchWord != null">
+			and title like concat('%', #{searchWord}, '%') or author like concat('%', #{searchWord}, '%') or
+			publisher like concat('%', #{searchWord}, '%') 
+		</if>
 	</select>
 	
 	<select id="selectProduct" resultType="ProductVO">
 		select*from product where product_no = #{prodNo}
 	</select>
 	
-	<select id="selectTopProducts" resultType="ProductVO">
+	<select id="selectTopSaleProducts" resultType="ProductVO">
 		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' and
 		category_code = #{category} order by sales_count desc limit 10
+	</select>
+	
+	<select id="selectTopViewProducts" resultType="ProductVO">
+		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' 
+		and title like concat('%', #{searchWord}, '%') or author like concat('%', #{searchWord}, '%') or 
+		publisher like concat('%', #{searchWord}, '%') order by read_count desc limit 10
 	</select>
 
 </mapper>

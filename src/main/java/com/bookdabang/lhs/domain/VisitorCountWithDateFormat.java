@@ -3,21 +3,21 @@ package com.bookdabang.lhs.domain;
 import java.sql.Timestamp;
 
 public class VisitorCountWithDateFormat {
-	private int monthSort;
+	private String dateSort;
 	private int visitor;
 	public VisitorCountWithDateFormat() {
 		super();
 	}
-	public VisitorCountWithDateFormat(int monthSort, int visitor) {
+	public VisitorCountWithDateFormat(String dateSort, int visitor) {
 		super();
-		this.monthSort = monthSort;
+		this.dateSort = dateSort;
 		this.visitor = visitor;
 	}
-	public int getmonthSort() {
-		return monthSort;
+	public String getDateSort() {
+		return dateSort;
 	}
-	public void setmonthSort(int monthSort) {
-		this.monthSort = monthSort;
+	public void setDateSort(String dateSort) {
+		this.dateSort = dateSort;
 	}
 	public int getVisitor() {
 		return visitor;
@@ -27,7 +27,7 @@ public class VisitorCountWithDateFormat {
 	}
 	@Override
 	public String toString() {
-		return "VisitorCountWithDateFormat [monthSort=" + monthSort + ", visitor=" + visitor + "]";
+		return "VisitorCountWithDateFormat [dateSort=" + dateSort + ", visitor=" + visitor + "]";
 	}
 	
 }	

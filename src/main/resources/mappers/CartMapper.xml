@@ -18,6 +18,20 @@
 		</choose>
 	</select>
 	
+	<!-- productNo 장바구니  출력 -->
+	<select id="getProdCart" resultType="CartVO">
+		select * from cart where
+		<choose>
+			<when test="userId != null">
+				userId = #{userId}
+			</when>
+			<otherwise>
+				ipaddr = #{ipaddr}
+			</otherwise>
+		</choose>
+		and productNo = #{productNo}
+	</select>
+	
 	<!-- 유저가 사지않은 장바구니 개수 출력 -->
 	<select id="countCart" resultType="int">
 		select count(cartNo) as cntCart from cart where
@@ -30,9 +44,23 @@
 			</otherwise>
 		</choose>
 	</select>
+	
 	<!-- 장바구니 가져오기 -->
 	<select id="selectCartByNo" resultType="CartVO">
 		select * from cart where cartNo = #{cartNo}
+	</select>
+	
+	
+	<select id="allCartNo" resultType="int">
+		select cartNo from cart where
+		<choose>
+			<when test="userId != null">
+				userId = #{userId}
+			</when>
+			<otherwise>
+				ipaddr = #{ipaddr}
+			</otherwise>
+		</choose>
 	</select>
 		
 	<!-- 장바구니 상품개수 update -->
@@ -51,7 +79,12 @@
 	
 	<!-- 장바구니 insert -->
 	<insert id="insertCart">
-		insert into cart(userId,ipaddr,productNo,productQtt) values(#{userId},#{ipaddr},#{productNo},#{productQtt})
+		insert into cart(cartNo,userId,ipaddr,productNo,productQtt) values(#{cartNo},#{userId},#{ipaddr},#{productNo},#{productQtt})
 	</insert>
+	
+	<!-- 다음 CartNo -->
+	<select id="nextCartNo" resultType="int">
+		select max(cartNo)+1 from cart
+	</select>
 	
 </mapper>

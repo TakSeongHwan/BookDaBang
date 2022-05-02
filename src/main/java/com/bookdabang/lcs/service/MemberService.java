@@ -31,8 +31,4 @@ public interface MemberService {
 	
 	public boolean delete(String userId) throws Exception;
 
-
-	
-	
-
 }

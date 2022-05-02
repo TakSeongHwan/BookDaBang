@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.Product;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.lhs.service.ChartService;
 import com.bookdabang.ljs.service.LoginService;
@@ -98,7 +99,18 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value="admin", method=RequestMethod.GET)
-	public String exam2() {
+	public String exam2(Model m) {
+		
+		try {
+			List<ProductVO> list = cService.getLessStock();
+			m.addAttribute("product",list);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
 		System.out.println("admin이 호출됨....");
 		return "adminHome";
 	}

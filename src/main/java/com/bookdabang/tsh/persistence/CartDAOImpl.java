@@ -61,6 +61,27 @@ public class CartDAOImpl implements CartDAO {
 		// TODO Auto-generated method stub
 		return ses.update(ns+".loginCart", dto);
 	}
+
+	@Override
+	public CartVO selectProdCart(CartVO cart) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns+".getProdCart", cart);
+	}
+
+	@Override
+	public List<Integer> allCartNo(CartSelectDTO dto) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns+".allCartNo", dto);
+	}
+
+	@Override
+	public int nextCartNo() throws Exception {
+		// TODO Auto-generated method stub
+		if(ses.selectOne(ns+".nextCartNo") == null) {
+			return 1;
+		}
+		return ses.selectOne(ns+".nextCartNo");
+	}
 	
 	
 }

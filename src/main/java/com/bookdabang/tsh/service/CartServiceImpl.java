@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bookdabang.common.domain.CartVO;
 import com.bookdabang.common.domain.ProductVO;
@@ -42,7 +43,19 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public int insertCart(CartVO cart) throws Exception {
 		// TODO Auto-generated method stub
-		return dao.insertCart(cart);
+		CartVO existingCart = dao.selectProdCart(cart);
+		System.out.println(existingCart);
+		System.out.println(cart);
+		int result = 0;
+		if(existingCart != null) {
+			CartProdQttDTO dto = new CartProdQttDTO(existingCart.getCartNo(), existingCart.getProductQtt()+cart.getProductQtt());
+			result = dao.updateCart(dto);
+		}else {
+			cart.setCartNo(dao.nextCartNo());
+			result = dao.insertCart(cart);
+			
+		}
+		return result;
 	}
 
 	@Override
@@ -68,7 +81,21 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public int loginCart(CartSelectDTO dto) throws Exception {
+		CartSelectDTO checkCart = new CartSelectDTO();
+		checkCart.setIpaddr(dto.getIpaddr());
+		List<CartVO> ipLst = dao.getAllCart(checkCart);
+		List<CartVO> idLst = dao.getAllCart(dto);
+		for(CartVO ipCart : ipLst) {
+			for(CartVO idCart : idLst) {
+				if(ipCart.getProductNo() == idCart.getProductNo()) {
+					CartProdQttDTO cd = new CartProdQttDTO(idCart.getCartNo(), idCart.getProductQtt()+ipCart.getProductQtt());
+					dao.updateCart(cd);
+					dao.deleteCart(ipCart.getCartNo());
+				}
+			}
+		}
 		return dao.loginCart(dto);
 	}
 
@@ -82,6 +109,11 @@ public class CartServiceImpl implements CartService {
 			cartView.add(cv);
 		}
 		return cartView;
+	}
+
+	@Override
+	public List<Integer> allCartNo(CartSelectDTO dto) throws Exception {
+		return dao.allCartNo(dto);
 	}
 
 

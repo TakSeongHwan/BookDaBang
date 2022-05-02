@@ -65,14 +65,13 @@
 					url : "/userCart/all",
 					type : "GET",
 					success : function(data) {
-						console.log(data);
 						let output = "";
 						let sum = 0;
 						$
 								.each(
 										data,
 										function(i, e) {
-											output += '<tr><td><input type="hidden" name = "cartNo" value='+e.cartNo+'><input type="checkbox" class="chkbox" onclick="chk();" value="'+e.cartNo+'" name="checkCart" id="'+e.cartNo+'" checked /><div class="media"><div class="d-flex"><img src="'+e.cover+'" style="width: 150px"></div><div class="media-body"><input type="hidden" id= "cartNo'+e.cartNo+'" value="'+e.cartNo+'" /><p>'
+											output += '<tr><td><input type="hidden" name = "cartNo" value='+e.cartNo+'><input type="checkbox" class="chkbox" onclick="chk();" value="'+e.cartNo+'" name="checkCart" id="'+e.cartNo+'" checked /> <div class="media"><div class="d-flex"><img src="'+e.cover+'" style="width: 150px"></div><div class="media-body"><input type="hidden" id= "cartNo'+e.cartNo+'" value="'+e.cartNo+'" /><p>'
 													+ e.title
 													+ '</p></div></div></td><td><h5 id = "sell'+e.cartNo+'">'
 													+ e.sell_price
@@ -84,14 +83,14 @@
 													+ ');"class="reduced items-count" type="button"><i class="lnr lnr-chevron-down">-</i></button></div></td><td><h5 id="total'+e.cartNo+'" class ="total">'
 													+ (parseInt(e.sell_price) * parseInt(e.productQtt))
 															.toLocaleString()
-													+ '원</h5></td></tr><input type="hidden" name="cover" value="'+e.cover+'"/><input type="hidden" name="product_no" value="'+e.product_no+'"/><input type="hidden" name="sell_price" value="'+e.sell_price+'"/><input type="hidden" name="stock" value="'+e.stock+'"/><input type="hidden" name="title" value="'+e.title+'"/>';
+													+ '원</h5></td><td nowrap><button id="delBtn" class="button" onclick="delCart('+e.cartNo+')">삭제</button></td></tr><input type="hidden" name="cover" value="'+e.cover+'"/><input type="hidden" name="product_no" value="'+e.product_no+'"/><input type="hidden" name="sell_price" value="'+e.sell_price+'"/><input type="hidden" name="stock" value="'+e.stock+'"/><input type="hidden" name="title" value="'+e.title+'"/>';
 											sum += parseInt(e.sell_price)
 													* parseInt(e.productQtt);
 										})
 						output += '<tr><td></td><td></td><td><h5>Subtotal</h5></td><td><h5 id="subtotal">'
 								+ sum.toLocaleString()
 								+ '원</h5></td></tr><tr class="out_button_area"><td class="d-none-l"></td><td class=""></td><td></td><td><div class="checkout_btn_inner d-flex" style="float: right"><a class="gray_btn" href="#">계속하기</a> <button class="primary-btn ml-2" type="submit" >결제하기</a></div></td></tr>';
-						$("#output").append(output);
+						$("#output").html(output);
 					}
 				})
 	}
@@ -150,22 +149,29 @@
 		});
 	}
 	function delCart(obj) {
-		let url = "/userCart/7";
+		event.preventDefault();
+		let url = "/userCart/"+obj;
 		$.ajax({
 			url : url,
-			data : {
-				cartNo : 7
+			contentType : "application/json",
+			headers : {
+				"X-HTTP-Method-Override" : "POST"
 			},
 			type : "delete",
 			success : function(data) {
-				console.log(data);
 				if (data == "success") {
-					alert("성공");
+					alert("삭제되었습니다");
+					cartInfo();
 				}
 			}
 		})
 	}
 </script>
+<style type="text/css">
+ #delBtn{
+ 	padding: 12px 12px;
+ }
+</style>
 </head>
 <body>
 	<jsp:include page="../userHeader.jsp"></jsp:include><!-- ================ start banner area ================= -->
@@ -199,6 +205,7 @@
 									<th scope="col">Price</th>
 									<th scope="col">Quantity</th>
 									<th scope="col">Total</th>
+									<th scope="col">drop</th>
 								</tr>
 							</thead>
 							<tbody id="output">

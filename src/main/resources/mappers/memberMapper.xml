@@ -81,4 +81,47 @@
 
 	<!-- -->
 
+	<!-- 마이페이지(이정선)  -->
+	
+		<select id="login" resultType="MemberVO">
+  		select * from member where userid=#{userId} and userPwd = sha1(md5(#{pwd}))
+  	</select>
+  	
+  	<update id = "putLastLogin">
+  		update member set lastLogin = now(), sessionId=#{sessionId} where userId=#{userId}
+  	</update>
+  	
+  	<select id = "loginSession" resultType="MemberVO">
+  		select * from member where sessionId = #{sessionId}
+  	</select>
+  	
+  	<update id = "withdrawMember" >
+  	update member set isDraw = 'Y' where userId=#{userId} 
+  	</update>
+  	
+	<select id = "pointCheck" resultType="MemberPoint">
+	select * from memberpoint where userid = #{userId} and point >0 order by pointWhen desc
+	</select>
+
+	<select id = "showRecentSeenProd" resultType ="RecentSeenProd">
+	select p.title, p.cover, r.* from product p join recentSeenProd r on (p.product_no = r.lastSeenProd) where r.userId  = #{userId} order by r.lastSeenDate desc;
+	</select>
+	
+	<update id = "updatePassword">
+	update member set userPwd = sha1(md5(#{pwd})) where userId= #{userId}
+	</update>
+	
+	<select id = "showOldPwd" resultType ="String">
+	select userPwd from member where userId = #{userId}
+	</select>
+	
+	<select id="myTotalPoint" resultType = "MemberPoint" >
+	 select * from memberpoint
+	</select>
+	
+
+	
+	
+	
+
 </mapper>

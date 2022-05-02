@@ -1,5 +1,8 @@
 package com.bookdabang.tsh.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
@@ -27,24 +30,28 @@ public class AddressController {
 	@Inject
 	private LoginService lservice;
 
+	// 사용자의 주소를 가져옴
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
-	public ResponseEntity<AddressVO> getAddress(HttpSession ses) {
-
-		ResponseEntity<AddressVO> result = new ResponseEntity<>(null, HttpStatus.OK);
+	public ResponseEntity<Map<String,Object>> getAddress(HttpSession ses) {
+		ResponseEntity<Map<String,Object>> result = new ResponseEntity<>(null, HttpStatus.OK);
 		AddressVO addr = null;
-
+		Map<String,Object> m = new HashMap<String, Object>();
 		try {
 			MemberVO loginMember = (MemberVO) lservice.findLoginSess((String) ses.getAttribute("sessionId"));
+			
 			if (loginMember != null) {
 				addr = service.selectUserAddress(loginMember.getUserId());
+				m.put("loginMember", loginMember);
 				if (addr != null) {
+					m.put("addr", addr);
+					System.out.println(m);
 					if (addr.getPostalcode().length() > 1) {
-						result = new ResponseEntity<AddressVO>(addr, HttpStatus.OK);
+						result = new ResponseEntity<Map<String,Object>>(m, HttpStatus.OK);
 					} else {
-						result = new ResponseEntity<>(null, HttpStatus.OK);
+						result = new ResponseEntity<>(m, HttpStatus.OK);
 					}
 				} else {
-					result = new ResponseEntity<>(null, HttpStatus.OK);
+					result = new ResponseEntity<>(m, HttpStatus.OK);
 				}
 			}
 

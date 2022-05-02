@@ -2,6 +2,7 @@
 package com.bookdabang.lcs.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.Refund;
 import com.bookdabang.lcs.service.RefundService;
 
@@ -23,11 +26,13 @@ public class RefundController {
 	private RefundService service;
 	
 	@RequestMapping(value = "/boardList", method = RequestMethod.GET)
-	public void Board(Model model) throws Exception { 
-		List<Refund> lst = service.adminRefundList();
-		model.addAttribute("refund", lst);
-		System.out.println(lst);
+	public void Board(Model model, @RequestParam("pageNo") int pageNo) throws Exception { 
+		Map<String, Object> map = service.adminRefundList(pageNo);
+		model.addAttribute("refund", map);
+		
+		System.out.println(pageNo +"여기오니");
 	}
+	
 	@RequestMapping(value = "/refunUpdate", method = RequestMethod.POST)
 	public ResponseEntity<String> refunUpdate(int refundNo){
 		ResponseEntity<String> result = null;
@@ -45,4 +50,5 @@ public class RefundController {
 		
 		return result;
 	}
+	
 }

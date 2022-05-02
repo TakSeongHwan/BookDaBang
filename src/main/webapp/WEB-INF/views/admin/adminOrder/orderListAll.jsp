@@ -19,6 +19,9 @@
 		searchType : "",
 		startSellDate : "",
 		endSellDate : "",
+		orderState: "",
+		confirm : "",
+		all : ""
 	}
 
 	window.onload = function() {
@@ -31,6 +34,9 @@
 		SearchCriteria.searchType = $("#serachType").val();
 		SearchCriteria.startSellDate = $("#startSellDate").val();
 		SearchCriteria.endSellDate = $("#endSellDate").val();
+		SearchCriteria.orderState = $("input[name='orderState']:checked").val();
+		SearchCriteria.confirm = $("input[name='confirm']:checked").val();
+		SearchCriteria.all = $("#all").is(":checked");
 		JsonSearchCriteria = JSON.stringify(SearchCriteria);
 		console.log(JsonSearchCriteria);
 		searchOrder(SearchCriteria, pageNo);
@@ -42,16 +48,16 @@
 				.html(
 						'<div style="position : absolute; left : 50%; top :50%; transform : translate(-50%, -50%)"><img src="/resources/img/etc/loading.gif" style ="width : 150px"></div>');
 		pageNo = pno;
-		console.log(pageNo);
-		console.log(sc);
 		$("#allcheck").prop("checked", false)
 
 		let url = "/orderManager/getAll/" + pageNo;
-
+		sc = JSON.stringify(sc)
+		console.log(sc);
 		$.ajax({
 			url : url,
 			dataType : "json",
 			type : "POST",
+			contentType : "application/json",
 			data : sc,
 			success : function(data) {
 				console.log(data)
@@ -70,7 +76,7 @@
 	
 	function confirmChange(obj){
 		let id = obj.id.substring(7);
-		$(obj).html("<select id='"+obj.id+"' name='confirm' onchange='confirm("+id+");'><option value='N'>선택</option><option value='N'>미확정</option><option value='Y'>구매 확정</option></select>");
+		$(obj).html("<select id='"+obj.id+"' name='confirm' onchange='confirm("+id+");'><option value='N'>선택</option><option value='N'>미확정</option><option value='Y'>상태 확정</option></select>");
 	}
 	
 	function confirm(id){
@@ -123,7 +129,13 @@
 
 		$.each(data.ManageOrder, function(i, e) {
 			output += '<tr><td>' + e.orderNo + '</td>';
-			output += '<td>' + e.userId + '</td>';
+			output += '<td>'; 
+			if(e.userId==null){
+				output += '비회원'
+			}else{
+				output += e.userId;
+			}
+			output += '</td>';
 			output += '<td>' + e.productNo + '</td>';
 			output += '<td><img src ="' + e.cover + '" width="50" /></td>';
 			output += '<td>' + e.title + '</td>';
@@ -154,7 +166,7 @@
 			if(e.confirm==null||e.confirm=='N'){
 				output += '<td  id="confirm'+e.orderNo+'" ondblclick="confirmChange(this);"> 미확정</td>'
 			}else{
-				output += '<td  id="confirm'+e.orderNo+'" ondblclick="confirmChange(this);">구매 확정</td></tr>';
+				output += '<td  id="confirm'+e.orderNo+'" ondblclick="confirmChange(this);">상태 확정</td></tr>';
 			}
 			
 		});
@@ -222,7 +234,7 @@
 .searchContainer {
 	width: 100%;
 	padding: 30px;
-	height: 300px;
+	height: 400px;
 	display: inline-block;
 }
 
@@ -338,13 +350,67 @@ th {
 				</div>
 
 			</div>
+			<div style="clear: both">
+					<div>
+
+						<table class="table" id="searchTable">
+							<tr>
+								<td style="border-right: 1px solid #ccc"><label
+									class="form-check-label" for="defaultCheck3"> 전체 </label></td>
+								<td><input class="form-check-input" id="all"
+									type="checkbox" value="all" id="defaultCheck3" checked /></td>
+							</tr>
+							<tr>
+								<td style="border-right: 1px solid #ccc">주문 상태</td>
+								<td><input class="form-check-input sales_status"
+									type="radio" value="0" id="defaultCheck3"
+									name="orderState" checked/> <label class="form-check-label"
+									for="defaultCheck3">전체 </label></td>
+								<td><input class="form-check-input sales_status"
+									type="radio" value="1" id="defaultCheck3"
+									name="orderState" /> <label class="form-check-label"
+									for="defaultCheck3">출고 준비중 </label></td>
+								<td><input class="form-check-input sales_status"
+									type="radio" value="2" id="defaultCheck3"
+									name="orderState" /> <label class="form-check-label"
+									for="defaultCheck3">배송중 </label></td>
+								<td><input class="form-check-input sales_status"
+									type="radio" value="3" id="defaultCheck3"
+									name="orderState" /> <label class="form-check-label"
+									for="defaultCheck3">배송 완료</label></td>
+								<td><input class="form-check-input sales_status"
+									type="radio" value="4" id="defaultCheck3"
+									name="orderState" /> <label class="form-check-label"
+									for="defaultCheck3">주문 취소</label></td>
+								<td><input class="form-check-input sales_status"
+									type="radio" value="5" id="defaultCheck3"
+									name="orderState" /> <label class="form-check-label"
+									for="defaultCheck3">상품 환불</label></td>
+							</tr>
+							<tr>
+								<td style="border-right: 1px solid #ccc">상태 확정</td>
+								<td><input class="form-check-input display_status"
+									type="radio" value="" id="defaultCheck3"
+									name="confirm" checked /> <label class="form-check-label"
+									for="defaultCheck3">전체 </label></td>
+								<td><input class="form-check-input display_status"
+									type="radio" value="N" id="defaultCheck3"
+									name="confirm" /> <label class="form-check-label"
+									for="defaultCheck3">미확정 </label></td>
+								<td><input class="form-check-input display_status"
+									type="radio" value="Y" id="defaultCheck3"
+									name="confirm" /> <label class="form-check-label"
+									for="defaultCheck3">상태 확정</label> </td>
+
+							</tr>
+						</table>
+					</div>
+				</div>
 		</div>
 		<div
 			style="width: 1200px; margin: 0 auto; margin-top: 25px; clear: both">
 			<button type="button" class="btn btn-primary" onclick="search();">검색</button>
 		</div>
-
-
 
 	</div>
 
@@ -367,7 +433,7 @@ th {
 						<th>판매일</th>
 						<th>주문 상태</th>
 						<th>출고 날짜</th>
-						<th>구매 확정</th>
+						<th>상태 확정</th>
 						
 					</tr>
 				</thead>
@@ -384,5 +450,5 @@ th {
 
 
 
-		<jsp:include page="../../managerFooter.jsp"></jsp:include></ body>
+		<jsp:include page="../../managerFooter.jsp"></jsp:include></body>
 </html>

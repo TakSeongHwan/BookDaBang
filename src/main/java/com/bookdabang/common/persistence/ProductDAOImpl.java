@@ -10,11 +10,11 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.CategoryVO;
-import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.cyh.domain.AnswerDTO;
+import com.bookdabang.cyh.domain.InsertProdDTO;
 import com.bookdabang.cyh.domain.ProdQnADTO;
 import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.cyh.domain.UpdateProdDTO;
@@ -23,9 +23,9 @@ import com.bookdabang.cyh.domain.UpdateProdDTO;
 public class ProductDAOImpl implements ProductDAO {
 
 	@Inject
-	private SqlSession ses; // SqlSessionTemplete 객체 주입
+	private SqlSession ses;
 
-	private static String ns = "com.bookdabang.mapper.productMapper"; // mapper의 namespace
+	private static String ns = "com.bookdabang.mapper.productMapper"; 
 	
 	// 최윤호
 
@@ -71,6 +71,18 @@ public class ProductDAOImpl implements ProductDAO {
 	public int updateProd(UpdateProdDTO prod) throws Exception {
 
 		return ses.update(ns + ".updateProd", prod);
+	}	
+	
+	@Override
+	public int deleteProd(String isbn) throws Exception {
+		
+		return ses.delete(ns + ".deleteProd", isbn);
+	}
+
+	@Override
+	public int insertProd(InsertProdDTO product) throws Exception {
+		
+		return ses.insert(ns + ".insertProd", product);
 	}
 
 	@Override
@@ -78,8 +90,14 @@ public class ProductDAOImpl implements ProductDAO {
 		
 		return ses.selectOne(ns + ".validationProdNo", prodNo);
 	}
+
 	
 	
+	@Override
+	public String getPwdByQuesNo(int question_no) {
+		
+		return ses.selectOne(ns + ".getQnAByQuesNo", question_no);
+	}
 
 	@Override
 	public int insertAnswer(AnswerDTO answer) {
@@ -167,39 +185,31 @@ public class ProductDAOImpl implements ProductDAO {
 
 	// 강명진
 	
-
 	@Override
-	public List<ProductVO> selectAllProducts(PagingInfo pi,int sort) throws Exception {
+	public List<ProductVO> selectAllProducts(int cno,PagingInfo pi,int sort,String searchWord) throws Exception {
 		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("cno", cno);
+		param.put("searchWord", searchWord);
+		param.put("sort", sort);
 		param.put("startNum", pi.getStartNum());
 		param.put("postPerPage", pi.getPostPerPage());
-		param.put("sort", sort);
+		
 		return ses.selectList(ns + ".selectAllProducts",param);
 	}
 	
 	@Override
-	public List<ProductVO> selectAllProducts(int cno,PagingInfo pi,int sort) throws Exception {
+	public List<CategoryVO> selectCategory(String searchWord) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("searchWord", searchWord);
+		return ses.selectList(ns + ".selectCategory",param);
+	}
+	
+	@Override
+	public int getTotalPost(int cno,String searchWord) throws Exception {
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("cno", cno);
-		param.put("startNum", pi.getStartNum());
-		param.put("postPerPage", pi.getPostPerPage());
-		param.put("sort", sort);
-		return ses.selectList(ns + ".selectProductsByCategory",param);
-	}
-	
-	@Override
-	public List<CategoryVO> selectCategory() throws Exception {
-		return ses.selectList(ns + ".selectCategory");
-	}
-	
-	@Override
-	public int getTotalPost() throws Exception {
-		return ses.selectOne(ns + ".getTotalPost");
-	}
-	
-	@Override
-	public int getTotalPost(int cno) throws Exception {
-		return ses.selectOne(ns + ".getTotalPostByCategory",cno);
+		param.put("searchWord", searchWord);
+		return ses.selectOne(ns + ".getTotalPost",param);
 	}
 
 	@Override
@@ -208,8 +218,20 @@ public class ProductDAOImpl implements ProductDAO {
 	}
 
 	@Override
-	public List<ProductVO> selectTopProducts(int category) throws Exception {
-		return ses.selectList(ns + ".selectTopProducts", category);
+	public List<ProductVO> selectTopProducts(int cno) throws Exception {
+		return ses.selectList(ns + ".selectTopSaleProducts", cno);
 	}
+
+
+
+	@Override
+	public List<ProductVO> selectTopProducts(String searchWord) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("searchWord", searchWord);
+		return ses.selectList(ns + ".selectTopViewProducts", param);
+	}
+
+
+	
 
 }
