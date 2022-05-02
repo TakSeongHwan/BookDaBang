@@ -51,7 +51,7 @@ public class RefundServiceImpl implements RefundService{
 		if(refundDAO.refundUpdate(refundNo) == 1) {
 			int orderNo = refundDAO.getOrderNo(refundNo);
 			orderDAO.updateOrderState(5, orderNo);
-			orderDAO.confirmUpdate(orderNo);
+			/* orderDAO.confirmUpdate(orderNo); */
 			result = true;
 		}
 		

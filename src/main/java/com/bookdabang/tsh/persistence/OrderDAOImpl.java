@@ -105,12 +105,6 @@ public class OrderDAOImpl implements OrderDAO {
 		// TODO Auto-generated method stub
 		return ses.selectOne(ns + ".orderStatusCnt",userId);
 	}
-
-	@Override
-	public int confirmUpdate(int orderNo) throws Exception {
-		// TODO Auto-generated method stub
-		return ses.update(ns+".confirmUpdate", orderNo);
-	}
 	
 	
 	

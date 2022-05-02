@@ -12,7 +12,8 @@
 	</select>
 	<!-- Refund 게시판 전체 출력 -->
 	<select id="selectAllRefund" resultType="Refund">
-		select * from refund order by refundNo 
+		select * from refund order by refundNo limit #{startNum},
+		#{postPerPage}
 	</select>
 	<!-- Refund 환불 체크 업데이트 -->
 	<update id="refundUpdate">

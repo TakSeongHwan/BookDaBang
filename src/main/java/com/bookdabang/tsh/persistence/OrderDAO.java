@@ -33,5 +33,4 @@ public interface OrderDAO {
 
 	public int orderStatusCnt(String userId) throws Exception;
 
-	public int confirmUpdate(int orderNo)throws Exception;
 }

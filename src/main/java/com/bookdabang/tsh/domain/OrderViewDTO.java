@@ -13,13 +13,12 @@ public class OrderViewDTO {
 	private String confirm;
 	private Timestamp orderDate;
 	private Timestamp releaseDate;
-	private int refundNo;
 	public OrderViewDTO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	public OrderViewDTO(int orderNo, String title, String cover, int productNo, int orderState_code, int productQtt,
-			int price, String confirm, Timestamp orderDate, Timestamp releaseDate, int refundNo) {
+			int price, String confirm, Timestamp orderDate, Timestamp releaseDate) {
 		super();
 		this.orderNo = orderNo;
 		this.title = title;
@@ -31,80 +30,75 @@ public class OrderViewDTO {
 		this.confirm = confirm;
 		this.orderDate = orderDate;
 		this.releaseDate = releaseDate;
-		this.refundNo = refundNo;
 	}
-	public final int getOrderNo() {
+	public int getOrderNo() {
 		return orderNo;
 	}
-	public final void setOrderNo(int orderNo) {
+	public void setOrderNo(int orderNo) {
 		this.orderNo = orderNo;
 	}
-	public final String getTitle() {
+	public String getTitle() {
 		return title;
 	}
-	public final void setTitle(String title) {
+	public void setTitle(String title) {
 		this.title = title;
 	}
-	public final String getCover() {
+	public String getCover() {
 		return cover;
 	}
-	public final void setCover(String cover) {
+	public void setCover(String cover) {
 		this.cover = cover;
 	}
-	public final int getProductNo() {
+	public int getProductNo() {
 		return productNo;
 	}
-	public final void setProductNo(int productNo) {
+	public void setProductNo(int productNo) {
 		this.productNo = productNo;
 	}
-	public final int getOrderState_code() {
+	public int getOrderState_code() {
 		return orderState_code;
 	}
-	public final void setOrderState_code(int orderState_code) {
+	public void setOrderState_code(int orderState_code) {
 		this.orderState_code = orderState_code;
 	}
-	public final int getProductQtt() {
+	public int getProductQtt() {
 		return productQtt;
 	}
-	public final void setProductQtt(int productQtt) {
+	public void setProductQtt(int productQtt) {
 		this.productQtt = productQtt;
 	}
-	public final int getPrice() {
+	public int getPrice() {
 		return price;
 	}
-	public final void setPrice(int price) {
+	public void setPrice(int price) {
 		this.price = price;
 	}
-	public final String getConfirm() {
+	public String getConfirm() {
 		return confirm;
 	}
-	public final void setConfirm(String confirm) {
+	public void setConfirm(String confirm) {
 		this.confirm = confirm;
 	}
-	public final Timestamp getOrderDate() {
+	public Timestamp getOrderDate() {
 		return orderDate;
 	}
-	public final void setOrderDate(Timestamp orderDate) {
+	public void setOrderDate(Timestamp orderDate) {
 		this.orderDate = orderDate;
 	}
-	public final Timestamp getReleaseDate() {
+	public Timestamp getReleaseDate() {
 		return releaseDate;
 	}
-	public final void setReleaseDate(Timestamp releaseDate) {
+	public void setReleaseDate(Timestamp releaseDate) {
 		this.releaseDate = releaseDate;
-	}
-	public final int getRefundNo() {
-		return refundNo;
-	}
-	public final void setRefundNo(int refundNo) {
-		this.refundNo = refundNo;
 	}
 	@Override
 	public String toString() {
 		return "OrderViewDTO [orderNo=" + orderNo + ", title=" + title + ", cover=" + cover + ", productNo=" + productNo
 				+ ", orderState_code=" + orderState_code + ", productQtt=" + productQtt + ", price=" + price
-				+ ", confirm=" + confirm + ", orderDate=" + orderDate + ", releaseDate=" + releaseDate + ", refundNo="
-				+ refundNo + "]";
+				+ ", confirm=" + confirm + ", orderDate=" + orderDate + ", releaseDate=" + releaseDate + "]";
 	}
+	
+	
+	
 	
 }

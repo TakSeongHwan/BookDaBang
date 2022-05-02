@@ -16,7 +16,10 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <title>Insert title here</title>
 <script>
-
+$(function(){
+	console.log("${refund}")
+	console.log("${pi}")
+});
 	function refundUpdate(refundNo){
 		let url = "refunUpdate"
 			$.ajax({
@@ -59,7 +62,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach var="Refund" items="${refund.lst }" varStatus="status">
+					<c:forEach var="Refund" items="${refund }" varStatus="status">
 						<tr>
 							<td><c:out value="${Refund.refundNo}" /></td>
 							<td><c:out value="${Refund.orderNo}" /></td>
@@ -92,37 +95,22 @@
 		</div>
 		<nav class="blog-pagination justify-content-center d-flex">
 			<ul class="pagination">
-				<c:if test="${refund.pageNo>1 }">
-					<c:choose>
-						<c:when test="${refund.searchType == null || refund.searchType =='' || refund.searchWord == null || refund.searchWord ==''}">
+				<c:if test="${param.pageNo>1 }">
+				
 							<li class="page-item">
 							<a class="page-link"
 								href="/admin/refundBoard/boardList?pageNo=1"><<</a></li>
 							<li class="page-item">
 							<a class="page-link"
-								href="/admin/refundBoard/boardList?pageNo=${refund.pageNo-1}"><</a></li>
-							
-						</c:when>
-						<c:otherwise>
-						<li class="page-item">
-							<a class="page-link"
-								href="//admin/refundBoard/boardList?pageNo=1&searchType=${refund.searchType}&searchWord=${refund.searchWord}"><<</a></li>
-							<li class="page-item">
-							<li class="page-item">
-							<a class="page-link"
-								href="/admin/refundBoard/boardList?pageNo=${refund.pageNo-1}&searchType=${refund.searchType}&searchWord=${param.searchWord}"><</a></li>
-								
-						</c:otherwise>
-					</c:choose>
+								href="/admin/refundBoard/boardList?pageNo=${param.pageNo-1}"><</a></li>
 				</c:if>
 
-				<c:forEach var="i" begin="${paging.startNoOfCurPagingBlock}"
-					end="${paging.endNoOfCurPagingBlock }" step="1">
-					<c:choose>
-						<c:when
-							test="${Refund.searchType == null || Refund.searchType =='' || Refund.searchWord == null || Refund.searchWord ==''}">
+				<c:forEach var="i" begin="${pi.startNoOfCurPagingBlock}"
+					end="${pi.endNoOfCurPagingBlock }" step="1">
+					
+						
 							<c:choose>
-								<c:when test="${Refund.pageNo== i}">
+								<c:when test="${param.pageNo== i}">
 									<li class="page-item"><a class="page-link"
 										href="/admin/refundBoard/boardList?pageNo=${i}">${i}</a></li>
 								</c:when>
@@ -131,44 +119,17 @@
 										href="/admin/refundBoard/boardList?pageNo=${i}">${i}</a></li>
 								</c:otherwise>
 							</c:choose>
-						</c:when>
-						<c:otherwise>
-							<c:choose>
-								<c:when test="${Refund.pageNo== i}">
-									<li class="page-item"><a class="page-link"
-										href="/admin/refundBoard/boardList?pageNo=${i}&searchType=${Refund.searchType}&searchWord=${Refund.searchWord}">${i}</a></li>
-								</c:when>
-								<c:otherwise>
-									<li class="page-item "><a class="page-link"
-										href="/admin/refundBoard/boardList?pageNo=${i}&searchType=${Refund.searchType}&searchWord=${Refund.searchWord}">${i}</a></li>
-								</c:otherwise>
-							</c:choose>
-						</c:otherwise>
-					</c:choose>
+	
 				</c:forEach>
-				<c:if test="${Refund.pageNo < paging.totalPage }">
-					<c:choose>
-						<c:when
-							test="${Refund.searchType == null || Refund.searchType =='' || Refund.searchWord == null || Refund.searchWord ==''}">
-							
+				<c:if test="${param.pageNo < pi.totalPage }">
+				
 							<li class="page-item">
 							<a class="page-link"
-								href="/admin/refundBoard/boardList?pageNo=${Refund.pageNo+1}">></a></li>
+								href="/admin/refundBoard/boardList?pageNo=${param.pageNo+1}">></a></li>
 								<li class="page-item">
 							<a class="page-link"
-								href="/admin/refundBoard/boardList?pageNo=${Refund.totalPage}">>></a></li>
-							
-						</c:when>
-						<c:otherwise>
-						
-						<li class="page-item">
-							<a class="page-link"
-								href="/admin/refundBoard/boardList?pageNo=${Refund.pageNo+1}&searchType=${Refund.searchType}&searchWord=${param.searchWord}">></a></li>
-						<li class="page-item">
-							<a class="page-link"
-								href="/admin/refundBoard/boardList?pageNo=${Refund.totalPage}&searchType=${Refund.searchType}&searchWord=${param.searchWord}">>></a></li>
-						</c:otherwise>
-					</c:choose>
+								href="/admin/refundBoard/boardList?pageNo=${pi.totalPage}">>></a></li>
+	
 				</c:if>
 			</ul>
 		 </nav>

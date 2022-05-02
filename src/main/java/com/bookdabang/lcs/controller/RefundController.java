@@ -1,6 +1,7 @@
 
 package com.bookdabang.lcs.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,8 +29,10 @@ public class RefundController {
 	@RequestMapping(value = "/boardList", method = RequestMethod.GET)
 	public void Board(Model model, @RequestParam("pageNo") int pageNo) throws Exception { 
 		Map<String, Object> map = service.adminRefundList(pageNo);
-		model.addAttribute("refund", map);
-		
+		List<Refund> list = (List<Refund>)map.get("lst");
+		System.out.println(list);
+		model.addAttribute("refund", list );
+		model.addAttribute("pi", (PagingInfo)map.get("pi"));
 		System.out.println(pageNo +"여기오니");
 	}
 	
