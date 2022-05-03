@@ -560,7 +560,7 @@ z-index: 22000;
 					<div style="display: inline-block; width: 85%;">
 						<input type="text" class="form-control" id="reply" name="reply"
 							placeholder="댓글을 입력하세요">
-							<input type="hidden" id="writer" value="userId"/>
+							<input type="hidden" id="writer" value="${userId}"/>
 					</div>
 
 					<a class="button button-header"

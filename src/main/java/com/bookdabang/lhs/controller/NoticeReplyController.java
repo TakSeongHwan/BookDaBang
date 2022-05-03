@@ -55,10 +55,12 @@ public class NoticeReplyController {
 		System.out.println("댓글 : "+ reply.toString());
 		
 		try {
+			int maxReplyNo = service.getMaxReplyNo();
 			int ref = service.getMaxReplyNo()+1;
 			reply.setRef(ref);
 			reply.setStep(0);
 			reply.setRefOrder(0);
+			System.out.println(reply);
 			if(service.insertReply(reply) == 1) {
 				service.replyCountIncrese(reply.getBoardNo());
 				result = new ResponseEntity<String>("success",HttpStatus.OK);
