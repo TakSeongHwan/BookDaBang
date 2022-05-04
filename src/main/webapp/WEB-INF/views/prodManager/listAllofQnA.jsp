@@ -36,7 +36,7 @@
 					
 				}
 
-				url = "/prodManager/insertAnswer";
+				url = "/prodQna/insertAnswer";
 				$.ajax({
 					url : url,
 					dataType : "text",

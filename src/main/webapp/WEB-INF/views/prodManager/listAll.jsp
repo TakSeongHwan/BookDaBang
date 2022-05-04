@@ -41,6 +41,15 @@
 			location.href= "/prodManager/prodUpdate?prodNo="+prodNo; 
 		});
 			
+		$(document).on("keypress","#searchWord", function(e){
+			if (e.keyCode === 13) {
+				e.preventDefault();
+				search();
+			}
+
+			
+			
+		});
 		
 
 		$("#allcheck").change(function() {
@@ -387,7 +396,7 @@
 		$("#selectProdView")
 				.html(
 						'<div style="position : absolute; left : 50%; top :50%; transform : translate(-50%, -50%)"><img src="/resources/img/etc/loading.gif" style="width : 100px" ></div>');
-		let url = "/prodRest/selectView";
+		let url = "/prodManager/selectView";
 
 		$.ajax({
 			url : url,
@@ -435,15 +444,19 @@
 		console.log(sc);
 		$("#allcheck").prop("checked", false)
 
-		let url = "/prodRest/all/" + pageNo;
+		let url = "/api.prod.com/prods/" + pageNo;
 		$.ajax({
 			url : url,
 			dataType : "json",
-			type : "post",
+			type : "get",
 			data : sc,
 			success : function(data) {
-				console.log(data)
-				searchView(data);
+				if(data.product.length <1) {
+					undifineSearchData()
+				} else {
+					searchView(data);
+				}
+				
 			}
 
 		});
@@ -451,7 +464,7 @@
 	}
 
 	function searchView(data) {
-		
+		$("#errZone").html("");
 		let output = "";
 		let displayStatus = "";
 		let salesStatus = "";
@@ -576,7 +589,7 @@
 	}
 
 	function selectProdView(data) {
-		
+	
 		let output = "";
 		$
 				.each(
@@ -621,7 +634,7 @@
 		let JsonUpdateProdAry = JSON.stringify(updateProdAry);
 		console.log(JsonUpdateProdAry);
 
-		let url = "/prodRest/";
+		let url = "/prodManager/batchUpdate";
 		$.ajax({
 			url : url,
 			dataType : "text",
@@ -661,7 +674,7 @@
 		let JsonDeleteProdAry = JSON.stringify(deleteProdAry);
 		console.log(deleteProdAry);
 		
-		let url = "/prodRest/delete";
+		let url = "/prodManager/batchDelete";
 		$.ajax({
 			url : url,
 			dataType : "text",
@@ -726,8 +739,25 @@
 		}
 
 	}
+	
+	function undifineSearchData() {
+		let searchWord = $("#searchWord").val();
+		let output = "<div class ='errbox'><div style='font-weight :bold; font-size :24px;'>'"+searchWord+"' 의 검색 결과  <span style='color:red; margin-left:1em'>'0'</span></div>";
+		output += "<div style='margin-top : 30px;'>입력하신 단어의 철자가 정확한지 확인해 보세요.</div>";
+		output += "<div>검색어의 단어 수를 줄이거나, 보다 일반적인 단어로 검색해 보세요.</div>";
+		output += "<div>두 단어 이상의 키워드로 검색 하신 경우, 정확하게 띄어쓰기를 한 후 검색해 보세요.</div>";
+		output += "</div>";
+		
+		$("#productView").html("");
+		$("#pagingZone").html("");
+		$("#errZone").html(output);
+	}
 </script>
 <style>
+.errbox {
+	margin : 50px 0 50px 50px;
+	font-size : 20px;
+}
 .container {
 	width: 100%;
 	height: 80px;
@@ -1030,6 +1060,7 @@ th {
 		</div>
 
 		<div class="demo-inline-spacing" id="pagingZone"></div>
+		<div id="errZone"></div>
 
 
 		<!-- The Modal -->
@@ -1110,6 +1141,8 @@ th {
 		<div class="alert alert-primary" style="width:300px;  height:70px;position: fixed; margin: 0 auto; top:10%; left : 45%; line-height: 45px; display: none;">
     
   </div>
+  
+
 
 
 

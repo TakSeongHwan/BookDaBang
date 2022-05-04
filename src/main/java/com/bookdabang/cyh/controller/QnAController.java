@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.bookdabang.common.domain.ProductQnA;
+import com.bookdabang.cyh.domain.AnswerDTO;
 import com.bookdabang.cyh.domain.ProdQnADTO;
 import com.bookdabang.cyh.service.ProductService;
 
@@ -49,6 +50,9 @@ public class QnAController {
 		return result;
 
 	}
+	
+	
+	
 
 	@RequestMapping(value = "deleteQnA", method = RequestMethod.POST)
 	public ResponseEntity<String> deleteQnA(@RequestBody String question_no) {
@@ -68,6 +72,27 @@ public class QnAController {
 		}
 
 		return result;
+	}
+	
+	
+	@RequestMapping(value = "/insertAnswer", method = RequestMethod.POST)
+	public ResponseEntity<String> insertAnswer(Model model, @ModelAttribute AnswerDTO answer) {
+
+		ResponseEntity<String> result = null;
+		
+		System.out.println(answer.toString());
+		try {
+			if (service.insertAnswer(answer)) {
+				result = new ResponseEntity<String>("success", HttpStatus.OK);
+			} else {
+				result = new ResponseEntity<String>("fail", HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		return result;
+
 	}
 
 }

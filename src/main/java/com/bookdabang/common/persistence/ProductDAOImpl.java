@@ -14,7 +14,7 @@ import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.cyh.domain.AnswerDTO;
-import com.bookdabang.cyh.domain.InsertProdDTO;
+import com.bookdabang.cyh.domain.ProdDTO;
 import com.bookdabang.cyh.domain.ProdQnADTO;
 import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.cyh.domain.UpdateProdDTO;
@@ -70,9 +70,16 @@ public class ProductDAOImpl implements ProductDAO {
 	@Override
 	public int updateProd(UpdateProdDTO prod) throws Exception {
 
-		return ses.update(ns + ".updateProd", prod);
+		return ses.update(ns + ".batchUpdateProd", prod);
 	}	
 	
+	
+	@Override
+	public int updateProd(ProdDTO prod) throws Exception {
+		
+		return ses.update(ns + ".updateProd", prod);
+	}
+
 	@Override
 	public int deleteProd(String isbn) throws Exception {
 		
@@ -80,7 +87,7 @@ public class ProductDAOImpl implements ProductDAO {
 	}
 
 	@Override
-	public int insertProd(InsertProdDTO product) throws Exception {
+	public int insertProd(ProdDTO product) throws Exception {
 		
 		return ses.insert(ns + ".insertProd", product);
 	}

@@ -1452,7 +1452,7 @@
 									alert("정상적으로 등록되었습니다");
 									location.reload();
 									} else {
-									alert("등록 안됨");
+									alert("등록에 실패하였습니다.");
 									location.reload();
 									}
 								}
@@ -1476,11 +1476,11 @@
 								success : function(data) {
 									
 									if(data == "success"){
-									alert("삭제 완뇨");
+									alert("삭제에 성공하였습니다. ");
 									location.reload();
 									
 									} else {
-									alert("삭제 안됨 ㅠ");
+									alert("삭제에 실패하였습니다.");
 									
 									}
 								}

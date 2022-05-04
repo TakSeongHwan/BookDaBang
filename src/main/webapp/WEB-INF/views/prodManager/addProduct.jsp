@@ -58,7 +58,7 @@
 			if (saveImage == false) {
 				let imagePath = $("#prodImg").attr("src");
 				console.log(imagePath);
-				let url = "/prodRest/c"
+				let url = "/prodManager/deleteFile";
 				$.ajax({
 					url : url,
 					dataType : "json",
@@ -171,7 +171,7 @@
 			if (isbn == "") {
 				outPutErrMessage("상품번호는 공백일 수 없습니다", $("#isbn"));
 			} else {
-				let url = "/prodRest/d";
+				let url = "/prodManager/validIsbn";
 				$.ajax({
 					url : url,
 					dataType : "text",
@@ -244,7 +244,7 @@
 							console.log(imageInput.files);
 							const formData = new FormData();
 							formData.append("image", imageInput.files[0]);
-							let url = "/prodRest/b";
+							let url = "/prodManager/uploadFile";
 							$
 									.ajax({
 										url : url,
@@ -374,7 +374,7 @@
 	}
 
 	function apiSearch(isbn) {
-		let url = "/prodRest/a";
+		let url = "/prodManager/viewInfoByIsbn";
 		$.ajax({
 			url : url,
 			dataType : "json",
@@ -422,7 +422,7 @@
 			saveImage = true;
 			dataSave = false;
 
-			let url = "/prodRest/insert";
+			let url = "/api.prod.com/post";
 			$.ajax({
 				url : url,
 				dataType : "text",
@@ -701,7 +701,7 @@
 
 	function validIsbn(isbn) {
 		let result = false;
-		let url = "/prodRest/d";
+		let url = "/prodManager/validIsbn";
 		$.ajax({
 			url : url,
 			dataType : "text",
@@ -747,8 +747,8 @@
 	
 	
 function deleteImage(imagePath) {
-	console.log(imagePath);
-	let url = "/prodRest/c"
+	
+	let url = "/prodManager/deleteFile";
 	$.ajax({
 		url : url,
 		dataType : "json",
@@ -818,7 +818,7 @@ function deleteImage(imagePath) {
 			<h4 class="fw-bold py-3 mb-4">
 				<span class="text-muted fw-light">상품 관리 /</span> 상품 등록
 			</h4>
-	
+		<div id="saveZone"></div>
 			<div class="row">
 				<div class="col-md-6">
 					<div class="card mb-4">

@@ -186,10 +186,16 @@
 		</choose>
 	</insert>
 	
-	<update id = "updateProd">
+	<update id = "batchUpdateProd">
 		update product set price=#{updatePrice}, stock =#{updateStock}, display_status = #{updateDisplay}, sales_status = #{updateSales}, update_date= now()
 		where isbn = #{prodNo}
 	</update>
+	
+	
+	<update id = "updateProd">
+		update product set title=#{title}, author=#{author}, price=#{price}, sell_price=#{sell_price}, publisher=#{publisher}, category_code=#{category_code}, description=#{description}, pub_date=timestamp(#{pub_date}),update_date=now(), stock=#{stock}, end_date=timestamp(#{end_date}), display_status=#{display_status}, sales_status=#{sales_status}, cover=#{cover}, detail_description=#{detail_description},inside_book=#{inside_book}, author_introduce=#{author_introduce}, pisOffdiscription=#{pisOffdiscription}, prod_index=#{index} where isbn=#{isbn}
+	</update>
+	
 	
 	<delete id="deleteProd">
 		delete from product where isbn = #{isbn}

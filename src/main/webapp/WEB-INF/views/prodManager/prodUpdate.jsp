@@ -44,30 +44,6 @@ window.onload = function() {
 	let discount =(100-(${prod.sell_price/prod.price*100}));
 	$("#discount").val(discount);
 	
-	$(window).on("beforeunload", callback);
-
-	function callback() {
-
-		
-			let imagePath = $("#prodImg").attr("src");
-			console.log(imagePath);
-			let url = "/prodRest/c"
-			$.ajax({
-				url : url,
-				dataType : "json",
-				type : "delete",
-				data : {
-					imagePath : imagePath
-				},
-				success : function(data) {
-					
-				},
-				error : function(data) {
-					console.log(data);
-				}
-			});
-		
-	}
 
 	$("#applyDiscount").on("click", function() {
 		if ($("#price").val() != "") {
@@ -350,33 +326,33 @@ function updateProduct() {
 	insertDataToProduct();
 	if (validCheck()) {
 		saveImage = true;
-		alert("good");
+		
 
-		/* let url = "/prodRest/update";
+		 let url = "/api.prod.com/put";
 		$.ajax({
 			url : url,
 			dataType : "text",
-			type : "post",
+			type : "put",
 			data : product,
 			success : function(data) {
-				if (data == "success") {
-					successView("수정에 성공했습니다.");
-					setTimeout(function() {
-					location.href = '${contextPath}/prodManager/listAll';
-					},1300);
-				} else {
-					errView("등록에 실패했습니다.")
+				if(data ="success") {
+					alert("수정에 성공했습니다");
+					
+					location.href="/prodManager/listAll";
+				}else {
+					
 				}
 			}
 
-		}); */
+		}); 
 	}
 }
 
 
 
 function insertDataToProduct() {
-
+	
+	product.isbn = $("#isbn").val();
 	product.title = $("#prodTitle").val();
 	product.price = parseInt($("#price").val().replace(",", ""));
 	if (product.sell_price == "" || isNaN(product.sell_price)) {
