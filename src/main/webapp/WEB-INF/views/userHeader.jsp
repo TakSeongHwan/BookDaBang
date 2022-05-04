@@ -303,7 +303,7 @@ overflow-y:scroll;
                  <li class="nav-item active"><a class="nav-link" href="${contextPath}/">Home</a></li>
             <li class="nav-item active"><a class="nav-link" href="${contextPath}/product/list?pageNo=1">도서</a></li>
                  <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">로그인</a></li>
-                 <li class="nav-item"><a class="nav-link" href="${contextPath }/loginPage">회원가입</a></li>
+                 <li class="nav-item"><a class="nav-link" href="${contextPath }/member/registerMember">회원가입</a></li>
 
      
                  <!--  <li class="nav-item submenu dropdown">

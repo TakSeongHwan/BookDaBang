@@ -152,7 +152,7 @@ function displayWarn() {
 							<p>There are advances being made in science and technology everyday, and a good example of this is the</p>
 							
 							<a class="button button-account" href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">비회원 주문조회</a>
-							<a class="button button-account" href="register.html">회원가입</a>
+							<a class="button button-account" href="${contextPath }/member/registerMember">회원가입</a>
 						</div>
 					</div>
 				</div>

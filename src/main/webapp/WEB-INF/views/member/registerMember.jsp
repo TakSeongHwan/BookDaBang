@@ -220,7 +220,7 @@ input[type=button]:hover {
 								<h4>이미 계정이 있나요?</h4>
 								<p>There are advances being made in science and technology
 									everyday, and a good example of this is the</p>
-								<a class="button button-account" href="login.html">로그인 하기</a>
+								<a class="button button-account" href="${contextPath }/loginPage">로그인 하기</a>
 							</div>
 						</div>
 					</div>
