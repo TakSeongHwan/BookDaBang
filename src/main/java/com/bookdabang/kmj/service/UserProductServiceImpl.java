@@ -1,5 +1,6 @@
 package com.bookdabang.kmj.service;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 
 import com.bookdabang.common.domain.CategoryVO;
+import com.bookdabang.common.domain.PageView;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.common.persistence.ProductDAO;
 import com.bookdabang.common.domain.PagingInfo;
@@ -83,6 +85,51 @@ public class UserProductServiceImpl implements UserProductService {
 		}
 		
 		return lst;
+	}
+
+	@Override
+	public boolean addProductView(int prodNo,String ipaddr) throws Exception {
+		boolean result = false;
+		
+		PageView pageview = dao.selectPageview(prodNo,ipaddr);
+		
+		if(pageview != null) {
+			
+			long lastAccessDate = pageview.getAccessDate().getTime();
+			long currTime = System.currentTimeMillis();
+			
+			System.out.println("이전 기록 : " + lastAccessDate);
+			System.out.println("현재 시간 : " + currTime);
+			
+			if(currTime - lastAccessDate > 1000 * 60 *60*24) {
+				if(dao.updatePageview(prodNo,ipaddr) == 1) {
+					if (dao.updateReadCount(prodNo) == 1) {
+						System.out.println("조회기록 갱신");
+						result = true;
+					}
+				}
+			} else {
+				result = true;
+				System.out.println("이전 조회기록 하루 안 지남");
+			}
+		}else {
+			
+			if(dao.insertPageview(prodNo,ipaddr) == 1) {
+				if (dao.updateReadCount(prodNo) == 1) {
+					System.out.println("조회기록 추가");
+					result = true;
+				}
+			}
+			
+		}
+		return result;
+	}
+
+	@Override
+	public String getCategoryName(int cno) throws Exception {
+		String categoryName = dao.selectCategoryName(cno);
+		
+		return categoryName;
 	}
 
 

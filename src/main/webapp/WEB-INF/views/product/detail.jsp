@@ -7,6 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <title>상품 상세페이지</title>
 <script>
 	let rPageNo = 1;
@@ -33,7 +34,32 @@
 		uploadFile("#modifyModal");
 		
 		parsePaging();
+		
+		
 	});
+	
+	function chartMaker() {
+		setTimeout(function() {
+			new Chart(document.getElementById("doughnut-chart"), {
+			    type: 'doughnut',
+			    data: {
+			      labels: ["5점", "4점", "3점", "2점", "1점"],
+			      datasets: [
+			        {
+			          label: "ReviewLating",
+			          backgroundColor: ["#D7DCFE", "#8795F9","#384AEB","#1C27A9","#192077"],
+			          data: ["${reviewStatistics.gradeRate5}",
+			        	  "${reviewStatistics.gradeRate4}",
+			        	  "${reviewStatistics.gradeRate3}",
+			        	  "${reviewStatistics.gradeRate2}",
+			        	  "${reviewStatistics.gradeRate1}"]
+			        }
+			      ]
+			    }
+			});
+		}, 300);
+		
+	}
 	
 	function insertCart2(no){
 		let quantity = $("#sst").val();
@@ -86,11 +112,20 @@
 	}
 	
 	function priceReplace() {
-		let sellPrice = $(".s_product_text h2").text().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
-		$(".s_product_text h2").text(sellPrice);
+		let sellPrice = $("#sellPrice").text().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+		$("#sellPrice").text(sellPrice);
+		let discountPer = "(" + Math.floor($("#discountPer").text()) + "%";
+		$("#discountPer").html(discountPer);
+		let discountQua = $("#discountQua").text().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+		$("#discountQua").html(discountQua);
 		
 		let listPrice = $("#listPrice").html().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
 		$("#listPrice").html(listPrice);
+		
+		$(".card-product__price").each(function() {
+			let price = $(this).text().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+			$(this).text(price);
+		});
 	}
 	
 	function quantityChange(quantity) {
@@ -104,11 +139,38 @@
 	}
 	
 	function infoReplace() {
+		let descrip = "${product.description}";
+		let frontD = descrip.split("-")[0];
+		descrip = descrip.replace(frontD, "<strong>작가 및 역자</strong> -");
+		descrip = descrip.replace("-", "");
+		console.log(descrip.indexOf("옮김"));
+		if (descrip.indexOf("옮김") != -1) {
+			descrip = descrip.replace("옮김", "옮김<br/><br/><strong>간단 책소개</strong>");
+		} else if (descrip.indexOf("지음") != -1){
+			descrip = descrip.replace("지음", "지음<br/><br/><strong>간단 책소개</strong>");
+		}
+		
+		if (descrip.indexOf("옮김") == -1 && descrip.indexOf("지음") == -1) {
+			descrip = "";
+			let brRemove = $(".s_product_text p").html().replace("<br>", "");
+			brRemove = brRemove.replace("<br>", "");
+			$(".s_product_text p").html(brRemove);
+		}
+		$("#description").html(descrip);
+		
+		let pubDate = $("#pubDate").text().split(" ")[0];
+		$("#pubDate").text(pubDate);
+		
 		let info = $("#home").html();
 		info = info.replaceAll("더보기", "");
-		info = info.replace("책소개", "<h4>책소개</h4>");
+		info = info.replaceAll("...", " (이하생략)");
+		info = info.replace("책소개", "<h4>책소개</h4>")
 		info = info.replace("저자 및 역자소개", "<h4>저자 및 역자소개</h4>");
-		info = info.replace("(모두보기)", "<hr style='border-style: dotted;' />");
+		if (info.indexOf("옮긴이") != -1) {
+			info = info.replace("(모두보기)", "<hr style='border-style: dashed; color:#dff0f4' />");
+		} else {
+			info = info.replace("(모두보기)", "");
+		}
 		info = info.replace("목차", "<h4>목차</h4>");
 		info = info.replace("책속에서", "<h4>책속에서</h4>");
 		info = info.replace("출판사 제공 책소개", "<h4>출판사 제공 책소개</h4>");
@@ -251,9 +313,11 @@
 						if(data == "success") {
 							changeCommentNum(1);
 							successAlert("* 댓글이 등록되었습니다 *");
-						} else if(data == "fail") {
+						} else {
 							failAlert("* 댓글 등록 실패 ! *");
 						}
+					},error : function() {
+						failAlert("* 댓글 등록 실패 ! *");
 					}
 				});
 			} else {
@@ -615,22 +679,26 @@
 	}
 	
 	function delPrevAttach(img,notImg) {
-		let attachArray = [];
-		attachArray.push("0,파일들");
+		let fileNoList = [];
+		let fileNameList = [];
 		
 		$(img).each(function(){
-			attachArray.push($(this).attr("value") + "," + $(this).attr("src").replace("/",""));
+			fileNoList.push($(this).attr("value"));
+			fileNameList.push($(this).attr("src").replace("/",""));
         });
         $(notImg).each(function(){
-			attachArray.push($(this).attr("value") + "," + $(this).attr("href").replace("/",""));
+        	fileNoList.push($(this).attr("value"));
+			fileNameList.push($(this).attr("href").replace("/",""));
         }); 
-        console.log(attachArray);
+        console.log(fileNoList);
+        console.log(fileNameList);
 		
 		let url = "/review/delPrevFile";
 		$.ajax({
 			url : url,
 			data : {
-				targetList : attachArray
+				fileNoList : fileNoList,
+				fileNameList : fileNameList
 			},
 			dataType : "text",
 			type : "POST",
@@ -777,7 +845,7 @@
 			$("#modifyModal").css("height","925px");
 			
 			if ($(".fDropList").html() != null) {
-				let output = "<span class='prevFileBtn' onclick='tempDelete(this)'><img class='closeImg' src= '/resources/ImgClose.svg'/></span>";
+				let output = "<span class='prevFileBtn' onclick='tempDelete(this)'><img class='closeImg' src= '/resources/img/review/ImgClose.svg'/></span>";
 				$(".thumbImg:visible").after(output);
 				$(".notImg:visible").after(output);
 			}
@@ -1004,6 +1072,35 @@
 	
 </script>
 <style>
+	#listPrice, #delivery , #stock {
+		margin: 5px 0 5px 0;
+	} 
+
+	#listPrice span, #delivery span, #stock span {
+		width: 76px;
+	} 
+
+	.infoHr {
+		width : 1048px;
+		padding-bottom: 30px;
+		margin-top: auto;
+    	margin-bottom: 0;
+    	border-top: 1px solid rgba(0,0,0,.1);
+		background: -webkit-gradient(linear, bottom, top, from(white), to(#dff0f4));
+    	background: -webkit-linear-gradient(bottom, white 0%, #dff0f4 100%);
+    	background: -moz-linear-gradient(bottom, white 0%, #dff0f4 100%);
+    	background: -o-linear-gradient(bottom, white 0%, #dff0f4 100%);
+   		background: linear-gradient(to top, white 0%, #dff0f4 100%);
+	}
+	
+	.list li i {
+		color :  #fbd600;
+	}
+	
+	.list li span {
+		margin-left: 10px;
+	}
+
  .reviewBtn {
  	width : 80px;
  	height: 35px;
@@ -1166,6 +1263,13 @@
     margin-bottom: 100px;
     margin-right: 7px;
 }
+	.productLink {
+    	padding-top: 7px;
+    	overflow: hidden;
+    	display: -webkit-box;
+    	-webkit-line-clamp: 2;
+    	-webkit-box-orient: vertical;
+	}
 
 </style>
 <head>
@@ -1180,31 +1284,33 @@
 					<div class="col-lg-6">
 						<div class="owl-carousel owl-theme s_Product_carousel owl-loaded owl-drag">
 							<div class="single-prd-item">
-								<img class="img-fluid" src="${product.cover }" alt="" style="width: auto; height: auto;">
+								<img class="img-fluid" src="${product.cover }" alt="" style="width:500px; height:750px;">
 							</div>		
 						</div>
 					</div>
 					<div class="col-lg-5 offset-lg-1">
-						<div class="s_product_text">
+						<div class="s_product_text" style="margin-top: 20px;">
 							<h3>${product.title }</h3>
-							<h2>판매가  : ${product.sell_price }원 
-							<c:if test="${product.sell_price != product.price }">
-								(${(product.price - product.sell_price)/product.price*100}%,
-								${product.price - product.sell_price}원 할인)
-							</c:if>
+							<h2>
+								<span id="sellPrice">판매가  : ${product.sell_price }원</span>
+								<c:if test="${product.sell_price != product.price }">
+									<span id="discountPer">${(product.price - product.sell_price)/product.price*100}</span>
+									<span id="discountQua">,${product.price - product.sell_price}원 할인)</span>
+								</c:if>
 							</h2>
 							<ul class="list">
-								<li><a id="listPrice"><span>정가</span> : ${product.price}원</a></li>
-								<li><a class="active" href="#"><span>Category</span> :
-										${product.category_code}</a></li>
-								<li><a href="#"><span>재고</span> : ${product.stock}개</a></li>
-								<li><a><span>배송비</span> : 무료</a></li>
+								<li><a id="listPrice"><span>정가</span> : &nbsp; ${product.price}원</a></li>
+								<li><a id="delivery"><span>배송비</span> : &nbsp; 무료</a></li>
+								<li><a id="stock"><span>남은 수량</span> : &nbsp; ${product.stock}개</a></li>
 							</ul>
-							<p>${product.description } <br/>
-							출판사 - ${product.publisher }  ||  출판일 - ${product.pub_date}
+							<p style="padding-bottom: 20px;">
+								<span><strong>주제 분야 </strong>- ${categoryName}</span> <br/><br/>
+								<span id="description">${product.description}</span> <br/><br/>
+								<strong>출판사</strong> - ${product.publisher } &nbsp;&nbsp;&nbsp;&nbsp;  
+								<strong>출판일</strong> - <span id="pubDate">${product.pub_date}</span>
 							</p>
 							<br/>
-							<div class="product_count">
+							<div class="product_count" style="margin-bottom: 30px;">
 								<label for="qty">Quantity:</label>
                                 <input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
                                     class="input-text qty" style="height: 40px;">
@@ -1223,14 +1329,12 @@
 							
 							</div>
 							<div>
-								<a class="button button--active button-contactForm" href="javascript:insertCart2(${product.product_no});">장바구니 담기</a>&nbsp;
-								<a class="button button--active button-contactForm" href="javascript:goOrder2(${product.product_no});">바로구매</a>
+								<a class="button button--active button-contactForm"
+								 href="javascript:insertCart2(${product.product_no});">장바구니 담기</a>
+								<a class="button button--active button-contactForm"
+								 href="javascript:goOrder2(${product.product_no});"
+								 style="margin-left: 15px;">바로구매</a>
 							</div>
-							
-							<!--  <div class="card_area d-flex align-items-center">
-								<a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
-								<a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a>
-							</div>-->
 						</div>
 					</div>
 				</div>
@@ -1247,7 +1351,8 @@
 						 role="tab" aria-controls="home" aria-selected="true">도서 정보</a></li>
 					<li class="nav-item" >
 						<a class="nav-link" id="review-tab" data-toggle="tab" href="#review"
-						 role="tab" aria-controls="review" aria-selected="false">Reviews</a></li>
+						 role="tab" aria-controls="review" aria-selected="false"
+						 onclick="chartMaker();">Reviews</a></li>
 					<li class="nav-item" >
 						<a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact"
 						role="tab" aria-controls="contact" aria-selected="false">Q&A</a></li>
@@ -1260,71 +1365,151 @@
 					<div class="tab-pane fade show active" id="home" role="tabpanel"
 						aria-labelledby="home-tab" style="white-space: pre-line;">
 						<h4>ISBN</h4>
-							${product.isbn13 } ( ${product.isbn } )
-							<hr/>${product.detail_description }
-							<hr/>${product.author_introduce }
-							<hr/>${product.index }
-							<c:if test="${product.inside_book != ''}">
-								<hr/> ${product.inside_book } 
+						<span>${product.isbn13 } ( ${product.isbn } )</span>
+						<div id="detail_description">
+							<c:if test="${product.detail_description != ''}">					
+								<hr class="infoHr" />${product.detail_description }
 							</c:if>
+						</div>
+						<div id="author_introduce">
+							<c:if test="${product.author_introduce != ''}">
+								<hr class="infoHr""/>${product.author_introduce }
+							</c:if>
+						</div>
+						<div id="index">
+							<c:if test="${product.prod_index != ''}">
+								<hr class="infoHr"/>${product.prod_index }
+							</c:if>
+						</div>
+						<div id="inside_book">
+							<c:if test="${product.inside_book != ''}">
+								 <hr class="infoHr"/>${product.inside_book }
+							</c:if>
+						</div>
+						<div id="pisOffdiscription">
 							<c:if test="${product.pisOffdiscription != ''}">
-								<hr/> ${product.pisOffdiscription }
+								 <hr class="infoHr"/>${product.pisOffdiscription }<br>
 							</c:if>	
+						</div>			
 					</div>
 					<!-- 리뷰 정보 content -->
 					<div class="tab-pane fade" id="review" role="tabpanel"
 						aria-labelledby="review-tab">
 						<div class="row">
 							<div class="col-lg-12">
-								<div class="row total_rate">
-									<div class="col-6">
-										<div class="box_total">
-											<h5>Overall</h5>
-											<h4>4.0</h4>
-											<h6>(03 Reviews)</h6>
-										</div>
+								<div class="row total_rate" style="background-color: #fafaff; margin-bottom:25px;">
+									<div class="col-6" style="margin-top: 25px;">
+										<h5 style="text-align: center; margin-bottom: 10px;"><strong>평점 분포도</strong></h5>
+										<canvas id="doughnut-chart" width="200" height="100"></canvas>						
 									</div>
-									<div class="col-6">
-										<div class="rating_list">
-											<h3>Based on 3 Reviews</h3>
+									<div class="col-6" style="height:100px; margin-top:25px; text-align:center;">
+										<div style="display: inline-block; width: 245px;">
+											<h5 style=" margin-bottom:10px;"><strong>리뷰 총 평점</strong></h5>
+											<h3 style="color:#384aeb;">
+												<i class="fa fa-crown" style="margin-right:2px; font-size:34px;"></i>
+												<span>${reviewStatistics.gradeAvg}</span>
+												<span style="color:rgba(0,0,0,.3);">/ 5.0</span>
+											</h3>
+										</div>
+										<div style="display: inline-block; width: 245px;">
+											<h5 style=" margin-bottom: 10px;"><strong>전체 리뷰수</strong></h5>
+											<h3>${reviewStatistics.gradeTotal}개</h3>
+										</div>
+										<div class="rating_list" style=" margin-top:25px; display: inline-block;">
+											<h5><strong>평점별 개수</strong></h5>
+											<!--  <ul class="list">
+												<li>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<span>${reviewStatistics.gradeCount1}개</span>
+												</li>
+												<li>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star" style="font-weight: 100"></i>
+													<span>${reviewStatistics.gradeCount2}개</span>
+												</li>
+												<li>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"style="font-weight: 100"></i>
+													<i class="fa fa-star"style="font-weight: 100"></i>
+													<span>${reviewStatistics.gradeCount3}개</span>
+												</li>
+												<li>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"style="font-weight: 100"></i>
+													<i class="fa fa-star" style="font-weight: 100"></i>
+													<i class="fa fa-star"style="font-weight: 100"></i>
+													<span>${reviewStatistics.gradeCount4}개</span>
+												</li>
+												<li>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"style="font-weight: 100"></i>
+													<i class="fa fa-star"style="font-weight: 100"></i>
+													<i class="fa fa-star"style="font-weight: 100"></i>
+													<i class="fa fa-star"style="font-weight: 100"></i>
+													<span>${reviewStatistics.gradeCount5}개</span>
+												</li>
+											</ul> ["#D7DCFE", "#8795F9","#384AEB","#1C27A9","#192077"],-->
 											<ul class="list">
-												<li><a href="#">5 Star <i class="fa fa-star"></i>
+												<li ><a href="#">4 Star <i class="fa fa-star"></i>
 														<i class="fa fa-star"></i>
 														<i class="fa fa-star"></i>
 														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i> 01
+														<i class="fa fa-star" style="font-weight: 100"></i>
+														<span>${reviewStatistics.gradeCount5}개</span>
 												</a></li>
 												<li><a href="#">4 Star <i class="fa fa-star"></i>
 														<i class="fa fa-star"></i>
 														<i class="fa fa-star"></i>
 														<i class="fa fa-star"></i>
-														<i class="fa fa-star" style="font-weight: 100"></i> 01
+														<i class="fa fa-star" style="font-weight: 100"></i>
+														<span>${reviewStatistics.gradeCount4}개</span>
 												</a></li>
 												<li><a href="#">3 Star <i class="fa fa-star"></i>
 														<i class="fa fa-star"></i>
 														<i class="fa fa-star"></i>
-														<i class="fa fa-star"style="font-weight: 100"></i>
-														<i class="fa fa-star"style="font-weight: 100"></i> 01
+														<i class="fa fa-star" style="font-weight: 100"></i>
+														<i class="fa fa-star" style="font-weight: 100"></i>
+														<span>${reviewStatistics.gradeCount3}개</span>
 												</a></li>
 												<li><a href="#">2 Star <i class="fa fa-star"></i>
 														<i class="fa fa-star"></i>
-														<i class="fa fa-star"style="font-weight: 100"></i>
 														<i class="fa fa-star" style="font-weight: 100"></i>
-														<i class="fa fa-star"style="font-weight: 100"></i> 01
+														<i class="fa fa-star" style="font-weight: 100"></i>
+														<i class="fa fa-star" style="font-weight: 100"></i>
+														<span>${reviewStatistics.gradeCount2}개</span>
 												</a></li>
 												<li><a href="#">1 Star <i class="fa fa-star"></i>
-														<i class="fa fa-star"style="font-weight: 100"></i>
-														<i class="fa fa-star"style="font-weight: 100"></i>
-														<i class="fa fa-star"style="font-weight: 100"></i>
-														<i class="fa fa-star"style="font-weight: 100"></i> 01
+														<i class="fa fa-star" style="font-weight: 100"></i>
+														<i class="fa fa-star" style="font-weight: 100"></i>
+														<i class="fa fa-star" style="font-weight: 100"></i>
+														<i class="fa fa-star" style="font-weight: 100"></i>
+														<span>${reviewStatistics.gradeCount1}개</span>
 												</a></li>
-											</ul>							
+											</ul>				
 										</div>
-										<div>
-											<button id ="createReview" class="button button--active button-review"
-											style="float: right;" onclick="showAddModal()"> 리뷰 작성</button>
-										</div>
-									</div>						
+									</div>					
+								</div>
+								<div style="height: 50px;">
+									<div class="nice-select shipping_select" tabindex="0" style="margin-top:7px;">
+										<span class="current">Bangladesh</span>
+										<ul class="list">
+											<li data-value="1" class="option selected focus">Bangladesh</li>
+											<li data-value="2" class="option">India</li>
+											<li data-value="4" class="option">Pakistan</li>
+										</ul>
+									</div>
+									<button id ="createReview" class="button button--active button-review"
+									style="float: right; border-radius: 5px;" onclick="showAddModal()"> 리뷰 작성</button>
 								</div>
 								<hr/>
 								<div class="review_list">
@@ -1368,6 +1553,17 @@
 											</div>
 										</div>
 									</c:forEach>
+									
+									<c:if test="${reviewList == '[]' }">
+										<div style="text-align: -webkit-center; margin: 100px 0 100px 0; ">
+											<i class="fa ti-comments" style="font-size: 50px;"></i>
+											<h4 style="color: #777"><strong>아직 작성된 리뷰가 없습니다.</strong></h4>
+											<h5 style="color:#fbd600;">
+												첫 리뷰를 작성해주세요<i class="fa ti-pencil" style="margin-left: 10px;"></i>
+											</h5>
+										</div>
+										<hr>
+									</c:if>
 								</div>
 								
 								<nav class="blog-pagination justify-content-center d-flex" style="padding-bottom: 25px;">
@@ -1746,6 +1942,50 @@
 		</section>
 		<!--================End Product Description Area =================-->
 		
+		<!-- ================ Best Selling item  carousel ================= -->
+		<section class="section-margin calc-60px" style="margin-top: 0;">
+			<div class="container">
+				<div class="section-intro pb-60px">
+					<p><strong>${categoryName} 분야</strong></p>
+					<h2>
+						Best <span class="section-intro__style">Sellers</span>
+					</h2>
+				</div>
+				<div class="owl-carousel owl-theme owl-loaded owl-drag" id="bestSellerCarousel">
+					<c:forEach var="product" items="${topList }">
+						<div class="card text-center card-product">
+							<div class="card-product__img">
+								<img class="img-fluid" src="${product.cover }" alt=""
+								style="width:247px; height: 371px;">
+								<ul class="card-product__imgOverlay">
+									<li>
+										<a href="${contextPath}/product/detail?no=${product.product_no}">
+											<button><i class="ti-search"></i></button>
+										</a>
+									</li>
+									<li>
+										<button onclick="insertCart(${product.product_no})"><i class="ti-shopping-cart"></i></button>
+									</li>
+									<li>
+										<button onclick="goOrder(${product.product_no})"><i class="ti-money"></i></button>
+									</li>
+								</ul>
+							</div>
+							<div class="card-body">
+								<p>${product.author}|${product.publisher}</p>
+								<h4 class="card-product__title">
+									<a href="${contextPath}/product/detail?no=${product.product_no}"
+									class="productLink">${product.title}</a>
+								</h4>
+								<p class="card-product__price">${product.sell_price}원</p>
+							</div>
+						</div>
+					</c:forEach>
+				</div>
+			</div>
+		</section>
+		<!-- ================ Best Selling item  carousel end ================= -->
+		
 		<!-- 리뷰 작성 모달창 -->
 		<div id="modalBack">
 			<div class="comment-form" id="reviewModal">
@@ -1926,47 +2166,7 @@
 		
 		<!-- 알림들 끝 -->
 
-		<!-- ================ Best Selling item  carousel ================= -->
-		<section class="section-margin calc-60px">
-			<div class="container">
-				<div class="section-intro pb-60px">
-					<p>Popular Book in the market</p>
-					<h2>
-						Best <span class="section-intro__style">Sellers</span>
-					</h2>
-				</div>
-				<div class="owl-carousel owl-theme owl-loaded owl-drag" id="bestSellerCarousel">
-					<c:forEach var="product" items="${topList }">
-						<div class="card text-center card-product">
-							<div class="card-product__img">
-								<img class="img-fluid" src="${product.cover }" alt="">
-								<ul class="card-product__imgOverlay">
-									<li>
-										<a href="${contextPath}/product/detail?no=${product.product_no}">
-											<button><i class="ti-search"></i></button>
-										</a>
-									</li>
-									<li>
-										<button onclick="insertCart(${product.product_no})"><i class="ti-shopping-cart"></i></button>
-									</li>
-									<li>
-										<button onclick="goOrder(${product.product_no})"><i class="ti-money"></i></button>
-									</li>
-								</ul>
-							</div>
-							<div class="card-body">
-								<p>${product.author}|${product.publisher}</p>
-								<h4 class="card-product__title">
-									<a href="${contextPath}/product/detail?no=${product.product_no}">${product.title}</a>
-								</h4>
-								<p class="card-product__price">${product.sell_price}원</p>
-							</div>
-						</div>
-					</c:forEach>
-				</div>
-			</div>
-		</section>
-		<!-- ================ Best Selling item  carousel end ================= -->
+		
 	</div>
 	
 	<jsp:include page="../userFooter.jsp"></jsp:include>

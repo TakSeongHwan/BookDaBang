@@ -10,6 +10,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.ReviewVO;
+import com.bookdabang.kmj.domain.ReviewStatisticsVO;
+import com.bookdabang.kmj.domain.SearchInfoDTO;
 import com.bookdabang.common.domain.AttachFileVO;
 import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.RecommendVO;
@@ -34,8 +36,21 @@ public class ReviewDAOImpl implements ReviewDAO {
 	}
 
 	@Override
-	public List<ReviewComment> selectAllComments(int rno) throws Exception {
-		return ses.selectList(ns + ".selectAllComments", rno);
+	public List<ReviewComment> selectAllComments(int reviewNo) throws Exception {
+		Map<String,Object> param = new HashMap<String, Object>();
+		param.put("reviewNo", reviewNo);
+		param.put("startNum", null);
+		param.put("postPerPage", null);
+		return ses.selectList(ns + ".selectAllComments", param);
+	}
+	
+	@Override
+	public List<ReviewComment> selectAllComments(int reviewNo,PagingInfo pi) throws Exception {
+		Map<String,Object> param = new HashMap<String, Object>();
+		param.put("reviewNo", reviewNo);
+		param.put("startNum", pi.getStartNum());
+		param.put("postPerPage", pi.getPostPerPage());
+		return ses.selectList(ns + ".selectAllComments", param);
 	}
 	
 	@Override
@@ -127,6 +142,11 @@ public class ReviewDAOImpl implements ReviewDAO {
 	public List<AttachFileVO> selectAllAttachFile(int prodNo) throws Exception {
 		return ses.selectList(ns + ".selectAllAttachfile",prodNo);
 	}
+	
+	@Override
+	public List<AttachFileVO> selectAttachFileByRNo(int reviewNo) throws Exception {
+		return ses.selectList(ns + ".selectAttachFileByRNo",reviewNo);
+	}
 
 	@Override
 	public int deleteAttachFile(int attachFileNo) throws Exception {
@@ -134,9 +154,48 @@ public class ReviewDAOImpl implements ReviewDAO {
 	}
 
 	@Override
-	public int getTotalPost(int prodNo) throws Exception {
-		return ses.selectOne(ns + ".selectTotalPost",prodNo);
+	public int getReviewTotalPost(int prodNo) throws Exception {
+		return ses.selectOne(ns + ".selectReviewTotalPost",prodNo);
+	}
+	
+	@Override
+	public int getReviewSearchTotalPost(SearchInfoDTO searchInfo) throws Exception {
+		return ses.selectOne(ns + ".selectReviewSearchTotalPost",searchInfo);
+	}
+	
+	@Override
+	public int getCommentTotalPost(int reviewNo) throws Exception {
+		return ses.selectOne(ns + ".selectCommentTotalPost",reviewNo);
 	}
 
+	@Override
+	public List<ReviewVO> selectSearchReview(SearchInfoDTO searchInfo, PagingInfo pi) throws Exception {
+		Map<String,Object> param = new HashMap<String, Object>();
+		param.put("searchType", searchInfo.getSearchType());
+		param.put("searchWord", searchInfo.getSearchWord());
+		param.put("startDate", searchInfo.getStartDate());
+		param.put("endDate", searchInfo.getEndDate());
+		param.put("startStar", searchInfo.getStartStar());
+		param.put("endStar", searchInfo.getEndStar());
+		param.put("fileStatus", searchInfo.getFileStatus());
+		param.put("order", searchInfo.getOrder());
+		param.put("startNum", pi.getStartNum());
+		param.put("postPerPage", pi.getPostPerPage());
+		return ses.selectList(ns + ".selectSearchReview",param);
+	}
+
+	@Override
+	public ReviewVO selectReview(int reviewNo) throws Exception {
+		return ses.selectOne(ns + ".selectReview",reviewNo);
+	}
+
+	@Override
+	public ReviewStatisticsVO selectReviewStatistics(int prodNo) throws Exception {
+		return ses.selectOne(ns + ".selectReviewStatistics",prodNo);
+	}
+
+
+	
+ 
 
 }

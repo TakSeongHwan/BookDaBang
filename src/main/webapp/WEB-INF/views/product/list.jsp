@@ -44,7 +44,11 @@
 		} else if (i == 2) {
 			$("#byPubDate").css("color", "#384aeb");
 		} else if (i == 3) {
-			$("#byDiscount").css("color", "#384aeb");
+			$("#byHDiscount").css("color", "#384aeb");
+		} else if (i == 4) {
+			$("#byLDiscount").css("color", "#384aeb");
+		} else if (i == 5) {
+			$("#byReadCount").css("color", "#384aeb");
 		}
 		sort = i;
 		getCategory(1);
@@ -171,14 +175,21 @@
     	text-align: center;
     	font-size: 17px;
 	}
+	#headArea {
+		background: -webkit-gradient(linear, bottom, top, from(white), to(#f1f6f7));
+    	background: -webkit-linear-gradient(bottom, white 0%, #f1f6f7 100%);
+    	background: -moz-linear-gradient(bottom, white 0%, #f1f6f7 100%);
+    	background: -o-linear-gradient(bottom, white 0%, #f1f6f7 100%);
+   		background: linear-gradient(to top, white 0%, #f1f6f7 100%);
+	}
 </style>
 </head>
 <body>
 	<jsp:include page="../userHeader.jsp"></jsp:include>
 
-	<div class="container">
+	<div>
 		<!-- ================ start banner area ================= -->
-		<section class="blog-banner-area" id="category">
+		<!-- <section class="blog-banner-area" id="category">
 			<div class="container h-100">
 				<div class="blog-banner">
 					<div class="text-center">
@@ -193,11 +204,63 @@
 					</div>
 				</div>
 			</div>
+		</section>-->
+
+		<section class="blog_categorie_area" id ="headArea" style="padding-top: 60px; padding-bottom: 0;">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">
+						<div class="categories_post">
+							<img class="card-img rounded-0"
+								src="${contextPath }/resources/img/instagram/ins-1.jpg" alt="post">
+							<div class="categories_details">
+								<div class="categories_text">
+									<a href="single-blog.html">
+										<h5>Social Life</h5>
+									</a>
+									<div class="border_line"></div>
+									<p>Enjoy your social life together</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">
+						<div class="categories_post">
+							<img class="card-img rounded-0"
+								src="${contextPath }/resources/img/instagram/ins-2.jpg" alt="post">
+							<div class="categories_details">
+								<div class="categories_text">
+									<a href="single-blog.html">
+										<h5>Politics</h5>
+									</a>
+									<div class="border_line"></div>
+									<p>Be a part of politics</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">
+						<div class="categories_post">
+							<img class="card-img rounded-0"
+								src="${contextPath }/resources/img/instagram/ins-3.jpg" alt="post">
+							<div class="categories_details">
+								<div class="categories_text">
+									<a href="single-blog.html">
+										<h5>Food</h5>
+									</a>
+									<div class="border_line"></div>
+									<p>Let the food be finished</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</section>
 		<!-- ================ end banner area ================= -->
 		
 		<!-- ================ category section start ================= -->
-		<section class="section-margin--small mb-5">
+		<section class="section-margin--small mb-5" style="margin-top: 80px;">
 			<div class="container">
 				<div class="row">
 					<div class="col-xl-3 col-lg-4 col-md-5">
@@ -228,6 +291,7 @@
 								</li>
 							</ul>
 						</div>
+						<!--  
 						<div class="sidebar-filter">
 							<div class="top-filter-head">Product Filters</div>
 							<div class="common-filter">
@@ -286,7 +350,7 @@
 									</div>
 								</div>
 							</div>
-						</div>
+						</div>--> 
 					</div>
 					<div class="col-xl-9 col-lg-8 col-md-7">
 						<!-- Start Filter Bar -->
@@ -295,24 +359,11 @@
 								<ul id ="sort">
 									<li class="orderBy"><a href="javascript:orderBy(1);" id ="bySellCount">판매순</a></li>
 									<li class="orderBy"><a href="javascript:orderBy(2);" id ="byPubDate">출간일순</a></li>
-									<li class="orderBy"><a href="javascript:orderBy(3);" id ="byDiscount">가격순</a></li>
+									<li class="orderBy"><a href="javascript:orderBy(3);" id ="byHDiscount">고가격순</a></li>
+									<li class="orderBy"><a href="javascript:orderBy(4);" id ="byLDiscount">저가격순</a></li>
+									<li class="orderBy"><a href="javascript:orderBy(5);" id ="byReadCount">상품조회순</a></li>
 								</ul>
 							</div>
-							<div class="sorting">
-								<select>
-									<option value="1">Default sorting</option>
-									<option value="1">Default sorting</option>
-									<option value="1">Default sorting</option>
-								</select>
-							</div>
-							<div class="sorting">
-								<select>
-									<option value="1">Show 12</option>
-									<option value="1">Show 12</option>
-									<option value="1">Show 12</option>
-								</select>
-							</div>
-							
 						</div>
 						<!-- End Filter Bar -->
 						<!-- Start Book List -->

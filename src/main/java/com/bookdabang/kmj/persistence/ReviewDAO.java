@@ -3,6 +3,8 @@ package com.bookdabang.kmj.persistence;
 import java.util.List;
 
 import com.bookdabang.common.domain.ReviewVO;
+import com.bookdabang.kmj.domain.ReviewStatisticsVO;
+import com.bookdabang.kmj.domain.SearchInfoDTO;
 import com.bookdabang.common.domain.AttachFileVO;
 import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.RecommendVO;
@@ -13,7 +15,10 @@ public interface ReviewDAO {
 	public List<ReviewVO> selectAllReview (int prodNo,PagingInfo pi) throws Exception;
 	
 	// n번 리뷰의 댓글들 가져오는 메서드
-	public List<ReviewComment> selectAllComments(int rno) throws Exception;
+	public List<ReviewComment> selectAllComments(int reviewNo) throws Exception;
+	
+	// 관리자 - n번 리뷰의 댓글들 가져오는 메서드 (페이징 포함)
+	public List<ReviewComment> selectAllComments(int reviewNo,PagingInfo pi) throws Exception;
 	
 	// 다음 댓글 번호 가져오는 메서드
 	public int selectNextRef() throws Exception;
@@ -69,9 +74,28 @@ public interface ReviewDAO {
 	// 첨부파일 모두 가져오는 메서드
 	public List<AttachFileVO> selectAllAttachFile(int prodNo) throws Exception;
 	
+	// 해당 리뷰에 첨부파일 있는 지 확인하는 메서드
+	public List<AttachFileVO> selectAttachFileByRNo(int reviewNo) throws Exception;
+	
 	// 리뷰 수정시, 기존 첨부파일 삭제하는 메서드
 	public int deleteAttachFile(int attachFileNo) throws Exception;
 	
 	// 해당 상품의 리뷰 전체개수 가져오는 메서드
-	public int getTotalPost(int prodNo) throws Exception;
+	public int getReviewTotalPost(int prodNo) throws Exception;
+	
+	// 관리자 - 리뷰 검색 결과의 총 개수 가져오는 메서드
+	public int getReviewSearchTotalPost(SearchInfoDTO searchInfo) throws Exception;
+	
+	// 관리자 - 리뷰댓글 총 개수 가져오는 메서드
+	public int getCommentTotalPost(int reviewNo) throws Exception;
+	
+	// 관리자 - 리뷰 검색 결과 가져오는 메서드
+	public List<ReviewVO> selectSearchReview(SearchInfoDTO searchInfo, PagingInfo pi) throws Exception;
+	
+	// 관리자 - 리뷰 상세정보 가져오는 메서드
+	public ReviewVO selectReview(int reviewNo) throws Exception;
+	
+	// 리뷰 통계자료 가져오는 메서드
+	public ReviewStatisticsVO selectReviewStatistics(int prodNo) throws Exception;
+	
 }

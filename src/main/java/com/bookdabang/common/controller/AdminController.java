@@ -14,8 +14,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.bookdabang.common.domain.AttachFileVO;
 import com.bookdabang.common.domain.BoardSearch;
 import com.bookdabang.common.domain.PagingInfo;
+import com.bookdabang.common.domain.ProductVO;
+import com.bookdabang.common.domain.ReviewComment;
+import com.bookdabang.common.domain.ReviewVO;
+import com.bookdabang.cyh.service.ProductService;
+import com.bookdabang.kmj.service.ReviewService;
+import com.bookdabang.kmj.service.UserProductService;
 import com.bookdabang.lhs.domain.AdminPagingInfo;
 import com.bookdabang.lhs.domain.AdminProduct;
 import com.bookdabang.lhs.service.ChartService;
@@ -26,6 +33,12 @@ public class AdminController {
 	
 	@Inject
 	ChartService cService;
+	
+	@Inject
+	private ReviewService rService;
+	
+	@Inject
+	private UserProductService pService;
 	
 	@RequestMapping("/adminOrder/orderListAll")
 	public void listAll(){
@@ -69,6 +82,34 @@ public class AdminController {
 	@RequestMapping("adminStatistics/salesDataDetail")
 	public void salesDataDetail() {
 		System.out.println("판매량 상세조회 페이지");
+	}
+	
+	@RequestMapping("reviewBoard/list")
+	public void reviewList() {
+		System.out.println("리뷰게시판 관리자 페이지");
+	}
+	
+	@RequestMapping("reviewBoard/detail")
+	public void reviewDetail(Model model , @RequestParam("no") int reviewNo) {
+		System.out.println("리뷰상세조회 관리자 페이지");
+		
+		Map<String, Object> resultMap;
+		try {
+			resultMap = rService.readReview(reviewNo);
+			ReviewVO review = (ReviewVO) resultMap.get("review");
+			List<AttachFileVO> fileList = (List<AttachFileVO>) resultMap.get("fileList");
+			
+			review.setContent(review.getContent().replace("<br/>", "\n"));
+			
+			ProductVO product = pService.readProduct(review.getProductNo());
+			
+			model.addAttribute("review", review);
+			model.addAttribute("fileList", fileList);
+			model.addAttribute("product", product);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 
