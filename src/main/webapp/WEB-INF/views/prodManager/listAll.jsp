@@ -41,6 +41,15 @@
 			location.href= "/prodManager/prodUpdate?prodNo="+prodNo; 
 		});
 			
+		$(document).on("keypress","#searchWord", function(e){
+			if (e.keyCode === 13) {
+				e.preventDefault();
+				search();
+			}
+
+			
+			
+		});
 		
 
 		$("#allcheck").change(function() {
@@ -102,6 +111,8 @@
 		});
 
 		$("#batchUpdate").on("click", function() {
+			
+			
 			checkAry = [];
 			for (let i = 0; i < 10; i++) {
 				if ($(".prodCheck").eq(i).is(":checked")) {
@@ -110,8 +121,15 @@
 				}
 
 			}
+			if(checkAry.length  <1 ){
+				errView("일괄처리할 상품을 선택하세요.");
+			
+			}else {
+				$("#myModal").modal("show");
+				prodselectview(checkAry);	
+			}
 
-			prodselectview(checkAry);
+			
 
 		});
 
@@ -283,8 +301,11 @@
 									updateProdAry.push(updateProd);
 								}
 							}
-							console.log(updateProdAry);
-							updateProd(updateProdAry);
+							if(updateProdAry.length <1) {
+								errView("일괄처리할 상품을 선택해주세요");
+							} else {
+							updateProd(updateProdAry);								
+							}
 
 						});
 		
@@ -387,12 +408,12 @@
 		$("#selectProdView")
 				.html(
 						'<div style="position : absolute; left : 50%; top :50%; transform : translate(-50%, -50%)"><img src="/resources/img/etc/loading.gif" style="width : 100px" ></div>');
-		let url = "/prodRest/selectView";
+		let url = "/api.prod.com/prods/batch";
 
 		$.ajax({
 			url : url,
 			dataType : "json",
-			type : "post",
+			type : "get",
 			data : {
 				checkBoxs : checkAry
 			},
@@ -435,15 +456,20 @@
 		console.log(sc);
 		$("#allcheck").prop("checked", false)
 
-		let url = "/prodRest/all/" + pageNo;
+		let url = "/api.prod.com/prods/" + pageNo;
 		$.ajax({
 			url : url,
 			dataType : "json",
-			type : "post",
+			type : "get",
 			data : sc,
 			success : function(data) {
-				console.log(data)
-				searchView(data);
+				console.log(data);
+				if(data.product.length <1) {
+					undifineSearchData()
+				} else {
+					searchView(data);
+				}
+				
 			}
 
 		});
@@ -451,7 +477,25 @@
 	}
 
 	function searchView(data) {
+		console.log(data.product);
 		
+		if(data.pagingInfo.totalPostCnt == 0){
+			alert("!");
+		}
+		
+		if(data.product.length < 10) {
+			$("#productView").height(0);
+			
+		}
+		if(data.product.length ==10) {
+			$("#productView").height(900);
+			
+		}
+		
+		
+		
+		/* $("#productView") */
+		$("#errZone").html("");
 		let output = "";
 		let displayStatus = "";
 		let salesStatus = "";
@@ -460,9 +504,8 @@
 		let endDate = "";
 		JsonSearchCriteria = JSON.stringify(SearchCriteria);
 
-		/* let PageNo = parseInt(data.pageNo); */
 		let pagingoutput = '<nav aria-label="Page navigation"><ul class="pagination">'
-
+			
 		$
 				.each(
 						data.product,
@@ -475,9 +518,9 @@
 									/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 							let sellPrice = e.sell_price.toString().replace(
 									/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-							output += '<td><div>' + price + '￦</div>'
-							output += '<div style="color : #ccc">' + sellPrice
-									+ '￦</div></td>';
+							output += '<td><div>￦' + price + '</div>'
+							output += '<div style="color : #ccc">￦' + sellPrice
+									+ '</div></td>';
 							output += '<td>' + e.stock + '</td>';
 							rgDate = new Date(
 									+new Date(e.rg_date) + 3240 * 10000)
@@ -576,7 +619,7 @@
 	}
 
 	function selectProdView(data) {
-		
+	
 		let output = "";
 		$
 				.each(
@@ -585,14 +628,14 @@
 							output += '<tr><td> <input class="form-check-input upProdCheck"  type="checkbox" id="'+e.isbn+'" /></td>';
 							output += '<td>' + e.isbn + '</td>';
 							output += '<td><img src ="' + e.cover + '" width="50" class ="imagePath"/></td>';
-							output += '<td>' + e.title + '</td>';
+							output += '<td style=" width:200px;" >' + e.title + '</td>';
 							output += '<td style="font-size : 12px">'
 									+ ConversionOfcategory(e.category_code)
 									+ '</td>';
 							let price = e.price.toString().replace(
 									/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-							output += '<td><span class="updatePrice">' + price
-									+ '</span><span>￦</span></td>'
+							output += '<td><span>￦</span><span class="updatePrice">' + price
+									+ '</span></td>'
 							output += '<td><span class="updateStock">'
 									+ e.stock + '</span><span>권</span></td>'
 							if (e.display_status == "yes") {
@@ -621,7 +664,7 @@
 		let JsonUpdateProdAry = JSON.stringify(updateProdAry);
 		console.log(JsonUpdateProdAry);
 
-		let url = "/prodRest/";
+		let url = "/api.prod.com/put/batch";
 		$.ajax({
 			url : url,
 			dataType : "text",
@@ -636,12 +679,7 @@
 			success : function(data) {
 				console.log(data)
 				if (data == "success") {
-					$(".alert").fadeIn(400);
-					$(".alert").html("상품이 정상적으로 수정되었습니다.");
-					setTimeout(function() {
-						$(".alert").fadeOut(500);	
-					},700);
-					
+					successView("상품을 성공적으로 수정했습니다.");
 					
 					setTimeout(function() {
 						location.reload();
@@ -661,11 +699,11 @@
 		let JsonDeleteProdAry = JSON.stringify(deleteProdAry);
 		console.log(deleteProdAry);
 		
-		let url = "/prodRest/delete";
+		let url = "/api.prod.com/delete/batch";
 		$.ajax({
 			url : url,
 			dataType : "text",
-			type : "post",
+			type : "delete",
 			headers : {
 				"content-type" : "application/json",
 				"X-HTTP-Method-Override" : "POST"
@@ -673,13 +711,7 @@
 			data : JsonDeleteProdAry,
 			success : function(data) {
 				if (data > 0) {
-					$(".alert").fadeIn(400);
-					$(".alert").html(data + " 개의 상품을 삭제했습니다.");
-					setTimeout(function() {
-						$(".alert").fadeOut(500);	
-					},700);
-					
-					
+					successView(data + "개의 상품을 삭제했습니다.");
 					setTimeout(function() {
 						location.reload();
 					},1300);
@@ -726,8 +758,46 @@
 		}
 
 	}
+	
+	function undifineSearchData() {
+		$("#productView").height(0);
+		let searchWord = $("#searchWord").val();
+		let output = "<div class ='errbox'><div style='font-weight :bold; font-size :24px;'>'"+searchWord+"' 의 검색 결과  <span style='color:red; margin-left:1em'>'0'</span></div>";
+		output += "<div style='margin-top : 30px;'>입력하신 단어의 철자가 정확한지 확인해 보세요.</div>";
+		output += "<div>검색어의 단어 수를 줄이거나, 보다 일반적인 단어로 검색해 보세요.</div>";
+		output += "<div>두 단어 이상의 키워드로 검색 하신 경우, 정확하게 띄어쓰기를 한 후 검색해 보세요.</div>";
+		output += "</div>";
+		
+		$("#productView").html("");
+		$("#pagingZone").html("");
+		$("#errZone").html(output);
+	}
+	
+	
+	function errView(text) {
+		$(".alert-danger").fadeIn(400);
+		$(".alert-danger").html(text);
+
+		setTimeout(function() {
+			$(".alert-danger").fadeOut(500);
+		}, 800);
+	}
+	
+	
+	function successView (text) {
+		$(".alert-primary").fadeIn(400);
+		$(".alert-primary").html(text);
+
+		setTimeout(function() {
+			$(".alert-primary").fadeOut(500);
+		}, 800);
+	}
 </script>
 <style>
+.errbox {
+	margin : 50px 0 50px 50px;
+	font-size : 20px;
+}
 .container {
 	width: 100%;
 	height: 80px;
@@ -750,11 +820,13 @@
 	width: 99%;
 	margin: 0 auto;
 	overflow: hidden;
+	
 }
 
-td {
+td {	
 	max-width: 150px;
 	overflow: hidden;
+	text-overflow : ellipsis;
 }
 
 th {
@@ -839,16 +911,14 @@ th {
 	transform: rotate(180deg);
 	transition: 0.5s;
 }
-
 .alert {
 	position: absolute;
 	width: 100%;
 	margin: 0 auto;
-	z-index: 3000;
+	z-index: 1500;
 	hegiht: -50%;
 	text-align: center;
 	padding: 10px;
-	
 }
 </style>
 </head>
@@ -969,7 +1039,8 @@ th {
 
 		<div
 			style="width: 1200px; margin: 0 auto; margin-top: 25px; clear: both">
-			<button type="button" class="btn btn-primary" onclick="search();">검색</button>
+			<button type="button" class="btn btn-primary" onclick="search();">
+               <span class="tf-icons bx bx-search-alt"></span>검색</button>
 		</div>
 
 
@@ -982,20 +1053,22 @@ th {
 	<div class="card">
 		<h4 class="card-header">상품 조회</h4>
 		<div>
-			<button type="button" class="btn rounded-pill btn-outline-primary"
-				style="float: left; margin-left: 15px" data-bs-toggle="modal"
-				data-bs-target="#myModal" id="batchUpdate">일괄 업데이트 / 삭제</button>
-
-			<button type="button" class="btn rounded-pill btn-outline-primary"
-				style="float: left; margin-left: 10px"
+			
+			<button type="button" class="btn btn-outline-primary"
+				style="float: right; margin-left: 10px"
 				onclick="location.href='${contextPath}/prodManager/addProduct'">상품
-				추가하기</button>
+				추가하기<i class='bx bxs-add-to-queue' style="margin-left :10px"></i></button>
+				
+				<button type="button" class="btn btn-outline-primary"
+				style="float: right; margin-left: 15px" 
+				 id="batchUpdate">일괄 수정 / 삭제 <i class='bx bx-pencil' style="margin-left :10px"></i></button>
+				  <!-- data-bs-toggle="modal"data-bs-target="#myModal" -->
 		</div>
 		<div class="table-responsive text-nowrap">
 			<table class="table">
 				<thead>
 					<tr>
-						<th>모두체크 <input class="form-check-input" type="checkbox"
+						<th> <input class="form-check-input" type="checkbox"
 							id="allcheck" /></th>
 						<th>상품번호</th>
 						<th>이미지</th>
@@ -1024,12 +1097,13 @@ th {
 						<th></th>
 					</tr>
 				</thead>
-				<tbody class="table-border-bottom-0" id="productView">
+				<tbody class="table-border-bottom-0" id="productView" >
 				</tbody>
 			</table>
 		</div>
 
 		<div class="demo-inline-spacing" id="pagingZone"></div>
+		<div id="errZone"></div>
 
 
 		<!-- The Modal -->
@@ -1071,7 +1145,7 @@ th {
 						<table class="table" id="updateTable">
 							<thead>
 								<tr>
-									<th>모두체크 <input class="form-check-input" type="checkbox"
+									<th> <input class="form-check-input" type="checkbox"
 										id="allUpCheck" /></th>
 									<th>상품번호</th>
 									<th>이미지</th>
@@ -1094,11 +1168,11 @@ th {
 					<div class="modal-footer">
 
 						<button type="button" class="btn btn-primary" id="updateprod">상품
-							수정</button>
+							수정<i class='bx bx-pencil'style="margin-left:5px"></i></button>
 						<button type="button" class="btn btn-danger" id="delProd">상품
-							삭제</button>
+							삭제<i class='bx bx-trash' style="margin-left:5px"></i></button>
 						<button type="button" class="btn btn-primary"
-							data-bs-dismiss="modal">닫기 X</button>
+							data-bs-dismiss="modal"><i class='bx bx-x'></i></button>
 
 					</div>
 
@@ -1106,10 +1180,18 @@ th {
 				</div>
 			</div>
 		</div>
-		
-		<div class="alert alert-primary" style="width:300px;  height:70px;position: fixed; margin: 0 auto; top:10%; left : 45%; line-height: 45px; display: none;">
+		<div class="alert alert-danger"
+		style="width: 300px; height: 70px; position: fixed; margin: 0 auto; top: 10%; left: 45%; line-height: 45px; display: none; font-weight: bold">
+
+	</div>
+	<div class="alert alert-primary"
+		style="width: 300px; height: 70px; position: fixed; margin: 0 auto; top: 20%; left: 45%; display: none; line-height: 45px;" >
+
+	</div>
     
   </div>
+  
+
 
 
 

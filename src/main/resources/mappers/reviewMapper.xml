@@ -7,11 +7,36 @@
 <mapper namespace="com.bookdabang.mapper.ReviewMapper" >
 
 	<select id="selectAllReview" resultType="ReviewVO">
-		select * from review where productNo = #{prodNo} order by writedate desc limit #{startNum},#{postPerPage}
+		select * from review where productNo = #{prodNo}  
+		<if test="sort == 1">
+			order by writedate desc 
+		</if>
+		<if test="sort == 2">
+			order by writedate asc 
+		</if>
+		<if test="sort == 3">
+			order by grade desc 
+		</if>
+		<if test="sort == 4">
+			order by grade asc 
+		</if>
+		<if test="sort == 5">
+			order by recommendNum desc 
+		</if>
+		<if test="sort == 6">
+			order by commentNum desc 
+		</if>
+		limit #{startNum},#{postPerPage}
 	</select>
 	
 	<select id="selectAllComments" resultType="ReviewComment">
-		select * from review_comment where reviewNo = #{rno} order by ref asc,step asc, reforder desc
+		select * from review_comment where reviewNo = #{reviewNo} 
+		<if test="startNum == null and postPerPage == null">
+			order by ref asc,step asc, reforder desc
+		</if>
+		<if test="startNum != null and postPerPage != null">
+			order by ref desc,reforder asc limit #{startNum},#{postPerPage}
+		</if>
 	</select>
 	
 	<insert id="insertComment">
@@ -59,12 +84,12 @@
 	</delete>
 	
 	<insert id="insertReview"> 
-		 insert into review(title,writer,content,grade,productNo)
-		 values (#{title},#{writer},#{content},#{grade},#{productNo})
+		 insert into review(title,writer,content,grade,productNo,fileStatus)
+		 values (#{title},#{writer},#{content},#{grade},#{productNo},#{fileStatus})
 	</insert>
 	
 	<update id="updateReview">
-		update review set title = #{title}, content=#{content}, grade=#{grade} where reviewNo = #{reviewNo}
+		update review set title = #{title}, content=#{content}, grade=#{grade}, fileStatus=#{fileStatus} where reviewNo = #{reviewNo}
 	</update>
 	
 	<delete id="deleteReview">
@@ -93,15 +118,146 @@
 	</insert>
 	
 	<select id="selectAllAttachfile" resultType="AttachFileVO">
-		select * from attachfile where productNo = #{prodNo}
+		select * from attachfile where
+		<if test="value != 0 and value != null">
+			productNo = #{value}
+		</if>
+		<if test="value == 0">
+			reviewNo is not null
+		</if>
+	</select>
+	
+	<select id="selectAttachFileByRNo" resultType="AttachFileVO">
+		select * from attachfile where reviewNo = #{reviewNo}
 	</select>
 	
 	<delete id="deleteAttachfile">
 		delete from attachfile where attachFileNo = #{attachFileNo}
 	</delete> 
 	
-	<select id="selectTotalPost" resultType="int">
-		select count(*) as totalCnt from review where productNo = #{prodNo}
+	<select id="selectReviewTotalPost" resultType="int">
+		select count(*) as totalCnt from review where productNo = #{value}
+	</select>
+	
+	<select id="selectReviewSearchTotalPost" resultType="int">
+		select count(*) as totalCnt from review where 1=1
+		<if test="searchWord != '' and searchWord != null">
+			<if test="searchType == 'reviewNo'">
+				and reviewNo like concat('%', #{searchWord}, '%') 
+			</if>
+			<if test="searchType == 'productNo'">
+				and productNo like concat('%', #{searchWord}, '%') 
+			</if>
+			<if test="searchType == 'title'">
+				and title like concat('%', #{searchWord}, '%') 
+			</if>
+			<if test="searchType == 'writer'">
+				and writer like concat('%', #{searchWord}, '%') 
+			</if>
+			<if test="searchType == 'content'">
+				and content like concat('%', #{searchWord}, '%') 
+			</if>
+		</if>
+		<if test="startDate != '' and startDate != null">
+			and writedate between #{startDate} and #{endDate} 
+		</if>
+		<if test="startStar != '시작 별점' and startStar != null">
+			and grade between #{startStar} and #{endStar} 
+		</if>
+		<if test="fileStatus != 'all' and fileStatus != null">
+			and fileStatus = #{fileStatus}
+		</if>
+		
+	</select>
+	
+	<select id="selectCommentTotalPost" resultType="int">
+		select count(*) as totalCnt from review_comment where reviewNo = #{value}
+	</select>
+	
+	<select id="selectSearchReview" resultType="ReviewVO">
+		select * from review where 1=1 
+		<if test="searchWord != '' and searchWord != null">
+			<if test="searchType == 'reviewNo'">
+				and reviewNo = #{searchWord}
+			</if>
+			<if test="searchType == 'productNo'">
+				and productNo = #{searchWord}
+			</if>
+			<if test="searchType == 'title'">
+				and title like concat('%', #{searchWord}, '%') 
+			</if>
+			<if test="searchType == 'writer'">
+				and writer like concat('%', #{searchWord}, '%') 
+			</if>
+			<if test="searchType == 'content'">
+				and content like concat('%', #{searchWord}, '%') 
+			</if>
+		</if>
+		<if test="startDate != '' and startDate != null">
+			and writedate between #{startDate} and #{endDate} 
+		</if>
+		<if test="startStar != '시작 별점' and startStar != null">
+			and grade between #{startStar} and #{endStar} 
+		</if>
+		<if test="fileStatus != 'all' and fileStatus != null">
+			and fileStatus = #{fileStatus} 
+		</if>
+		<if test="order == 1">
+			order by reviewNo desc 
+		</if>
+		<if test="order == 2">
+			order by reviewNo asc 
+		</if>
+		<if test="order == 3">
+			order by productNo desc 
+		</if>
+		<if test="order == 4">
+			order by productNo asc 
+		</if>
+		<if test="order == 5">
+			order by writedate desc 
+		</if>
+		<if test="order == 6">
+			order by writedate asc 
+		</if>
+		<if test="order == 7">
+			order by grade desc 
+		</if>
+		<if test="order == 8">
+			order by grade asc 
+		</if>
+		<if test="order == 9">
+			order by recommendNum desc 
+		</if>
+		<if test="order == 10">
+			order by recommendNum asc 
+		</if>
+		<if test="order == 11">
+			order by commentNum desc 
+		</if>
+		<if test="order == 12">
+			order by commentNum asc 
+		</if>
+		 limit #{startNum},#{postPerPage}
+	</select>
+	
+	<select id = "selectReview" resultType = "ReviewVO" >
+		select * from review where reviewNo = #{reviewNo}
+	</select>
+	
+	<select id = "selectReviewStatistics" resultType = "ReviewStatisticsVO" >
+		select count(case when grade=1 then 1 end) as gradeCount1,
+		count(case when grade=2 then 1 end) as gradeCount2,
+		count(case when grade=3 then 1 end) as gradeCount3,
+		count(case when grade=4 then 1 end) as gradeCount4,
+		count(case when grade=5 then 1 end) as gradeCount5,
+		truncate(count(case when grade=1 then 1 end)/count(*)*100,1) as gradeRate1,
+		truncate(count(case when grade=2 then 1 end)/count(*)*100,1) as gradeRate2,
+		truncate(count(case when grade=3 then 1 end)/count(*)*100,1) as gradeRate3,
+		truncate(count(case when grade=4 then 1 end)/count(*)*100,1) as gradeRate4,
+		truncate(count(case when grade=5 then 1 end)/count(*)*100,1) as gradeRate5,
+		count(*) as gradeTotal,truncate(avg(grade),1) as gradeAvg
+		from review where productNo = #{prodNo}
 	</select>
 	
 

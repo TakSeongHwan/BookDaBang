@@ -3,12 +3,12 @@ package com.bookdabang.common.persistence;
 import java.util.List;
 
 import com.bookdabang.common.domain.CategoryVO;
-import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.PageView;
 import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.cyh.domain.AnswerDTO;
-import com.bookdabang.cyh.domain.InsertProdDTO;
+import com.bookdabang.cyh.domain.ProdDTO;
 import com.bookdabang.cyh.domain.ProdQnADTO;
 import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.cyh.domain.UpdateProdDTO;
@@ -27,16 +27,20 @@ public interface ProductDAO {
 	public ProductVO selectProdView(String prodNo) throws Exception;
 	// 선택된 상품 하나를 업데이트 (일괄)
 	public int updateProd(UpdateProdDTO prod) throws Exception;
+	
+	// 선택된 상품 하나를 업데이트 	
+	public int updateProd(ProdDTO prod) throws Exception;
 	// 선택된 상품 하나를 삭제 (일괄)
 	public int deleteProd(String isbn) throws Exception;
 	
-	public int insertProd(InsertProdDTO product) throws Exception;
+	public int insertProd(ProdDTO product) throws Exception;
 	// isbn(상품번호) 유효성 확인
 	public int validationProdNo(String prodNo) throws Exception;
 	
 	// 글번호로 qna 비밀번호 가져옴
 	public String getPwdByQuesNo(int question_no);
-	
+	// 글번호로 QnA 정보 가져옴
+	public ProductQnA getQnAByquesNo(int question_no);
 	// 답글 insert
 	public int insertAnswer(AnswerDTO answer);
 	// Qna isnert
@@ -55,6 +59,9 @@ public interface ProductDAO {
 	public List<ProductQnA> selectAllProdQnA_NoAnswer(PagingInfo pi) throws Exception;
 	public List<ProductQnA> selectAllProdQnA_Answer(PagingInfo pi) throws Exception;
 	
+	
+	//QnA Update
+	public int updateQnA(AnswerDTO prodQnA);
 	
 	//qna 삭제
 	public int deleteQnA(int questionNo);
@@ -81,6 +88,24 @@ public interface ProductDAO {
 	
 	// Top 상품 가져오는 메서드
 	public List<ProductVO> selectTopProducts (String searchWord) throws Exception;
+	
+	// 상품 조회기록 확인하는 메서드
+	public PageView selectPageview(int prodNo, String ipaddr) throws Exception;
+	
+	// 상품 조회기록 추가하는 메서드
+	public int insertPageview(int prodNo, String ipaddr) throws Exception;
+	
+	// 상품 조회수 증가하는 메서드
+	public int updateReadCount(int prodNo) throws Exception;
+	
+	// 상품 조회기록 업데이트하는 메서드
+	public int updatePageview(int prodNo, String ipaddr) throws Exception;
+	
+	// 상품 조회기록 삭제하는 메서드
+	public int deletePageview (int prodNo, String ipaddr) throws Exception;
+	
+	// 카테고리 이름 가져오는 메서드
+	public String selectCategoryName(int cno) throws Exception;
 	
 	
 }

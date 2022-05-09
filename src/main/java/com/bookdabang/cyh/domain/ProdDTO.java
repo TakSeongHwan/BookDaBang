@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-public class InsertProdDTO {
+public class ProdDTO {
 
 	private String title;
 	private String author;
@@ -26,7 +26,7 @@ public class InsertProdDTO {
 	private String pisOffdiscription;
 	private String isbn;
 
-	public InsertProdDTO(String title, String author, int price, int sell_price, String publisher, int category_code,
+	public ProdDTO(String title, String author, int price, int sell_price, String publisher, int category_code,
 			String description, String pub_date, int stock, String end_date, String display_status, String sales_status,
 			String cover, String detail_description, String index, String inside_book, String author_introduce,
 			String pisOffdiscription, String isbn) {
@@ -52,7 +52,7 @@ public class InsertProdDTO {
 		this.isbn = isbn;
 	}
 
-	public InsertProdDTO() {
+	public ProdDTO() {
 		super();
 	}
 
@@ -210,7 +210,7 @@ public class InsertProdDTO {
 
 	@Override
 	public String toString() {
-		return "InsertProdDTO [title=" + title + ", author=" + author + ", price=" + price + ", sell_price="
+		return "ProdDTO [title=" + title + ", author=" + author + ", price=" + price + ", sell_price="
 				+ sell_price + ", publisher=" + publisher + ", category_code=" + category_code + ", description="
 				+ description + ", pub_date=" + pub_date + ", stock=" + stock + ", end_date=" + end_date
 				+ ", display_status=" + display_status + ", sales_status=" + sales_status + ", cover=" + cover

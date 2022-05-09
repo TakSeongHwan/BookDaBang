@@ -10,11 +10,12 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.CategoryVO;
+import com.bookdabang.common.domain.PageView;
 import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.cyh.domain.AnswerDTO;
-import com.bookdabang.cyh.domain.InsertProdDTO;
+import com.bookdabang.cyh.domain.ProdDTO;
 import com.bookdabang.cyh.domain.ProdQnADTO;
 import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.cyh.domain.UpdateProdDTO;
@@ -70,9 +71,16 @@ public class ProductDAOImpl implements ProductDAO {
 	@Override
 	public int updateProd(UpdateProdDTO prod) throws Exception {
 
-		return ses.update(ns + ".updateProd", prod);
+		return ses.update(ns + ".batchUpdateProd", prod);
 	}	
 	
+	
+	@Override
+	public int updateProd(ProdDTO prod) throws Exception {
+		
+		return ses.update(ns + ".updateProd", prod);
+	}
+
 	@Override
 	public int deleteProd(String isbn) throws Exception {
 		
@@ -80,7 +88,7 @@ public class ProductDAOImpl implements ProductDAO {
 	}
 
 	@Override
-	public int insertProd(InsertProdDTO product) throws Exception {
+	public int insertProd(ProdDTO product) throws Exception {
 		
 		return ses.insert(ns + ".insertProd", product);
 	}
@@ -96,7 +104,15 @@ public class ProductDAOImpl implements ProductDAO {
 	@Override
 	public String getPwdByQuesNo(int question_no) {
 		
-		return ses.selectOne(ns + ".getQnAByQuesNo", question_no);
+		return ses.selectOne(ns + ".getPwdByQuesNo", question_no);
+	}
+	
+	
+
+	@Override
+	public ProductQnA getQnAByquesNo(int question_no) {
+	
+		return ses.selectOne(ns + ".getQnAByquesNo", question_no);
 	}
 
 	@Override
@@ -179,12 +195,20 @@ public class ProductDAOImpl implements ProductDAO {
 		return ses.delete(ns + ".deleteQnA", questionNo);
 	}
 	
+	@Override
+	public int updateQnA(AnswerDTO prodQnA) {
+		return ses.update(ns + ".updateQnA", prodQnA);
+		
+	}
+	
 	
 	
 	
 
 	// 강명진
 	
+	
+
 	@Override
 	public List<ProductVO> selectAllProducts(int cno,PagingInfo pi,int sort,String searchWord) throws Exception {
 		Map<String, Object> param = new HashMap<String, Object>();
@@ -222,8 +246,6 @@ public class ProductDAOImpl implements ProductDAO {
 		return ses.selectList(ns + ".selectTopSaleProducts", cno);
 	}
 
-
-
 	@Override
 	public List<ProductVO> selectTopProducts(String searchWord) throws Exception {
 		Map<String, Object> param = new HashMap<String, Object>();
@@ -231,6 +253,47 @@ public class ProductDAOImpl implements ProductDAO {
 		return ses.selectList(ns + ".selectTopViewProducts", param);
 	}
 
+	@Override
+	public PageView selectPageview(int prodNo, String ipaddr) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("prodNo", prodNo);
+		param.put("ipaddr", ipaddr);
+		return ses.selectOne(ns + ".selectPageview", param);
+	}
+
+	@Override
+	public int insertPageview(int prodNo, String ipaddr) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("prodNo", prodNo);
+		param.put("ipaddr", ipaddr);
+		return ses.insert(ns + ".insertPageview", param);
+	}
+
+	@Override
+	public int updateReadCount(int prodNo) throws Exception {
+		return ses.update(ns + ".updateReadCount",prodNo);
+	}
+
+	@Override
+	public int updatePageview(int prodNo, String ipaddr) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("prodNo", prodNo);
+		param.put("ipaddr", ipaddr);
+		return ses.update(ns + ".updatePageview", param);
+	}
+	
+	@Override
+	public int deletePageview(int prodNo, String ipaddr) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("prodNo", prodNo);
+		param.put("ipaddr", ipaddr);
+		return ses.delete(ns + ".deletePageview", param);
+	}
+
+	@Override
+	public String selectCategoryName(int cno) throws Exception {
+		return ses.selectOne(ns + ".selectCategoryName", cno);
+	}
 
 	
 

@@ -7,7 +7,7 @@ import com.bookdabang.common.domain.CategoryVO;
 import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.cyh.domain.AnswerDTO;
-import com.bookdabang.cyh.domain.InsertProdDTO;
+import com.bookdabang.cyh.domain.ProdDTO;
 import com.bookdabang.cyh.domain.ProdInfo;
 import com.bookdabang.cyh.domain.ProdQnADTO;
 import com.bookdabang.cyh.domain.SearchCriteria;
@@ -31,22 +31,33 @@ public interface ProductService {
 
 	public ProdInfo viewInfoByIsbn(String isbn) throws Exception;
 	
-	public boolean insertProd(InsertProdDTO product) throws Exception;
+	public boolean insertProd(ProdDTO product) throws Exception;
 
 	public void deleteImage(String upPath, String deletePath) throws Exception;
 
 	public boolean insertAnswer(AnswerDTO answer) throws Exception;
+	
+	public boolean updateProd(ProdDTO product) throws Exception;
 
 //	QnA
 	// sessionId로 member 찾기
 	public String validSession(String sessionId) throws Exception;
+	
+	public ProductQnA getQnAByquesNo(int quesion_no) throws Exception;
+	
 
 	public boolean InsertQnA(ProdQnADTO dto) throws Exception;
+	
+	public boolean updateQnA(AnswerDTO prodQnA) throws Exception;
+	
+	
 
 	public Map<String, Object> selectProdQnA(int pageno, int answerStatus, String isbn) throws Exception;
 
 
 	public boolean deleteQnA(int questionNo) throws Exception;
+
+	
 
 	
 

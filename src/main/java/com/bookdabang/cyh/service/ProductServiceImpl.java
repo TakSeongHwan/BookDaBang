@@ -17,7 +17,7 @@ import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.common.persistence.ProductDAO;
 import com.bookdabang.cyh.domain.AnswerDTO;
-import com.bookdabang.cyh.domain.InsertProdDTO;
+import com.bookdabang.cyh.domain.ProdDTO;
 import com.bookdabang.cyh.domain.ProdInfo;
 import com.bookdabang.cyh.domain.ProdQnADTO;
 import com.bookdabang.cyh.domain.SearchCriteria;
@@ -112,7 +112,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public boolean insertProd(InsertProdDTO product) throws Exception {
+	public boolean insertProd(ProdDTO product) throws Exception {
 		boolean result = false;
 		if (pdao.insertProd(product) == 1) {
 			result = true;
@@ -142,8 +142,22 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 	}
+	
+	
+	@Override
+	public boolean updateProd(ProdDTO product) throws Exception {
+		boolean result = false; 
+			if(pdao.updateProd(product) ==1) {
+				result = true;
+			}
+		return result;
+	}
+	
+	
 
 //========================= QnA ===================================================
+
+	
 
 	@Override
 	public boolean insertAnswer(AnswerDTO answer) throws Exception {
@@ -162,6 +176,14 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 		return result;
+	}
+	
+	
+
+	@Override
+	public ProductQnA getQnAByquesNo(int quesion_no) throws Exception {
+		ProductQnA prodQnA = pdao.getQnAByquesNo(quesion_no);
+		return prodQnA;
 	}
 
 	@Override
@@ -183,6 +205,18 @@ public class ProductServiceImpl implements ProductService {
 			result = true;
 		}
 
+		return result;
+	}
+	
+	
+
+	@Override
+	public boolean updateQnA(AnswerDTO prodQnA) throws Exception {
+		boolean result = false;
+		
+		if (pdao.updateQnA(prodQnA) == 1) {
+			result = true;
+		}
 		return result;
 	}
 
