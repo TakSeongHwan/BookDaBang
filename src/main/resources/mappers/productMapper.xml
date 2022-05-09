@@ -193,8 +193,22 @@
 	
 	
 	<update id = "updateProd">
-		update product set title=#{title}, author=#{author}, price=#{price}, sell_price=#{sell_price}, publisher=#{publisher}, category_code=#{category_code}, description=#{description}, pub_date=timestamp(#{pub_date}),update_date=now(), stock=#{stock}, end_date=timestamp(#{end_date}), display_status=#{display_status}, sales_status=#{sales_status}, cover=#{cover}, detail_description=#{detail_description},inside_book=#{inside_book}, author_introduce=#{author_introduce}, pisOffdiscription=#{pisOffdiscription}, prod_index=#{index} where isbn=#{isbn}
+		<choose>
+			<when test="end_date == '' and pub_date == ''">
+			update product set title=#{title}, author=#{author}, price=#{price}, sell_price=#{sell_price}, publisher=#{publisher}, category_code=#{category_code}, description=#{description},update_date=now(), stock=#{stock}, display_status=#{display_status}, sales_status=#{sales_status}, cover=#{cover}, detail_description=#{detail_description},inside_book=#{inside_book}, author_introduce=#{author_introduce}, pisOffdiscription=#{pisOffdiscription}, prod_index=#{index} where isbn=#{isbn}
+			</when>
+			<when test="end_date == ''">
+			update product set title=#{title}, author=#{author}, price=#{price}, sell_price=#{sell_price}, publisher=#{publisher}, category_code=#{category_code}, description=#{description},update_date=now(), stock=#{stock}, display_status=#{display_status}, sales_status=#{sales_status}, cover=#{cover}, detail_description=#{detail_description},inside_book=#{inside_book}, author_introduce=#{author_introduce}, pisOffdiscription=#{pisOffdiscription}, prod_index=#{index}, pub_date=timestamp(#{pub_date}) where isbn=#{isbn}
+			</when>
+			<when test="pub_date == ''">
+		 	update product set title=#{title}, author=#{author}, price=#{price}, sell_price=#{sell_price}, publisher=#{publisher}, category_code=#{category_code}, description=#{description},update_date=now(), stock=#{stock}, display_status=#{display_status}, sales_status=#{sales_status}, cover=#{cover}, detail_description=#{detail_description},inside_book=#{inside_book}, author_introduce=#{author_introduce}, pisOffdiscription=#{pisOffdiscription}, prod_index=#{index}, end_date=timestamp(#{end_date}) where isbn=#{isbn}
+		 	</when>
+		 	<otherwise>
+		 	update product set title=#{title}, author=#{author}, price=#{price}, sell_price=#{sell_price}, publisher=#{publisher}, category_code=#{category_code}, description=#{description},update_date=now(), stock=#{stock}, display_status=#{display_status}, sales_status=#{sales_status}, cover=#{cover}, detail_description=#{detail_description},inside_book=#{inside_book}, author_introduce=#{author_introduce}, pisOffdiscription=#{pisOffdiscription}, prod_index=#{index}, end_date=timestamp(#{end_date}), pub_date=timestamp(#{pub_date}) where isbn=#{isbn}
+		 	</otherwise>
+		 </choose>
 	</update>
+	
 	
 	
 	<delete id="deleteProd">
@@ -239,8 +253,12 @@
 		select max(question_no) from product_qna
 	</select>
 	
-	<select id="getQnAByQuesNo" resultType="String">
+	<select id="getPwdByQuesNo" resultType="String">
 		select pwd from product_qna where question_no = #{question_no}
+	</select>
+	
+	<select id="getQnAByquesNo" resultType="ProductQnA">
+		select * from product_qna where question_no = #{question_no}
 	</select>
 	
 	<insert id="insertProdQnA">
@@ -262,6 +280,18 @@
 	<delete id="deleteQnA">
 		delete from product_qna where ref = #{questionNo}
 	</delete>
+	
+	<update id="updateQnA">
+		<choose>
+		<when test="pwd != '' and pwd != null">
+		update product_qna set content = #{content}, pwd = md5(#{pwd}) where question_no = #{question_no}
+		</when>
+		<otherwise>
+		update product_qna set content = #{content}, pwd = null where question_no = #{question_no}
+		</otherwise>
+		</choose>
+		
+	</update>
 	
 	
 	<insert id="insertAnswer">

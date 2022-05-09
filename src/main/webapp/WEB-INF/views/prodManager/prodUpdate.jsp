@@ -176,7 +176,7 @@ window.onload = function() {
 						console.log(imageInput.files);
 						const formData = new FormData();
 						formData.append("image", imageInput.files[0]);
-						let url = "/prodRest/b";
+						let url = "/api.prod.com/file";
 						$
 								.ajax({
 									url : url,
@@ -495,7 +495,7 @@ function successView (text) {
 
 function deleteImage(imagePath) {
 console.log(imagePath);
-let url = "/prodRest/c"
+let url = "/api.prod.com/delete/file";
 $.ajax({
 	url : url,
 	dataType : "json",
@@ -640,19 +640,19 @@ $.ajax({
 								<label for="floatingInput" class="form-label"
 									style="display: block">작가</label> <input type="text"
 									class="form-control" id="author" placeholder="작가"
-									aria-describedby="defaultFormControlHelp" readonly
+									aria-describedby="defaultFormControlHelp" 
 									value="${prod.author}" />
 							</div>
 							<div class="mb-3">
 								<label for="floatingInput" class="form-label"
 									style="display: block">출판사</label> <input type="text"
 									class="form-control" id="publisher" placeholder="출판사"
-									aria-describedby="defaultFormControlHelp" readonly
+									aria-describedby="defaultFormControlHelp" 
 									value="${prod.publisher}" /> <label for="floatingInput"
 									class="form-label" style="display: block">출판일</label> <input
 									type="date" class="form-control" id="pub_date"
 									placeholder="출판일" aria-describedby="defaultFormControlHelp"
-									readonly style="width: 200px" value="${pubDate}" />
+									style="width: 200px" value="${pubDate}" />
 							</div>
 
 						</div>
