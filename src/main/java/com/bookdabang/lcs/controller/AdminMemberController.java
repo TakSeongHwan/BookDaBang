@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -76,11 +77,21 @@ public class AdminMemberController {
 		}
 		return result;
 	}
-	@RequestMapping(value = "/delete", method = RequestMethod.GET)
-	public String deleteMember(@RequestParam String userId) throws Exception {
-		System.out.println(userId);
-		System.out.println(service.delete(userId));
-		String result = null;
+	@RequestMapping(value = "/delete/{userId}", method = RequestMethod.GET)
+	public ResponseEntity<String> deleteMember(@PathVariable("userId") String userId)  {
+		ResponseEntity<String> result = null;
+		
+		try {
+			if(service.delete(userId)) {
+				result = new ResponseEntity<String>("success", HttpStatus.OK);
+			} else {
+				result = new ResponseEntity<String>("fail", HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			e.printStackTrace();
+		}
+		
 		return result;
 	}
 

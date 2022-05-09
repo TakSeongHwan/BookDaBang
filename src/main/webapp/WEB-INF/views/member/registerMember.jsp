@@ -134,6 +134,7 @@
 	function validate() {
 		if (idCheck && nickCheck && userPwdCheck && emailCheck) {
 			$("#register_form").submit();
+			alert("회원가입성공");
 			return true;
 		} else {
 			alert("회원가입실패");

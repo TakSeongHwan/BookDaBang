@@ -17,6 +17,7 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 	let pageNo = 1;
+	let deleteUserId;
 
 	window.onload = function() {
 		getList(1, pageNo);
@@ -27,12 +28,20 @@
 			isdormant : "",
 			userId : ""
 		}
+			
+		$(document).on("click", ".deleteImg", function() {
+			deleteUserId = $(this).attr("value");
+			
+			$(".modal-title").html(deleteUserId + "삭제");
+			$(".modal-body").html(deleteUserId + "를 정말 삭제하시겠습니까?");
+			
+		});
 		$(document).on("change", ".dormentCk", function() {
 			let url = "/admin/adminMember/dormantUpdate";
 			let index = $(".dormentCk").index(this);
 			dormant.userId = $(".userId").eq(index).html();
 
-			if ($(".dormentCk").is(":checked")) {
+			if ($(this).is(":checked")) {
 				dormant.isdormant = "Y";
 			} else {
 				dormant.isdormant = "N";
@@ -134,7 +143,7 @@
 		let output = "";
 		$.each(data.memberList, function(i, e) {
 			output += '<tr class="">';
-			output += '<td class="">' + e.userId + "</td>";
+			output += '<td class="userId">' + e.userId + "</td>";
 			let birth = new Date(new Date(e.birth) + 3240 * 10000)
 					.toISOString().split("T")[0];
 			output += '<td class="">' + birth + "</td>";
@@ -191,7 +200,7 @@
 							new Date(e.withdrawWhen) + 3240 * 10000)
 							.toISOString().split("T")[0];
 					output += '<td class="">' + withdrawWhen + "</td>";
-					output += '<td><img src="../../resources/img/delete.png" style="width: 20px;" data-bs-toggle="modal" data-bs-target="#myModal" onclick="deleteMember("${status.count }");" /></td></tr>'
+					output += '<td><img src="../../resources/img/delete.png"  class="deleteImg" value = "'+e.userId+'"style="width: 20px;" data-bs-toggle="modal" data-bs-target="#myModal" /></td></tr>'
 				});
 
 		let pagingoutput = '<nav aria-label="Page navigation"><ul class="pagination">'
@@ -228,25 +237,21 @@
 	}
 
 	//회원 삭제 모달
-	let userId = null;
-	function deleteMember(i) {
-		userId = $("#" + i).text();
-		$(".modal-body").html(userId + "를 삭제하시겠습니까?")
-	}
+	
 	//회원 삭제
 	function delete2() {
-		let url = "/admin/adminMember/delete"
+		let url = "/admin/adminMember/delete/" + deleteUserId
+		console.log(deleteUserId);
 		$.ajax({
 			url : url, // ajax와 통신할곳
 			dataType : "text", // 수신 받을 데이터의 타입
 			type : "GET",
-			data : {
-				userId : userId
-			},
 			success : function(data) { // 통신 성공시 실행될 콜백 함수
 				console.log(data);
 				if (data == "success") {
-
+					alert("삭제가 완료되었습니다.");
+				} else {
+					alert("삭제에 실패하였습니다.");
 				}
 			}
 		});
