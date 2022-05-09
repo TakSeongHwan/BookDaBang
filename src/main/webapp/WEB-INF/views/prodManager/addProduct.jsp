@@ -58,7 +58,7 @@
 			if (saveImage == false) {
 				let imagePath = $("#prodImg").attr("src");
 				console.log(imagePath);
-				let url = "/api.prod.com/delete/file";
+				let url = "/prodManager/deleteFile";
 				$.ajax({
 					url : url,
 					dataType : "json",
@@ -171,11 +171,14 @@
 			if (isbn == "") {
 				outPutErrMessage("상품번호는 공백일 수 없습니다", $("#isbn"));
 			} else {
-				let url = "/api.prod.com/isbn/" + isbn;
+				let url = "/prodManager/validIsbn";
 				$.ajax({
 					url : url,
 					dataType : "text",
-					type : "get",
+					type : "post",
+					data : {
+						isbn : isbn
+					},
 					success : function(data) {
 						console.log(data)
 						if (data == "validate") {
@@ -232,8 +235,7 @@
 						"change",
 						"#imgFile",
 						function() {
-							 setImageFromFile(this, '#bannerImg');
-							 
+							
 							if(beforeImage != "") {
 								deleteImage(beforeImage);
 							} 
@@ -242,7 +244,7 @@
 							console.log(imageInput.files);
 							const formData = new FormData();
 							formData.append("image", imageInput.files[0]);
-							let url = "/api.prod.com/file";
+							let url = "/prodManager/uploadFile";
 							$
 									.ajax({
 										url : url,
@@ -339,8 +341,6 @@
 			$(".loadBtn").eq(index).remove();
 
 		});
-		
-	
 
 	}
 
@@ -374,12 +374,14 @@
 	}
 
 	function apiSearch(isbn) {
-		let url = "/api.prod.com/get/info/" + isbn;
+		let url = "/prodManager/viewInfoByIsbn";
 		$.ajax({
 			url : url,
 			dataType : "json",
-			type : "get",
-			
+			type : "post",
+			data : {
+				isbn : isbn
+			},
 			success : function(data) {
 				prodInfoView(data);
 				console.log(data);
@@ -444,7 +446,6 @@
 	function saveProduct() {
 		saveImage = true;
 		insertDataToProduct();
-		console.log(saveImg);
 		for (let i = 1; i < 6; i++) {
 			if (localStorage.getItem("saveFile" + i) == null
 					|| localStorage.getItem("saveFile" + i) == "") {
@@ -700,12 +701,15 @@
 
 	function validIsbn(isbn) {
 		let result = false;
-		let url = "/api.prod.com/isbn/"+isbn;
+		let url = "/prodManager/validIsbn";
 		$.ajax({
 			url : url,
 			dataType : "text",
 			async : false,
-			type : "get",
+			type : "post",
+			data : {
+				isbn : isbn
+			},
 			success : function(data) {
 				console.log(data)
 				if (data == "validate") {
@@ -744,7 +748,7 @@
 	
 function deleteImage(imagePath) {
 	
-	let url = "/api.prod.com/delete/file";
+	let url = "/prodManager/deleteFile";
 	$.ajax({
 		url : url,
 		dataType : "json",
@@ -760,25 +764,8 @@ function deleteImage(imagePath) {
 		}
 	});
 	
-
-}
-
-let saveImg;
-
-function setImageFromFile(input, expression) {
+}	
 	
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-        	saveImg = e.target.result
-        }
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-
-
-
 </script>
 <style>
 .addInfo {

@@ -10,7 +10,6 @@
 
 <script>
 	let pageNo = 1;
-	let questionNo = 0;
 	window.onload = function() {
 
 		ViewSelectQnA(1, pageNo);
@@ -76,46 +75,6 @@
 			});
 
 		});
-		
-		$(document).on("click", ".remove", function() {
-			$("#deleteModal").modal('show');
-			let index = $(".bx-trash").index(this);
-			questionNo = $(".questionNo").eq(index).text();
-			
-			$(".removeQnA-title").html(questionNo + "번 Q&A");
-			$(".removeQnA-body").html("Q&A를 정말로 삭제하시겠습니까?");
-					
-		});
-		
-		
-		$(document).on("click", "#removeQnA", function(e) {
-			e.stopPropagation();
-			console.log(questionNo);
-			 let url = "/prodQna/deleteQnA" ;
-			 $.ajax({
-				url : url,
-				dataType : "text",
-				type : "post",
-				data : {question_no : questionNo},
-				success : function(data) {
-					
-					if(data == "success"){
-					alert("삭제에 성공하였습니다. ");
-					location.reload();
-					
-					} else {
-					alert("삭제에 실패하였습니다.");
-					
-					}
-				}
-
-			});
-		});
-		
-		
-		
-		
-		
 
 	}
 
@@ -164,7 +123,7 @@
 									.toISOString().split("T")[0];
 							output += '<td>' + writeDate + '</td>';
 							output += '<td><span class="badge bg-label-warning">답변대기</span></td>';
-							output += '<td><button type="button" class="btn rounded-pill btn-outline-primary answerBtn" data-bs-toggle="modal" data-bs-target="#myModal" >답변하기<i class="bx bx-pencil"style="margin-left:5px"></i></button><i class="bx bx-trash remove" style="margin-left:10px; width:80px"></i></td>';
+							output += '<td><button type="button" class="btn rounded-pill btn-outline-primary answerBtn" data-bs-toggle="modal" data-bs-target="#myModal">답변하기</button></td>';
 							output += '</tr>';
 						});
 
@@ -219,7 +178,7 @@
 									.toISOString().split("T")[0];
 							if (e.ref_order == 0) {
 								output += '<tr class="prodQnA">';
-								output += '<td class="questionNo">' + e.question_no + '</td>';
+								output += '<td>' + e.question_no + '</td>';
 								output += '<td class="productNo">' + e.product_no
 										+ '</td>';
 								output += '<td style ="text-align :left">'
@@ -228,7 +187,7 @@
 
 								output += '<td>' + writeDate + '</td>';
 								output += '<td><span class="badge bg-label-primary">답변완료</span></td>';
-								output += '<td><i class="bx bx-trash remove" style="margin-left:10px; width:80px"></i></td>';
+								output += '<td></td>';
 								output += '</tr>';
 							} else {
 								output += '<tr class="answer"><td></td>';
@@ -310,10 +269,6 @@
 	text-align: center;
 	padding: 10px;
 	
-}
-
-.bx-trash {
-	cursor: pointer;
 }
 </style>
 </head>
@@ -401,33 +356,6 @@
 			</div>
 		</div>
 	</div>
-	
-	
-	
-<div class="modal" id="deleteModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title removeQnA-title"></h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <!-- Modal body -->
-      <div class=" modal-body removeQnA-body">
-        Modal body..
-      </div>
-
-      <!-- Modal footer -->
-      <div class="modal-footer">
-         <button type="button" class="btn btn-danger" id="removeQnA"><i class="bx bx-trash" style="margin-right:7px;"></i>삭제 </button>
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-      </div>
-
-    </div>
-  </div>
-</div>
 		
 	</button>
 	<div class="alert alert-primary" style="width:300px;  height:70px;position: fixed; margin: 0 auto; top:10%; left : 45%; line-height: 45px; display: none;">

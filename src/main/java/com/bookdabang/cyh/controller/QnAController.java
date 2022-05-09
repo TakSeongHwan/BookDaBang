@@ -92,11 +92,7 @@ public class QnAController {
 			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		return result;
+
 	}
-	
-	
-	
-	
-	
 
 }

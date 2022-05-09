@@ -177,14 +177,6 @@ public class ProductServiceImpl implements ProductService {
 
 		return result;
 	}
-	
-	
-
-	@Override
-	public ProductQnA getQnAByquesNo(int quesion_no) throws Exception {
-		ProductQnA prodQnA = pdao.getQnAByquesNo(quesion_no);
-		return prodQnA;
-	}
 
 	@Override
 	public String validSession(String sessionId) throws Exception {
@@ -205,18 +197,6 @@ public class ProductServiceImpl implements ProductService {
 			result = true;
 		}
 
-		return result;
-	}
-	
-	
-
-	@Override
-	public boolean updateQnA(AnswerDTO prodQnA) throws Exception {
-		boolean result = false;
-		
-		if (pdao.updateQnA(prodQnA) == 1) {
-			result = true;
-		}
 		return result;
 	}
 

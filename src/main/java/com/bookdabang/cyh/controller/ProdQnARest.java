@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bookdabang.common.domain.ProductQnA;
-import com.bookdabang.cyh.domain.AnswerDTO;
 import com.bookdabang.cyh.domain.SearchCriteria;
 import com.bookdabang.cyh.service.ProductService;
 
@@ -51,7 +49,7 @@ public class ProdQnARest {
 	}
 	
 	
-	@RequestMapping(value = "/nick/{sessionId}", method = RequestMethod.GET,  produces = "application/text; charset=utf8")
+	@RequestMapping(value = "/{sessionId}", method = RequestMethod.GET,  produces = "application/text; charset=utf8")
 	public ResponseEntity<String> getuserNickName(@PathVariable("sessionId") String sessionId) {
 		
 		System.out.println("세션아이디" + sessionId);
@@ -71,42 +69,6 @@ public class ProdQnARest {
 
 		return result;
 
-	}
-	
-	@RequestMapping(value = "/{quesion_no}", method = RequestMethod.GET)
-	public ResponseEntity<ProductQnA> selectQnAByquesNo(Model model, @PathVariable("quesion_no") String quesion_no) {
-		
-		ResponseEntity<ProductQnA> result = null;
-		int quesNo = Integer.parseInt(quesion_no);
-		System.out.println(quesNo);
-		try {
-			ProductQnA prodQnA = service.getQnAByquesNo(quesNo);
-			System.out.println(prodQnA.toString());
-			result = new ResponseEntity<ProductQnA>(prodQnA, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-		return result;
-	}
-	
-	@RequestMapping(value = "/put", method = RequestMethod.PUT)
-	public ResponseEntity<String> updateQnA(@ModelAttribute AnswerDTO prodQnA ) {
-		System.out.println(prodQnA);
-		ResponseEntity<String> result = null;
-		try {
-			if(service.updateQnA(prodQnA)) {
-				result = new ResponseEntity<String>("success", HttpStatus.OK);
-			} else {
-				result = new ResponseEntity<String>("fail", HttpStatus.OK);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-		
-		
-		return result;
 	}
 
 	
