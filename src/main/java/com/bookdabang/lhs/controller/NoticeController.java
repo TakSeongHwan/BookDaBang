@@ -161,7 +161,7 @@ public class NoticeController {
 				mv = loginService.findLoginSess(sessionId);
 				System.out.println(mv);
 				if(mv != null) {
-				m.addAttribute("userId", mv.getUserId());
+				m.addAttribute("loginUser", mv);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -207,6 +207,8 @@ public class NoticeController {
 		
 		String oldImgName = request.getParameter("oldImgName");
 		String[] oldAttachFileName = request.getParameterValues("deletedAttachFile");
+		
+		System.out.println("첨부파일 삭제 : " + oldAttachFileName);
 		
 		String upPathImg = request.getSession().getServletContext().getRealPath("resources/uploads/noticeBoardImg/");
 		String upPathAttach =  request.getSession().getServletContext().getRealPath("resources/uploads/attachFile");
