@@ -22,7 +22,7 @@ public class ProductVO {
 	private int sales_count;
 	private String cover;
 	private String detail_description;
-	private String index;
+	private String prod_index;
 	private String inside_book;
 	private String author_introduce;
 	private String pisOffdiscription;
@@ -36,7 +36,7 @@ public class ProductVO {
 	public ProductVO(int product_no, String title, String author, int price, int sell_price, String publisher,
 			int category_code, String description, Timestamp pub_date, int stock, Timestamp rg_date, Timestamp end_date,
 			Timestamp update_date, String display_status, int read_count, String sales_status, int sales_count,
-			String cover, String detail_description, String index, String inside_book, String author_introduce,
+			String cover, String detail_description, String prod_index, String inside_book, String author_introduce,
 			String pisOffdiscription, String isbn, String isbn13) {
 		super();
 		this.product_no = product_no;
@@ -58,7 +58,7 @@ public class ProductVO {
 		this.sales_count = sales_count;
 		this.cover = cover;
 		this.detail_description = detail_description;
-		this.index = index;
+		this.prod_index = prod_index;
 		this.inside_book = inside_book;
 		this.author_introduce = author_introduce;
 		this.pisOffdiscription = pisOffdiscription;
@@ -218,12 +218,12 @@ public class ProductVO {
 		this.detail_description = detail_description;
 	}
 
-	public String getIndex() {
-		return index;
+	public String getprod_index() {
+		return prod_index;
 	}
 
-	public void setIndex(String index) {
-		this.index = index;
+	public void setprod_index(String prod_index) {
+		this.prod_index = prod_index;
 	}
 
 	public String getInside_book() {
@@ -273,7 +273,7 @@ public class ProductVO {
 				+ ", description=" + description + ", pub_date=" + pub_date + ", stock=" + stock + ", rg_date="
 				+ rg_date + ", end_date=" + end_date + ", update_date=" + update_date + ", display_status="
 				+ display_status + ", read_count=" + read_count + ", sales_status=" + sales_status + ", sales_count="
-				+ sales_count + ", cover=" + cover + ", detail_description=" + detail_description + ", index=" + index
+				+ sales_count + ", cover=" + cover + ", detail_description=" + detail_description + ", prod_index=" + prod_index
 				+ ", inside_book=" + inside_book + ", author_introduce=" + author_introduce + ", pisOffdiscription="
 				+ pisOffdiscription + ", isbn=" + isbn + ", isbn13=" + isbn13 + "]";
 	}

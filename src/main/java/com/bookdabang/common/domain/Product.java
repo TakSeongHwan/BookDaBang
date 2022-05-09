@@ -220,11 +220,11 @@ public class Product {
 		this.detail_description = detail_description;
 	}
 
-	public String getIndex() {
+	public String getindex() {
 		return index;
 	}
 
-	public void setIndex(String index) {
+	public void setindex(String index) {
 		this.index = index;
 	}
 

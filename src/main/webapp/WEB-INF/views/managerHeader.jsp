@@ -61,8 +61,11 @@ $(document).ready(function() {
 		
 	}
 	
+
+	
 	
 });
+
 </script>
 <style>
 .saveCount {
@@ -86,7 +89,7 @@ $(document).ready(function() {
          </div>
          <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
             <div class="app-brand demo">
-               <a href="${contextPath}/admin" class="app-brand-link">
+               <a href="${contextPath}/admin?sessionId=${sessionId}" class="app-brand-link">
                    <span class="app-brand-logo demo">
                     <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg"
                         xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -161,7 +164,10 @@ $(document).ready(function() {
                         class="menu-link">
                            <div data-i18n="Container">판매량 통계 상세조회</div>
                      </a></li>
-                    
+                    <li class="menu-item"><a href="${contextPath}/admin/adminStatistics/allSalesDetail"
+                        class="menu-link">
+                           <div data-i18n="Container">총 매출 상세조회</div>
+                     </a></li>
                   </ul></li>
 
                <li class="menu-header small text-uppercase"><span
@@ -189,24 +195,25 @@ $(document).ready(function() {
                <li class="menu-item"><a href="javascript:void(0);"
                   class="menu-link menu-toggle"> <i
                      class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-                     <div data-i18n="Authentications">상품 리뷰/Q&A</div>
+                     <div data-i18n="Authentications">상품 Review/Q&A</div>
                </a>
                   <ul class="menu-sub">
-                     <li class="menu-item"><a href="auth-login-basic.html"
-                        class="menu-link" target="_blank">
-                           <div data-i18n="Basic">상품 리뷰</div>
-                     </a></li>
+                     <li class="menu-item">
+                     	<a href="${contextPath}/admin/reviewBoard/list" class="menu-link" >
+                           <div data-i18n="Basic">Review</div>
+                     	</a>
+                     </li>
                      <li class="menu-item"><a href="auth-register-basic.html"
                         class="menu-link" target="_blank" onclick="location.href='${contextPath}/prodManager/listAllofQnA'">
                            <div data-i18n="Basic">Q&A</div>
                      </a></li>
-                     <li class="menu-item"><a
+                     <!--  <li class="menu-item"><a
                         href="auth-forgot-password-basic.html" class="menu-link"
                         target="_blank">
                            <div data-i18n="Basic">Forgot Password</div>
-                     </a></li>
+                     </a></li>-->
                   </ul></li>
-               <li class="menu-item"><a href="javascript:void(0);"
+      <!--          <li class="menu-item"><a href="javascript:void(0);"
                   class="menu-link menu-toggle"> <i
                      class="menu-icon tf-icons bx bx-cube-alt"></i>
                      <div data-i18n="Misc">Misc</div>
@@ -223,7 +230,7 @@ $(document).ready(function() {
                         href="pages-misc-under-maintenance.html" class="menu-link">
                            <div data-i18n="Under Maintenance">Under Maintenance</div>
                      </a></li>
-                  </ul></li>
+                  </ul></li> -->
 
                   <li class="menu-item"><a href="javascript:void(0);"
                   class="menu-link menu-toggle"> <i
@@ -254,21 +261,14 @@ $(document).ready(function() {
                      class="menu-icon tf-icons bx bx-dock-top"></i>
                      <div data-i18n="Account Settings" onclick="location.href='${contextPath}/admin/adminOrder/orderListAll'">주문 조회</div>
                </a>
-                  <ul class="menu-sub">
-                     <li class="menu-item"><a
-                        href="pages-account-settings-account.html" class="menu-link">
-                           <div data-i18n="Account">Account</div>
-                     </a></li>
-                     <li class="menu-item"><a
-                        href="pages-account-settings-notifications.html"
-                        class="menu-link">
-                           <div data-i18n="Notifications">Notifications</div>
-                     </a></li>
-                     <li class="menu-item"><a
-                        href="pages-account-settings-connections.html" class="menu-link">
-                           <div data-i18n="Connections">Connections</div>
-                     </a></li>
-                  </ul></li>
+                 </li>
+                  <li class="menu-item"><a href="javascript:void(0);"
+                  class="menu-link menu-toggle"> <i
+                     class="menu-icon tf-icons bx bx-dock-top"></i>
+                     <div data-i18n="Account Settings" onclick="location.href='${contextPath}/admin/refundBoard/boardList?pageNo=1'">환불상품</div>
+               </a>
+                 </li>
+                 
 
                <!-- Components -->
                <li class="menu-header small text-uppercase"><span

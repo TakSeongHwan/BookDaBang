@@ -3,7 +3,7 @@ package com.bookdabang.common.persistence;
 import java.util.List;
 
 import com.bookdabang.common.domain.CategoryVO;
-import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.PageView;
 import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
@@ -88,6 +88,24 @@ public interface ProductDAO {
 	
 	// Top 상품 가져오는 메서드
 	public List<ProductVO> selectTopProducts (String searchWord) throws Exception;
+	
+	// 상품 조회기록 확인하는 메서드
+	public PageView selectPageview(int prodNo, String ipaddr) throws Exception;
+	
+	// 상품 조회기록 추가하는 메서드
+	public int insertPageview(int prodNo, String ipaddr) throws Exception;
+	
+	// 상품 조회수 증가하는 메서드
+	public int updateReadCount(int prodNo) throws Exception;
+	
+	// 상품 조회기록 업데이트하는 메서드
+	public int updatePageview(int prodNo, String ipaddr) throws Exception;
+	
+	// 상품 조회기록 삭제하는 메서드
+	public int deletePageview (int prodNo, String ipaddr) throws Exception;
+	
+	// 카테고리 이름 가져오는 메서드
+	public String selectCategoryName(int cno) throws Exception;
 	
 	
 }

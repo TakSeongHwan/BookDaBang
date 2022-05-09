@@ -12,13 +12,30 @@
 	</select>
 	<!-- Refund 게시판 전체 출력 -->
 	<select id="selectAllRefund" resultType="Refund">
-		select * from refund
-		order by refundNo
+		select * from refund order by refundNo limit #{startNum},
+		#{postPerPage}
 	</select>
 	<!-- Refund 환불 체크 업데이트 -->
 	<update id="refundUpdate">
-		update refund set isRefund ='yes', refundProcessdate=now();
+		update refund set isRefund ='yes', refundProcessdate=now() where refundNo = #{refundNo};
 	</update>
+	
+	<!-- RefundNo로 OrderNo가져오기 -->
+	<select id="getOrderNo" resultType="int">
+		select orderNo from refund where refundNo = #{refundNo}
+	</select>
+	<!-- Refund 게시판 insert -->
+	<insert id="insertRefund">
+		insert into refund(orderNo, userId, refundDate,refundReason) 
+		values(#{orderNo},#{userId},now(),#{refundReason})
+	</insert>
+	<!-- refund 페이징 -->
+	
+	<!-- 페이징 -->
+	<select id="getTotalPost" resultType="int">
+		select count(*) as totalCnt from refund
+	</select>
+	
 	<!-- adsfxcv -->
 
 	<!-- Refund 게시판 한개 출력 -->
@@ -35,11 +52,12 @@
 		</choose>
 	</select>
 
-	<!-- Refund 게시판 insert -->
-	<insert id="insertRefund">
+
+	<!-- 비회원 refund -->
+	<insert id="">
 		insert into
-		refund(orderNo,userId,productPhoto,comment,orderPwd)
-		values(#{orderNo},#{userId},#{productPhoto},#{comment},#{orderPwd})
+		refund(orderNo,refundReason,orderPwd)
+		values(#{orderNo},#{refundReason},#{orderPwd})
 	</insert>
 
 	<!-- Refund 게시판 delete -->
