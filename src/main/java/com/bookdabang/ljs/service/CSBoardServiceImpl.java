@@ -11,7 +11,9 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 
 import com.bookdabang.common.domain.AttachFileVO;
+import com.bookdabang.common.domain.BoardSearch;
 import com.bookdabang.common.domain.CustomerService;
+import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.ljs.domain.CSUploadFile;
 import com.bookdabang.ljs.persistence.CSBoardDAO;
 
@@ -24,9 +26,62 @@ public class CSBoardServiceImpl implements CSBoardService {
 	CSBoardDAO bdao;
 
 	@Override
-	public List<CustomerService> showEntireCSBoard() throws Exception {
+	public Map<String, Object> showEntireCSBoard(int pageNo, BoardSearch searchWord) throws Exception {
 		
-		return bdao.showEntireCSBoard();
+		PagingInfo pi = pagingProcess(pageNo, searchWord);
+		List<CustomerService> csBoard = null;
+		
+		if (searchWord.getSearchWord().equals("") || searchWord.getSearchType().equals("")) {
+			csBoard = bdao.showEntireCSBoard(pi);
+			
+		} else {
+			csBoard = bdao.showEntireCSBoard(pi, searchWord);
+		}
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("csBoard", csBoard);
+		map.put("pagingInfo", pi);
+		
+		return map;
+	}
+	
+	
+	private PagingInfo pagingProcess(int pageNo, BoardSearch searchWord) {
+		PagingInfo pi = new PagingInfo();
+		System.out.println("페이지 프로세스 : "+ searchWord);
+		try{
+			if(searchWord.getSearchWord().equals("") || searchWord.getSearchType().equals("")) {
+				int cnt = bdao.getTotalPost();
+				pi.setTotalPostCnt(bdao.getTotalPost());
+				System.out.println("검색결과 갯수 : "+cnt);
+			} else {
+				int cnt = bdao.getSearchResultCnt(searchWord);
+				System.out.println("검색결과 갯수 : "+cnt);
+				pi.setTotalPostCnt(bdao.getSearchResultCnt(searchWord));
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		pi.setPostPerPage(10);
+		
+		//pi.setPageCntPerBlock(5);
+		
+		pi.setTotalPage(pi.getTotalPostCnt());
+		
+		pi.setStartNum(pageNo);
+		
+		pi.setTotalPagingBlock(pi.getTotalPage());
+		
+		pi.setCurrentPagingBlock(pageNo);
+		
+		pi.setStartNoOfCurPagingBlock(pi.getCurrentPagingBlock());
+		
+		pi.setEndNoOfCurPagingBlock(pi.getStartNoOfCurPagingBlock());
+		
+		System.out.println(pi.toString());
+		return pi;
+	
 	}
 
 	@Override

@@ -49,10 +49,12 @@ window.onload = function () {
 		let orderPwd = document.getElementById("orderPwd").value;
 		orderChk(orderBundle,orderPwd);
 	});
-	if (status = "fail" ) {
+	
+	if (status == "fail" ) {
 		let autoLoginBox = document.getElementById('autoLoginBox');
 		let incorrect = document.createElement('div');
-		incorrect.innerHTML = "아이디 혹은 비밀번호를 다시 확인해주세요!"
+		incorrect.innerHTML = "아이디 혹은 비밀번호를 다시 확인해주세요!";
+		incorrect.style.color = "red";
 		autoLoginBox.appendChild(incorrect);
 
 	}
@@ -158,8 +160,7 @@ function displayWarn() {
 				</div>
 				<div class="col-lg-6">
 					<div class="login_form_inner">
-					
-						<h3>Log in to enter</h3>
+						<h3>Login to enter</h3>
 						
 						<form action="loginSign" method="post">
 							<div class="col-md-12 form-group">
@@ -186,21 +187,16 @@ function displayWarn() {
 								<label for="forgotPwd"><a href="#">아이디/ 비밀번호 찾기</a></label>
 							</div>
 						</form>
-						
 							<div>
-								 	<div id="button_area">
-        								<div id="naverIdLogin">
+							 	<div id="button_area">
+      								<div id="naverIdLogin">
         								<a id="naverIdLogin_loginButton">
         					<button style="background-color: #03c75a; color : #fff; width:300px; border:none; margin-top:10px; height : 45px; text-align:left; border-radius: 5px"><img src="/resources/img/etc/btnG_naver.png" width="40"><div style="width:230px; text-align: center; display: inline-block; font-size: 16px; ">네이버 로그인</div></button>
         								</a>
         								</div>
       								</div>
-      								
-								 	
-								 	<img src="/resources/img/etc/kakao_login_medium_wide.png" style="margin-top: 10px" >
-								 	
-								 	
-								 </div>
+								 	<img src="/resources/img/etc/kakao_login_medium_wide.png" style="margin-top: 10px" onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=95a72bf8adefb359efc8431a1b86586d&redirect_uri=http://localhost:8001/kakaoLogin&response_type=code';">
+							</div>
 					</div>
 				</div>
 			</div>

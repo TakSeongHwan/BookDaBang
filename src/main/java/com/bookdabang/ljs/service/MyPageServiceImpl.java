@@ -13,6 +13,7 @@ import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.RecentSeenProd;
 import com.bookdabang.common.domain.ReviewVO;
 import com.bookdabang.ljs.domain.LoginDTO;
+import com.bookdabang.ljs.domain.modifyDTO;
 import com.bookdabang.ljs.persistence.MyPageDAO;
 
 @Service
@@ -88,6 +89,13 @@ public class MyPageServiceImpl implements MyPageService {
 	public List<FreeBoard> showMyLike(String userId) throws Exception {
 		
 		return mdao.showMyLike(userId);
+	}
+
+
+	@Override
+	public int modifyMemInfo(modifyDTO mdto) throws Exception {
+		// TODO Auto-generated method stub
+		return mdao.modifyMemInfo(mdto);
 	}
 	
 	

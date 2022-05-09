@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,8 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bookdabang.common.domain.AttachFileVO;
+import com.bookdabang.common.domain.BoardSearch;
 import com.bookdabang.common.domain.CustomerService;
 import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.NoticeVO;
+import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.ljs.domain.CSUploadFile;
 import com.bookdabang.ljs.domain.CSUploadFileProcess;
 import com.bookdabang.ljs.service.CSBoardService;
@@ -46,14 +50,32 @@ public class CSBoardController {
 	private List<CSUploadFile> upfileLst = new ArrayList<CSUploadFile>();
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String csBoardAll (Model model) {
+	public String csBoardAll (Model model, @RequestParam(value="pageNo", required= false, defaultValue = "1") String curPage, @ModelAttribute BoardSearch searchWord) {
 		
 		
 		List<CustomerService> boardList = null;
 		
+		int pageNo = 1;
+		if (!curPage.equals("") || curPage != null) {
+			pageNo = Integer.parseInt(curPage);
+		}
+		if(searchWord.getSearchWord() == null) {
+			searchWord.setSearchWord("");
+		}
+		if(searchWord.getSearchType() == null) {
+			searchWord.setSearchType("");
+		}
+		System.out.println("검색어 : " + searchWord);
+		
+		PagingInfo pi = null;
+
+	
 		try {
 			
-			boardList = cservice.showEntireCSBoard();
+			Map<String,Object> map = cservice.showEntireCSBoard(pageNo, searchWord);
+			
+			boardList = (List<CustomerService>) map.get("csBoard");
+			pi = (PagingInfo) map.get("pagingInfo");		
 			
 		} catch (Exception e) {
 			
@@ -62,8 +84,8 @@ public class CSBoardController {
 		}
 		
 		System.out.println("게시글 다 가지고 왔는지" + boardList.toString());
-		
 		model.addAttribute("boardList", boardList);
+		model.addAttribute("pagingInfo", pi);
 		
 		
 		return "cs/csBoardList";

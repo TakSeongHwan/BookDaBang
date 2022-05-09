@@ -12,10 +12,8 @@
 
 <body>
 							
-							<div class="media post_item">
-								<img src="${ userImg}" alt="userImg">
-								
-								
+					<div class="media post_item">
+							<img src="${ userImg}" alt="userImg">			
 							 		<h3>${ user.nickName}</h3>
 							 							
 									<h3>${ user.userEmail}</h3>

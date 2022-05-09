@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.lcs.domain.MemberDTO;
+import com.bookdabang.lcs.service.MemberService;
 import com.bookdabang.ljs.domain.LoginDTO;
 import com.bookdabang.ljs.service.LoginService;
 
@@ -38,9 +40,14 @@ public class LoginController {
 	@Inject
 	private LoginService service;
 	
+	@Inject
+	private MemberService mservice;
+	
+	
 	@RequestMapping(value="/kakaoLogin", method=RequestMethod.GET)
-	public String kakaoLogin(@RequestParam(value = "code", required = false) String code, Model model) throws Exception {
+	public void kakaoLogin(HttpServletRequest request,HttpServletResponse response, @RequestParam(value = "code", required = false) String code, Model model) throws Exception {
 		
+		HttpSession ses = request.getSession();
 		 		
 		System.out.println("받아온 코드" + code);
         
@@ -59,8 +66,41 @@ public class LoginController {
 		System.out.println(userImg);
 		
 		System.out.println("코드로 받아온 엑세스 토큰 access_Token : " + access_Token);
-        
-		return "kakaoLogin";
+		
+		// 만약 회원이 있으면 로그인, 없으면 회원가입으로 insert. 이 있으면 
+		
+		LoginDTO dto =new LoginDTO(user.getUserId(), null, false, access_Token);
+		
+		int result = service.lastLogin(dto);
+		
+		System.out.println("회원정보가 있는가 없는가?" + result);
+		
+		if (result == 0) {
+			
+			MemberDTO mdto = new MemberDTO();
+			mdto.setUserId(user.getUserId());
+			mdto.setUserPwd(user.getUserId());
+			mdto.setUserName(user.getUserName());
+			mdto.setNickName(user.getNickName());
+			mdto.setPhoneNum(user.getUserId());
+			mdto.setUserEmail(user.getUserEmail());
+			mdto.setGender(user.getGender());
+			mdto.setRecommend("");
+			
+			System.out.println("회원가입하러 보내는 mdto" + mdto.toString());
+			
+			
+		 boolean conf = mservice.insertMember(mdto);
+		 result = service.lastLogin(dto);
+		 
+		 System.out.println("회원가입 시켰는지" + conf);
+			
+		} 
+		
+		ses.setAttribute("sessionId", access_Token);
+		String prePage = (String) ses.getAttribute("prePage");
+		System.out.println("마지막 페이지 : " + prePage);
+		response.sendRedirect(prePage);
 		
     	}
 	
@@ -196,6 +236,7 @@ public class LoginController {
 			
 			// 세션에 저장함
 			String prePage = req.getHeader("REFERER");
+			System.out.println("제대로 된 이전 페이지가 되는가" + prePage);
 			ses.setAttribute("prePage", prePage);
 			
 		}

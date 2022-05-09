@@ -543,7 +543,13 @@ function confirmPwd(e) {
 	}
 	
 	
+function corrInfo() {
 	
+	let ses = "${ sessionId}";
+	location.href="${ contextPath}/mypage/modifyInfo?u=" + ses;
+	
+	
+}	
 
 
 	
@@ -611,7 +617,7 @@ function confirmPwd(e) {
 	window.onload = function () {
 		
 
-		
+		// modifyStatus
 			let birthStr ="${ loginMember.birth}";
 			let userBirth = birthStr.split('-');
 			
@@ -630,16 +636,15 @@ function confirmPwd(e) {
 			
 			document.getElementById('userBirth').valueAsDate = birth;
 			
-			
-			
-			
-		
-		
+
 		document.getElementById('showMyPoint').addEventListener("click", pointHistory);
 		document.getElementById('originalPwd').addEventListener ("keyup", confirmPwd);
 		document.getElementById('modifyInfo').addEventListener ("click", modifyInfo);
 		document.getElementById('showAllMyPosts').addEventListener("click", showMyPosts);
 		document.getElementById('showMyLike').addEventListener("click", showMyLike);
+		
+		
+		
 		//showMyLike
 		
 		    $('#pwdModi i').on('click',function(){
@@ -930,19 +935,24 @@ margin-bottom : 10px;
 					<div class= "infoBox">
 					<h2>회원 정보 수정</h2>
 					<div class="single-post row">
-						아이디 : <input type="text" class="form-control"
-							value="${loginMember.userId}" readonly/>
-						비밀번호 : <input type="hidden" id ="password" value="${loginMember.userPwd }" />
+					비밀번호 : <input type="hidden" id ="password" value="${loginMember.userPwd }" />
 						<button data-bs-toggle="modal" data-bs-target="#modalPwd">비밀번호
 							변경</button>
+					<form action = "/mypage/modifyInfo" method = "POST">
+						아이디 : <input type="text" class="form-control"
+							value="${loginMember.userId}" name="userId" readonly/>
 						이름 : <input type="text" class="form-control"
-							value="${loginMember.nickName }" /> 	
+							value="${loginMember.userName }" name="userName"  /> 	
 						닉네임 : <input type="text" class="form-control"
-							value="${loginMember.nickName }" /> 
-						핸드폰 번호 : <input type="text" class="form-control" value="${loginMember.phoneNum}" />
-						이메일 : <input type="text" class="form-control" value="${loginMember.userEmail}" /> 
-						생일 : <input type = "date" id= "userBirth"  value= "${loginMember.birth }"  /> 
- 						<button type="button"  class="button button-postComment" >수정</button>
+							value="${loginMember.nickName }" name="nickName" /> 
+						핸드폰 번호 : <input type="text" class="form-control" value="${loginMember.phoneNum}" name="phoneNum" />
+						이메일 : <input type="text" class="form-control" value="${loginMember.userEmail}" name="userEmail"/> 
+						생일 : <input type = "date" id= "userBirth"  value= "${loginMember.birth }" /> 
+						
+						<input type = "hidden" name = "u" value = "${ sessionId}" />
+					
+ 						<button type="submit"  class="button button-postComment" id = "modiButton" >수정</button>
+						</form>
 						</div>
 						
 					</div>
