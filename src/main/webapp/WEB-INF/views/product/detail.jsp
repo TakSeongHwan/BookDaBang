@@ -11,6 +11,7 @@
 <title>상품 상세페이지</title>
 <script>
 	let rPageNo = 1;
+	let sort = 1;
 	let rno = 0;
 	let cno = 0;
 	let modCno = 0;
@@ -26,16 +27,16 @@
 		quantityChange(1);
 		infoReplace();
 		navColor();
+		orderBy();
 		starMaker();
-		reviewStatus();	
+		timeMaker();
+		reviewStatus();
 		getUserId();
 		parseNotImgFile();
 		uploadFile("#reviewModal");
 		uploadFile("#modifyModal");
 		
 		parsePaging();
-		
-		
 	});
 	
 	function chartMaker() {
@@ -47,7 +48,7 @@
 			      datasets: [
 			        {
 			          label: "ReviewLating",
-			          backgroundColor: ["#D7DCFE", "#8795F9","#384AEB","#1C27A9","#192077"],
+			          backgroundColor: ["#192077", "#1C27A9","#384AEB","#8795F9","#D7DCFE"],
 			          data: ["${reviewStatistics.gradeRate5}",
 			        	  "${reviewStatistics.gradeRate4}",
 			        	  "${reviewStatistics.gradeRate3}",
@@ -188,18 +189,26 @@
 
 	function starMaker() {
 		let star = "";
-
 		$(".star").each(function (i,e) {
 			star = $(e).attr("value");
 			let output = "";
 			for (i=0; i < star; i++) {
-				output += '<i class="fa fa-star"></i>&nbsp';
+				output += '<i class="fa fa-star" ></i>&nbsp';
 			}
 			for (i=0; i < 5-star; i++) {
-				output += '<i class="fa fa-star"style="font-weight: 100"></i>&nbsp';
+				output += '<i class="fa fa-star" style="font-weight: 100"></i>&nbsp';
 			}
 			$(e).html(output);
 		});	
+	}
+	
+	function timeMaker() {
+		$(".writeDate").each(function (i,e) {
+			let writeDate = new Date($(this).text()).toLocaleString();
+			writeDate = writeDate.split("오")[0];
+			$(this).text(writeDate);
+		});	
+		
 	}
 	
 	function getComment(no,obj) { //$(".comments-area").length == 1 && rno != no
@@ -227,8 +236,13 @@
 		rno = no;
 	}
 	
+	function focusComment() {
+		$("#commentText").focus();
+	}
+	
 	function parseComment(data,obj) {
-		let output = '<div class="comments-area" style="display:none;" >';
+		let output = '<div class="comments-area" style="display:none; padding:30px;" >';
+		output += '<a href="javascript:focusComment();" style="color: #384aeb; margin:0 0 20px 20px;">바로작성</a>';
 		if (data != null) {
 			$.each(data, function(i, e) {
 				output += '<div class="comment-list" style="padding-bottom: 25px;">';
@@ -1011,9 +1025,18 @@
 		//$(".filter-bar").attr("tabindex", -1).focus();
 	}
 	
+	function orderBy() {
+		$(".option").on("click",function() {
+			sort = $(this).val();
+			if ($("#resultNone").length == 0) {
+				getReview(1);
+			}
+		});
+	}
+	
 	function getReview(pageNo) {
 		rPageNo = pageNo;
-		let url = "/review/read?no=${param.no}&pageNo=" + rPageNo;
+		let url = "/review/read?no=${param.no}&pageNo=" + rPageNo + "&sort=" + sort;
 		console.log(url);
 		$.ajax({
 			url : url,
@@ -1040,6 +1063,7 @@
 			output += '<div style="display:inline-block; width:750px;"><h4 style="display:inline-block; margin-right:20px" class="reviewTitle"'
 					+ ' value="' + review.reviewNo + '">' + review.title + '</h4>';
 			let writeDate = new Date(review.writedate).toLocaleString();
+			writeDate = writeDate.split("오")[0];
 			output += '<h5 style="float:right; margin-top:1px" value="' + review.writer + '">' + review.writer + ' | ' + writeDate + '</h5>';
 			output += '<p>' + review.content + '</p><div class="attachfile">';
 			$.each(fList, function(i, file) {
@@ -1093,13 +1117,15 @@
    		background: linear-gradient(to top, white 0%, #dff0f4 100%);
 	}
 	
-	.list li i {
-		color :  #fbd600;
-	}
-	
 	.list li span {
 		margin-left: 10px;
 	}
+	
+	.c5 { color :  #192077;}
+	.c4 { color :  #1C27A9;}
+	.c3 { color :  #384AEB;}
+	.c2 { color :  #8795F9;}
+	.c1 { color :  #D7DCFE;}
 
  .reviewBtn {
  	width : 80px;
@@ -1178,6 +1204,14 @@
   		border-radius : 25px;
   		box-shadow : 10px 10px 10px 10px;
 }
+
+ #reviewModal, #modifyModal {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+ }
+ #reviewModal::-webkit-scrollbar,#modifyModal::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+ }
  
  .newStar {
  	color : #fbd600;
@@ -1240,11 +1274,22 @@
 	border-radius: 20px;
 }
 
-.thumbImg,.notImg,.thumbImgR,.notImgR {
+.thumbImg,.notImg {
 	border: 1px dotted;
 	width: 100px; height: 100px;
 	margin-left: 7px;
 }
+ 
+ .thumbImgR{
+ 	width: 100px; height: 100px;
+	margin-left: 7px;
+ }
+ 
+ .notImgR {
+ 	border: 1px solid;
+ 	width: 100px; height: 100px;
+	margin-left: 7px;
+ }
 
 .thumbImgR,.notImgR {
 	float: right;
@@ -1398,12 +1443,12 @@
 						<div class="row">
 							<div class="col-lg-12">
 								<div class="row total_rate" style="background-color: #fafaff; margin-bottom:25px;">
-									<div class="col-6" style="margin-top: 25px;">
+									<div class="col-6" style="margin:25px 0 25px 0;">
 										<h5 style="text-align: center; margin-bottom: 10px;"><strong>평점 분포도</strong></h5>
 										<canvas id="doughnut-chart" width="200" height="100"></canvas>						
 									</div>
 									<div class="col-6" style="height:100px; margin-top:25px; text-align:center;">
-										<div style="display: inline-block; width: 245px;">
+										<div>
 											<h5 style=" margin-bottom:10px;"><strong>리뷰 총 평점</strong></h5>
 											<h3 style="color:#384aeb;">
 												<i class="fa fa-crown" style="margin-right:2px; font-size:34px;"></i>
@@ -1411,101 +1456,74 @@
 												<span style="color:rgba(0,0,0,.3);">/ 5.0</span>
 											</h3>
 										</div>
-										<div style="display: inline-block; width: 245px;">
+										<div style="display: inline-block; width:195px; float:left; margin-top:30px;">
 											<h5 style=" margin-bottom: 10px;"><strong>전체 리뷰수</strong></h5>
-											<h3>${reviewStatistics.gradeTotal}개</h3>
+											<i class="fa fa-comments" style="margin: 5px 0 15px 0; font-size:45px;
+											color: rgb(56, 74, 235);"></i>
+											<h3 style="color: rgba(0,0,0,0.7);">${reviewStatistics.gradeTotal}개</h3>
 										</div>
 										<div class="rating_list" style=" margin-top:25px; display: inline-block;">
-											<h5><strong>평점별 개수</strong></h5>
-											<!--  <ul class="list">
+											<h5><strong>평점별 리뷰수</strong></h5>
+											<ul class="list">
 												<li>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<span>${reviewStatistics.gradeCount1}개</span>
+													<span style="margin-right: 10px;">5 Star</span>
+													<i class="fa fa-star c5"></i>
+													<i class="fa fa-star c5"></i>
+													<i class="fa fa-star c5"></i>
+													<i class="fa fa-star c5"></i>
+													<i class="fa fa-star c5"></i>
+													<span>${reviewStatistics.gradeCount5}개</span>
 												</li>
 												<li>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star" style="font-weight: 100"></i>
-													<span>${reviewStatistics.gradeCount2}개</span>
+													<span style="margin-right: 10px;">4 Star</span>
+													<i class="fa fa-star c4"></i>
+													<i class="fa fa-star c4"></i>
+													<i class="fa fa-star c4"></i>
+													<i class="fa fa-star c4"></i>
+													<i class="fa fa-star c4" style="font-weight: 100"></i>
+													<span>${reviewStatistics.gradeCount4}개</span>
 												</li>
-												<li>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"style="font-weight: 100"></i>
-													<i class="fa fa-star"style="font-weight: 100"></i>
+												<li>	
+													<span style="margin-right: 10px;">3 Star</span>
+													<i class="fa fa-star c3"></i>
+													<i class="fa fa-star c3"></i>
+													<i class="fa fa-star c3"></i>
+													<i class="fa fa-star c3" style="font-weight: 100"></i>
+													<i class="fa fa-star c3" style="font-weight: 100"></i>
 													<span>${reviewStatistics.gradeCount3}개</span>
 												</li>
 												<li>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"style="font-weight: 100"></i>
-													<i class="fa fa-star" style="font-weight: 100"></i>
-													<i class="fa fa-star"style="font-weight: 100"></i>
-													<span>${reviewStatistics.gradeCount4}개</span>
+													<span style="margin-right: 10px;">2 Star</span>
+													<i class="fa fa-star c2"></i>
+													<i class="fa fa-star c2"></i>
+													<i class="fa fa-star c2"style="font-weight: 100"></i>
+													<i class="fa fa-star c2" style="font-weight: 100"></i>
+													<i class="fa fa-star c2"style="font-weight: 100"></i>
+													<span>${reviewStatistics.gradeCount2}개</span>
 												</li>
 												<li>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"style="font-weight: 100"></i>
-													<i class="fa fa-star"style="font-weight: 100"></i>
-													<i class="fa fa-star"style="font-weight: 100"></i>
-													<i class="fa fa-star"style="font-weight: 100"></i>
-													<span>${reviewStatistics.gradeCount5}개</span>
+													<span style="margin-right: 10px;">1 Star</span>
+													<i class="fa fa-star c1"></i>
+													<i class="fa fa-star c1" style="font-weight: 100"></i>
+													<i class="fa fa-star c1" style="font-weight: 100"></i>
+													<i class="fa fa-star c1" style="font-weight: 100"></i>
+													<i class="fa fa-star c1" style="font-weight: 100"></i>
+													<span>${reviewStatistics.gradeCount1}개</span>
 												</li>
-											</ul> ["#D7DCFE", "#8795F9","#384AEB","#1C27A9","#192077"],-->
-											<ul class="list">
-												<li ><a href="#">4 Star <i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star" style="font-weight: 100"></i>
-														<span>${reviewStatistics.gradeCount5}개</span>
-												</a></li>
-												<li><a href="#">4 Star <i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star" style="font-weight: 100"></i>
-														<span>${reviewStatistics.gradeCount4}개</span>
-												</a></li>
-												<li><a href="#">3 Star <i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star" style="font-weight: 100"></i>
-														<i class="fa fa-star" style="font-weight: 100"></i>
-														<span>${reviewStatistics.gradeCount3}개</span>
-												</a></li>
-												<li><a href="#">2 Star <i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star" style="font-weight: 100"></i>
-														<i class="fa fa-star" style="font-weight: 100"></i>
-														<i class="fa fa-star" style="font-weight: 100"></i>
-														<span>${reviewStatistics.gradeCount2}개</span>
-												</a></li>
-												<li><a href="#">1 Star <i class="fa fa-star"></i>
-														<i class="fa fa-star" style="font-weight: 100"></i>
-														<i class="fa fa-star" style="font-weight: 100"></i>
-														<i class="fa fa-star" style="font-weight: 100"></i>
-														<i class="fa fa-star" style="font-weight: 100"></i>
-														<span>${reviewStatistics.gradeCount1}개</span>
-												</a></li>
-											</ul>				
+											</ul>		
 										</div>
 									</div>					
 								</div>
 								<div style="height: 50px;">
 									<div class="nice-select shipping_select" tabindex="0" style="margin-top:7px;">
-										<span class="current">Bangladesh</span>
+										<span class="current">최신순</span>
 										<ul class="list">
-											<li data-value="1" class="option selected focus">Bangladesh</li>
-											<li data-value="2" class="option">India</li>
-											<li data-value="4" class="option">Pakistan</li>
+											<li value="1" class="option selected focus">최신순</li>
+											<li value="2" class="option">오래된순</li>
+											<li value="3" class="option">평점 높은순</li>
+											<li value="4" class="option">평점 낮은순</li>
+											<li value="5" class="option">좋아요순</li>
+											<li value="6" class="option">댓글순</li>
 										</ul>
 									</div>
 									<button id ="createReview" class="button button--active button-review"
@@ -1527,7 +1545,7 @@
 														<h4 style="display: inline-block; margin-right: 20px"
 														class="reviewTitle" value="${review.reviewNo }">${review.title }</h4>
 														<h5 style="float: right; margin-top: 1px" value="${review.writer}">
-														${review.writer } | ${review.writedate}</h5>
+														${review.writer } | <span class="writeDate">${review.writedate}</span></h5>
 														<p>${review.content }</p>
 														<div class="attachfile">
 														<c:forEach var="file" items="${fileList }">
@@ -1555,7 +1573,7 @@
 									</c:forEach>
 									
 									<c:if test="${reviewList == '[]' }">
-										<div style="text-align: -webkit-center; margin: 100px 0 100px 0; ">
+										<div id="resultNone" style="text-align: -webkit-center; margin: 100px 0 100px 0; ">
 											<i class="fa ti-comments" style="font-size: 50px;"></i>
 											<h4 style="color: #777"><strong>아직 작성된 리뷰가 없습니다.</strong></h4>
 											<h5 style="color:#fbd600;">
@@ -1993,14 +2011,14 @@
 				<form action="/review/add" method="post">
 					<div class="form-group form-inline">
 						<div class="form-group col-lg-8 col-md-8 name">
-							<h4 style="margin-bottom: 15px;">제목 </h4>
+							<h4 style="margin-bottom: 15px;"><strong>제목 </strong></h4>
 							<input type="text" class="form-control" id="title" name = "title"
 								placeholder="Enter title" required=""
 								style="border-radius : 20px;">
 							<input type="hidden" name ="writer" value="${sessionId }">
 						</div>
 						<div class="form-group col-lg-4 col-md-4 rating_list">
-							<h4 style="margin-bottom: 15px;">등급 </h4>
+							<h4 style="margin-bottom: 15px;"><strong>등급</strong> </h4>
 							<div>
 								<i class="fa fa-star newStar" id="star1" style="font-weight: 100"></i>
 								<i class="fa fa-star newStar" id="star2" style="font-weight: 100"></i>
@@ -2012,14 +2030,14 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<h4 style="text-align: left; margin-bottom: 15px;">내용</h4>
+						<h4 style="text-align: left; margin-bottom: 15px;"><strong>내용</strong></h4>
 						<textarea class="form-control mb-10" rows="4" name="content"
 							placeholder="content" required=""
 							style="border-radius : 20px;"></textarea>
 					</div>
 					<input type="hidden" name ="productNo" value="${product.product_no }">
 					<div class="form-group">
-						<h4 style="text-align: left; margin-bottom: 15px;">첨부파일</h4>
+						<h4 style="text-align: left; margin-bottom: 15px;"><strong>첨부파일</strong></h4>
 						<button type="button" class="button button-header reviewBtn" id = "addFileBtn"
 						 style="padding: 8px" onclick="openArea();">추가하기</button>
 						<div class="fileDrop">
@@ -2044,13 +2062,13 @@
 					<div class="form-group form-inline">
 						<input type="hidden" id ="modifyReviewNo" name ="reviewNo">
 						<div class="form-group col-lg-8 col-md-8 name">
-							<h4 style="margin-bottom: 15px;">제목 </h4>
+							<h4 style="margin-bottom: 15px;"><strong>제목</strong> </h4>
 							<input type="text" class="form-control" id="modifyTitle" name = "title"
 								placeholder="Enter title" required=""
 								style="border-radius : 20px;">
 						</div>
 						<div class="form-group col-lg-4 col-md-4 rating_list2">
-							<h4 style="margin-bottom: 15px;">등급 </h4>
+							<h4 style="margin-bottom: 15px;"><strong>등급</strong> </h4>
 							<div>
 								<i class="fa fa-star newStar" id="star6" style="font-weight: 100"></i>
 								<i class="fa fa-star newStar" id="star7" style="font-weight: 100"></i>
@@ -2062,7 +2080,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<h4 style="text-align: left; margin-bottom: 15px;">내용</h4>
+						<h4 style="text-align: left; margin-bottom: 15px;"><strong>내용</strong></h4>
 						<textarea class="form-control mb-10" rows="4" name="content"
 							placeholder="content" required=""  id="modifyContent" 
 							style="border-radius : 20px;"></textarea>
@@ -2070,7 +2088,7 @@
 					<input type="hidden" name ="productNo" value="${product.product_no }">
 					
 					<div class="form-group">
-						<h4 style="text-align: left; margin-bottom: 15px;">첨부파일</h4>
+						<h4 style="text-align: left; margin-bottom: 15px;"><strong>첨부파일</strong></h4>
 						<button type="button" class="button button-header reviewBtn" id = "modiFileBtn"
 						 style="padding: 8px" onclick="modifyArea();">수정하기</button>
 						<div class="fileDrop">
@@ -2092,17 +2110,17 @@
 			<div class="modal-dialog modal-dialog-centered">
 				<div class="modal-content">
 					<!-- Modal Header -->
-					<div class="modal-header">
+					<div class="modal-header" style="border-style: none;">
 						<h3 class="modal-title" style="margin: 10px;font-size: 25px;">리뷰 삭제</h3>
 						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 					</div>
 					<!-- Modal body -->
 					<div class="modal-body" style="margin: 20px;text-align: center;">
-						<h4>해당 리뷰를 삭제하시겠습니까?</h4>
-						(한번 삭제한 리뷰는 복원이 불가합니다)
+						<h4><strong>해당 리뷰를 삭제하시겠습니까?</strong></h4>
+						<span style="color: #dc3545;">(한번 삭제한 리뷰는 복원이 불가합니다)</span>
 					</div>
 					<!-- Modal footer -->
-					<div class="modal-footer" style="margin: 10px;">
+					<div class="modal-footer" style="margin: 10px; border-style: none;">
 						<form action="/review/delete" method="post">
 							<input type="hidden" id="deleteNo" name="reviewNo">
 							<input type="hidden" name ="productNo" value="${product.product_no }">
@@ -2120,17 +2138,17 @@
 			<div class="modal-dialog modal-dialog-centered">
 				<div class="modal-content">
 					<!-- Modal Header -->
-					<div class="modal-header">
+					<div class="modal-header" style="border-style: none;">
 						<h3 class="modal-title" style="margin: 10px;font-size: 25px;">댓글 삭제</h3>
 						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 					</div>
 					<!-- Modal body -->
 					<div class="modal-body" style="margin: 20px;text-align: center;">
-						<h4>해당 댓글을 삭제하시겠습니까?</h4>
-						(한번 삭제한 댓글은 복원이 불가합니다)
+						<h4><strong>해당 댓글을 삭제하시겠습니까?</strong></h4>
+						<span style="color: #dc3545;">(한번 삭제한 댓글은 복원이 불가합니다)</span>
 					</div>
 					<!-- Modal footer -->
-					<div class="modal-footer" style="margin: 10px;">
+					<div class="modal-footer" style="margin: 10px; border-style: none;">
 						<button type="button" class="btn btn-danger" onclick="deleteComment();">삭제하기</button>
 						<button type="button" class="btn btn-light" id = "deleteCancle"
 							data-bs-dismiss="modal">취소</button>

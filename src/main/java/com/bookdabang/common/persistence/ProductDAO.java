@@ -94,6 +94,9 @@ public interface ProductDAO {
 	// 상품 조회기록 업데이트하는 메서드
 	public int updatePageview(int prodNo, String ipaddr) throws Exception;
 	
+	// 상품 조회기록 삭제하는 메서드
+	public int deletePageview (int prodNo, String ipaddr) throws Exception;
+	
 	// 카테고리 이름 가져오는 메서드
 	public String selectCategoryName(int cno) throws Exception;
 	

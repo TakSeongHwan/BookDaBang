@@ -7,8 +7,26 @@
 <mapper namespace="com.bookdabang.mapper.ReviewMapper" >
 
 	<select id="selectAllReview" resultType="ReviewVO">
-		select * from review where productNo = #{prodNo} order by writedate desc 
-		 limit #{startNum},#{postPerPage}
+		select * from review where productNo = #{prodNo}  
+		<if test="sort == 1">
+			order by writedate desc 
+		</if>
+		<if test="sort == 2">
+			order by writedate asc 
+		</if>
+		<if test="sort == 3">
+			order by grade desc 
+		</if>
+		<if test="sort == 4">
+			order by grade asc 
+		</if>
+		<if test="sort == 5">
+			order by recommendNum desc 
+		</if>
+		<if test="sort == 6">
+			order by commentNum desc 
+		</if>
+		limit #{startNum},#{postPerPage}
 	</select>
 	
 	<select id="selectAllComments" resultType="ReviewComment">
@@ -19,7 +37,6 @@
 		<if test="startNum != null and postPerPage != null">
 			order by ref desc,reforder asc limit #{startNum},#{postPerPage}
 		</if>
-		
 	</select>
 	
 	<insert id="insertComment">

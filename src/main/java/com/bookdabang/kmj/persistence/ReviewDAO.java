@@ -12,7 +12,7 @@ import com.bookdabang.common.domain.ReviewComment;
 
 public interface ReviewDAO {
 	// n번 상품의 리뷰들 가져오는 메서드 (페이징 포함)
-	public List<ReviewVO> selectAllReview (int prodNo,PagingInfo pi) throws Exception;
+	public List<ReviewVO> selectAllReview (int prodNo,PagingInfo pi,int sort) throws Exception;
 	
 	// n번 리뷰의 댓글들 가져오는 메서드
 	public List<ReviewComment> selectAllComments(int reviewNo) throws Exception;

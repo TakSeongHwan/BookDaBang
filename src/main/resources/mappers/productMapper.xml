@@ -360,6 +360,10 @@
 		update pageview set accessDate = now() where ip_address=#{ipaddr} and productNo=#{prodNo}
 	</update>
 	
+	<delete id="deletePageview">
+		delete from pageview where where ip_address=#{ipaddr} and productNo=#{prodNo}
+	</delete>
+	
 	<select id="selectCategoryName" resultType="String">
 		select category_name from category where category_code = #{cno}
 	</select>

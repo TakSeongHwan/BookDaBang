@@ -238,59 +238,59 @@
 	<jsp:include page="../../managerHeader.jsp"></jsp:include>
 	<div class="back">	
 		<div class="card" style="margin: 50px; width: 1050px; display: inline-block;">
-			<h5 class="card-header">리뷰 상세조회</h5>
+			<h5 class="card-header"><strong>리뷰 상세조회</strong></h5>
 			<div style="margin: 0 0 60px 37px;">
 				<div style="display: inline-block;">
-					<label for="detail" class="form-label" style="display: block">리뷰번호</label>
+					<label for="detail" class="form-label" style="display: block"><strong>리뷰번호</strong></label>
 					<input type="text" class="form-control" value="${review.reviewNo}" readonly
 					 style="width: 82px; display: inline-block; background-color: #fafbfc;"
 					>	
 				</div>
 				<div style="display: inline-block; margin-left: 37px;">
-					<label for="detail" class="form-label" style="display: block">제목</label>
+					<label for="detail" class="form-label" style="display: block"><strong>제목</strong></label>
 					<input type="text" class="form-control" value="${review.title}" readonly
 					 style="width:400px; display: inline-block; background-color: #fafbfc;"
 					>
 				</div>
 				<div style="display: inline-block; margin-left: 100px;">
-					<label for="detail" class="form-label" style="display: block">작성자</label>
+					<label for="detail" class="form-label" style="display: block"><strong>작성자</strong></label>
 					<input type="text" class="form-control" value="${review.writer}" readonly
 					 style="width:100px; display: inline-block; background-color: #fafbfc;"
 					>
 				</div>
 				<div style="display: inline-block; margin-left: 35px;">
-					<label for="detail" class="form-label" style="display: block">작성날짜</label>
+					<label for="detail" class="form-label" style="display: block"><strong>작성날짜</strong></label>
 					<input type="text" class="form-control" value="${review.writedate}" readonly
 					style="width:210px; display: inline-block; background-color: #fafbfc;"
 					>
 				</div>
 				<div style="display: inline-block; margin-top: 20px;">
-					<label for="detail" class="form-label" style="display: block">내용</label>
+					<label for="detail" class="form-label" style="display: block"><strong>내용</strong></label>
 					<textarea type="text" class="form-control" rows="8"  readonly
 					style="width:760px; display:inline-block; background-color: #fafbfc;"
 					>${review.content}</textarea>
 				</div>
 				<div style="display: inline-block; float: right; margin: 10px 40px 0 0;">
 					<div style="margin-top: 12px">
-						<label for="detail" class="form-label" style="display: block">별점수</label>
+						<label for="detail" class="form-label" style="display: block"><strong>별점수</strong></label>
 						<input type="text" class="form-control" style="width:150px; display: inline-block;
 						color: #fbd600; background-color: #fafbfc;" id="star" readonly>
 					</div>
 					<div style="margin-top: 12px" >
-						<label for="detail" class="form-label" style="display: block">추천수</label>
+						<label for="detail" class="form-label" style="display: block"><strong>추천수</strong></label>
 						<input type="text" class="form-control" value="${review.recommendNum}" readonly
 						style="width:150px; display: inline-block; background-color: #fafbfc;"
 						>
 					</div>
 					<div style="margin-top: 12px">
-						<label for="detail" class="form-label" style="display: block">댓글수</label>
+						<label for="detail" class="form-label" style="display: block"><strong>댓글수</strong></label>
 						<input type="text" class="form-control" id="totalCommentNum"
 						 value="${review.commentNum}" readonly style="width:150px; display: inline-block;
 						  background-color: #fafbfc;">
 					</div>
 				</div>
 				<div class="attachfile" style="margin-top: 20px;">
-					<label for="detail" class="form-label" style="display: block">첨부파일</label>
+					<label for="detail" class="form-label" style="display: block"><strong>첨부파일</strong></label>
 					<c:forEach var="file" items="${fileList}">
 						<c:if test="${file.thumbnailFile != null}">
 							<img class='thumbImg' src='/resources/uploads${file.originFile}'/>
@@ -306,7 +306,7 @@
 			</div>
 		</div>
 		<div class="card" style="margin:50px 50px 0 0; width:440px; display:inline-block; float: right;">
-			<h5 class="card-header">해당 상품</h5>
+			<h5 class="card-header"><strong>해당 상품</strong></h5>
 			<div style="margin: 10px 0px 35px 20px; width:400px; height: 529px;">
 				<div class="card mb-3">
 					<img class="card-img-top" src="${product.cover}" alt="Card image cap"
@@ -324,7 +324,7 @@
 		</div>
 		<div class="card" style="margin: 0 50px 50px 50px">
 			<div>
-				<h5 class="card-header" style="display: inline-block; width: 1200px;">리뷰 댓글</h5>
+				<h5 class="card-header" style="display: inline-block; width: 1200px;"><strong>리뷰 댓글</strong></h5>
 				<div style="display: inline-block; width: 158px; margin: 28px 24px 24px 0; float: right;">
 					<button type="button" class="btn btn-outline-primary modalBtn" data-bs-toggle="modal"
 					 data-bs-target="#modalToggle" onclick="showModal();">일괄 삭제 &nbsp; 

@@ -26,11 +26,12 @@ public class ReviewDAOImpl implements ReviewDAO {
 	private static String ns = "com.bookdabang.mapper.ReviewMapper"; // mapper의 namespace
 	
 	@Override
-	public List<ReviewVO> selectAllReview(int prodNo,PagingInfo pi) throws Exception {
+	public List<ReviewVO> selectAllReview(int prodNo,PagingInfo pi,int sort) throws Exception {
 		Map<String,Object> param = new HashMap<String, Object>();
 		param.put("prodNo", prodNo);
 		param.put("startNum", pi.getStartNum());
 		param.put("postPerPage", pi.getPostPerPage());
+		param.put("sort", sort);
 		
 		return ses.selectList(ns + ".selectAllReview", param);
 	}

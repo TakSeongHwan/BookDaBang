@@ -223,8 +223,6 @@ public class ProductDAOImpl implements ProductDAO {
 		return ses.selectList(ns + ".selectTopSaleProducts", cno);
 	}
 
-
-
 	@Override
 	public List<ProductVO> selectTopProducts(String searchWord) throws Exception {
 		Map<String, Object> param = new HashMap<String, Object>();
@@ -260,11 +258,20 @@ public class ProductDAOImpl implements ProductDAO {
 		param.put("ipaddr", ipaddr);
 		return ses.update(ns + ".updatePageview", param);
 	}
+	
+	@Override
+	public int deletePageview(int prodNo, String ipaddr) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("prodNo", prodNo);
+		param.put("ipaddr", ipaddr);
+		return ses.delete(ns + ".deletePageview", param);
+	}
 
 	@Override
 	public String selectCategoryName(int cno) throws Exception {
 		return ses.selectOne(ns + ".selectCategoryName", cno);
 	}
 
+	
 
 }

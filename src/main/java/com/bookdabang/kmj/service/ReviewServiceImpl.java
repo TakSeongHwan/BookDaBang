@@ -30,11 +30,11 @@ public class ReviewServiceImpl implements ReviewService {
 	private LoginDAO lDao;
 	
 	@Override
-	public Map<String, Object> readAllReview(int prodNo,int pageNo) throws Exception {
+	public Map<String, Object> readAllReview(int prodNo,int pageNo,int sort) throws Exception {
 		System.out.println(prodNo);
 		PagingInfo pi = pagingProcess(prodNo,pageNo,null,0);
 		
-		List<ReviewVO> lst = rDao.selectAllReview(prodNo,pi);
+		List<ReviewVO> lst = rDao.selectAllReview(prodNo,pi,sort);
 		List<AttachFileVO> lst2 = rDao.selectAllAttachFile(prodNo);
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();

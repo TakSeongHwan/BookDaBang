@@ -12,7 +12,7 @@ import com.bookdabang.common.domain.ReviewComment;
 
 public interface ReviewService {
 	// n번 상품의 리뷰들 가져오기 (첨부파일까지 포함,페이징 포함)
-	public Map<String, Object> readAllReview (int prodNo,int pageNo) throws Exception;
+	public Map<String, Object> readAllReview (int prodNo,int pageNo,int sort) throws Exception;
 	
 	// n번 리뷰의 댓글들 가져오기
 	public List<ReviewComment> readAllComments (int rno) throws Exception;

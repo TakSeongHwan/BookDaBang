@@ -106,18 +106,22 @@ public class UserProductServiceImpl implements UserProductService {
 					if (dao.updateReadCount(prodNo) == 1) {
 						System.out.println("조회기록 갱신");
 						result = true;
+					} else {
+						dao.deletePageview(prodNo, ipaddr);
 					}
 				}
 			} else {
 				result = true;
 				System.out.println("이전 조회기록 하루 안 지남");
 			}
-		}else {
+		} else {
 			
 			if(dao.insertPageview(prodNo,ipaddr) == 1) {
 				if (dao.updateReadCount(prodNo) == 1) {
 					System.out.println("조회기록 추가");
 					result = true;
+				} else {
+					dao.deletePageview(prodNo, ipaddr);
 				}
 			}
 			

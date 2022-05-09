@@ -58,7 +58,7 @@
 					parseList(data.reviewList,data.fileList);
 					parsePaging(data.pagingInfo);
 				} 
-			},error : function(){
+			},error : function() {
 				alert("리뷰 가져오기 실패");
 			}
 		});
@@ -66,61 +66,70 @@
 
 	function parseList(rList,fList) {
 		$("#reviewtList").empty();
+		$("#resultNone").remove();
 		let output = '';
-		$.each(rList,function(i, e) {
-			output += '<tr onclick=location.href="${contextPath}/admin/reviewBoard/detail?no=' + e.reviewNo + '">';
-			output += '<td onclick="event.stopPropagation();"><input class="form-check-input reviewCheck" type="checkbox" value="' + e.reviewNo + '">';
-			if (e.fileStatus == "yes") {
-				$.each(fList, function(i, file) {
-					if (e.reviewNo == file.reviewNo) {
-						if (file.thumbnailFile != null) {
-							output += "<input type='hidden' value='" + file.thumbnailFile + "'>";
-						} else if (file.notImageFile != null) {
-							output += "<input type='hidden' value='" + file.notImageFile + "'>";
+		if (rList.length != 0) {
+			$.each(rList,function(i, e) {
+				output += '<tr onclick=location.href="${contextPath}/admin/reviewBoard/detail?no=' + e.reviewNo + '">';
+				output += '<td onclick="event.stopPropagation();"><input class="form-check-input reviewCheck" type="checkbox" value="' + e.reviewNo + '">';
+				if (e.fileStatus == "yes") {
+					$.each(fList, function(i, file) {
+						if (e.reviewNo == file.reviewNo) {
+							if (file.thumbnailFile != null) {
+								output += "<input type='hidden' value='" + file.thumbnailFile + "'>";
+							} else if (file.notImageFile != null) {
+								output += "<input type='hidden' value='" + file.notImageFile + "'>";
+							}
 						}
-					}
-				});
-			}
-			output += '</td>';
-			output += '<td><strong>' + e.reviewNo + '</strong></td>';
-			output += '<td>' + e.productNo + '</td>';
-			output += '<td class="reviewTitle">' + e.title + '</td>';
-			output += '<td>' + e.writer + '</td>';
-			let writeDate = new Date(e.writedate).toLocaleString();
-			writeDate = writeDate.split("오")[0];
-			output += '<td>' + writeDate + '</td>';
-			let content = e.content.replaceAll("<br/>", "");
-			output += '<td class="reviewContent">' + content + '</td>';
-			let grade = "";
-			for (let i = 0; i < e.grade; i++) {
-				grade += "★";
-			}
-			for (let i = 0; i < 5-e.grade; i++) {
-				grade += "☆";
-			}
-			output += '<td class="s">' + grade + '</td>';
-			output += '<td>' + e.recommendNum + '개</td>';
-			output += '<td>' + e.commentNum + '개</td>';
-			output += '<td> <ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">';
-			if (e.fileStatus == "yes") {
-				$.each(fList, function(i, file) {
-					if (e.reviewNo == file.reviewNo) {
-						output += '<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="" data-bs-original-title="Lilian Fuller">';
-						if (file.thumbnailFile != null) {
-							output += "<img class='rounded-circle thumbImgR' src='${contextPath}/resources/uploads" + file.thumbnailFile + "'>";
-						} else if (file.notImageFile != null) {
-							output += "<img class='rounded-circle notImgR' src='${contextPath}/resources/img/review/bx-file.svg'>";
+					});
+				}
+				output += '</td>';
+				output += '<td><strong>' + e.reviewNo + '</strong></td>';
+				output += '<td>' + e.productNo + '</td>';
+				output += '<td class="reviewTitle">' + e.title + '</td>';
+				output += '<td>' + e.writer + '</td>';
+				let writeDate = new Date(e.writedate).toLocaleString();
+				writeDate = writeDate.split("오")[0];
+				output += '<td>' + writeDate + '</td>';
+				let content = e.content.replaceAll("<br/>", "");
+				output += '<td class="reviewContent">' + content + '</td>';
+				let grade = "";
+				for (let i = 0; i < e.grade; i++) {
+					grade += "★";
+				}
+				for (let i = 0; i < 5-e.grade; i++) {
+					grade += "☆";
+				}
+				output += '<td class="s">' + grade + '</td>';
+				output += '<td>' + e.recommendNum + '개</td>';
+				output += '<td>' + e.commentNum + '개</td>';
+				output += '<td> <ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">';
+				if (e.fileStatus == "yes") {
+					$.each(fList, function(i, file) {
+						if (e.reviewNo == file.reviewNo) {
+							output += '<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="" data-bs-original-title="Lilian Fuller">';
+							if (file.thumbnailFile != null) {
+								output += "<img class='rounded-circle thumbImgR' src='${contextPath}/resources/uploads" + file.thumbnailFile + "'>";
+							} else if (file.notImageFile != null) {
+								output += "<img class='rounded-circle notImgR' src='${contextPath}/resources/img/review/bx-file.svg'>";
+							}
+							output += '</li>';
 						}
-						output += '</li>';
-					}
-				});
-			} else {
-				output += '<li class="avatar avatar-xs">없음</li>';
-			}
-			output += '</ul></td>';
-			output += '<td onclick="event.cancelBubble=true"><a href="javascript:deleteOne('+ e.reviewNo + ');"><i class="bx bx-trash me-1"></i></a></td>'
-			output += '</tr>';
-		});
+					});
+				} else {
+					output += '<li class="avatar avatar-xs">없음</li>';
+				}
+				output += '</ul></td>';
+				output += '<td onclick="event.cancelBubble=true"><a href="javascript:deleteOne('+ e.reviewNo + ');"><i class="bx bx-trash me-1"></i></a></td>'
+				output += '</tr>';
+			});
+		} else {
+			output += '<tr><td></td></tr>';
+			let output2 = '<div id="resultNone"><h5 style="height: 115px; margin-top: 65px; text-align: center;">';
+			output2 += '<i class="bx bxs-message-alt-x"style="display: block;font-size: 45px;margin-bottom: 20px;"></i>';
+			output2 += '<strong>요청하신 검색조건에 일치하는 검색결과가 없습니다.</strong></h5></div>';
+			$(".table-responsive").after(output2);
+		}
 		$("#checkAll").prop("checked", false);
 		$("#reviewtList").html(output);
 	}
@@ -128,34 +137,36 @@
 	function parsePaging(data) {
 		$(".pagination").empty();
 		let output = "";
-		let beforePageNo = pageNo;
-		if (pageNo > 2) {
-			output += '<li class="page-item prev"><a class="page-link" href="javascript:getReviewList(1);">'
-					+ '<i class="tf-icon bx bx-chevrons-left"></i></a></li>';
-		}
-		if (pageNo > 1) {
-			output += '<li class="page-item prev"><a class="page-link" href="javascript:getReviewList(' + (pageNo-1) + ');">'
-				+ '<i class="tf-icon bx bx-chevron-left"></i></a></li>';
-		}
-		for (let i = data.startNoOfCurPagingBlock; i <= data.endNoOfCurPagingBlock; i++) {
-			if (pageNo == i) {
-				output += '<li class="page-item active"><a class="page-link" href="javascript:getReviewList(' + i + ');">'
-						+ i + '</a></li>';
-			} else {
-				output += '<li class="page-item"><a class="page-link" href="javascript:getReviewList(' + i + ');">'
-				+ i + '</a></li>';
+		if (data.totalPostCnt != 0) {
+			let beforePageNo = pageNo;
+			if (pageNo > 2) {
+				output += '<li class="page-item prev"><a class="page-link" href="javascript:getReviewList(1);">'
+						+ '<i class="tf-icon bx bx-chevrons-left"></i></a></li>';
 			}
+			if (pageNo > 1) {
+				output += '<li class="page-item prev"><a class="page-link" href="javascript:getReviewList(' + (pageNo-1) + ');">'
+					+ '<i class="tf-icon bx bx-chevron-left"></i></a></li>';
+			}
+			for (let i = data.startNoOfCurPagingBlock; i <= data.endNoOfCurPagingBlock; i++) {
+				if (pageNo == i) {
+					output += '<li class="page-item active"><a class="page-link" href="javascript:getReviewList(' + i + ');">'
+							+ i + '</a></li>';
+				} else {
+					output += '<li class="page-item"><a class="page-link" href="javascript:getReviewList(' + i + ');">'
+					+ i + '</a></li>';
+				}
+			}
+			if (pageNo < data.totalPage) {
+				output += '<li class="page-item next"><a class="page-link" href="javascript:getReviewList(' + ++pageNo + ');">'
+				+ '<i class="tf-icon bx bx-chevron-right"></i></a></li>';
+			}
+			if (pageNo < data.totalPage) {
+				output += '<li class="page-item next"><a class="page-link" href="javascript:getReviewList(' + data.totalPage + ');">'
+					+ '<i class="tf-icon bx bx-chevrons-right"></i></a></li>';
+			}
+			pageNo = beforePageNo;
+			$(".pagination").html(output);
 		}
-		if (pageNo < data.totalPage) {
-			output += '<li class="page-item next"><a class="page-link" href="javascript:getReviewList(' + ++pageNo + ');">'
-			+ '<i class="tf-icon bx bx-chevron-right"></i></a></li>';
-		}
-		if (pageNo < data.totalPage) {
-			output += '<li class="page-item next"><a class="page-link" href="javascript:getReviewList(' + data.totalPage + ');">'
-				+ '<i class="tf-icon bx bx-chevrons-right"></i></a></li>';
-		}
-		pageNo = beforePageNo;
-		$(".pagination").html(output);
 	}
 	
 	function searchReview() {
@@ -336,10 +347,10 @@
 	<div class="back">
 		
 		<div class="card" style="margin: 50px; width: 1050px; display: inline-block;">
-			<h5 class="card-header">리뷰 상세검색</h5>
+			<h5 class="card-header"><strong>리뷰 상세검색</strong></h5>
 			<div style="margin: 0 0 60px 37px;">
 			<div style="display: inline-block;">
-				<label for="searchKey" class="form-label">검색어</label>
+				<label for="searchKey" class="form-label"><strong>검색어</strong></label>
 				<select class="form-select" id="serachType" style="width: 150px; display: inline-block;" >
 					<option selected="" hidden="">키워드 검색</option>
 					<option value="reviewNo">리뷰번호</option>
@@ -352,14 +363,14 @@
 					style="width: 300px; display: inline-block;">	
 			</div>
 			<div style="display: inline-block; margin-left: 37px;" >
-					<label for="searchDate" class="form-label">작성기간 (시작일 ~ 종료일)</label>
+					<label for="searchDate" class="form-label"><strong>작성기간 (시작일 ~ 종료일)</strong></label>
 					<input type="date" class="form-control" id="startDate">
 					<span style="font-size: 24px; margin: 0 10px 0 10px;">~</span>
 					<input type="date" class="form-control" id="endDate">
 			</div>
 			<br>
 			<div style="display: inline-block;">
-				<label for="searchGrade" class="form-label" style="padding-top: 20px;">별점 수</label>
+				<label for="searchGrade" class="form-label" style="padding-top: 20px;"><strong>별점 수</strong></label>
 				<select class="form-select" id="startStar">
 					<option selected="" hidden="" >시작 별점</option>
 					<option value="1" class="s" >★</option>
@@ -379,7 +390,7 @@
 				</select>
 			</div>
 			<div style="display: inline-block; margin-left: 142px;">
-				<label for="searchAttach" class="form-label">첨부파일 유무</label>
+				<label for="searchAttach" class="form-label"><strong>첨부파일 유무</strong></label>
 				<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
 					<input type="radio" class="btn-check" name="fileStatus" id ="all" checked="" >
 					<label class="btn btn-outline-primary" for="all">전체보기</label>
@@ -399,10 +410,10 @@
 		</div>
 
 		<div class="card" style="margin:50px 50px 50px 0; width:435px; display:inline-block;">
-			<h5 class="card-header" >리뷰 정렬</h5>
+			<h5 class="card-header" ><strong>리뷰 정렬</strong></h5>
 			<div style="margin :0 0px 45px 27px;">
 			<div style="display: inline-block; margin-top: 2px;">
-				<label for="order" class="form-label" style="margin-bottom: 12px;">리뷰번호순</label>
+				<label for="order" class="form-label" style="margin-bottom: 12px;"><strong>리뷰번호순</strong></label>
 				<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
 					<input type="radio" class="btn-check" name="order" id="order1" checked="" >
 					<label class="btn btn-outline-primary" for="order1">높은순</label>
@@ -411,7 +422,7 @@
 				</div>
 			</div>
 			<div style="display: inline-block; margin-left: 33px;">
-				<label for="order" class="form-label" style="margin-bottom: 12px;">상품번호순</label>
+				<label for="order" class="form-label" style="margin-bottom: 12px;"><strong>상품번호순</strong></label>
 				<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
 					<input type="radio" class="btn-check" name="order" id="order3">
 					<label class="btn btn-outline-primary" for="order3">높은순</label>
@@ -420,7 +431,7 @@
 				</div>
 			</div>
 			<div style="display: inline-block; margin-top: 25px;">
-				<label for="order" class="form-label" style="margin-bottom: 12px;">작성날짜순</label>
+				<label for="order" class="form-label" style="margin-bottom: 12px;"><strong>작성날짜순</strong></label>
 				<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
 					<input type="radio" class="btn-check" name="order" id="order5">
 					<label class="btn btn-outline-primary" for="order5">최신순</label>
@@ -429,7 +440,7 @@
 				</div>
 			</div>
 			<div style="display: inline-block; margin-left: 19px;">
-				<label for="order" class="form-label" style="margin-bottom: 12px;">별점순</label>
+				<label for="order" class="form-label" style="margin-bottom: 12px;"><strong>별점순</strong></label>
 				<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
 					<input type="radio" class="btn-check" name="order" id="order7">
 					<label class="btn btn-outline-primary" for="order7">높은순</label>
@@ -438,7 +449,7 @@
 				</div>
 			</div>
 			<div style="display: inline-block; margin-top: 25px;">
-				<label for="order" class="form-label" style="margin-bottom: 12px;">추천순</label>
+				<label for="order" class="form-label" style="margin-bottom: 12px;"><strong>추천순</strong></label>
 				<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
 					<input type="radio" class="btn-check" name="order" id="order9">
 					<label class="btn btn-outline-primary" for="order9">높은순</label>
@@ -447,7 +458,7 @@
 				</div>
 			</div>
 			<div style="display: inline-block; margin-left: 33px;">
-				<label for="order" class="form-label" style="margin-bottom: 12px;">댓글순</label>
+				<label for="order" class="form-label" style="margin-bottom: 12px;"><strong>댓글순</strong></label>
 				<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
 					<input type="radio" class="btn-check" name="order" id="order11">
 					<label class="btn btn-outline-primary" for="order11">높은순</label>
@@ -460,7 +471,7 @@
 		
 		<div class="card" style="margin: 0 50px 50px 50px">
 			<div>
-				<h5 class="card-header" style="display: inline-block; width: 1200px;">상품 리뷰게시판</h5>
+				<h5 class="card-header" style="display: inline-block; width: 1200px;"><strong>상품 리뷰게시판</strong></h5>
                 <div style="display: inline-block; width:158px; margin: 28px 24px 24px 0; float: right;" >
                		<button type="button" class="btn btn-outline-primary modalBtn"  data-bs-toggle="modal"
                 	 data-bs-target="#modalToggle" onclick="showModal();">일괄 삭제 &nbsp;

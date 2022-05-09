@@ -44,12 +44,13 @@ public class ReviewController {
 	private List<UploadFile> upfileList = new ArrayList<UploadFile>(); // 업로드된 파일들의 리스트
 	
 	@RequestMapping(value = "/read", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> readReview(@RequestParam("no") int prodNo, @RequestParam("pageNo") int pageNo) {
-		System.out.println(prodNo + "번 상품 " + pageNo + "페이지 리뷰 가져오기");
+	public ResponseEntity<Map<String, Object>> readReview(@RequestParam("no") int prodNo, @RequestParam("pageNo") int pageNo,
+			@RequestParam("sort") int sort) {
+		System.out.println(prodNo + "번 상품 " + pageNo + "페이지 리뷰 가져오기 - 정렬방법 : " + sort);
 		ResponseEntity<Map<String, Object>> result = null;
 		
 		try {
-			Map<String, Object> map = rService.readAllReview(prodNo,pageNo);
+			Map<String, Object> map = rService.readAllReview(prodNo,pageNo,sort);
 			result = new ResponseEntity<Map<String, Object>> (map, HttpStatus.OK);
 		} catch (Exception e) {
 			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);

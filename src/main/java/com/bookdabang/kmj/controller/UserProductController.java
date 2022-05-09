@@ -37,7 +37,7 @@ public class UserProductController {
 	
 	
 	@RequestMapping(value = "/list", method=RequestMethod.GET)
-	public void productList (Model model, @RequestParam("pageNo") int pageNo,
+	public void productList (Model model, @RequestParam(value="pageNo", required=false, defaultValue ="1") int pageNo,
 			@RequestParam(value="searchWord", required=false, defaultValue ="") String searchWord) throws Exception {
 		// 상품 리스트
 		int cno = 0;
@@ -106,7 +106,7 @@ public class UserProductController {
 		String categoryName = pService.getCategoryName(cno);
 		
 		// 해당 상품의 리뷰들(페이징,첨부파일 포함)
-		Map<String, Object> resultMap = rService.readAllReview(prodNo,pageNo);
+		Map<String, Object> resultMap = rService.readAllReview(prodNo,pageNo,1);
 		List<ReviewVO> lst2 = (List<ReviewVO>) resultMap.get("reviewList");
 		PagingInfo pi = (PagingInfo) resultMap.get("pagingInfo");
 		List<AttachFileVO> lst3 = (List<AttachFileVO>) resultMap.get("fileList");
