@@ -42,8 +42,15 @@ public interface ProductService {
 //	QnA
 	// sessionId로 member 찾기
 	public String validSession(String sessionId) throws Exception;
+	
+	public ProductQnA getQnAByquesNo(int quesion_no) throws Exception;
+	
 
 	public boolean InsertQnA(ProdQnADTO dto) throws Exception;
+	
+	public boolean updateQnA(AnswerDTO prodQnA) throws Exception;
+	
+	
 
 	public Map<String, Object> selectProdQnA(int pageno, int answerStatus, String isbn) throws Exception;
 

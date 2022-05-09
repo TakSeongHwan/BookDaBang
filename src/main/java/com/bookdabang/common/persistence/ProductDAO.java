@@ -39,7 +39,8 @@ public interface ProductDAO {
 	
 	// 글번호로 qna 비밀번호 가져옴
 	public String getPwdByQuesNo(int question_no);
-	
+	// 글번호로 QnA 정보 가져옴
+	public ProductQnA getQnAByquesNo(int question_no);
 	// 답글 insert
 	public int insertAnswer(AnswerDTO answer);
 	// Qna isnert
@@ -58,6 +59,9 @@ public interface ProductDAO {
 	public List<ProductQnA> selectAllProdQnA_NoAnswer(PagingInfo pi) throws Exception;
 	public List<ProductQnA> selectAllProdQnA_Answer(PagingInfo pi) throws Exception;
 	
+	
+	//QnA Update
+	public int updateQnA(AnswerDTO prodQnA);
 	
 	//qna 삭제
 	public int deleteQnA(int questionNo);

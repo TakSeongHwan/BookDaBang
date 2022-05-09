@@ -1604,6 +1604,13 @@
 								pwd : ""
 						}
 						
+						let update_qna = {
+							question_no : "",
+							content : "",
+							pwd : ""
+						}
+						let updateNo = 0;
+						
 						let pageNo = 1;
 						window.onload = function() {
 							sessionId = "${sessionId}";
@@ -1627,6 +1634,7 @@
 								
 								$("#qnaContent").val("");
 								$("#pwd").val("");
+								$(".insert_title").html("Q&A를 작성하세요"); 
 								$("#qnaContainer").toggle();
 								$("#qnaContentBox").toggle();
 								
@@ -1638,6 +1646,8 @@
 							$(document).on("click", "#backTolist", function() {
 								$("#qnaContainer").toggle();
 								$("#qnaContentBox").toggle();
+								$("#insertQnA").show();
+								$("#updateQnA").remove();
 							});
 							
 							
@@ -1708,9 +1718,38 @@
 						
 						}
 						
+						$(document).on("click", ".updateBtn", function() {
+							
+							updateNo = $(this).attr("value");
+							$("#pwd").val("");
+							update_qna.question_no = updateNo;
+							$("#qnaContainer").toggle();
+							$("#qnaContentBox").toggle();
+							$(".insert_title").html(updateNo +"번글 수정"); 
+							$("#insertQnA").hide();
+							$("#backTolist").after('<a class="button button-active button-contactForm" id="updateQnA" style="color : #fff; margin : 10px 0 0 5px;" >글 수정</a>');
+							viewOneProdQnA(updateNo);
+							
+						});
+							
+						function viewOneProdQnA(updateNo) {
+							let url = "/prodQnARest/"+updateNo; 
+							
+							$.ajax({
+								url : url,
+								dataType : "json",
+								type : "get",
+								success : function(data) {
+									$("#qnaContent").html(data.content);
+								}
+								});
+						}
+						
+						
+						
 						
 						function getUserNickName(sessionId) {
-							let url = "/prodQnARest/"+sessionId; 
+							let url = "/prodQnARest/nick/"+sessionId; 
 								$.ajax({
 									url : url,
 									dataType : "text",
@@ -1722,6 +1761,28 @@
 										}
 									});
 						}
+						
+						$(document).on("click", "#updateQnA", function(){
+							update_qna.content =$("#qnaContent").val();
+							update_qna.pwd = $("#pwd").val();
+							console.log(update_qna);
+							
+							let url = "/prodQnARest/put";
+							$.ajax({
+								url : url,
+								dataType : "text",
+								type : "put",
+								data : update_qna,
+								success : function(data) {
+									if(data == "success") {
+										alert("수정이 완료되었습니다.");
+									} else {
+										alert("수정이 실패하였습니다.");
+									}
+									location.reload();
+									}
+								});
+						});
 							
 						
 						function viewProdQnA(data) {
@@ -1763,6 +1824,7 @@
 								output += '<td>'
 								
 								if(userNickName == e.writer){
+									output += "<span class='badge bg-warning updateBtn' value= "+e.question_no+" style='margin-right : 5px;' >수정</span>";
 									output += "<span class='badge bg-danger deleteBtn' >삭제</span>";
 									} 
 								output+='</td>'
@@ -1888,14 +1950,16 @@
 						
 						
 						<div id="qnaContentBox" style="display : none">
-						<span style="font-size : 21px; line-height: 70px">Q&A를 작성하세요</span>
+						<span class="insert_title"style="font-size : 21px; line-height: 70px">Q&A를 작성하세요</span>
 						<div style ="float: right;  display : inline-block;">
 						<label class="form-label">비밀번호 입력(선택)</label>
 						<input type="text" class="form-control" id="pwd" placeholder="Password" aria-describedby="defaultFormControlHelp" style="width:200px; margin-bottom: 10px " />
 						</div>
 						<textarea class="form-control" id="qnaContent" id=index " rows="9"></textarea>
 						<a class="button button--active button-contactForm" id="backTolist" style="color : #fff; margin-top: 10px;">뒤로가기</a>
-						<a class="button button--active button-contactForm" id="insertQnA" style="color : #fff; margin-top: 10px;" >글등록</a>
+						<a class="button button-active button-contactForm" id="insertQnA" style="color : #fff; margin-top: 10px;" >글  작성</a>
+						
+
 						
 						
 						</div>

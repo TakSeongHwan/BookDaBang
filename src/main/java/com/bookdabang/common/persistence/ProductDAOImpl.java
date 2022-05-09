@@ -104,7 +104,15 @@ public class ProductDAOImpl implements ProductDAO {
 	@Override
 	public String getPwdByQuesNo(int question_no) {
 		
-		return ses.selectOne(ns + ".getQnAByQuesNo", question_no);
+		return ses.selectOne(ns + ".getPwdByQuesNo", question_no);
+	}
+	
+	
+
+	@Override
+	public ProductQnA getQnAByquesNo(int question_no) {
+	
+		return ses.selectOne(ns + ".getQnAByquesNo", question_no);
 	}
 
 	@Override
@@ -187,12 +195,20 @@ public class ProductDAOImpl implements ProductDAO {
 		return ses.delete(ns + ".deleteQnA", questionNo);
 	}
 	
+	@Override
+	public int updateQnA(AnswerDTO prodQnA) {
+		return ses.update(ns + ".updateQnA", prodQnA);
+		
+	}
+	
 	
 	
 	
 
 	// 강명진
 	
+	
+
 	@Override
 	public List<ProductVO> selectAllProducts(int cno,PagingInfo pi,int sort,String searchWord) throws Exception {
 		Map<String, Object> param = new HashMap<String, Object>();
