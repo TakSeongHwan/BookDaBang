@@ -12,6 +12,7 @@ public class ReviewVO {
 	private int recommendNum; 
 	private int productNo;
 	private int commentNum;
+	private String fileStatus;
 	
 	public ReviewVO() {
 		super();
@@ -19,7 +20,7 @@ public class ReviewVO {
 	}
 
 	public ReviewVO(int reviewNo, String title, String writer, Timestamp writedate, String content, int grade,
-			int recommendNum, int productNo, int commentNum) {
+			int recommendNum, int productNo, int commentNum, String fileStatus) {
 		super();
 		this.reviewNo = reviewNo;
 		this.title = title;
@@ -30,6 +31,7 @@ public class ReviewVO {
 		this.recommendNum = recommendNum;
 		this.productNo = productNo;
 		this.commentNum = commentNum;
+		this.fileStatus = fileStatus;
 	}
 
 	public int getReviewNo() {
@@ -104,11 +106,20 @@ public class ReviewVO {
 		this.commentNum = commentNum;
 	}
 
+	public String getFileStatus() {
+		return fileStatus;
+	}
+
+	public void setFileStatus(String fileStatus) {
+		this.fileStatus = fileStatus;
+	}
+
 	@Override
 	public String toString() {
 		return "ReviewVO [reviewNo=" + reviewNo + ", title=" + title + ", writer=" + writer + ", writedate=" + writedate
 				+ ", content=" + content + ", grade=" + grade + ", recommendNum=" + recommendNum + ", productNo="
-				+ productNo + ", commentNum=" + commentNum  + "]";
+				+ productNo + ", commentNum=" + commentNum + ", fileStatus=" + fileStatus + "]";
 	}
+
 	
 }

@@ -263,7 +263,7 @@ overflow-y:scroll;
     	display: none;
     	position: fixed;
    		top: 150px;
-    	left: 35%;
+    	left: 33.3%;
     	z-index: 15000;
     	border: 1px solid #ccc;
 	}

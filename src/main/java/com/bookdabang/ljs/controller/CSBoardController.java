@@ -2,7 +2,6 @@ package com.bookdabang.ljs.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,13 +23,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bookdabang.common.domain.AttachFileVO;
+import com.bookdabang.common.domain.BoardSearch;
 import com.bookdabang.common.domain.CustomerService;
 import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.NoticeVO;
+import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.ljs.domain.CSUploadFile;
 import com.bookdabang.ljs.domain.CSUploadFileProcess;
 import com.bookdabang.ljs.service.CSBoardService;
 import com.bookdabang.ljs.service.LoginService;
-import com.google.protobuf.Timestamp;
 
 
 
@@ -48,14 +50,32 @@ public class CSBoardController {
 	private List<CSUploadFile> upfileLst = new ArrayList<CSUploadFile>();
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String csBoardAll (Model model) {
+	public String csBoardAll (Model model, @RequestParam(value="pageNo", required= false, defaultValue = "1") String curPage, @ModelAttribute BoardSearch searchWord) {
 		
 		
 		List<CustomerService> boardList = null;
 		
+		int pageNo = 1;
+		if (!curPage.equals("") || curPage != null) {
+			pageNo = Integer.parseInt(curPage);
+		}
+		if(searchWord.getSearchWord() == null) {
+			searchWord.setSearchWord("");
+		}
+		if(searchWord.getSearchType() == null) {
+			searchWord.setSearchType("");
+		}
+		System.out.println("검색어 : " + searchWord);
+		
+		PagingInfo pi = null;
+
+	
 		try {
 			
-			boardList = cservice.showEntireCSBoard();
+			Map<String,Object> map = cservice.showEntireCSBoard(pageNo, searchWord);
+			
+			boardList = (List<CustomerService>) map.get("csBoard");
+			pi = (PagingInfo) map.get("pagingInfo");		
 			
 		} catch (Exception e) {
 			
@@ -64,8 +84,8 @@ public class CSBoardController {
 		}
 		
 		System.out.println("게시글 다 가지고 왔는지" + boardList.toString());
-		
 		model.addAttribute("boardList", boardList);
+		model.addAttribute("pagingInfo", pi);
 		
 		
 		return "cs/csBoardList";
@@ -92,6 +112,7 @@ public class CSBoardController {
 		//가져오는거 까야됨 어떻게 까냐?
 		
 		System.out.println("다 가져왔니" + csPost.toString());
+		System.out.println("첨부파일도 가져오니" + attachLst);
 		model.addAttribute("csBoard", csPost);
 		model.addAttribute("attachLst", attachLst);
 		
@@ -149,7 +170,7 @@ public class CSBoardController {
 		System.out.println("파일사이즈" + upfile.getSize());
 		System.out.println("파일의 타입" + upfile.getContentType());
 		System.out.println("파일 구분자 : " + File.separator);
-
+		
 		String upPath = request.getSession().getServletContext().getRealPath("resources/cs_uploads"); // 파일을 올리기 위한 '서버' 상
 																									// 경로
 		System.out.println("파일이 업로드되는 실제 물리적 경로 : " + upPath); // 파일이 업로드되는 실제 경로.
@@ -166,6 +187,14 @@ public class CSBoardController {
 			try {
 				uploadFile = utp.uploadFileRename(upPath, upfile.getOriginalFilename(), upfile.getBytes());
 				System.out.println("업로드된 파일 이름이요" + uploadFile);
+				
+				//if ( postNo != null) {
+				
+				//	int no = Integer.parseInt(postNo);
+					
+				//	uploadFile.setCsBoardNo(no);
+				//}
+				
 				this.upfileLst.add(uploadFile);
 				result = new ResponseEntity<CSUploadFile>(uploadFile, HttpStatus.OK);
 
@@ -237,10 +266,20 @@ public class CSBoardController {
 	
 	
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
-	public void deleteCSPost(@RequestParam("no") int postNo, Model model) {
+	public String deleteCSPost(@RequestParam("no") int postNo, Model model) {
 		
+		int result = 0;
+		try {
+			
+			result = cservice.deleteCSPost(postNo);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		System.out.println("게시글 삭제하러 가자");
+		System.out.println(result + "게시글 삭제 완료");
+		return "redirect:/cs/";
 	}
 	
 	
@@ -265,11 +304,30 @@ public class CSBoardController {
 		model.addAttribute("csBoard", csPost);
 		model.addAttribute("attachLst", attachLst);
 		
-			return "cs/modifyCSPost";
+		return "cs/modifyCSPost";
+		
 	}
 	
 	
-	
+	@RequestMapping(value = "/deleteAttach", method = RequestMethod.POST)
+	@ResponseBody
+	public void deleteAttach(@RequestParam("no") int postNo, Model model) {
+		
+		 System.out.println("삭제할 글 번호 가져오니?" + postNo);
+		
+		try {
+			
+			int result = cservice.deleteAttach(postNo);
+					
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("첨부파일 삭제 완료");
+		
+	}
 	
 	
 	

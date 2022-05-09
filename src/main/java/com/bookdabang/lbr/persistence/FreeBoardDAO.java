@@ -36,9 +36,9 @@ public interface FreeBoardDAO {
 	// 파일보기
 	public List<AttachFileVO> readFile(int no);
 	// 신고게시판 전체보기
-	public List<ReportBoard> getListAllReportBoards(PagingInfo paging)throws Exception;
+
 	
-	public List<ReportBoard> getListAllReportBoards(PagingInfo paging,BoardSearch search )throws Exception;
+	public List<ReportBoard> getListAllReportBoards(PagingInfo paging)throws Exception;
 	// 게시글 신고하기
 	public int insertReportBoard(ReportBoard reportboard)throws Exception;
 	
@@ -101,7 +101,7 @@ public interface FreeBoardDAO {
 
 	public int removeTotal()throws Exception;
 
-	int getSearchResultCntReport(BoardSearch search) throws Exception;
+	
 
 	public List<FreeBoard> getListAllRemoveBoards(PagingInfo paging, BoardSearch search) throws Exception;
 
@@ -110,6 +110,18 @@ public interface FreeBoardDAO {
 	public int adminRemove(String boardno)throws Exception;
 
 	public int admindelAttach(String boardno)throws Exception;
+
+	public List<ReportBoard> statusYesReportBoards(PagingInfo paging)throws Exception;
+
+	public List<ReportBoard> statusNoReportBoards(PagingInfo paging)throws Exception;
+
+	public int totalYes()throws Exception;
+
+	public int totalNo()throws Exception;
+
+	
+
+
 
 
 

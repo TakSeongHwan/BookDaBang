@@ -12,8 +12,19 @@
 	
 	
 <script>
-	
-	
+
+
+
+ function search() {
+	if($("#searchBar").val()==("")){
+		alert("검색어를 입력해주세요!");
+		return false;
+	}
+}
+
+
+
+
 </script>
 </head>
 <body>
@@ -27,7 +38,7 @@
 		<div style="float: right;">
 			<div class="input-group filter-bar-search">
 
-				<form action="adminFreeBoard" method="get">
+				<form action="adminFreeBoard" method="get" onsubmit="return search();">
 					<select class="form-select placement-dropdown" id="selectPlacement"
 						name="searchType">
 						<option value="title">제목</option>
@@ -37,7 +48,7 @@
 					<div class="nav-item d-flex align-items-center">
 						<input type="text" name="searchWord"
 							class="form-control border-0 shadow-none"
-							placeholder="검색어를 입력하세요.." aria-label="Search..." />
+							placeholder="검색어를 입력하세요.." aria-label="Search..."  id="searchBar"/>
 						<button type="submit"
 							style="background-color: white; border-color: white;">
 							<i class="bx bx-search fs-4 lh-0"></i>
@@ -51,9 +62,11 @@
 
 
 
+
 		<table class="table table-hover" id=listTable>
 			<thead>
 				<tr>
+					
 					<th>게시글 번호</th>
 					<th>제목</th>
 					<th>글쓴이</th>
@@ -67,6 +80,7 @@
 
 				<c:forEach var="board" items="${freeBoard }">
 					<tr onclick="location.href='/board/adminRead?boardno='+ ${board.boardno };">
+						
 						<td>${board.boardno }</td>
 						<td>${board.title }</td>
 						<td>${board.writer }</td>
@@ -79,24 +93,28 @@
 		</table>
 
 
-		<nav class="blog-pagination justify-content-center d-flex">
-			<ul class="pagination">
+		 <nav aria-label="Page navigation">
+			<ul class="pagination" style="justify-content: center;">
 				<c:if test="${param.pageNo>1 }">
 					<c:choose>
 						<c:when
 							test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
-							<li class="page-item"><a class="page-link"
-								href="/board/adminFreeBoard?pageNo=1"><<</a></li>
-							<li class="page-item"><a class="page-link"
-								href="/board/adminFreeBoard?pageNo=${param.pageNo-1}"><</a></li>
+							<li class="page-item first"><a class="page-link"
+								href="/board/adminFreeBoard?pageNo=1"><i
+							class="tf-icon bx bx-chevrons-left"></i></a>
+							<li class="page-item next"><a class="page-link"
+								href="/board/adminFreeBoard?pageNo=${param.pageNo-1}"><i
+							class="tf-icon bx bx-chevron-left"></i></a>
 
 						</c:when>
 						<c:otherwise>
-							<li class="page-item"><a class="page-link"
-								href="/board/adminFreeBoard?pageNo=1&searchType=${param.searchType}&searchWord=${param.searchWord}"><<</a></li>
+							<li class="page-item first"><a class="page-link"
+								href="/board/adminFreeBoard?pageNo=1&searchType=${param.searchType}&searchWord=${param.searchWord}"><i
+							class="tf-icon bx bx-chevrons-left"></i></a>
 
-							<li class="page-item"><a class="page-link"
-								href="/board/adminFreeBoard?pageNo=${param.pageNo-1}&searchType=${param.searchType}&searchWord=${param.searchWord}"><</a></li>
+							<li class="page-item next"><a class="page-link"
+								href="/board/adminFreeBoard?pageNo=${param.pageNo-1}&searchType=${param.searchType}&searchWord=${param.searchWord}"><i
+							class="tf-icon bx bx-chevron-left"></i></a>
 
 						</c:otherwise>
 					</c:choose>
@@ -109,7 +127,7 @@
 							test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
 							<c:choose>
 								<c:when test="${param.pageNo== i}">
-									<li class="page-item"><a class="page-link"
+									<li class="page-item active"><a class="page-link"
 										href="/board/adminFreeBoard?pageNo=${i}">${i}</a></li>
 								</c:when>
 								<c:otherwise>
@@ -137,18 +155,22 @@
 						<c:when
 							test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
 
-							<li class="page-item"><a class="page-link"
-								href="/board/adminFreeBoard?pageNo=${param.pageNo+1}">></a></li>
-							<li class="page-item"><a class="page-link"
-								href="/board/adminFreeBoard?pageNo=${paging.totalPage}">>></a></li>
+							<li class="page-item next"><a class="page-link"
+								href="/board/adminFreeBoard?pageNo=${param.pageNo+1}"><i
+							class="tf-icon bx bx-chevron-right"></i></a>
+							<li class="page-item next"><a class="page-link"
+								href="/board/adminFreeBoard?pageNo=${paging.totalPage}"><i
+							class="tf-icon bx bx-chevrons-right"></i></a>
 
 						</c:when>
 						<c:otherwise>
 
-							<li class="page-item"><a class="page-link"
-								href="/board/adminFreeBoard?pageNo=${param.pageNo+1}&searchType=${param.searchType}&searchWord=${param.searchWord}">></a></li>
-							<li class="page-item"><a class="page-link"
-								href="/board/adminFreeBoard?pageNo=${paging.totalPage}&searchType=${param.searchType}&searchWord=${param.searchWord}">>></a></li>
+							<li class="page-item next"><a class="page-link"
+								href="/board/adminFreeBoard?pageNo=${param.pageNo+1}&searchType=${param.searchType}&searchWord=${param.searchWord}"><i
+							class="tf-icon bx bx-chevron-right"></i></a>
+							<li class="page-item next"><a class="page-link"
+								href="/board/adminFreeBoard?pageNo=${paging.totalPage}&searchType=${param.searchType}&searchWord=${param.searchWord}"><i
+							class="tf-icon bx bx-chevrons-right"></i></a>
 						</c:otherwise>
 					</c:choose>
 				</c:if>

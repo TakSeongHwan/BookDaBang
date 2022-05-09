@@ -14,6 +14,7 @@ import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.RecentSeenProd;
 import com.bookdabang.common.domain.ReviewVO;
 import com.bookdabang.ljs.domain.LoginDTO;
+import com.bookdabang.ljs.domain.modifyDTO;
 
 @Repository
 public class MyPageDAOImpl implements MyPageDAO {
@@ -85,6 +86,13 @@ public class MyPageDAOImpl implements MyPageDAO {
 	public List<FreeBoard> showMyLike(String userId) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectList(nsFreeBoard + ".showMylike" , userId);
+	}
+
+	@Override
+	public int modifyMemInfo(modifyDTO mdto) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.update(ns + ".updateMemInfo", mdto);
+		
 	}
 
 }

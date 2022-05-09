@@ -15,6 +15,7 @@ public class MemberDTO {
 	private Timestamp memberWhen;
 	private Timestamp latsLogin;
 	private String recommend;
+	
 	public MemberDTO() {
 		super();
 	}

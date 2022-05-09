@@ -11,7 +11,12 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
 $(document).ready(function(){
-	
+
+	if("${loginUser.isAdmin}" != 'Y'){
+		alert("잘못된 접근입니다");
+		location.href=history.back();
+	}
+
 	
 	$("#imageFile").change(function(){
 		
@@ -186,26 +191,32 @@ function delAttachFile(thumbnailFile,notImageFile,originFile){
 function writeCancle(){
 	let url = "${contextPath}/notice/uploadCancle";
 	let targetFileDiv = $("#imgOutput").html();
-	console.log(targetFileDiv);
-	let targetFile = targetFileDiv.split("/")[5].split("\"")[0];
-	console.log(targetFile);
+	if(targetFileDiv != ""){
+		console.log(targetFileDiv);
+		let targetFile = targetFileDiv.split("/")[5].split("\"")[0];
+		console.log(targetFile);
+		
+		$.ajax({
+	 		url : url,
+	 		dataType : "text", // 수신될 데이터 타입
+	 		type : "POST",
+	 		data : {
+	 			targetFile : targetFile
+	 			},
+			success : function(data){
+				console.log(data);
+				location.href = '${contextPath}/notice/listAll';
+				
+			},error : function(e){
+				
+				alert("에러 발생!잠시 후 다시 시도하세요!")
+			}
+	 	});
+	}else{
+		location.href = '${contextPath}/notice/listAll';
+		
+	}
 	
-	$.ajax({
- 		url : url,
- 		dataType : "text", // 수신될 데이터 타입
- 		type : "POST",
- 		data : {
- 			targetFile : targetFile
- 			},
-		success : function(data){
-			console.log(data);
-			location.href = '${contextPath}/notice/listAll';
-			
-		},error : function(e){
-			
-			alert("에러 발생!잠시 후 다시 시도하세요!")
-		}
- 	});
 		
 }
 </script>
@@ -231,7 +242,7 @@ z-index:20000;
  	 <div id="titleOk"></div>
  	  <div class="mb-3 mt-3">
  	  
-  	 <input type="text" id="writer" class="form-control" name="writer" value="${userId }" readonly>
+  	 <input type="text" id="writer" class="form-control" name="writer" value="${loginUser.userId }" readonly>
   	  </div>
   	    <div class="mb-3 mt-3">
       <textarea class="form-control" rows="5" id="content" name="content" placeholder="내용 입력"></textarea>

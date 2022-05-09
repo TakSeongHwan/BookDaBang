@@ -42,6 +42,28 @@ function movePage(no) {
 <jsp:include page="../userHeader.jsp"></jsp:include>
 <div class="container mt-3">
 	<h1 style="margin:20px; margin-bottom:20px;">고객센터</h1>
+	
+	<div>
+	<form action = "${contextPath}/cs/" method="get">
+		<select name = "searchType">
+			<option value="title" >제목</option>
+			<option value= "contents">제목 + 내용</option>
+			<option value= "writer">글쓴이</option>
+			<option value= "category">말머리</option>
+		</select>
+		<div>
+			<div class="input-group filter-bar-search">
+				<input type="text" name = "searchWord"  placeholder="검색" />
+					<div class = "input-group-append">
+						<button type = "submit">
+						<i class = "ti-search">
+						</i>
+						</button>
+					</div>
+			</div>
+		</div>
+		</form>
+	</div>
   <table class="table table-hover">
     <thead style="background-color:#fafaff;">
       <tr>
@@ -63,7 +85,70 @@ function movePage(no) {
       </tr>
      </c:forEach>
     </tbody>
+    
+    
   	</table>
+  	
+  	<ul class="pagination">
+			<c:if test="${param.pageNo>1 }">
+				<c:choose>
+					<c:when
+						test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
+						<li class="page-item"><a class="page-link"
+							href="${contextPath}/cs/?pageNo=${param.pageNo-1}">Previous</a></li>
+					</c:when>
+					<c:otherwise>
+						<li class="page-item"><a class="page-link"
+							href="${contextPath}/cs/?pageNo=${param.pageNo-1}&searchType=${param.searchType}&searchWord=${param.searchWord}">Previous</a>
+					</c:otherwise>
+				</c:choose>
+			</c:if>
+			<c:forEach var="i" begin="${pagingInfo.startNoOfCurPagingBlock}"
+				end="${pagingInfo.endNoOfCurPagingBlock }" step="1">
+				<c:choose>
+					<c:when
+						test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
+						<c:choose>
+							<c:when test="${param.pageNo== i}">
+								<li class="page-item active"><a class="page-link"
+									href="${contextPath}/cs/?pageNo=${i}">${i}</a></li>
+							</c:when>
+							<c:otherwise>
+								<li class="page-item "><a class="page-link"
+									href="${contextPath}/cs/?pageNo=${i}">${i}</a></li>
+							</c:otherwise>
+						</c:choose>
+					</c:when>
+					<c:otherwise>
+						<c:choose>
+							<c:when test="${param.page== i}">
+								<li class="page-item active"><a class="page-link"
+									href="${contextPath}/cs/?pageNo=${i}&searchType=${param.searchType}&searchWord=${param.searchWord}">${i}</a></li>
+							</c:when>
+							<c:otherwise>
+								<li class="page-item "><a class="page-link"
+									href="${contextPath}/cs/?pageNo=${i}&searchType=${param.searchType}&searchWord=${param.searchWord}">${i}</a></li>
+							</c:otherwise>
+						</c:choose>
+					</c:otherwise>
+				</c:choose>
+			</c:forEach>
+			<c:if test="${param.pageNo < pagingInfo.totalPage }">
+				<c:choose>
+					<c:when
+						test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
+						<li class="page-item"><a class="page-link"
+							href="${contextPath}/cs/?pageNo=${param.pageNo+1}">Next</a></li>
+					</c:when>
+					<c:otherwise>
+						<li class="page-item"><a class="page-link"
+							href="${contextPath}/cs/?pageNo=${param.pageNo+1}&searchType=${param.searchType}&searchWord=${param.searchWord}">Next</a></li>
+
+					</c:otherwise>
+				</c:choose>
+			</c:if>
+		</ul>
+  	
   	<button class="button button-header" onclick='location.href="${ contextPath}/cs/write?u=${ sessionId}"'>글쓰기</button>
 	</div>
 	<jsp:include page="../userFooter.jsp"></jsp:include>

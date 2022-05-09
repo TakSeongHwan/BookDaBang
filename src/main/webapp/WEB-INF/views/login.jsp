@@ -49,10 +49,12 @@ window.onload = function () {
 		let orderPwd = document.getElementById("orderPwd").value;
 		orderChk(orderBundle,orderPwd);
 	});
-	if (status = "fail" ) {
+	
+	if (status == "fail" ) {
 		let autoLoginBox = document.getElementById('autoLoginBox');
 		let incorrect = document.createElement('div');
-		incorrect.innerHTML = "아이디 혹은 비밀번호를 다시 확인해주세요!"
+		incorrect.innerHTML = "아이디 혹은 비밀번호를 다시 확인해주세요!";
+		incorrect.style.color = "red";
 		autoLoginBox.appendChild(incorrect);
 
 	}
@@ -158,8 +160,7 @@ function displayWarn() {
 				</div>
 				<div class="col-lg-6">
 					<div class="login_form_inner">
-					
-						<h3>Log in to enter</h3>
+						<h3>Login to enter</h3>
 						
 						<form action="loginSign" method="post">
 							<div class="col-md-12 form-group">
@@ -177,15 +178,25 @@ function displayWarn() {
 							<div class="col-md-12 form-group">
 								<button type="submit" class="button button-login w-100" onclick="return displayWarn();">로그인 </button>
 								<div>
-								 	<button style="background-color: #03c75a; color : #fff; width:300px; border:none; margin-top:10px; height : 45px; line-height : 40px; text-align:left"><img src="/resources/img/etc/btnG_naver.png" width="40"><div style="width:250px; text-align: center; display: inline-block; color:#fff">네이버 로그인</div></button>
 								 	
-								 	<img src="/resources/img/etc/kakao_login_medium_wide.png" >
+								 	
+								 	
 								 	
 								 	
 								 </div>
 								<label for="forgotPwd"><a href="#">아이디/ 비밀번호 찾기</a></label>
 							</div>
 						</form>
+							<div>
+							 	<div id="button_area">
+      								<div id="naverIdLogin">
+        								<a id="naverIdLogin_loginButton">
+        					<button style="background-color: #03c75a; color : #fff; width:300px; border:none; margin-top:10px; height : 45px; text-align:left; border-radius: 5px"><img src="/resources/img/etc/btnG_naver.png" width="40"><div style="width:230px; text-align: center; display: inline-block; font-size: 16px; ">네이버 로그인</div></button>
+        								</a>
+        								</div>
+      								</div>
+								 	<img src="/resources/img/etc/kakao_login_medium_wide.png" style="margin-top: 10px" onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=95a72bf8adefb359efc8431a1b86586d&redirect_uri=http://localhost:8001/kakaoLogin&response_type=code';">
+							</div>
 					</div>
 				</div>
 			</div>
@@ -216,6 +227,113 @@ function displayWarn() {
     </div>
   </div>
 </div>
+
+script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+
+
+
+
+
+
+
+<script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+  <script type="text/javascript">
+  
+  let naverMember = {
+		  userId : "",
+		  userPwd : "",
+		  nickName : "",
+		  userEmail  :"",
+		  isAdmin  :"",
+		  gender  :"",
+		  birth  :"",
+		  phoneNum  :"",
+		  memberWhen  :"",
+		  lastLogin  :"",
+		  isDraw :"",
+		  userName : "",
+		  sessionId: ""
+  }
+  
+  const naverLogin = new naver.LoginWithNaverId(
+   {
+    clientId: "_MSPMGBQvc3RTySfYdhS",
+    callbackUrl: "http://localhost:8085/login",
+    callbackHandle: true
+   
+    }
+   );
+  
+
+    naverLogin.init();
+    naverLogin.getLoginStatus(function (status) {
+      if (status) {
+          const nickName=naverLogin.user.getNickName();
+          const age=naverLogin.user.getAge();
+          const birthday=naverLogin.user.getBirthday();
+          console.log(naverLogin.user);
+			insertOutsider(naverLogin.user);
+          if(nickName===null||nickName===undefined ){
+            alert("별명이 필요합니다. 정보제공을 동의해주세요.");
+            naverLogin.reprompt();
+            return ;  
+         }else{
+          setLoginStatus();
+         }
+	}
+    });
+    console.log(naverLogin);
+
+    function setLoginStatus(){
+    
+      const button_area=document.getElementById('button_area');
+      button_area.innerHTML='<button id="btn_logout" style="background-color: #03c75a; color : #fff; width:300px; border:none; margin-top:10px; height : 45px; text-align:left; border-radius: 5px"><img src="/resources/img/etc/btnG_naver.png" width="40"><div style="width:230px; text-align: center; display: inline-block; font-size: 16px;">로그아웃</div></button>'
+    
+
+      const logout=document.getElementById('btn_logout');
+      logout.addEventListener('click',(e)=>{
+        naverLogin.logout();
+        
+		location.replace("http://localhost:8085/login");
+      });
+    }
+    
+    
+    function insertOutsider(user) {
+    	/*  userId = "",
+		  userPwd = "",
+		  nickName = ""
+		  userEmail  ="",
+		  isAdmin  ="",
+		  gender  ="",
+		  birth  ="",
+		  phoneNum  ="",
+		  memberWhen  ="",
+		  lastLogin  ="",
+		  isDraw ="",
+		  userName = "",
+		  sessionId= "" */
+    	
+    	naverMember.userId =user.id;
+    	naverMember.nickName = user.nickname;
+    	naverMember.nickEmail = user.email;
+    	naverMember.isAdmin = "N"
+    	if(user.gender== "M") {
+    		naverMember.gender = "male";	
+    	} else {
+    		naverMember.gender = "female";
+    	}
+    	naverMember.birth = user.birthyear + "-" +  user.birthday;
+    	naverMember.phoneNum = user.mobile;
+    	naverMember.userName = user.name;
+    	
+    	
+    	console.log(naverMember);
+    }
+    
+   
+
+  </script>
 	<!--================End Login Box Area =================-->
 <jsp:include page="userFooter.jsp"></jsp:include>
 

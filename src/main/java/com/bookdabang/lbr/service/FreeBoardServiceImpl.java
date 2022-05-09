@@ -1,12 +1,12 @@
 package com.bookdabang.lbr.service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -34,53 +34,44 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	@Override
 	public Map<String, Object> listAllBoards(int pageNo, BoardSearch search) throws Exception {
 		PagingInfo paging = pagingProcess(pageNo, search);
+		
 
 		List<FreeBoard> lst = null;
-		if (search.getSearchWord()== null && search.getSearchType()== null || search.getSearchWord().equals("")) {
-			
+		if (search.getSearchWord() == null && search.getSearchType() == null || search.getSearchWord().equals("")) {
+
 			lst = dao.getListAllFreeBoards(paging);
 		} else {
 			lst = dao.getListAllFreeBoards(paging, search);
-			
-			
+
 		}
-		 
 		
+		
+
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("freeBoard", lst);
 		map.put("paging", paging);
-		System.out.println(paging);
+		//System.out.println(paging);
 
-		
-		
 		return map;
 	}
-
-
 
 	private PagingInfo pagingProcess(int pageNo, BoardSearch search) throws Exception {
 		PagingInfo paging = new PagingInfo();
 
-		if (search.getSearchWord()== null && search.getSearchType()== null || search.getSearchWord().equals("")) {
+		if (search.getSearchWord() == null && search.getSearchType() == null || search.getSearchWord().equals("")) {
 			
 			paging.setTotalPostCnt(dao.getTotalPost());
 			
-			paging.setTotalPostCnt(dao.removeTotal());
-			
 		} else {
-
 			paging.setTotalPostCnt(dao.getSearchResultCnt(search));
-			
-			paging.setTotalPostCnt(dao.getSearchResultCntRemove(search));
-			
-			
-		} 
 
-		
-		
+		}
+
+	
 		paging.setPostPerPage(5);
-		paging.setPageCntPerBlock(3);
 		
+		paging.setPageCntPerBlock(3);
+
 		paging.setTotalPage(paging.getTotalPostCnt());
 		// 현재 페이지에서 출력 시작할 글번호
 		paging.setStartNum(pageNo);
@@ -96,7 +87,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
 		// 현재 페이지에서의 끝 페이징 블럭
 		paging.setEndNoOfCurPagingBlock(paging.getStartNoOfCurPagingBlock());
-		
+
 		System.out.println(paging.toString());
 		return paging;
 	}
@@ -105,28 +96,25 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	@Override
 	public Map<String, Object> readFreeBoard(int no, String ipAddr) throws Exception {
 
-		
 		PageView view = new PageView(ipAddr, no, 0, 0, null);
 		view = dao.getReadCountProcess(view);
-		if(view != null) {
+		if (view != null) {
 			long beforeReadTime = view.getAccessDate().getTime();
 			long currentTime = System.currentTimeMillis();
 			long timeDiff = currentTime - beforeReadTime;
 			long oneday = 1000 * 60 * 60 * 24;
-			
-			if(timeDiff >= oneday) {
-				if(dao.updateReadCount(no) == 1) {
+
+			if (timeDiff >= oneday) {
+				if (dao.updateReadCount(no) == 1) {
 					dao.updateReadCountProcess(new PageView(ipAddr, no, 0, 0, new Timestamp(currentTime)));
 				}
 			}
 		} else {
-			if(dao.updateReadCount(no) == 1) {
+			if (dao.updateReadCount(no) == 1) {
 				dao.insertReadCount(new PageView(ipAddr, no, 0, 0, null));
 			}
 		}
-		
-		
-		
+
 		FreeBoard freeBoard = dao.readFreeBoard(no);
 
 		List<AttachFileVO> fileLst = dao.readFile(no);
@@ -142,38 +130,55 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	}
 
 	@Override
-	public Map<String, Object> listAllReportBoards(int pageNo, BoardSearch search) throws Exception {
+	public Map<String, Object> listAllReportBoards(int pageNo) throws Exception {
+		System.out.println("그냥 모두 신고보기");
+		PagingInfo paging = pagingProcess(pageNo);
+		List<ReportBoard> lst =  new ArrayList<ReportBoard>();
+
 		
-		PagingInfo paging = pagingProcess(pageNo,search);
-		List<ReportBoard> lst = null;
-		
-		
-		if (search.getSearchWord()== null && search.getSearchType()== null || search.getSearchWord().equals("")) {
-			lst = dao.getListAllReportBoards(paging);
-		} else {
-			lst = dao.getListAllReportBoards(paging, search);
-			
-		}
-		
+		lst = dao.getListAllReportBoards(paging);
 		
 
+		
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("reportBoard", lst);
 		map.put("paging", paging);
 
-		
-		
 		return map;
-		
-		
-		
+
 	}
 
+	private PagingInfo pagingProcess(int pageNo) throws Exception {
+		PagingInfo paging = new PagingInfo();
+		
+		paging.setTotalPostCnt(dao.reportTotal());
+		
+		paging.setPostPerPage(5);
+		paging.setPageCntPerBlock(3);
 
-	
+		paging.setTotalPage(paging.getTotalPostCnt());
+		// 현재 페이지에서 출력 시작할 글번호
+		paging.setStartNum(pageNo);
+
+		// 전체 페이징 블럭 수
+		paging.setTotalPagingBlock(paging.getTotalPage());
+
+		// 현재 페이징 블럭
+		paging.setCurrentPagingBlock(pageNo);
+
+		// 현재 페이지에서의 시작 페이징블럭
+		paging.setStartNoOfCurPagingBlock(paging.getCurrentPagingBlock());
+
+		// 현재 페이지에서의 끝 페이징 블럭
+		paging.setEndNoOfCurPagingBlock(paging.getStartNoOfCurPagingBlock());
+
+		System.out.println(paging.toString());
+		return paging;
+	}
 
 	@Override
-	public boolean createFreeBoard(FreeBoard freeBoard, List<BoardUploadFile> uploadLst ) throws Exception {
+	public boolean createFreeBoard(FreeBoard freeBoard, List<BoardUploadFile> uploadLst) throws Exception {
 		boolean result = false;
 		int fb = dao.insertFreeBoard(freeBoard);
 		int ref = dao.getNextNo(); // 게시판번호
@@ -207,31 +212,62 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	@Override
 	public Map<String, Object> removeAllFreeBoard(int pageNo, BoardSearch search) throws Exception {
 		// TODO Auto-generated method stub
-		
-		PagingInfo paging = pagingProcess(pageNo,search);
+
+		PagingInfo paging = pagingProcess2(pageNo, search);
 		List<FreeBoard> lst = null;
-		
-		
-		if (search.getSearchWord()== null && search.getSearchType()== null || search.getSearchWord().equals("")) {
+
+		if (search.getSearchWord() == null && search.getSearchType() == null || search.getSearchWord().equals("")) {
 
 			lst = dao.removeAllFreeBoard(paging);
 		} else {
 			lst = dao.getListAllRemoveBoards(paging, search);
-			
+
 		}
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("removeBoard", lst);
 		map.put("paging", paging);
 
-		
-		
 		return map;
+
+	}
+
+	private PagingInfo pagingProcess2(int pageNo, BoardSearch search) throws Exception {
+		PagingInfo paging = new PagingInfo();
+		
+		if (search.getSearchWord() == null && search.getSearchType() == null || search.getSearchWord().equals("")) {
+			paging.setTotalPostCnt(dao.removeTotal());
+
+		} else {
+			paging.setTotalPostCnt(dao.getSearchResultCntRemove(search));
+
+		}
+
+	
+		paging.setPostPerPage(5);
+		
+		paging.setPageCntPerBlock(3);
+
+		paging.setTotalPage(paging.getTotalPostCnt());
+		// 현재 페이지에서 출력 시작할 글번호
+		paging.setStartNum(pageNo);
+
+		// 전체 페이징 블럭 수
+		paging.setTotalPagingBlock(paging.getTotalPage());
+
+		// 현재 페이징 블럭
+		paging.setCurrentPagingBlock(pageNo);
+
+		// 현재 페이지에서의 시작 페이징블럭
+		paging.setStartNoOfCurPagingBlock(paging.getCurrentPagingBlock());
+
+		// 현재 페이지에서의 끝 페이징 블럭
+		paging.setEndNoOfCurPagingBlock(paging.getStartNoOfCurPagingBlock());
+
+		System.out.println(paging.toString());
+		return paging;
 		
 	}
-	
-
-
 
 	@Override
 	public FreeBoard readDelBoard(int no) throws Exception {
@@ -296,7 +332,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
 		return dao.delLikeCount(no);
 	}
-	
+
 	@Override
 	public boolean insertComment(FreeBoardComment comment) throws Exception {
 		boolean result = false;
@@ -375,8 +411,6 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
 	@Override
 	public MemberVO getUser(String userId) throws Exception {
-		
-	
 
 		return dao.getUser(userId);
 	}
@@ -384,14 +418,30 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 	@Override
 	public ReportBoard readreportBoard(int reportNo) throws Exception {
 		return dao.readReportBoard(reportNo);
-		
+
 	}
 
 	@Override
-	public int updateFreeBoard(FreeBoard freeboard) throws Exception {
+	public boolean updateFreeBoard(FreeBoard freeboard,List<BoardUploadFile> uploadLst) throws Exception {
+		boolean result = false;
+		int fb = dao.updateFreeBoard(freeboard);
+		int ref = dao.getNextNo();
+		freeboard.setContent(freeboard.getContent().replace("\r\n", "<br />"));
 		
-		return dao.updateFreeBoard(freeboard);
+		int attachFile = dao.readFileNo() + 1; // 파일번호
+
+		for (BoardUploadFile file : uploadLst) {
+			dao.insertAttachFile(new AttachFileVO(attachFile, 0, ref, 0, 0, 0, file.getOriginalFileName(),
+					file.getThumbnailFileName(), file.getNotImageFileName()));
+
+		}
+		if (fb == 1) {
+			result = true;
+		}
+		return result;
 	}
+	
+	
 
 	@Override
 	public boolean adminRemove(String boardno) throws Exception {
@@ -402,7 +452,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 			result = true;
 		}
 		return result;
-		
+
 	}
 
 	@Override
@@ -426,16 +476,101 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 		return result;
 	}
 
+	@Override
+	public Map<String, Object> statusYesReportBoards(int pageNo) throws Exception {
+		System.out.println("처리한거 서비스");
+		PagingInfo paging = pagingProcessY(pageNo);
+		List<ReportBoard> lst = new ArrayList<ReportBoard>();
+
+		
+		lst = dao.statusYesReportBoards(paging);
+		
+
+		
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("reportBoard", lst);
+		map.put("paging", paging);
+
+		return map;
+
+	}
+
+	private PagingInfo pagingProcessY(int pageNo) throws Exception {
+		System.out.println("처리한거");
+			PagingInfo paging = new PagingInfo();
+			
+			paging.setTotalPostCnt(dao.totalYes());
+			
+			paging.setPostPerPage(5);
+			paging.setPageCntPerBlock(3);
+
+			paging.setTotalPage(paging.getTotalPostCnt());
+			// 현재 페이지에서 출력 시작할 글번호
+			paging.setStartNum(pageNo);
+
+			// 전체 페이징 블럭 수
+			paging.setTotalPagingBlock(paging.getTotalPage());
+
+			// 현재 페이징 블럭
+			paging.setCurrentPagingBlock(pageNo);
+
+			// 현재 페이지에서의 시작 페이징블럭
+			paging.setStartNoOfCurPagingBlock(paging.getCurrentPagingBlock());
+
+			// 현재 페이지에서의 끝 페이징 블럭
+			paging.setEndNoOfCurPagingBlock(paging.getStartNoOfCurPagingBlock());
+
+			System.out.println(paging.toString());
+			return paging;
+		}
 	
 
-}
+	@Override
+	public Map<String, Object> statusNoReportBoards(int pageNo) throws Exception {
+		PagingInfo paging = pagingProcessN(pageNo);
+		List<ReportBoard> lst = new ArrayList<ReportBoard>();
 
+		
+		lst = dao.statusNoReportBoards(paging);
+		
 
-	
+		
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("reportBoard", lst);
+		map.put("paging", paging);
 
+		return map;
+	}
 
-	
+	private PagingInfo pagingProcessN(int pageNo)throws Exception  {
+		PagingInfo paging = new PagingInfo();
+		
+		paging.setTotalPostCnt(dao.totalNo());
+		
+		paging.setPostPerPage(5);
+		paging.setPageCntPerBlock(3);
 
+		paging.setTotalPage(paging.getTotalPostCnt());
+		// 현재 페이지에서 출력 시작할 글번호
+		paging.setStartNum(pageNo);
 
+		// 전체 페이징 블럭 수
+		paging.setTotalPagingBlock(paging.getTotalPage());
+
+		// 현재 페이징 블럭
+		paging.setCurrentPagingBlock(pageNo);
+
+		// 현재 페이지에서의 시작 페이징블럭
+		paging.setStartNoOfCurPagingBlock(paging.getCurrentPagingBlock());
+
+		// 현재 페이지에서의 끝 페이징 블럭
+		paging.setEndNoOfCurPagingBlock(paging.getStartNoOfCurPagingBlock());
+
+		System.out.println(paging.toString());
+		return paging;
+	}
+	}
 
 

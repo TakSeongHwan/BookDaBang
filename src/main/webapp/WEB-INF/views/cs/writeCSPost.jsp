@@ -118,7 +118,7 @@ $(function(){
                    
                    output += "<a href='${ contextPath}/resources/cs_uploads" + data.notImageFile + "'>"+ fn + "</a>";
                    output += "<span id='" + data.notImageFile + "'>";
-                   
+            
 				}
 				
 				output += "<img src = '${ contextPath}/resources/img/board/close.png' onclick='delFile(this);'/></span>"

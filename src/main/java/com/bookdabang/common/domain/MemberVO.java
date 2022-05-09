@@ -37,6 +37,19 @@ public class MemberVO {
 		this.sessionId = sessionId;
 		this.apiType = apiType;
 	}
+	
+	public MemberVO(String userId, String nickName, String userEmail, String gender,
+			String userName, String sessionId, String apiType) {
+		
+		super();
+		this.userId = userId;
+		this.nickName = nickName;
+		this.userEmail = userEmail;
+		this.gender = gender;
+		this.userName = userName;
+		this.sessionId = sessionId;
+		
+	}
 
 	public MemberVO() {
 		super();

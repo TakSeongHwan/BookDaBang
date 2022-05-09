@@ -168,12 +168,9 @@ group by p.category_code order by totalSales desc
 	from product as p, category as c, sales as s, prodOrder as o, member as m 
 	where p.category_code = c.category_code and s.product_no = p.product_no and s.orderNo = o.orderNo and o.userId = m.userId
 	and TIMESTAMPDIFF(YEAR, m.birth,now()) >= #{ageStart} and TIMESTAMPDIFF(YEAR, m.birth,now()) &lt; #{ageEnd}
-	and purchasetime between #{startDate} and #{endDate}
-	group by s.product_no
-	order by sell_count desc, p.product_no asc limit 10
 	and purchasetime between DATE_FORMAT(#{startDate},'%Y-%c-%d') and DATE_FORMAT(#{endDate},'%Y-%c-%d')
 	group by s.product_no
-	order by sell_count desc, p.product_no asc
+	order by sell_count desc, p.product_no asc limit 10
  	</select>
  	
  	<select id="getGender" resultType="SalesDataDetail">

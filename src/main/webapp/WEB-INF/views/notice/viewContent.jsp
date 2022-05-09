@@ -20,6 +20,7 @@
 	let imgChangeCount = 0;
 	let oldFileNames = new Array();
 	$(document).ready(function() {
+		
 
 		showAllReply();
 		
@@ -107,8 +108,8 @@
 	});
 
 	function delFile() {
-		if(imgChangeCount == 0){
-			let oldImgName = $("#imgFileArea img").attr("src").split("/")[5];
+		if(imgChangeCount == 0){ 
+			let oldImgName = $("#imgFileArea img").attr("src").split("/")[$("#imgFileArea img").attr("src").split("/").length-1];
 			console.log(oldImgName);
 			let output = '<input type="hidden" id="oldImgName" name="oldImgName" value="'+oldImgName+'">'
 			$("#deletedImgFile").html(output);
@@ -123,8 +124,9 @@
 		let getFileId = $(obj).attr("id");
 		let fileName = $(obj).siblings("span").html();
 		let getFileType = getFileId.split("-")[0];
+ 		console.log(oldFileNames)
 		console.log(fileName)
-		console.log(getFileType)
+		console.log(getFileType) 
 		for(let i in oldFileNames){
 		
 			if(getFileType == "delAttachImgFileBtn"){
@@ -134,10 +136,10 @@
 				}
 				$("#"+getFileId+"").parent().hide();
 			}else if(getFileType == "delAttachNotImgFileBtn"){
-				console.log(oldFileNames[i].split(",")[2].split("]")[0])
-				console.log(fileName)
+ 				console.log(oldFileNames[i].split(",")[2].split("]")[0])
+				console.log(fileName) 
 				if(oldFileNames[i].split(",")[2].split("]")[0] == fileName){
-					console.log(fileName);
+					console.log(fileName); 
 					let output = '<input type="hidden" name="deletedAttachFile" value="'+fileName+'">'
 					$("#deletedAttachFile").append(output);
 				
@@ -154,13 +156,14 @@
 	
 		let oldAttachFile = "${attachFile}"
 		let oafArray = oldAttachFile.replace(/[\t\s]/g,'').split("AttachFileVO");
-	
+		console.log(oafArray)
+		console.log(oldAttachFile) 
 		for(let i = 1; i < oafArray.length; i++){
 			
-				let originFile = oafArray[i].split(",")[5].split("=")[1];
-				let thumbnailFile = oafArray[i].split(",")[6].split("=")[1];
-				let notImageFile = oafArray[i].split(",")[7].split("=")[1];
-				
+				let originFile = oafArray[i].split(",")[6].split("=")[1];
+				let thumbnailFile = oafArray[i].split(",")[7].split("=")[1];
+				let notImageFile = oafArray[i].split(",")[8].split("=")[1];
+				console.log(originFile+","+thumbnailFile+","+notImageFile)
 				oldFileNames[i-1] = (originFile+","+thumbnailFile+","+notImageFile);
 			
 			
@@ -257,10 +260,8 @@
 							output += '<div style="float:right; margin-right:10px; margin-bottom:5px;">'
 									+ "<img src='${contextPath}/resources/img/addrereply.png' width='20px' style='margin-right:10px;' onclick='showRereplyModal("
 									+ e.replyNo + ");'/>";
-							output += "<img src='${contextPath}/resources/img/correct.png' width='20px' style='margin-right:10px;' onclick='showReplyModify("
-									+ e.replyNo + ");'/>";
-							output += "<img src='${contextPath}/resources/img/delete.png' width='20px' onclick='showReplyDelete("
-									+ e.replyNo + ");'/>";
+							output += "<img src='${contextPath}/resources/img/correct.png' width='20px' style='margin-right:10px;' onclick='showReplyModify("+ e.replyNo + ");'/>";
+							output += "<img src='${contextPath}/resources/img/delete.png' width='20px' onclick='showReplyDelete("+ e.replyNo + ");'/>";
 							output += '</div>';
 							output += '</div></div>';
 						});
@@ -398,6 +399,7 @@
 
 		let replyContent = $("#rereplyContent").val();
 		let boardNo = ${content.no}
+		console.log(loginUser);
 		
 		let sendData = JSON.stringify({
 			replyNo : replyNo,
@@ -560,7 +562,7 @@ z-index: 22000;
 					<div style="display: inline-block; width: 85%;">
 						<input type="text" class="form-control" id="reply" name="reply"
 							placeholder="댓글을 입력하세요">
-							<input type="hidden" id="writer" value="userId"/>
+							<input type="hidden" id="writer" value="${userId}"/>
 					</div>
 
 					<a class="button button-header"
