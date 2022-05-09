@@ -99,7 +99,7 @@ text-align: center;
 							<li><a href="${contextPath }/board/listAllFreeBoard">
 							<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickFreeboard.png"/>
 							<div class="quickManuText">자유게시판</div></a></li>
-							<li><a href="${contextPath }/">
+							<li><a href="${contextPath }/event/allEventList">
 							<img src="${contextPath }/resources/img/footerQuickMenu/footerQuickEvent.png"/>
 							<div class="quickManuText">이벤트게시판</div></a></li>
 								
