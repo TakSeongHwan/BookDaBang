@@ -79,7 +79,6 @@ public class NoticeServiceImpl implements NoticeService {
 		System.out.println(pi.toString());
 		return pi;
 	
-		
 	}
 
 	@Override

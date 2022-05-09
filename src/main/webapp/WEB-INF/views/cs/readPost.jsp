@@ -81,7 +81,7 @@ function modifyPost() {
 						</c:if>
 						<c:if test="${file.notImageFile != null}">
 							<a href="/resources/cs_uploads${file.notImageFile }"
-								class="notImgFile"></a>
+								class="notImgFile">${file.notImageFile }</a>
 						</c:if>
 					</c:forEach>
 				</div>

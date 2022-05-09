@@ -162,7 +162,9 @@
 	 select * from memberpoint
 	</select>
 	
-
+	<update id = "updateMemInfo" >
+	update member set userName = #{userName}, nickName = #{nickName}, phoneNum = #{phoneNum}, userEmail = #{userEmail} where userId= #{userId}
+	</update>
 	
 	
 	

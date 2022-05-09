@@ -9,6 +9,7 @@ import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.RecentSeenProd;
 import com.bookdabang.common.domain.ReviewVO;
 import com.bookdabang.ljs.domain.LoginDTO;
+import com.bookdabang.ljs.domain.modifyDTO;
 
 public interface MyPageDAO {
 	
@@ -31,6 +32,8 @@ public interface MyPageDAO {
 	public List<MemberPoint> showTotalPoint(String userId)throws Exception;  
 	
 	public List<FreeBoard> showMyLike(String userId) throws Exception;
+
+	public int modifyMemInfo(modifyDTO mdto)throws Exception;
 	
 	
 }
