@@ -117,6 +117,7 @@ LEFT OUTER JOIN review as r on p.product_no = r.productNo
  	</select>
  	
  	<select id="getCategoryTotalSales" resultType="CategoryTotalSales">
+
  	 	select c.category_name, sum(s.productqtt) as totalSales 
 from product as p join category as c on p.category_code = c.category_code
 LEFT OUTER JOIN sales as s on p.product_no = s.product_no
@@ -128,14 +129,15 @@ group by p.category_code order by totalSales desc
 		JOIN sales as s on p.product_no = s.product_no
 		group by p.product_no order by totalSalesCount desc
  	 	</select>
- 	 	
+
  	<select id="getWeekVisitor" resultType="VisitorCountWithDateFormat">
  	select DATE_FORMAT(accessdate,'%m-%d') as dateSort ,count(ipaddr)as visitor 
  	from visitor_ipcheck where DATE_FORMAT(accessdate,'%m-%d') 
  	between (select DATE_FORMAT(now()- interval 6 day,'%m-%d')) and DATE_FORMAT(now(),'%m-%d') 
  	group by dateSort order by dateSort asc
  	</select>
- 	
+
+
  	<select id="getLessStock" resultType="com.bookdabang.common.domain.ProductVO">
  	select * from product where stock &lt; 5
  	</select>
@@ -166,6 +168,9 @@ group by p.category_code order by totalSales desc
 	from product as p, category as c, sales as s, prodOrder as o, member as m 
 	where p.category_code = c.category_code and s.product_no = p.product_no and s.orderNo = o.orderNo and o.userId = m.userId
 	and TIMESTAMPDIFF(YEAR, m.birth,now()) >= #{ageStart} and TIMESTAMPDIFF(YEAR, m.birth,now()) &lt; #{ageEnd}
+	and purchasetime between #{startDate} and #{endDate}
+	group by s.product_no
+	order by sell_count desc, p.product_no asc limit 10
 	and purchasetime between DATE_FORMAT(#{startDate},'%Y-%c-%d') and DATE_FORMAT(#{endDate},'%Y-%c-%d')
 	group by s.product_no
 	order by sell_count desc, p.product_no asc
@@ -179,12 +184,12 @@ group by p.category_code order by totalSales desc
 	from product as p, category as c, sales as s, prodOrder as o, member as m 
 	where p.category_code = c.category_code and s.product_no = p.product_no and s.orderNo = o.orderNo and o.userId = m.userId
 	and m.gender = #{gender}
-	and purchasetime between DATE_FORMAT(#{startDate},'%Y-%c-%d') and DATE_FORMAT(#{endDate},'%Y-%c-%d')
+	and purchasetime between #{startDate} and #{endDate}
 	group by s.product_no
-	order by sell_count desc, p.product_no asc
+	order by sell_count desc, p.product_no asc limit 10
  	
  	 </select>
- 	 
+ 
  	 <select id="getVisitorDetailChart" resultType="VisitorCountWithDateFormat">
  	 select DATE_FORMAT(accessdate,
  	 <if test='searchType.equals("day")'>
@@ -240,5 +245,6 @@ order by date asc) as d left outer join
 
 (select DATE_FORMAT(purchasetime, '%Y-%m-%d') as pDate, sum(total_price) as totalSales from sales group by pDate) as s
  on d.date = s.pDate where d.date between DATE_FORMAT(#{startDate},'%Y-%m-%d') and DATE_FORMAT(#{endDate},'%Y-%m-%d') order by d.date
+
  	 </select>
  </mapper>

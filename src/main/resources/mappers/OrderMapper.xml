@@ -13,30 +13,38 @@
 				where userId = #{userId}
 			</when>
 			<otherwise>
-				where orderBundle = #{orderBundle} and orderPwd = #{orderPwd}
+				where orderBundle = #{orderBundle} and orderPwd =
+				#{orderPwd}
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<!-- 관리자가 전체 order select -->
 	<select id="selectAllOrder" resultType="ProdOrder">
-		select * from prodOrder order by orderNo desc limit #{startNum},#{postPerPage} 
+		select * from prodOrder
+		order by orderNo desc limit #{startNum},#{postPerPage}
 	</select>
-	
+
 	<!-- 관리자가 orderNo로 update -->
 	<update id="updateAdminOrder">
-		update prodOrder set orderState_code = #{orderState_code}, releaseDate = #{releaseDate} where orderNo = #{orderNo} 
+		update prodOrder set orderState_code =
+		#{orderState_code}, releaseDate = #{releaseDate} where orderNo =
+		#{orderNo}
 	</update>
-	
-	
+
+
 	<!-- prodOrder insert -->
 	<insert id="insertOrder">
+
+		insert into
+		prodOrder(orderNo,userId,productNo,productQtt,orderState_code,addressNo,price,orderPwd,orderBundle,confirm)
 		insert into prodOrder(orderNo,userId,productNo,productQtt,orderState_code,addressNo,price,orderPwd,orderBundle,confirm)
 		values(#{orderNo},#{userId},#{productNo},#{productQtt},1,#{addressNo},#{price},sha1(md5(#{orderPwd})),#{orderBundle},'N')
 	</insert>
-	
+
 	<!-- Order confirm update -->
 	<update id="updateOrderCofirm">
+	
 		update prodOrder set confirm= #{confirm} where orderNo = #{orderNo} 
 	</update>
 	
@@ -71,6 +79,8 @@
 		<if test="all == false">
 			<choose>
 				<when test="orderState !=0 and confirm !=''">
+					and orderState_code = #{orderState} and confirm =
+					#{confirm}
 					and orderState_code = #{orderState} and confirm = #{confirm}
 				</when>
 				<when test="orderState ==0 and confirm != ''">
@@ -85,7 +95,7 @@
 
 	<!-- 페이징을 한 주문 -->
 	<select id="orderView" resultType="ProdOrder">
-		select * from prodOrder where 1=1 
+		select * from prodOrder where 1=1
 		<if test="searchType != '' and  searchType != null">
 			<if test="searchType =='prodNo'">
 				and productNo like concat('%', #{searchWord}, '%')
@@ -94,6 +104,16 @@
 				and orderNo like concat('%', #{searchWord}, '%')
 			</if>
 			<if test="searchType =='userId'">
+				<choose>
+					<when test="searchWord == null or searchWord == '비회원'">
+						and userId is null
+					</when>
+					<otherwise>
+						and userId like concat('%', #{searchWord}, '%')
+					</otherwise>
+				</choose>
+
+
 			<choose>
 				<when test="searchWord == null or searchWord == '비회원'">
 					and userId is null
@@ -106,7 +126,8 @@
 				
 			</if>
 			<if test="searchType=='title'">
-				and (productNo) in (select product_no from product where title like concat('%',#{searchWord},'%'))
+				and (productNo) in (select product_no from product where
+				title like concat('%',#{searchWord},'%'))
 			</if>
 		</if>
 		<choose>
@@ -126,6 +147,8 @@
 		<if test="all == false">
 			<choose>
 				<when test="orderState !=0 and confirm !=''">
+					and orderState_code = #{orderState} and confirm =
+					#{confirm}
 					and orderState_code = #{orderState} and confirm = #{confirm}
 				</when>
 				<when test="orderState ==0 and confirm != ''">
@@ -136,9 +159,11 @@
 				</when>
 			</choose>
 		</if>
-		
-		 order by orderNo desc limit #{startNum}, #{postPerPage} 
+
+
+		order by orderNo desc limit #{startNum}, #{postPerPage}
 	</select>
+
 	
 	<!-- 주문상태 코드 변경 -->
 	<update id="updateOrderState">
@@ -148,12 +173,52 @@
 		</if>
 		where orderNo = #{orderNo}
 	</update>
-	
+
 	<select id="getNextOrderNo" resultType="int">
-		select max(orderNo)+1 from prodOrder
+		select max(orderNo)+1
+		from prodOrder
+	</select>
+
+	<!-- 로그인 주문상태조회 -->
+	<select id="orderStatus" resultType="OrderViewDTO">
+		select
+		o.orderNo,p.title,p.cover, o.productNo,o.orderState_code,o.confirm,
+		o.productQtt, o.price, o.orderDate, o.releaseDate, r.refundNo
+		from prodOrder as o inner join product as p
+		on o.productNo = p.product_no
+		left outer join refund as r
+		on r.orderNo = o.orderNo
+		where o.userId = #{userId}
+		order by orderNo desc limit #{startNum}, #{postPerPage}
+	</select>
+
+	<!-- 비로그인 주문조회 -->
+	<select id="orderCheck" resultType="OrderViewDTO">
+		select
+		o.orderNo,p.title,p.cover, o.productNo,o.orderState_code,o.confirm,
+		o.productQtt, o.price, o.orderDate, o.releaseDate
+		from prodOrder as o inner join product as p
+		on o.productNo = p.product_no
+		where o.orderBundle = #{orderBundle} and
+		o.orderPwd = sha1(md5(#{orderPwd}))
+	</select>
+
+	<!-- 로그인 주문상태 조회 페이징 -->
+	<select id="orderStatusCnt" resultType="int">
+		select count(orderNo)
+		from prodOrder where userId = #{userId}
 	</select>
 	
-	<!-- 로그인 주문상태조회 -->
+	<!-- update -->
+	<update id="confirmUpdate">
+	update prodOrder set confirm = 'Y' where orderNo = #{orderNo}
+	</update>
+
+	<!-- <select id="getNextOrderNo" resultType="int">
+		select max(orderNo)+1 from prodOrder
+	</select> -->
+	
+	<!-- 로그인 주문상태조회 
 	<select id="orderStatus" resultType="OrderViewDTO">
 		select o.orderNo,p.title,p.cover, o.productNo,o.orderState_code,o.confirm, o.productQtt, o.price, o.orderDate, o.releaseDate 
 		from prodOrder as o inner join product as p 
@@ -161,18 +226,18 @@
 		where o.userId = #{userId}
 		order by orderNo desc limit #{startNum}, #{postPerPage} 
 	</select>
-	
-	<!-- 비로그인 주문조회 -->
+	-->
+	<!-- 비로그인 주문조회 
 	<select id="orderCheck" resultType="OrderViewDTO">
 		select o.orderNo,p.title,p.cover, o.productNo,o.orderState_code,o.confirm, o.productQtt, o.price, o.orderDate, o.releaseDate 
 		from prodOrder as o inner join product as p 
 		on o.productNo = p.product_no
 		where o.orderBundle = #{orderBundle} and o.orderPwd = sha1(md5(#{orderPwd}))
 	</select>
-	
-	<!-- 로그인 주문상태 조회 페이징 -->
+	-->
+	<!-- 로그인 주문상태 조회 페이징
 	<select id="orderStatusCnt" resultType="int">
 		select count(orderNo)  from prodOrder where userId = #{userId}
 	</select>
-	
+	 -->
 </mapper>

@@ -47,6 +47,7 @@
 	}
 	$(function() {
 		priceReplace();
+		sideBar();
 		
 		$(".category").click(function() {
 			cno = $(this).val();
@@ -55,9 +56,18 @@
 		noProduct();
 	});
 	
+	function sideBar() {
+		let currentPosition = parseInt($("#sideBar").css("top"));
+		$(window).scroll(function(){
+			let position = $(window).scrollTop()/ 7;
+			console.log(position);
+			$("#sideBar").stop().animate({"top":position+currentPosition+"px"},700); 
+		});
+	}
+	
 	function noProduct() {
 		if ($("#productList").children("div").length == 0) {
-			let output = "<img src='${contextPath}/resources/img/product/noproduct.png' style='margin-top: 200px;'>";
+			let output = "<img src='${contextPath}/resources/img/product/noproduct.png' style='margin:150px 0 50px 0;'>";
 			$("#productList").html(output);
 		}
 		
@@ -78,7 +88,11 @@
 		} else if (i == 2) {
 			$("#byPubDate").css("color", "#384aeb");
 		} else if (i == 3) {
-			$("#byDiscount").css("color", "#384aeb");
+			$("#byHDiscount").css("color", "#384aeb");
+		} else if (i == 4) {
+			$("#byLDiscount").css("color", "#384aeb");
+		} else if (i == 5) {
+			$("#byReadCount").css("color", "#384aeb");
 		}
 		sort = i;
 		getCategory(1);
@@ -205,39 +219,60 @@
     	text-align: center;
     	font-size: 17px;
 	}
+	#headArea {
+		background: -webkit-gradient(linear, bottom, top, from(white), to(#f1f6f7));
+    	background: -webkit-linear-gradient(bottom, white 0%, #f1f6f7 100%);
+    	background: -moz-linear-gradient(bottom, white 0%, #f1f6f7 100%);
+    	background: -o-linear-gradient(bottom, white 0%, #f1f6f7 100%);
+   		background: linear-gradient(to top, white 0%, #f1f6f7 100%);
+	}
+	
+	#sideBar { 
+		  position: sticky;
+  			top: 100px;
+   		 right: 300px;
+	}
+
+
 </style>
 </head>
 <body>
 	<jsp:include page="../userHeader.jsp"></jsp:include>
 
-	<div class="container">
+	<div>
 		<!-- ================ start banner area ================= -->
-		<section class="blog-banner-area" id="category">
-			<div class="container h-100">
-				<div class="blog-banner">
-					<div class="text-center">
-						<h1>Book Category</h1>
-						<nav aria-label="breadcrumb" class="banner-breadcrumb">
-							<ol class="breadcrumb">
-								<li class="breadcrumb-item"><a href="#">Home</a></li>
-								<li class="breadcrumb-item active" aria-current="page">Shop
-									Category</li>
-							</ol>
-						</nav>
+		<section class="blog_categorie_area" id ="headArea" style="padding-top: 60px; padding-bottom: 0;">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-6 col-lg-12 mb-4 mb-lg-0">
+						<div class="categories_post">
+							<img class="card-img rounded-0"
+								src="${contextPath }/resources/book.jpg" alt="post">
+							<div class="categories_details">
+								<div class="categories_text">
+									<a href="${contextPath }/">
+										<h5>BookDaBang</h5>
+									</a>
+									<div class="border_line"></div>
+									<p>북다방 사이트에 오신걸 환엽합니다</p>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
-		</section>
+		</section>	
 		<!-- ================ end banner area ================= -->
 		
 		<!-- ================ category section start ================= -->
-		<section class="section-margin--small mb-5">
+		<section class="section-margin--small mb-5" style="margin-top: 80px;">
 			<div class="container">
 				<div class="row">
-					<div class="col-xl-3 col-lg-4 col-md-5">
-						<div class="sidebar-categories">
-							<div class="head">Book Categories</div>
-							<ul class="main-categories" style="padding: 20px 26px;">
+					<div class="col-xl-3 col-lg-4 col-md-5" >
+						<div class="sidebar-categories" id="sideBar">
+							<div class="head" style="border-radius: 10px 10px 0 0;">Book Categories</div>
+							<ul class="main-categories" style="padding: 20px 26px; background-color: #fafaff;
+							border-radius: 0 0 10px 10px;">
 								<li class="common-filter">
 									<form action="/list">
 										<ul>
@@ -262,91 +297,19 @@
 								</li>
 							</ul>
 						</div>
-						<div class="sidebar-filter">
-							<div class="top-filter-head">Product Filters</div>
-							<div class="common-filter">
-								<div class="head">Brands</div>
-								<form action="#">
-									<ul>
-										<li class="filter-list"><input class="pixel-radio"
-											type="radio" id="apple" name="brand"><label
-											for="apple">Apple<span>(29)</span></label></li>
-										<li class="filter-list"><input class="pixel-radio"
-											type="radio" id="asus" name="brand"><label for="asus">Asus<span>(29)</span></label></li>
-										<li class="filter-list"><input class="pixel-radio"
-											type="radio" id="gionee" name="brand"><label
-											for="gionee">Gionee<span>(19)</span></label></li>
-										<li class="filter-list"><input class="pixel-radio"
-											type="radio" id="micromax" name="brand"><label
-											for="micromax">Micromax<span>(19)</span></label></li>
-										<li class="filter-list"><input class="pixel-radio"
-											type="radio" id="samsung" name="brand"><label
-											for="samsung">Samsung<span>(19)</span></label></li>
-									</ul>
-								</form>
-							</div>
-							<div class="common-filter">
-								<div class="head">Color</div>
-								<form action="#">
-									<ul>
-										<li class="filter-list"><input class="pixel-radio"
-											type="radio" id="black" name="color"><label
-											for="black">Black<span>(29)</span></label></li>
-										<li class="filter-list"><input class="pixel-radio"
-											type="radio" id="balckleather" name="color"><label
-											for="balckleather">Black Leather<span>(29)</span></label></li>
-										<li class="filter-list"><input class="pixel-radio"
-											type="radio" id="blackred" name="color"><label
-											for="blackred">Black with red<span>(19)</span></label></li>
-										<li class="filter-list"><input class="pixel-radio"
-											type="radio" id="gold" name="color"><label for="gold">Gold<span>(19)</span></label></li>
-										<li class="filter-list"><input class="pixel-radio"
-											type="radio" id="spacegrey" name="color"><label
-											for="spacegrey">Spacegrey<span>(19)</span></label></li>
-									</ul>
-								</form>
-							</div>
-							<div class="common-filter">
-								<div class="head">Price</div>
-								<div class="price-range-area">
-									<div id="price-range"></div>
-									<div class="value-wrapper d-flex">
-										<div class="price">Price:</div>
-										<span>$</span>
-										<div id="lower-value"></div>
-										<div class="to">to</div>
-										<span>$</span>
-										<div id="upper-value"></div>
-									</div>
-								</div>
-							</div>
-						</div>
 					</div>
 					<div class="col-xl-9 col-lg-8 col-md-7">
 						<!-- Start Filter Bar -->
-						<div class="filter-bar align-items-center" style="height: 55px;">
+						<div class="filter-bar align-items-center" style="height: 55px; background-color: #fafaff;">
 							<div style="float: left;">
 								<ul id ="sort">
 									<li class="orderBy"><a href="javascript:orderBy(1);" id ="bySellCount">판매순</a></li>
 									<li class="orderBy"><a href="javascript:orderBy(2);" id ="byPubDate">출간일순</a></li>
-									<li class="orderBy"><a href="javascript:orderBy(3);" id ="byDiscount">가격순</a></li>
+									<li class="orderBy"><a href="javascript:orderBy(3);" id ="byHDiscount">고가격순</a></li>
+									<li class="orderBy"><a href="javascript:orderBy(4);" id ="byLDiscount">저가격순</a></li>
+									<li class="orderBy"><a href="javascript:orderBy(5);" id ="byReadCount">상품조회순</a></li>
 								</ul>
 							</div>
-							<div class="sorting">
-								<select>
-									<option value="1">Default sorting</option>
-									<option value="1">Default sorting</option>
-									<option value="1">Default sorting</option>
-								</select>
-							</div>
-							<div class="sorting">
-								<select>
-									<option value="1">Show 12</option>
-									<option value="1">Show 12</option>
-									<option value="1">Show 12</option>
-								</select>
-							</div>
-							
 						</div>
 						<!-- End Filter Bar -->
 						<!-- Start Book List -->

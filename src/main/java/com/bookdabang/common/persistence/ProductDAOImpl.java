@@ -10,6 +10,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.CategoryVO;
+import com.bookdabang.common.domain.PageView;
 import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.ProductVO;
@@ -222,8 +223,6 @@ public class ProductDAOImpl implements ProductDAO {
 		return ses.selectList(ns + ".selectTopSaleProducts", cno);
 	}
 
-
-
 	@Override
 	public List<ProductVO> selectTopProducts(String searchWord) throws Exception {
 		Map<String, Object> param = new HashMap<String, Object>();
@@ -231,6 +230,47 @@ public class ProductDAOImpl implements ProductDAO {
 		return ses.selectList(ns + ".selectTopViewProducts", param);
 	}
 
+	@Override
+	public PageView selectPageview(int prodNo, String ipaddr) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("prodNo", prodNo);
+		param.put("ipaddr", ipaddr);
+		return ses.selectOne(ns + ".selectPageview", param);
+	}
+
+	@Override
+	public int insertPageview(int prodNo, String ipaddr) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("prodNo", prodNo);
+		param.put("ipaddr", ipaddr);
+		return ses.insert(ns + ".insertPageview", param);
+	}
+
+	@Override
+	public int updateReadCount(int prodNo) throws Exception {
+		return ses.update(ns + ".updateReadCount",prodNo);
+	}
+
+	@Override
+	public int updatePageview(int prodNo, String ipaddr) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("prodNo", prodNo);
+		param.put("ipaddr", ipaddr);
+		return ses.update(ns + ".updatePageview", param);
+	}
+	
+	@Override
+	public int deletePageview(int prodNo, String ipaddr) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("prodNo", prodNo);
+		param.put("ipaddr", ipaddr);
+		return ses.delete(ns + ".deletePageview", param);
+	}
+
+	@Override
+	public String selectCategoryName(int cno) throws Exception {
+		return ses.selectOne(ns + ".selectCategoryName", cno);
+	}
 
 	
 

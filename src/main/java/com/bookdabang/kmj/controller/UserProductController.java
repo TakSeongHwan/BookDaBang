@@ -14,14 +14,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookdabang.common.domain.AttachFileVO;
 import com.bookdabang.common.domain.CategoryVO;
 import com.bookdabang.common.domain.ProductVO;
 import com.bookdabang.common.domain.ReviewVO;
+import com.bookdabang.common.etc.IPCheck;
 import com.bookdabang.kmj.service.UserProductService;
 import com.bookdabang.common.domain.PagingInfo;
+import com.bookdabang.kmj.domain.ReviewStatisticsVO;
 import com.bookdabang.kmj.service.ReviewService;
  
 @Controller
@@ -36,7 +37,7 @@ public class UserProductController {
 	
 	
 	@RequestMapping(value = "/list", method=RequestMethod.GET)
-	public void productList (Model model, @RequestParam("pageNo") int pageNo,
+	public void productList (Model model, @RequestParam(value="pageNo", required=false, defaultValue ="1") int pageNo,
 			@RequestParam(value="searchWord", required=false, defaultValue ="") String searchWord) throws Exception {
 		// 상품 리스트
 		int cno = 0;
@@ -85,9 +86,14 @@ public class UserProductController {
 	}
 	
 	@RequestMapping(value = "/detail", method=RequestMethod.GET)
-	public void productDetail (Model model , @RequestParam("no") int prodNo,
+	public void productDetail (Model model , @RequestParam("no") int prodNo, HttpServletRequest request,
 			@RequestParam(value="pageNo", required=false, defaultValue ="1") int pageNo) throws Exception {
 		System.out.println(prodNo + "번 상품 상세페이지");
+		
+		// 조회수 증가
+		String ipaddr = null;
+		ipaddr = IPCheck.getIPAddr(request);
+		pService.addProductView(prodNo,ipaddr);
 		
 		// 상품 상세정보
 		ProductVO product = pService.readProduct(prodNo);
@@ -96,17 +102,25 @@ public class UserProductController {
 		int cno = product.getCategory_code();
 		List<ProductVO> lst = pService.readTopProducts(cno,"");
 		
+		// 카데고리 이름
+		String categoryName = pService.getCategoryName(cno);
+		
 		// 해당 상품의 리뷰들(페이징,첨부파일 포함)
-		Map<String, Object> resultMap = rService.readAllReview(prodNo,pageNo);
+		Map<String, Object> resultMap = rService.readAllReview(prodNo,pageNo,1);
 		List<ReviewVO> lst2 = (List<ReviewVO>) resultMap.get("reviewList");
 		PagingInfo pi = (PagingInfo) resultMap.get("pagingInfo");
 		List<AttachFileVO> lst3 = (List<AttachFileVO>) resultMap.get("fileList");
 		
+		// 리뷰 통계(등급별 개수,총개수,평균)
+		ReviewStatisticsVO reviewStatistics = rService.getReviewStatistics(prodNo);
+		
 		model.addAttribute("product", product);
 		model.addAttribute("topList", lst);
+		model.addAttribute("categoryName", categoryName);
 		model.addAttribute("reviewList", lst2);
 		model.addAttribute("pagingInfo", pi);
 		model.addAttribute("fileList", lst3);
+		model.addAttribute("reviewStatistics", reviewStatistics);
 	}
 	
 	@RequestMapping(value = "/search", method = RequestMethod.POST)

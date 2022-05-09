@@ -14,6 +14,8 @@ import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.RecommendVO;
 import com.bookdabang.common.domain.ReviewVO;
 import com.bookdabang.common.domain.ReviewComment;
+import com.bookdabang.kmj.domain.ReviewStatisticsVO;
+import com.bookdabang.kmj.domain.SearchInfoDTO;
 import com.bookdabang.kmj.etc.UploadFile;
 import com.bookdabang.kmj.persistence.ReviewDAO;
 import com.bookdabang.ljs.persistence.LoginDAO;
@@ -28,10 +30,11 @@ public class ReviewServiceImpl implements ReviewService {
 	private LoginDAO lDao;
 	
 	@Override
-	public Map<String, Object> readAllReview(int prodNo,int pageNo) throws Exception {
-		PagingInfo pi = pagingProcess(prodNo,pageNo);
+	public Map<String, Object> readAllReview(int prodNo,int pageNo,int sort) throws Exception {
+		System.out.println(prodNo);
+		PagingInfo pi = pagingProcess(prodNo,pageNo,null,0);
 		
-		List<ReviewVO> lst = rDao.selectAllReview(prodNo,pi);
+		List<ReviewVO> lst = rDao.selectAllReview(prodNo,pi,sort);
 		List<AttachFileVO> lst2 = rDao.selectAllAttachFile(prodNo);
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -43,15 +46,30 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 	
 	// 페이징 처리 작업 전담 메서드
-	private PagingInfo pagingProcess(int prodNo,int pageNo) throws Exception {
+	private PagingInfo pagingProcess(int prodNo,int pageNo,SearchInfoDTO searchInfo,int reviewNo) throws Exception {
 		PagingInfo pi = new PagingInfo();
-
-		// 1페이지당 보여 줄 글의 개수 & 1개의 블럭에 보여줄 페이지 수
-		pi.setPostPerPage(5);
-		pi.setPageCntPerBlock(3);
-
-		// 전체 게시물 개수
-		pi.setTotalPostCnt(rDao.getTotalPost(prodNo));
+		
+		if (searchInfo == null) {
+			if (reviewNo == 0) {
+				// 1페이지당 보여 줄 글의 개수 & 1개의 블럭에 보여줄 페이지 수
+				pi.setPostPerPage(5);
+				pi.setPageCntPerBlock(3);
+				// 전체 게시물 개수
+				pi.setTotalPostCnt(rDao.getReviewTotalPost(prodNo));
+			} else {
+				// 1페이지당 보여 줄 글의 개수 & 1개의 블럭에 보여줄 페이지 수
+				pi.setPostPerPage(10);
+				pi.setPageCntPerBlock(3);
+				// 전체 게시물 개수
+				pi.setTotalPostCnt(rDao.getCommentTotalPost(reviewNo));
+			}
+		} else {
+			// 1페이지당 보여 줄 글의 개수 & 1개의 블럭에 보여줄 페이지 수
+			pi.setPostPerPage(10);
+			pi.setPageCntPerBlock(5);
+			// 전체 게시물 개수
+			pi.setTotalPostCnt(rDao.getReviewSearchTotalPost(searchInfo));
+		}
 
 		// 전체 페이지 수
 		pi.setTotalPage(pi.getTotalPostCnt());
@@ -75,6 +93,19 @@ public class ReviewServiceImpl implements ReviewService {
 	public List<ReviewComment> readAllComments(int rno) throws Exception {
 		List<ReviewComment> lst = rDao.selectAllComments(rno);
 		return lst;
+	}
+	
+	@Override
+	public Map<String, Object> readAllComments(int reviewNo, int pageNo) throws Exception {
+		PagingInfo pi = pagingProcess(0,pageNo,null,reviewNo);
+		List<ReviewComment> lst = rDao.selectAllComments(reviewNo,pi);
+		
+		System.out.println(lst);
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("commentList", lst);
+		resultMap.put("pagingInfo", pi);
+		return resultMap;
 	}
 
 	@Override
@@ -165,16 +196,30 @@ public class ReviewServiceImpl implements ReviewService {
 	@Override
 	public boolean modifyReview(ReviewVO review,List<UploadFile> upfileList) throws Exception {
 		boolean result = false;
-		
-		if (rDao.updateReview(review) == 1) {
-			result = true;
-		}
+		boolean fileResult = true;
+		boolean reviewResult = false;
 		
 		for (UploadFile file : upfileList) {
 			if (rDao.insertAttachFile(new AttachFileVO(review.getReviewNo(),review.getProductNo(),file.getOriginalFileName(),
 					file.getThumbnailFileName(), file.getNotImageFileName())) != 1) {
-				result = false;
+				fileResult = false;
 			}
+		}
+		
+		System.out.println(rDao.selectAttachFileByRNo(review.getReviewNo()).toString());
+		
+		if (rDao.selectAttachFileByRNo(review.getReviewNo()).size() < 1) {
+			review.setFileStatus("no");
+		} else {
+			review.setFileStatus("yes");
+		}
+		
+		if (rDao.updateReview(review) == 1) {
+			reviewResult = true;
+		}
+		
+		if (fileResult && reviewResult) {
+			result = true;
 		}
 		
 		return result;
@@ -228,6 +273,80 @@ public class ReviewServiceImpl implements ReviewService {
 		return result;
 	}
 
+	@Override
+	public Map<String, Object> searchReview(SearchInfoDTO searchInfo) throws Exception {
+		PagingInfo pi = pagingProcess(0,searchInfo.getPageNo(),searchInfo,0);
+		
+		List<ReviewVO> lst = rDao.selectSearchReview(searchInfo,pi);
+		List<AttachFileVO> lst2 = null;
+		if (searchInfo.getFileStatus() != "no") {
+			lst2 = rDao.selectAllAttachFile(0);
+		}
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("reviewList", lst);
+		resultMap.put("pagingInfo", pi);
+		resultMap.put("fileList", lst2);
+		
+		return resultMap;
+		
+	}
+
+	@Override
+	public Map<String, Object> readReview(int reviewNo) throws Exception {
+		ReviewVO review = rDao.selectReview(reviewNo);
+		List<AttachFileVO> fileList = null;
+		
+		if (review.getFileStatus().equals("yes")) {
+			fileList = rDao.selectAttachFileByRNo(reviewNo);
+		}
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("review", review);
+		resultMap.put("fileList", fileList);
+		
+		return resultMap;
+	}
+
+	@Override
+	public boolean deleteReviews(List<Integer> deleteNoList) throws Exception {
+		boolean result = false;
+		
+		for (Integer reviewNo : deleteNoList) {
+			if (rDao.deleteReview(reviewNo) == 1) {
+				result = true;
+			} else {
+				result = false;
+				break;
+			}
+		}
+		
+		return result;
+	}
+
+	@Override
+	public boolean deleteComments(List<Integer> deleteNoList, int reviewNo) throws Exception {
+		boolean result = false;
+		
+		for (Integer commentNo : deleteNoList) {
+			if (rDao.deleteComment(commentNo) == 1) {
+				if (rDao.updateCommentNum2(reviewNo) == 1) {
+					result = true;
+				}
+			} else {
+				result = false;
+				break;
+			}	
+		}
+		
+		return result;
+	}
+
+	@Override
+	public ReviewStatisticsVO getReviewStatistics(int prodNo) throws Exception {
+		ReviewStatisticsVO reviewStatistics = rDao.selectReviewStatistics(prodNo);
+		return reviewStatistics;
+	}
 	
 
 }

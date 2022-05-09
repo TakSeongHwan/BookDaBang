@@ -26,9 +26,9 @@ public class SendMail {
 		// 보낼 메일을 만들자
 		Properties prop = new Properties();
 		String subject = "Book다방에서 보낸 이메일 인증번호 입니다.";
-		String message = "Book다방에서 보낸 이메일 인증번호 입니다. <br/>";
-		message += "회원 가입 화면에 아래의 번호를 기입하시고, 인증확인 버튼을 눌러주세요!<br/>";
-		message += "<b>인증 번호 : " + confirmCode + "<b><br />";
+		String message = "Book다방에서 보낸 이메일 인증번호 입니다. \n";
+		message += "회원 가입 화면에 아래의 번호를 기입하시고, 인증확인 버튼을 눌러주세요!\n";
+		message += "\n인증 번호 : " + confirmCode + "\n";
 		message += "감사합니다 !";
 
 		// 메일 셋팅

@@ -298,6 +298,12 @@
 		<if test="sort == 3">
 			order by sell_price desc 
 		</if>
+		<if test="sort == 4">
+			order by sell_price asc 
+		</if>
+		<if test="sort == 5">
+			order by read_count desc 
+		</if>
 		limit #{startNum},#{postPerPage}
 	</select>
 	
@@ -335,6 +341,31 @@
 		select product_no,title,author,sell_price,publisher,cover from product where display_status = 'yes' 
 		and title like concat('%', #{searchWord}, '%') or author like concat('%', #{searchWord}, '%') or 
 		publisher like concat('%', #{searchWord}, '%') order by read_count desc limit 10
+	</select>
+	
+	<select id="selectPageview" resultType="PageView">
+		select ip_address,productNo,accessDate from pageview
+		where ip_address = #{ipaddr} and productNo = #{prodNo}
+	</select>
+	
+	<insert id="insertPageview" >
+		insert into pageview(ip_address,productNo) values (#{ipaddr},#{prodNo})
+	</insert>
+	
+	<update id="updateReadCount" >
+		update product set read_count = read_count + 1 where product_no = #{prodNo}
+	</update>
+	
+	<update id="updatePageview" >
+		update pageview set accessDate = now() where ip_address=#{ipaddr} and productNo=#{prodNo}
+	</update>
+	
+	<delete id="deletePageview">
+		delete from pageview where where ip_address=#{ipaddr} and productNo=#{prodNo}
+	</delete>
+	
+	<select id="selectCategoryName" resultType="String">
+		select category_name from category where category_code = #{cno}
 	</select>
 
 </mapper>
