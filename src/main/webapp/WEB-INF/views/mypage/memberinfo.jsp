@@ -7,36 +7,123 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>My Page</title>
+<!-- Page CSS -->
 
-<link rel="icon" href="../resources/img/Fevicon.png" type="image/png">
-<link rel="stylesheet"
-	href="../resources/vendors/bootstrap/bootstrap.min.css">
-<link rel="stylesheet"
-	href="../resources/vendors/fontawesome/css/all.min.css">
-<link rel="stylesheet"
-	href="../resources/vendors/themify-icons/themify-icons.css">
-<link rel="stylesheet" href="../resources/vendors/linericon/style.css">
-<link rel="stylesheet"
-	href="../resources/vendors/owl-carousel/owl.theme.default.min.css">
-<link rel="stylesheet"
-	href="../resources/vendors/owl-carousel/owl.carousel.min.css">
-<link rel="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-<link rel="stylesheet" href="../resources/css/style.css">
-<script src="../resources/vendors/jquery/jquery-3.2.1.min.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-<script src="../resources/vendors/bootstrap/bootstrap.bundle.min.js"></script>
-<script src="../resources/vendors/skrollr.min.js"></script>
-<script src="../resources/vendors/owl-carousel/owl.carousel.min.js"></script>
-<script src="../resources/vendors/nice-select/jquery.nice-select.min.js"></script>
-<script src="../resources/vendors/jquery.ajaxchimp.min.js"></script>
-<script src="../resources/vendors/mail-script.js"></script>
-<script src="../resources/js/main.js"></script>
 </head>
 <script>
+let pageNo = 1;
+
+	function confirm(orderNo){
+		$.ajax({
+			url : "/order/confirmOrder",
+			data : {
+				orderNo : orderNo
+			},
+			type : "post",
+			success : function(data){
+				getOrderStatus(pageNo);
+			},error : function(data){
+			}
+		})
+	}
+	function refund(orderNo){
+
+	}
+	
+	function parsingOrder(data){
+		console.log(data);
+		let output2 = '';
+		let pagingoutput = '<nav class="blog-pagination justify-content-center d-flex"><ul class="pagination">';
+			$.each(data.order, function(i, e) {
+				output2 += '<tr><td>'+e.orderNo+'</td>'
+				output2 += '<td><div class="media"><div class="d-flex" style="width:200px"><img src="'+e.cover+'" style="width: 150px"></div><div class="media-body"><p>'+e.title+ '</p></div></div></td>'
+				output2 += '<td>'+e.productQtt+'</td>'
+				output2 += '<td><h5 id = "price'+e.cartNo+'">'+ e.price.toLocaleString()+'원</td>'
+				output2 +='<td>';
+				if(e.orderState_code == 1){
+					output2 += '출고 준비중';
+				}else if(e.orderState_code ==2){
+					output2 += '배송중';
+				}else if(e.orderState_code ==3){
+					output2 += '배송완료';
+				}else if(e.orderState_code == 4){
+					output2 += '주문 취소';
+				}else if(e.orderState_code == 5){
+					output2 += '상품 환불';
+				}
+				output2 +='</td>';
+				output2 += '<td>';
+				if(e.orderState_code == 5){
+					output2 += 'Y';
+				}else{
+					output2 += '<button type="button" id="refundBtn" onclick="refund();" class="button" value="'+e.orderNo+'">환불신청</button>';
+				}
+				output2 += '</td>';
+				output2 += '<td>';
+				if(e.confirm == 'Y'){
+					output2 += "Y";
+				}else if(e.orderState_code == 5 && e.confirm == 'N'){
+					output2 += "환불 대기중";
+				}else if(e.orderState_code == 4){
+					output2 += "주문 취소";
+				}
+				else{
+					output2 += '<button type="button" id="cofirmBtn" class="button" onclick="confirm(this.value);" value="'+e.orderNo+'">확정하기</button>';
+				}
+				output2 += '</td></tr>';
+				});
+		if (pageNo != 1) {
+			pagingoutput += "<li class='page-item last'><a class='page-link'onclick='getOrderStatus(1)' ><<<i class='tf-icon bx bx-chevrons-left'></i></a></li>";
+			pagingoutput += "<li class='page-item last'><a class='page-link'onclick='getOrderStatus("+ (pageNo - 1)+ ")'><<i class='tf-icon bx bx-chevron-left'> </i></a></li>";
+		}
+		for (let i = data.pagingInfo.startNoOfCurPagingBlock; i <= data.pagingInfo.endNoOfCurPagingBlock; i++) {
+			if (pageNo == i) {
+				pagingoutput += "<li class='page-item active'><a class='page-link' onclick='getOrderStatus("+ i+ ")'>"+ i+ "</a></li>";
+			} else {
+				pagingoutput += "<li class='page-item'><a class='page-link' onclick='getOrderStatus("+ i+ ")'>"+ i+ "</a></li>";
+			}
+		}
+
+		if (pageNo < data.pagingInfo.totalPage) {
+			pagingoutput += "<li class='page-item last'><a class='page-link'onclick='getOrderStatus("+ (pageNo + 1)+ ")' >><i class='tf-icon bx bx-chevron-right'></i></a></li>";
+			pagingoutput += "<li class='page-item last'><a class='page-link'onclick='getOrderStatus("+ (data.pagingInfo.totalPage)+ ")' >>><i class='tf-icon bx bx-chevrons-right'></i></a></li>";
+		}
+
+		pagingoutput += '</ul></nav>'
+
+		$("#pagingZone").html(pagingoutput);
+		$("#output").html(output2);
+	}
+
+	function orderStatus(){
+		let output ='<div class="container" style= "width:1200px;"><div><div class="table-responsive"><table class="table">'
+		output += '<thead><tr><th scope="col" nowrap> 주문 번호</th><th scope="col" nowrap style="width:500px;">상품</th><th scope="col" nowrap>수량</th><th scope="col" nowrap>가격</th><th scope="col" nowrap>상태</th><th scope="col" nowrap>환불</th><th scope="col" nowrap>확정</th></tr></thead>'
+		output += '<tbody id="output"></tbody></table></div></div></div><div class="demo-inline-spacing" id="pagingZone">12</div></div>';
+		$("#myPageOrder").html(output);
+		getOrderStatus(pageNo);
+	}
+	
+	function getOrderStatus(pno){
+		$.ajax({
+			url : "${contextPath}/order/orderstatus/"+pno,
+			type : "get",
+			data : {
+				sessionId : "${sessionId}"
+			},
+			success : function(data) {
+				pageNo = pno;
+				parsingOrder(data);
+			},
+			error : function(data){
+				console.log(data);
+				
+			}
+		});
+	}
 
 // 비밀번호 변경
 function confirmModifyPwd() {
@@ -456,7 +543,13 @@ function confirmPwd(e) {
 	}
 	
 	
+function corrInfo() {
 	
+	let ses = "${ sessionId}";
+	location.href="${ contextPath}/mypage/modifyInfo?u=" + ses;
+	
+	
+}	
 
 
 	
@@ -524,7 +617,7 @@ function confirmPwd(e) {
 	window.onload = function () {
 		
 
-		
+		// modifyStatus
 			let birthStr ="${ loginMember.birth}";
 			let userBirth = birthStr.split('-');
 			
@@ -543,16 +636,15 @@ function confirmPwd(e) {
 			
 			document.getElementById('userBirth').valueAsDate = birth;
 			
-			
-			
-			
-		
-		
+
 		document.getElementById('showMyPoint').addEventListener("click", pointHistory);
 		document.getElementById('originalPwd').addEventListener ("keyup", confirmPwd);
 		document.getElementById('modifyInfo').addEventListener ("click", modifyInfo);
 		document.getElementById('showAllMyPosts').addEventListener("click", showMyPosts);
 		document.getElementById('showMyLike').addEventListener("click", showMyLike);
+		
+		
+		
 		//showMyLike
 		
 		    $('#pwdModi i').on('click',function(){
@@ -596,6 +688,9 @@ margin-bottom : 10px;
 
 }
 
+#refundBtn, #cofirmBtn{
+	padding: 12px 12px;
+}
 
 #pwdModi i{
     position: absolute;
@@ -795,6 +890,7 @@ margin-bottom : 10px;
 							<img class="author_img rounded-circle" src="img/blog/author.png"
 								alt="">
 							<h4>환영합니다</h4>
+							
 							<p>${loginMember.userName}고객님</p>
 							<div class="social_icon"></div>
 						</aside>
@@ -803,14 +899,10 @@ margin-bottom : 10px;
 							<div class="br"></div>
 							<ul class="list cat-list">
 								<li><span id = "modifyInfo">회원 정보 수정</span></li>
-								<li><a href="#" class="d-flex justify-content-between">
-										<p>주문 현황</p>
-								</a></li>
-								<li><a href="#" class="d-flex justify-content-between">
-										<p>구매 내역</p>
-								</a></li>
-								<li><span id = "showAllMyPosts">내 게시물 조회</span>
-								</a></li>
+								<li><a href="#" onclick="orderStatus();" class="d-flex justify-content-between">
+										<p>구매 현황</p></a>
+								</li>
+								<li><span id = "showAllMyPosts">내 게시물 조회</span></li>
 								<li><span id="showMyLike">내가 쓴 댓글  |  추천한 글</span></li>
 								<li><span id = "showMyPoint">적립금 조회</span></li>
 								<li><a href="#" class="d-flex justify-content-between"
@@ -838,24 +930,29 @@ margin-bottom : 10px;
 					</div>
 				</div>
 
-				<div class="col-lg-8 posts-list contentsBox">
+				<div class="col-lg-8 posts-list contentsBox" id="myPageOrder">
 					<div class= "pointBox"></div>
 					<div class= "infoBox">
 					<h2>회원 정보 수정</h2>
 					<div class="single-post row">
-						아이디 : <input type="text" class="form-control"
-							value="${loginMember.userId}" />
-						비밀번호 : <input type="hidden" id ="password" value="${loginMember.userPwd }" />
+					비밀번호 : <input type="hidden" id ="password" value="${loginMember.userPwd }" />
 						<button data-bs-toggle="modal" data-bs-target="#modalPwd">비밀번호
 							변경</button>
+					<form action = "/mypage/modifyInfo" method = "POST">
+						아이디 : <input type="text" class="form-control"
+							value="${loginMember.userId}" name="userId" readonly/>
 						이름 : <input type="text" class="form-control"
-							value="${loginMember.nickName }" /> 	
+							value="${loginMember.userName }" name="userName"  /> 	
 						닉네임 : <input type="text" class="form-control"
-							value="${loginMember.nickName }" /> 
-						핸드폰 번호 : <input type="text" class="form-control" value="${loginMember.phoneNum}" />
-						이메일 : <input type="text" class="form-control" value="${loginMember.userEmail}" /> 
-						생일 : <input type = "date" id= "userBirth"  value= "${loginMember.birth }"  /> 
- 						<button type="button"  class="button button-postComment" >수정</button>
+							value="${loginMember.nickName }" name="nickName" /> 
+						핸드폰 번호 : <input type="text" class="form-control" value="${loginMember.phoneNum}" name="phoneNum" />
+						이메일 : <input type="text" class="form-control" value="${loginMember.userEmail}" name="userEmail"/> 
+						생일 : <input type = "date" id= "userBirth"  value= "${loginMember.birth }" /> 
+						
+						<input type = "hidden" name = "u" value = "${ sessionId}" />
+					
+ 						<button type="submit"  class="button button-postComment" id = "modiButton" >수정</button>
+						</form>
 						</div>
 						
 					</div>
@@ -945,10 +1042,9 @@ margin-bottom : 10px;
 					</div>
 			</div>
 		</div>
-
-		</div>
-		</div>
 		<!--================Blog Area =================-->
 	</section>
+	<jsp:include page="../userFooter.jsp"></jsp:include>
 </body>
+
 </html>

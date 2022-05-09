@@ -3,6 +3,7 @@ package com.bookdabang.ljs.domain;
 public class CSUploadFile {
 	
 	private int csBoardNo;
+	
 	private String originFile; // 원본 파일의 이름
 	private String thumbnailFile; // 이미지 파일일 경우 썸네일 이미지 파일의 이름
 	private String notImageFile; // 이미지 파일이 아닌 경우의 파일 이름.\

@@ -35,28 +35,94 @@
 	</insert>
 	<!-- 전체회원조회 -->
 	<select id="selectMember" resultType="MemberVO">
-		select * from member where isdormant ="n" and isDraw="n"
+		select * from member where
+		isdormant ="n" and isDraw="n"
+		order by memberWhen limit #{startNum},
+		#{postPerPage}
+	</select>
+	<!-- 페이징 -->
+	<select id="getTotalPost" resultType="int">
+		select count(*) as totalCnt
+		from member where isdormant ="n" and isDraw="n"
 	</select>
 
 	<!-- 삭제 회원 조회 -->
 	<select id="deleteMember" resultType="Withdraw">
-		select * from withdraw
+		select * from withdraw limit #{startNum},
+		#{postPerPage}
+	</select>
+	<!-- 페이징 -->
+	<select id="getTotalPostOfDelete" resultType="int">
+		select count(*) as totalCnt from withdraw 
 	</select>
 	<!-- 회원 삭제 -->
 	<delete id="delete">
-		delete from member where userId =#{userId}
+		delete from member where userId =#{userId} 
 	</delete>
 	
-	<!-- 휴면/및 정지 회원 조회-->
+
+	<!-- 휴면/및 정지 회원 조회 -->
 	<select id="dormantMember" resultType="MemberVO">
-		 select * from member where
-		TIMESTAMPDIFF(DAY, lastLogin, now()) >= 90
+		select * from member where 
+		TIMESTAMPDIFF(DAY, lastLogin, now()) >= 90 limit #{startNum},
+		#{postPerPage}
 	</select>
-	
+	<!-- 페이징 -->
+	<select id="getTotalPostOfDormant" resultType="int">
+		select count(*) as totalCnt 
+		from member where TIMESTAMPDIFF(DAY, lastLogin, now()) >= 90
+	</select>
+
 	<!-- 휴면/정지 전환 -->
 	<update id="isdormant">
-		update member set isdormant = #{isdormant} where userId=#{userId}
-	</update> 
+		update member set isdormant = #{isdormant} where
+		userId=#{userId}
+	</update>
+
+	<!-- -->
+
+	<!-- 마이페이지(이정선)  
+	
+		<select id="login" resultType="MemberVO">
+  		select * from member where userid=#{userId} and userPwd = sha1(md5(#{pwd}))
+  	</select>
+  	
+  	<update id = "putLastLogin">
+  		update member set lastLogin = now(), sessionId=#{sessionId} where userId=#{userId}
+  	</update>
+  	
+  	<select id = "loginSession" resultType="MemberVO">
+  		select * from member where sessionId = #{sessionId}
+  	</select>
+  	
+  	<update id = "withdrawMember" >
+  	update member set isDraw = 'Y' where userId=#{userId} 
+  	</update>
+  	
+	<select id = "pointCheck" resultType="MemberPoint">
+	select * from memberpoint where userid = #{userId} and point >0 order by pointWhen desc
+	</select>
+
+	<select id = "showRecentSeenProd" resultType ="RecentSeenProd">
+	select p.title, p.cover, r.* from product p join recentSeenProd r on (p.product_no = r.lastSeenProd) where r.userId  = #{userId} order by r.lastSeenDate desc;
+	</select>
+	
+	<update id = "updatePassword">
+	update member set userPwd = sha1(md5(#{pwd})) where userId= #{userId}
+	</update>
+	
+	<select id = "showOldPwd" resultType ="String">
+	select userPwd from member where userId = #{userId}
+	</select>
+	
+	<select id="myTotalPoint" resultType = "MemberPoint" >
+	 select * from memberpoint
+	</select>
+	
+
+	-->
+	
+	
 
 	<!-- 마이페이지(이정선)  -->
 	
@@ -96,7 +162,9 @@
 	 select * from memberpoint
 	</select>
 	
-
+	<update id = "updateMemInfo" >
+	update member set userName = #{userName}, nickName = #{nickName}, phoneNum = #{phoneNum}, userEmail = #{userEmail} where userId= #{userId}
+	</update>
 	
 	
 	

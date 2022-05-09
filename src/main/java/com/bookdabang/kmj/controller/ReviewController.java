@@ -44,12 +44,13 @@ public class ReviewController {
 	private List<UploadFile> upfileList = new ArrayList<UploadFile>(); // 업로드된 파일들의 리스트
 	
 	@RequestMapping(value = "/read", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> readReview(@RequestParam("no") int prodNo, @RequestParam("pageNo") int pageNo) {
-		System.out.println(prodNo + "번 상품 " + pageNo + "페이지 리뷰 가져오기");
+	public ResponseEntity<Map<String, Object>> readReview(@RequestParam("no") int prodNo, @RequestParam("pageNo") int pageNo,
+			@RequestParam("sort") int sort) {
+		System.out.println(prodNo + "번 상품 " + pageNo + "페이지 리뷰 가져오기 - 정렬방법 : " + sort);
 		ResponseEntity<Map<String, Object>> result = null;
 		
 		try {
-			Map<String, Object> map = rService.readAllReview(prodNo,pageNo);
+			Map<String, Object> map = rService.readAllReview(prodNo,pageNo,sort);
 			result = new ResponseEntity<Map<String, Object>> (map, HttpStatus.OK);
 		} catch (Exception e) {
 			result = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -64,6 +65,12 @@ public class ReviewController {
 		System.out.println("리뷰 등록시작 - " + review.toString() + ", 첨부파일 : " + upfileList.toString());
 		review.setContent(review.getContent().replace("\n", "<br/>"));
 		
+		if(upfileList.size() < 1) {
+			review.setFileStatus("no");
+		} else {
+			review.setFileStatus("yes");
+		}
+		
 		if (rService.addReview(review,this.upfileList)) {
 			rttr.addFlashAttribute("addResult", "success");
 		} else {
@@ -77,7 +84,7 @@ public class ReviewController {
 	
 	@RequestMapping(value="/modify", method=RequestMethod.POST)
 	public String modifyReview(ReviewVO review,RedirectAttributes rttr) throws Exception {
-		System.out.println("리뷰 수정시작 - " + review.toString() + ", 첨부파일 : " + upfileList.toString());
+		System.out.println("리뷰 수정시작 - " + review.toString() + ", 추가 첨부파일 : " + upfileList.toString());
 		review.setContent(review.getContent().replace("\n", "<br/>"));
 		
 		if (rService.modifyReview(review,this.upfileList)) {
@@ -231,55 +238,47 @@ public class ReviewController {
 	}
 	
 	@RequestMapping(value = "/delPrevFile", method = RequestMethod.POST) 
-	public ResponseEntity<String> delPrevFile(@RequestParam("targetList[]") List<String> targetList, HttpServletRequest request) {
-		System.out.println("기존파일 " + targetList + "삭제");
+	public ResponseEntity<String> delPrevFile(@RequestParam("fileNoList[]") List<Integer> fileNoList,
+			@RequestParam("fileNameList[]") List<String> fileNameList, HttpServletRequest request) {
+		System.out.println("기존파일 번호리스트 - " + fileNoList + " 삭제");
+		System.out.println("기존파일명 리스트 - " + fileNameList + " 삭제");
 		String upPath = request.getSession().getServletContext().getRealPath("");
 		boolean oFile = false, tFile = false;
 		boolean delFileResult = false;
 		ResponseEntity<String> result = null;
 		
-		List<Integer> attachNoList = new ArrayList<Integer>();
-		for (String file : targetList) {
-			if (!file.contains("0,파일들")) {
-				int attachNo = Integer.parseInt(file.split(",")[0]);
-				attachNoList.add(attachNo);
-			}
-		}
-		System.out.println("최종 첨부파일 삭제번호 리스트 : " + attachNoList);
-		
 		boolean DBResult = false;
 		try {
-			DBResult = rService.deleteAttachFile(attachNoList);
+			DBResult = rService.deleteAttachFile(fileNoList);
 		} catch (Exception e) {
 			result = new ResponseEntity<String>("fail",HttpStatus.BAD_REQUEST); 
 			e.printStackTrace();
 		}
 		
 		if (DBResult) {
-			for (String file : targetList) {
-				if (!file.contains("0,파일들")) {
-					String fileName = file.split(",")[1];
-					if (fileName.contains("thumb")) {
-						File delFile = new File(upPath + fileName.replace("/", File.separator));
-						tFile = delFile.delete();
-						String originalFileName = fileName.replace("thumb_", "");
-						File originFile = new File(upPath + originalFileName.replace("/", File.separator));
-						oFile = originFile.delete();
-					} else {
-						File delFile = new File(upPath + fileName.replace("/", File.separator));
-						oFile = delFile.delete();
+			for (String fileName : fileNameList) {
+				if (fileName.contains("thumb")) {
+					File delFile = new File(upPath + fileName.replace("/", File.separator));
+					tFile = delFile.delete();
+					String originalFileName = fileName.replace("thumb_", "");
+					File originFile = new File(upPath + originalFileName.replace("/", File.separator));
+					oFile = originFile.delete();
+				} else {
+					File delFile = new File(upPath + fileName.replace("/", File.separator));
+					oFile = delFile.delete();
+					if (oFile) {
 						tFile = true;
 					}
-					
-					if (oFile && tFile) {
-						delFileResult = true;
-						System.out.println("기존 파일명 : " + fileName + " - 삭제 완료(" + oFile  + "/" + tFile + ")");
-					} else {
-						delFileResult = false;
-						System.out.println("기존 파일명 : " + fileName + " - 삭제 실패(" + oFile  + "/" + tFile + ")");
-						result = new ResponseEntity<String>("fail",HttpStatus.BAD_REQUEST);
-						break;
-					}
+				}
+				
+				if (oFile && tFile) {
+					delFileResult = true;
+					System.out.println("기존 파일명 : " + fileName + " - 삭제 완료(" + oFile  + "/" + tFile + ")");
+				} else {
+					delFileResult = false;
+					System.out.println("기존 파일명 : " + fileName + " - 삭제 실패(" + oFile  + "/" + tFile + ")");
+					result = new ResponseEntity<String>("fail",HttpStatus.BAD_REQUEST);
+					break;
 				}
 			}
 		}

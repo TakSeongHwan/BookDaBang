@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.bookdabang.common.domain.MemberPoint;
 import com.bookdabang.common.domain.MemberVO;
+import com.bookdabang.common.domain.PagingInfo;
 import com.bookdabang.common.domain.Withdraw;
 import com.bookdabang.lcs.domain.IsdormantDTO;
 import com.bookdabang.lcs.domain.MemberDTO;
@@ -47,19 +48,19 @@ public class MemberDAOImpl implements MemberDAO {
 		return sql.insert(ns + ".insertPoint", point);
 	}
 	@Override
-	public List<MemberVO> selectMember() throws Exception {
+	public List<MemberVO> selectMember(PagingInfo pi) throws Exception {
 	
-		return sql.selectList(ns + ".selectMember");
+		return sql.selectList(ns + ".selectMember", pi);
 	}
 	@Override
-	public List<MemberVO> dormantMember() throws Exception {
+	public List<MemberVO> dormantMember(PagingInfo pi) throws Exception {
 		
-		return sql.selectList(ns + ".dormantMember");
+		return sql.selectList(ns + ".dormantMember", pi);
 	}
 	@Override
-	public List<Withdraw> deleteMember() throws Exception {
+	public List<Withdraw> deleteMember(PagingInfo pi) throws Exception {
 		
-		return sql.selectList(ns + ".deleteMember");
+		return sql.selectList(ns + ".deleteMember", pi);
 	}
 
 	@Override
@@ -75,7 +76,19 @@ public class MemberDAOImpl implements MemberDAO {
 		return sql.delete(ns +".delete", userId);
 		
 	}
-	
+	@Override
+	public int getTotalPost(PagingInfo paging) throws Exception {
+		return sql.selectOne(ns+".getTotalPost", paging);
+	}
+	@Override
+	public int getTotalPostOfDormant(PagingInfo paging) throws Exception {
+		return sql.selectOne(ns+".getTotalPostOfDormant", paging);
+	}
+	@Override
+	public int getTotalPostOfDelete(PagingInfo paging) throws Exception {
+		return sql.selectOne(ns+".getTotalPostOfDelete", paging);
+	}
+
 
 
 

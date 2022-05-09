@@ -72,8 +72,6 @@ public class MemberController {
 			result = "success";
 		}
 		System.out.println(result);
-		System.out.println("userId " + request.getParameter("userId"));
-		
 		return result;
 	}
 

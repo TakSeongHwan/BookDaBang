@@ -49,16 +49,17 @@ public class NoticeReplyController {
 	}
 
 	@RequestMapping(value="addReply", method=RequestMethod.POST)
-	@Transactional
 	public ResponseEntity<String> addReply(@RequestBody NoticeReplyVO reply ){
 		ResponseEntity<String> result = null;
 		System.out.println("댓글 : "+ reply.toString());
 		
 		try {
+			int maxReplyNo = service.getMaxReplyNo();
 			int ref = service.getMaxReplyNo()+1;
 			reply.setRef(ref);
 			reply.setStep(0);
 			reply.setRefOrder(0);
+			System.out.println(reply);
 			if(service.insertReply(reply) == 1) {
 				service.replyCountIncrese(reply.getBoardNo());
 				result = new ResponseEntity<String>("success",HttpStatus.OK);
@@ -73,7 +74,6 @@ public class NoticeReplyController {
 	}
 	
 	@RequestMapping(value="/{replyNo}",method=RequestMethod.PUT)
-	@Transactional
 	public @ResponseBody String modiReply(@RequestBody NoticeReplyVO nr){
 		String result = null;
 
@@ -90,7 +90,6 @@ public class NoticeReplyController {
 	}
 	
 	@RequestMapping(value = "/{replyNo}", method=RequestMethod.DELETE)
-	@Transactional
 	public ResponseEntity<String> delReply(@PathVariable("replyNo") int replyNo){
 		ResponseEntity<String> result = null;
 		
@@ -110,7 +109,6 @@ public class NoticeReplyController {
 		
 	}
 	@RequestMapping(value="rereply", method=RequestMethod.POST)
-	@Transactional
 	public ResponseEntity<String> addRereply(@RequestBody NoticeReplyVO reply){
 		ResponseEntity<String> result = null;
 		

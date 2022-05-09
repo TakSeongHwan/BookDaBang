@@ -6,7 +6,7 @@
 <mapper namespace="com.bookdabang.mapper.csBoardMapper">
 
 <select id = "showEntireCSBoard" resultType="CustomerService">
-select * from customer_service order by postNo desc
+select * from customer_service order by postNo desc limit #{startNum}, #{postPerPage};
 </select>
 
 <select id = "readCSPost" resultType="CustomerService">
@@ -16,7 +16,6 @@ select * from customer_service where postNo=#{postNo}
 <insert id = "writeCSPost" >
 insert into customer_service (categoryCode, writer, postdate, title, contents) values(#{categoryCode}, #{writer}, now(), #{title}, #{contents})
 </insert>
-
 
 <select id = "showMyCS" resultType = "CustomerService">
 select * from customer_service where writer = #{userId}
@@ -34,8 +33,55 @@ select attachfileNo, originFile, thumbnailFile, notImageFile from attachfile whe
 insert into attachfile(csBoardNo, originFile, thumbnailFile, notImageFile) values(#{csBoardNo}, #{originFile},#{thumbnailFile}, #{notImageFile})
 </insert>
 
+
 <select id="getNextNo" resultType = "int">
 select max(postno) as nextno from customer_service;
 </select>
+
+<delete id = "deleteCSPost">
+delete from customer_service where postNo = #{postNo}
+</delete>
+
+<delete id="deleteAttachFile">
+delete from attachfile where csBoardNo = #{postNo};
+</delete>
+
+<select id="getTotalPost" resultType="int" >
+select count(*) as totalCnt from customer_service;
+</select>
+
+<select id="getSearchResultCnt" resultType="int">
+ 	  select count(*) from customer_service where
+ 	  <if test='searchType.equals("title")'>
+ 	  title like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType.equals("category")'>
+ 	  categoryCode like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType.equals("contents")'>
+ 	  contents like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType.equals("writer")'>
+ 	  writer like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  order by postNo desc
+</select>
+
+ 	<select id="getSearchResultList" resultType="CustomerService">
+ 	  select * from customer_service where
+ 	  <if test='searchType == "title"'>
+ 	  title like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType.equals("category")'>
+ 	  categoryCode like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType == "contents"'>
+ 	  contents like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  <if test='searchType == "writer"'>
+ 	  writer like concat('%',#{searchWord} ,'%')
+ 	  </if>
+ 	  order by postNo desc limit #{startNum}, #{postPerPage}
+ 	</select>
 
 </mapper>

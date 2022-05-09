@@ -11,8 +11,8 @@
 	
 	<!-- 주소 insert -->
 	<insert id="insertAddress">
-		insert into address(userId,recipient,postalcode,mainAddress,remainaddress,phonenumber,deliverymessage) 
-		values(#{userId},#{recipient},#{postalcode},#{mainAddress},#{remainaddress},#{phonenumber},#{deliverymessage})
+		insert into address(address_no,userId,recipient,postalcode,mainAddress,remainaddress,phonenumber,deliverymessage) 
+		values(#{address_no},#{userId},#{recipient},#{postalcode},#{mainAddress},#{remainaddress},#{phonenumber},#{deliverymessage})
 	</insert>
 	
 	<select id="nextAddressNo" resultType="int">

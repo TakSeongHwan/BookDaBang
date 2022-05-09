@@ -1,5 +1,6 @@
 package com.bookdabang.ljs.service;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.bookdabang.common.domain.MemberPoint;
@@ -18,5 +19,8 @@ public interface LoginService {
 	
 	public List<MemberPoint> pointCheck(String userId) throws Exception;
 	
+	public String getAccessToken (String authorize_code) throws Exception;
+	
+	public HashMap<String, Object> getUserInfo(String access_Token) throws Exception;
 	
 }

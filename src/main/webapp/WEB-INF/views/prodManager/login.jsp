@@ -13,49 +13,55 @@
   
 </head>
 <body>
- <input type='file' id="uploadBannerImage" onchange="readURL(this);" />
+ <input type='file' id="uploadBannerImage"/>
  <img id="bannerImg" alt="" src="">
  <img src="" id="tableBanner" />
  
  </body>
    <script>
+   
+   let bannerImg = "";
    window.onload = function() {
-	   var dataImage = localStorage.getItem('imgData');
-	   bannerImg = document.getElementById('tableBanner');
-	   bannerImg.src = "data:image/png;base64,"+  dataImage;
+	 
+	   $(document).on("change","#uploadBannerImage", function(e){
+		 
+		  setImageFromFile(this, '#bannerImg');
+		  
+		 
+	   });
+	   
+	   
+	   
 	
    }
-   
-   
-   function readURL(input)  {
-       document.getElementById("bannerImg").style.display = "block";
-
-       if (input.files && input.files[0]) {
-           var reader = new FileReader();
-
-           reader.onload = function (e) {
-               document.getElementById('bannerImg').src =  e.target.result;
-           }
-
-           reader.readAsDataURL(input.files[0]);
-           bannerImage = document.getElementById('bannerImg');
-    	   imgData = getBase64Image(bannerImage);
-    	   localStorage.setItem("imgData", imgData);
-       }
-   }
-   
-   function getBase64Image(img) {
-	    var canvas = document.createElement("canvas");
-	    canvas.width = img.width;
-	    canvas.height = img.height;
-
-	    var ctx = canvas.getContext("2d");
-	    ctx.drawImage(img, 0, 0);
-
-	    var dataURL = canvas.toDataURL("image/png");
-
-	    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+   function setImageFromFile(input, expression) {
+	    if (input.files && input.files[0]) {
+	        var reader = new FileReader();
+	        reader.onload = function (e) {
+	            $(expression).attr('src', e.target.result);
+	        }
+	        reader.readAsDataURL(input.files[0]);
+	    }
 	}
+   
+   function getDataUrl(img) {
+	   // Create canvas
+	   const canvas = document.createElement('canvas');
+	   const ctx = canvas.getContext('2d');
+	   // Set width and height
+	   canvas.width = img.width;
+	   canvas.height = img.height;
+	   // Draw the image
+	   ctx.drawImage(img, 0, 0);
+	   
+	   var base64 = canvas.toDataURL('image/*');
+	   strImage = base64.replace(/^data:image\/[a-z]+;base64,/, "");
+	   }
+   
+   
+   
+   
+   
    
   </script>
 </html>

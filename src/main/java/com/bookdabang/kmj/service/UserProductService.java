@@ -19,4 +19,10 @@ public interface UserProductService {
 	// Top 상품 리스트 (판매량순, 조회수순)
 	public List<ProductVO> readTopProducts (int cno,String searchWord) throws Exception;
 	
+	// 상품 조회수 증가
+	public boolean addProductView(int prodNo,String ipaddr) throws Exception;
+	
+	// 상품 상세정보 - 카테고리명 가져오기
+	public String getCategoryName(int cno) throws Exception;
+	
 }

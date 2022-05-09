@@ -44,30 +44,6 @@ window.onload = function() {
 	let discount =(100-(${prod.sell_price/prod.price*100}));
 	$("#discount").val(discount);
 	
-	$(window).on("beforeunload", callback);
-
-	function callback() {
-
-		
-			let imagePath = $("#prodImg").attr("src");
-			console.log(imagePath);
-			let url = "/prodRest/c"
-			$.ajax({
-				url : url,
-				dataType : "json",
-				type : "delete",
-				data : {
-					imagePath : imagePath
-				},
-				success : function(data) {
-					
-				},
-				error : function(data) {
-					console.log(data);
-				}
-			});
-		
-	}
 
 	$("#applyDiscount").on("click", function() {
 		if ($("#price").val() != "") {
@@ -200,7 +176,7 @@ window.onload = function() {
 						console.log(imageInput.files);
 						const formData = new FormData();
 						formData.append("image", imageInput.files[0]);
-						let url = "/prodRest/b";
+						let url = "/api.prod.com/file";
 						$
 								.ajax({
 									url : url,
@@ -350,33 +326,33 @@ function updateProduct() {
 	insertDataToProduct();
 	if (validCheck()) {
 		saveImage = true;
-		alert("good");
+		
 
-		/* let url = "/prodRest/update";
+		 let url = "/api.prod.com/put";
 		$.ajax({
 			url : url,
 			dataType : "text",
-			type : "post",
+			type : "put",
 			data : product,
 			success : function(data) {
-				if (data == "success") {
-					successView("수정에 성공했습니다.");
-					setTimeout(function() {
-					location.href = '${contextPath}/prodManager/listAll';
-					},1300);
-				} else {
-					errView("등록에 실패했습니다.")
+				if(data ="success") {
+					alert("수정에 성공했습니다");
+					
+					location.href="/prodManager/listAll";
+				}else {
+					
 				}
 			}
 
-		}); */
+		}); 
 	}
 }
 
 
 
 function insertDataToProduct() {
-
+	
+	product.isbn = $("#isbn").val();
 	product.title = $("#prodTitle").val();
 	product.price = parseInt($("#price").val().replace(",", ""));
 	if (product.sell_price == "" || isNaN(product.sell_price)) {
@@ -519,7 +495,7 @@ function successView (text) {
 
 function deleteImage(imagePath) {
 console.log(imagePath);
-let url = "/prodRest/c"
+let url = "/api.prod.com/delete/file";
 $.ajax({
 	url : url,
 	dataType : "json",
@@ -664,19 +640,19 @@ $.ajax({
 								<label for="floatingInput" class="form-label"
 									style="display: block">작가</label> <input type="text"
 									class="form-control" id="author" placeholder="작가"
-									aria-describedby="defaultFormControlHelp" readonly
+									aria-describedby="defaultFormControlHelp" 
 									value="${prod.author}" />
 							</div>
 							<div class="mb-3">
 								<label for="floatingInput" class="form-label"
 									style="display: block">출판사</label> <input type="text"
 									class="form-control" id="publisher" placeholder="출판사"
-									aria-describedby="defaultFormControlHelp" readonly
+									aria-describedby="defaultFormControlHelp" 
 									value="${prod.publisher}" /> <label for="floatingInput"
 									class="form-label" style="display: block">출판일</label> <input
 									type="date" class="form-control" id="pub_date"
 									placeholder="출판일" aria-describedby="defaultFormControlHelp"
-									readonly style="width: 200px" value="${pubDate}" />
+									style="width: 200px" value="${pubDate}" />
 							</div>
 
 						</div>

@@ -1,10 +1,6 @@
-<%@ page language="java" contentType="text/html;charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
-<%@ page import="java.net.URLEncoder" %>
-<%@ page import="java.security.SecureRandom" %>
-<%@ page import="java.math.BigInteger" %>
 <c:set var="contextPath" value="<%=request.getContextPath() %>"></c:set>
 <!DOCTYPE html>
 <html>
@@ -24,8 +20,15 @@
   <link rel="stylesheet" href="resources/resources/vendors/nice-select/nice-select.css">
   <link rel="stylesheet" href="resources/vendors/nouislider/nouislider.min.css">
   <link rel="stylesheet" href="resources/css/style.css">
-  
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <style type="text/css">
+  	#myModal {
+  		position: fixed;
+  		top: 30%;
+  	}
+  </style>
 </head>
   <script src="resources/vendors/jquery/jquery-3.2.1.min.js"></script>
   <script src="resources/vendors/bootstrap/bootstrap.bundle.min.js"></script>
@@ -41,16 +44,57 @@
 window.onload = function () {
 	
 	let status = getParameter();	
+	$(document).on("click", "#orderCheck", function(){
+		let orderBundle = document.getElementById("orderBundle").value;
+		let orderPwd = document.getElementById("orderPwd").value;
+		orderChk(orderBundle,orderPwd);
+	});
 	
-	if (status = "fail" ) {
+	if (status == "fail" ) {
 		let autoLoginBox = document.getElementById('autoLoginBox');
 		let incorrect = document.createElement('div');
-		incorrect.innerHTML = "아이디 혹은 비밀번호를 다시 확인해주세요!"
+		incorrect.innerHTML = "아이디 혹은 비밀번호를 다시 확인해주세요!";
+		incorrect.style.color = "red";
 		autoLoginBox.appendChild(incorrect);
 
 	}
 
 
+}
+
+function orderChk(orderBundle,orderPwd){
+	$.ajax({
+		url : "/order/orderCheck",
+		type: "get",
+		data : {
+			orderBundle : orderBundle,
+			orderPwd : orderPwd
+		},
+		success : function(data){
+			if(data == ""){
+				alert("주문이 없습니다");
+			}else{
+				let form = document.createElement("form");
+				form.setAttribute("charset", "UTF-8");
+		        form.setAttribute("method", "Post");
+		        form.setAttribute("action", "/order/orderCheck");
+		        let hiddenField = document.createElement("input");
+	        	hiddenField.setAttribute("type", "hidden");
+	            hiddenField.setAttribute("name", "orderBundle");
+	            hiddenField.setAttribute("value", orderBundle);
+	            let hiddenField2 = document.createElement("input");
+	            hiddenField2.setAttribute("type", "hidden");
+	            hiddenField2.setAttribute("name", "orderPwd");
+	            hiddenField2.setAttribute("value", orderPwd);
+	            form.appendChild(hiddenField);
+	            form.appendChild(hiddenField2);
+		        document.body.appendChild(form);
+		        form.submit();
+			}
+		},error : function(data){
+			console.log(data);
+		}
+	});
 }
 
 
@@ -59,11 +103,16 @@ function getParameter(param) {
     let returnVal = -1; // 리턴할 값을 저장할 변수
     let url = location.href;
     console.log(url);
-
-    let queryString = url.split("?") [1].split("&");
+    
+    let queryString = url.split("?") [1];
+    let status = "";
+    if(queryString!=null){
+    	queryString = queryString.split("&");
+    	status = queryString[0].split("=")[1];
+    }
     console.log(queryString);
 
-    let status= queryString[0].split("=")[1];
+    
     console.log(status);
     
     return status;
@@ -78,18 +127,6 @@ function displayWarn() {
 
 
 </script>
-
-<%
-    String clientId = "_MSPMGBQvc3RTySfYdhS";//애플리케이션 클라이언트 아이디값";
-    String redirectURI = URLEncoder.encode("http://127.0.0.1:8085", "UTF-8");
-    SecureRandom random = new SecureRandom();
-    String state = new BigInteger(130, random).toString();
-    String apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
-    apiURL += "&client_id=" + clientId;
-    apiURL += "&redirect_uri=" + redirectURI;
-    apiURL += "&state=" + state;
-    session.setAttribute("state", state);
- %>
 <jsp:include page="userHeader.jsp"></jsp:include>
 	<section class="blog-banner-area" id="category">
 		<div class="container h-100">
@@ -116,15 +153,14 @@ function displayWarn() {
 							<h4>New to our website?</h4>
 							<p>There are advances being made in science and technology everyday, and a good example of this is the</p>
 							
-							<a class="button button-account" href="register.html">비회원 주문조회</a>
+							<a class="button button-account" href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">비회원 주문조회</a>
 							<a class="button button-account" href="register.html">회원가입</a>
 						</div>
 					</div>
 				</div>
 				<div class="col-lg-6">
 					<div class="login_form_inner">
-					
-						<h3>Log in to enter</h3>
+						<h3>Login to enter</h3>
 						
 						<form action="loginSign" method="post">
 							<div class="col-md-12 form-group">
@@ -141,39 +177,66 @@ function displayWarn() {
 							</div>
 							<div class="col-md-12 form-group">
 								<button type="submit" class="button button-login w-100" onclick="return displayWarn();">로그인 </button>
-
+								<div>
+								 	
+								 	
+								 	
+								 	
+								 	
+								 </div>
 								<label for="forgotPwd"><a href="#">아이디/ 비밀번호 찾기</a></label>
 							</div>
 						</form>
-														<div>
-								 	<div id="button_area">
-        								<div id="naverIdLogin">
+							<div>
+							 	<div id="button_area">
+      								<div id="naverIdLogin">
         								<a id="naverIdLogin_loginButton">
         					<button style="background-color: #03c75a; color : #fff; width:300px; border:none; margin-top:10px; height : 45px; text-align:left; border-radius: 5px"><img src="/resources/img/etc/btnG_naver.png" width="40"><div style="width:230px; text-align: center; display: inline-block; font-size: 16px; ">네이버 로그인</div></button>
         								</a>
         								</div>
       								</div>
-      								
-								 	
-								 	<img src="/resources/img/etc/kakao_login_medium_wide.png" style="margin-top: 10px" >
-								 	
-								 	
-								 </div>
+								 	<img src="/resources/img/etc/kakao_login_medium_wide.png" style="margin-top: 10px" onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=95a72bf8adefb359efc8431a1b86586d&redirect_uri=http://localhost:8001/kakaoLogin&response_type=code';">
+							</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		
 	</section>
-	
+	<div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">주문조회</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div>주문 번들 : <input class="form-control" id="orderBundle" type="text" placeholder="주문 번들을 입력하세요"/></div>
+        <div>비밀 번호 :<input class="form-control" id="orderPwd" type="text" placeholder="주문 비밀번호를 입력하세요"/></div>
+        <div style="margin-top: 10px; float: right;">
+        <button id="orderCheck" type="button" class="btn btn-primary">조회</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">닫기</button>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+
+
+
+
+
+
+
 <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
-
-
-
-
-
-
-
-
   <script type="text/javascript">
   
   let naverMember = {

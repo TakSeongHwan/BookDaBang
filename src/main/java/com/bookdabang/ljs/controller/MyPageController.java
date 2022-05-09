@@ -1,8 +1,10 @@
 package com.bookdabang.ljs.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ import com.bookdabang.common.domain.ProductQnA;
 import com.bookdabang.common.domain.RecentSeenProd;
 import com.bookdabang.common.domain.ReviewVO;
 import com.bookdabang.ljs.domain.LoginDTO;
+import com.bookdabang.ljs.domain.modifyDTO;
 import com.bookdabang.ljs.service.LoginService;
 import com.bookdabang.ljs.service.MyPageService;
 
@@ -38,16 +41,17 @@ public class MyPageController {
 	
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String myPageHome(@RequestParam("u") String sessionId, Model model) {
+	public String myPageHome(@RequestParam("u") String sessionId, Model model, @RequestParam(value = "status", required = false) String status, HttpServletResponse resp) {
 		
 		MemberVO loginMember = null;
+		String userId = null;
 		System.out.println(sessionId);
 		List<RecentSeenProd> recSeenProd = null;
 		try {
 			
 			loginMember = service.findLoginSess(sessionId); // 세션아이디로 멤버 찾기.
 			
-			String userId = loginMember.getUserId();
+			userId = loginMember.getUserId();
 			System.out.println("마이페이지 로딩시 유저아이디 잘 가져오나?" + userId);
 			recSeenProd = myPgService.showRecentSeenProd(userId);
 			
@@ -58,6 +62,19 @@ public class MyPageController {
 		
 		model.addAttribute("loginMember", loginMember);
 		model.addAttribute("recentSeenProd", recSeenProd);
+		model.addAttribute("modifyStatus", status);
+		
+		if (userId.equals("admin")) {
+			
+			try {
+				resp.sendRedirect("/admin");
+				
+			} catch (IOException e) {
+				 
+				e.printStackTrace();
+			}
+			
+		}
 		
 		
 		return "mypage/memberinfo";
@@ -354,11 +371,9 @@ public class MyPageController {
 			return myCSPosts;
 		}
 	
-	
 	@RequestMapping(value = "/delmycs", method = RequestMethod.GET)
 	@ResponseBody
-	public int delMyCS(@RequestParam(value = "postArr[]") List<Integer> postNo) {
-		
+	public int delMyCS(@RequestParam(value = "postArr[]") List<Integer> postNo) {	
 		
 		int result = 0;
 				try {
@@ -367,22 +382,32 @@ public class MyPageController {
 					
 				} catch (Exception e) {
 					
-					System.out.println("실패여유");
 					e.printStackTrace();
 				}
-		
-				
 		
 			return result;
 		}
 	
-
-	
-	
-//	@RequestMapping(value = "/", method = RequestMethod.GET)
-//	public void home(@RequestParam("ses") String sessionId) {
-//		
-//	}
-	
+	@RequestMapping(value = "/modifyInfo", method = RequestMethod.POST)
+	public void corrInfo(modifyDTO mdto, @RequestParam("u") String sessionId, HttpServletResponse resp) throws Exception {
+		
+		String status = null;
+		System.out.println(mdto.toString());
+		
+		int result = myPgService.modifyMemInfo(mdto);
+		
+		if (result == 1) {
+			
+			status = "success";
+			
+		} else {
+			
+			status = "fail";
+		}
+		
+		
+		resp.sendRedirect("/mypage/?u="+sessionId + "&status=" + status);
+		
+		}
 	
 }

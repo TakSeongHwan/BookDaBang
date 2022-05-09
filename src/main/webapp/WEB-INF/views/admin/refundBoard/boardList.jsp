@@ -16,20 +16,25 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <title>Insert title here</title>
 <script>
-	window.onload = function() {
-		$("#refunUpdate").click(function() {
-			let url = "refunUpdate"
+$(function(){
+	console.log("${refund}")
+	console.log("${pi}")
+});
+	function refundUpdate(refundNo){
+		let url = "refunUpdate"
 			$.ajax({
 				url : url,
 				type : "POST",
 				dataType : "text",
+				data : {
+					refundNo : refundNo
+				},
 				success : function(data) {
 					if(data == "success"){
 						location.reload();
 					}
 				}
 			});
-		});
 	}
 
 </script>
@@ -76,7 +81,7 @@
 								<c:when test="${Refund.isRefund !='yes' }">
 									<td>환불대기</td>
 									<td><button type="button" class="btn btn-secondary"
-											id="refunUpdate">환불</button></td>
+											id="refunUpdate" onclick="refundUpdate(${Refund.refundNo})">환불</button></td>
 								</c:when>
 								<c:otherwise>
 									<td>환불완료</td>
@@ -88,6 +93,46 @@
 				</tbody>
 			</table>
 		</div>
+		<nav class="blog-pagination justify-content-center d-flex">
+			<ul class="pagination">
+				<c:if test="${param.pageNo>1 }">
+				
+							<li class="page-item">
+							<a class="page-link"
+								href="/admin/refundBoard/boardList?pageNo=1"><<</a></li>
+							<li class="page-item">
+							<a class="page-link"
+								href="/admin/refundBoard/boardList?pageNo=${param.pageNo-1}"><</a></li>
+				</c:if>
+
+				<c:forEach var="i" begin="${pi.startNoOfCurPagingBlock}"
+					end="${pi.endNoOfCurPagingBlock }" step="1">
+					
+						
+							<c:choose>
+								<c:when test="${param.pageNo== i}">
+									<li class="page-item"><a class="page-link"
+										href="/admin/refundBoard/boardList?pageNo=${i}">${i}</a></li>
+								</c:when>
+								<c:otherwise>
+									<li class="page-item "><a class="page-link"
+										href="/admin/refundBoard/boardList?pageNo=${i}">${i}</a></li>
+								</c:otherwise>
+							</c:choose>
+	
+				</c:forEach>
+				<c:if test="${param.pageNo < pi.totalPage }">
+				
+							<li class="page-item">
+							<a class="page-link"
+								href="/admin/refundBoard/boardList?pageNo=${param.pageNo+1}">></a></li>
+								<li class="page-item">
+							<a class="page-link"
+								href="/admin/refundBoard/boardList?pageNo=${pi.totalPage}">>></a></li>
+	
+				</c:if>
+			</ul>
+		 </nav>
 	</div>
 
 	<jsp:include page="../../managerFooter.jsp"></jsp:include>
