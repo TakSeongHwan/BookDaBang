@@ -28,6 +28,7 @@ import com.bookdabang.lhs.domain.CategoryTotalSales;
 import com.bookdabang.lhs.domain.RecentBestSeller;
 import com.bookdabang.lhs.domain.SalesChartDetail;
 import com.bookdabang.lhs.domain.SalesDataDetail;
+import com.bookdabang.lhs.domain.SalesDataWithDate;
 import com.bookdabang.lhs.domain.StartDateEndDate;
 import com.bookdabang.lhs.domain.VisitorCountWithDateFormat;
 import com.bookdabang.lhs.service.ChartService;
@@ -183,11 +184,12 @@ public class ChartController {
 	}
 	
 	@RequestMapping(value="getVisitorDetailChart", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> getVisitorDetailChart(@RequestBody StartDateEndDate sded) {
+	public ResponseEntity<Map<String, Object>> getVisitorDetailChart(@RequestBody SalesChartDetail scd) {
 		ResponseEntity<Map<String, Object>> result = null;
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
-			List<VisitorCountWithDateFormat> list = service.getVisitorDetailChart(sded);
+			System.out.println(scd);
+			List<VisitorCountWithDateFormat> list = service.getVisitorDetailChart(scd);
 			map.put("visitorDetail", list);
 			result = new ResponseEntity<Map<String,Object>>(map,HttpStatus.OK);
 		} catch (Exception e) {
@@ -197,5 +199,59 @@ public class ChartController {
 		
 		return result;
 		
+	}
+	@RequestMapping("getSalesData")
+	public ResponseEntity<Map<String, Object>> getSalesData() {
+		ResponseEntity<Map<String, Object>> result = null;
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			int allSales = service.getAllSalesData();
+			map.put("allSales", allSales);
+			result = new ResponseEntity<Map<String,Object>>(map,HttpStatus.OK);
+		} catch (Exception e) {
+			result = new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+			e.printStackTrace();
+		}
+		
+		return result;
+		
+	}
+	
+	@RequestMapping("getBookSalesMonth")
+	public ResponseEntity<Map<String, Object>> getBookSalesMonth() {
+		ResponseEntity<Map<String, Object>> result = null;
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			float bookSalesMonth = service.getBookSalesMonth();
+			map.put("bookSalesMonth", bookSalesMonth);
+			result = new ResponseEntity<Map<String,Object>>(map,HttpStatus.OK);
+		} catch (Exception e) {
+			result = new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+			e.printStackTrace();
+		}
+		
+		return result;
+		
+	}
+	
+	
+	@RequestMapping(value="periodSalesDetail",method=RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> periodSalesDetail(@RequestBody StartDateEndDate sded){
+		System.out.println(sded.toString());
+		ResponseEntity<Map<String, Object>> result = null;
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		List<SalesDataWithDate> list = new ArrayList<SalesDataWithDate>();
+		try {
+			list = service.periodSalesDetail(sded);
+			System.out.println(list);
+			map.put("periodSalesDetail", list);
+			result = new ResponseEntity<Map<String,Object>>(map,HttpStatus.OK);
+		} catch (Exception e) {
+			result = new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 }

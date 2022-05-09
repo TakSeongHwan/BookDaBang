@@ -12,6 +12,8 @@ public interface CartDAO {
 	public List<CartVO> getAllCart(CartSelectDTO dto) throws Exception;
 	
 	public CartVO selectCartByNo(int cartNo) throws Exception;
+	
+	public int nextCartNo() throws Exception;
 
 	public int updateCart(CartProdQttDTO dto) throws Exception;
 	

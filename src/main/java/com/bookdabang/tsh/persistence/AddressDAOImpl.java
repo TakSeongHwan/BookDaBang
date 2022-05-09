@@ -31,6 +31,9 @@ public class AddressDAOImpl implements AddressDAO {
 
 	@Override
 	public int nextAddressNo() throws Exception {
+		if(ses.selectOne(ns+".nextAddressNo") == null) {
+			return 1;
+		}
 		return ses.selectOne(ns+".nextAddressNo");
 	}
 	

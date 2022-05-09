@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bookdabang.common.domain.AttachFileVO;
 import com.bookdabang.common.domain.BoardSearch;
-import com.bookdabang.common.domain.PagingInfo;
+import com.bookdabang.common.domain.MemberVO;
 import com.bookdabang.common.domain.ProductVO;
-import com.bookdabang.common.domain.ReviewComment;
 import com.bookdabang.common.domain.ReviewVO;
-import com.bookdabang.cyh.service.ProductService;
 import com.bookdabang.kmj.service.ReviewService;
 import com.bookdabang.kmj.service.UserProductService;
+
 import com.bookdabang.lhs.domain.AdminPagingInfo;
 import com.bookdabang.lhs.domain.AdminProduct;
 import com.bookdabang.lhs.service.ChartService;
+import com.bookdabang.ljs.service.LoginService;
 
 @Controller
 @RequestMapping("/admin/")
@@ -33,6 +33,8 @@ public class AdminController {
 	
 	@Inject
 	ChartService cService;
+	@Inject
+	LoginService lService;
 	
 	@Inject
 	private ReviewService rService;
@@ -60,8 +62,6 @@ public class AdminController {
 			bs.setSearchType("");
 		}
 		AdminPagingInfo pi = null;
-		System.out.println("검색 : "+bs);
-		System.out.println(sortType);
 		try {
 			map = cService.getAdminProduct(pageNo, bs, sortType);
 			
@@ -76,12 +76,47 @@ public class AdminController {
 		
 	}
 	@RequestMapping("adminStatistics/visitorChartDetail")
-	public void visitorChartDetail() {
-		System.out.println("방문자 수 상세조회 페이지");
+	public void visitorChartDetail(Model m, HttpServletRequest request) {
+		
+		String sessionId = request.getSession().getId();
+		System.out.println(sessionId);
+		
+		try {
+			MemberVO member = lService.findLoginSess(sessionId);
+			m.addAttribute("member",member);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 	@RequestMapping("adminStatistics/salesDataDetail")
-	public void salesDataDetail() {
-		System.out.println("판매량 상세조회 페이지");
+	public void salesDataDetail(Model m, HttpServletRequest request) {
+		String sessionId = request.getSession().getId();
+		System.out.println(sessionId);
+		
+		try {
+			MemberVO member = lService.findLoginSess(sessionId);
+			m.addAttribute("member",member);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	@RequestMapping("adminStatistics/allSalesDetail")
+	public void allSalesDetail(Model m, HttpServletRequest request){
+		String sessionId = request.getSession().getId();
+		System.out.println(sessionId);
+		
+		try {
+			MemberVO member = lService.findLoginSess(sessionId);
+			m.addAttribute("member",member);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	@RequestMapping("reviewBoard/list")

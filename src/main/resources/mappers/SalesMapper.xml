@@ -7,13 +7,17 @@
 <mapper namespace="com.bookdabang.mapper.SalesMapper">
 	<!-- Sales insert -->
 	<insert id="insertSales">
-		insert into sales(orderno,product_no,productqtt,total_price,purchasetime) values(#{orderno},#{product_no},#{productqtt},#{total_price},now())
+		insert into sales(no,orderno,product_no,productqtt,total_price,purchasetime) values(#{no},#{orderno},#{product_no},#{productqtt},#{total_price},now())
 	</insert>
 	
 	<!-- orderNo로 Sales delete -->
 	<delete id="deleteSales">
 		delete from sales where orderno = #{orderno};
 	</delete>
+	
+	<select id="nextSalesNo" resultType="int">
+		select max(no)+1 from sales
+	</select>
 	
 	<select id="selectAllSales" resultType="sales">
 		select * from sales
