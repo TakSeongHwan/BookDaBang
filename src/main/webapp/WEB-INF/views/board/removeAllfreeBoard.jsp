@@ -5,12 +5,26 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>삭제게시판</title>
 <script>
 	function readDelBoard(boardno) {
 		location.href="/board/readDelBoard?boardno=" + boardno;
+		
 	}
 
+	function search() {
+		if($("#searchbar").val() == ("")){
+			alert("검색어를 입력해주세요!");
+			
+			return false;
+			
+			
+		}
+			
+		
+	}
+	
+	
 </script>
 
 </head>
@@ -23,9 +37,10 @@
 		<hr/>
 		
 		<div  style="float: right;">
-			<div class="input-group filter-bar-search">
+			<div
+			>
 
-				<form action="removeAllfreeBoard" method="get">
+				<form action="removeAllfreeBoard" method="get" onsubmit="return search();">
 					<select class="form-select placement-dropdown" id="selectPlacement"
 						name="searchType">
 						<option value="title">제목</option>
@@ -34,8 +49,8 @@
 					</select>
 					<div class="nav-item d-flex align-items-center" >
 						<input type="text" name="searchWord" class="form-control border-0 shadow-none"
-							placeholder="검색어를 입력하세요.." aria-label="Search..." />
-						<button type="submit"
+							placeholder="검색어를 입력하세요.." aria-label="Search..."  id="searchbar" />
+						<button type="submit" 
 							style="background-color: white; border-color: white;">
 							<i class="bx bx-search fs-4 lh-0"></i>
 						</button>
@@ -68,25 +83,29 @@
 		</table>
 		
 		
-		 <nav class="blog-pagination justify-content-center d-flex">
-			<ul class="pagination">
+		 <nav aria-label="Page navigation">
+			<ul class="pagination" style="justify-content: center;">
 				<c:if test="${param.pageNo>1 }">
 					<c:choose>
 						<c:when test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
-						<li class="page-item">
+						<li class="page-item first">
 							<a class="page-link"
-								href="/board/removeAllfreeBoard?pageNo=1"><<</a></li>
-							<li class="page-item">
+								href="/board/removeAllfreeBoard?pageNo=1"><i
+							class="tf-icon bx bx-chevrons-left"></i></a>
+							<li class="page-item next">
 							<a class="page-link"
-								href="/board/removeAllfreeBoard?pageNo=${param.pageNo-1}"><</a></li>
+								href="/board/removeAllfreeBoard?pageNo=${param.pageNo-1}"><i
+							class="tf-icon bx bx-chevron-left"></i></a>
 						</c:when>
 						<c:otherwise>
-						<li class="page-item">
+						<li class="page-item first">
 							<a class="page-link"
-								href="/board/removeAllfreeBoard?pageNo=1&searchType=${param.searchType}&searchWord=${param.searchWord}"><<</a></li>
-							<li class="page-item">
+								href="/board/removeAllfreeBoard?pageNo=1&searchType=${param.searchType}&searchWord=${param.searchWord}"><i
+							class="tf-icon bx bx-chevrons-left"></i></a>
+							<li class="page-item next">
 							<a class="page-link"
-								href="/board/removeAllfreeBoard?pageNo=${param.pageNo-1}&searchType=${param.searchType}&searchWord=${param.searchWord}"><</a></li>
+								href="/board/removeAllfreeBoard?pageNo=${param.pageNo-1}&searchType=${param.searchType}&searchWord=${param.searchWord}"><i
+							class="tf-icon bx bx-chevron-left"></i></a>
 								
 						</c:otherwise>
 					</c:choose>
@@ -99,7 +118,7 @@
 							test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
 							<c:choose>
 								<c:when test="${param.pageNo== i}">
-									<li class="page-item"><a class="page-link"
+									<li class="page-item active"><a class="page-link"
 										href="/board/removeAllfreeBoard?pageNo=${i}">${i}</a></li>
 								</c:when>
 								<c:otherwise>
@@ -111,7 +130,7 @@
 						<c:otherwise>
 							<c:choose>
 								<c:when test="${param.pageNo== i}">
-									<li class="page-item"><a class="page-link"
+									<li class="page-item active"><a class="page-link"
 										href="/board/removeAllfreeBoard?pageNo=${i}&searchType=${param.searchType}&searchWord=${param.searchWord}">${i}</a></li>
 								</c:when>
 								<c:otherwise>
@@ -126,26 +145,31 @@
 					<c:choose>
 						<c:when
 							test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
-							<li class="page-item">
+							<li class="page-item next">
 							<a class="page-link"
-								href="/board/removeAllfreeBoard?pageNo=${param.pageNo+1}">></a></li>
-								<li class="page-item">
+								href="/board/removeAllfreeBoard?pageNo=${param.pageNo+1}"><i
+							class="tf-icon bx bx-chevron-right"></i></a>
+								<li class="page-item next">
 							<a class="page-link"
-								href="/board/removeAllfreeBoard?pageNo=${paging.totalPage}">>></a></li>
+								href="/board/removeAllfreeBoard?pageNo=${paging.totalPage}"><i
+							class="tf-icon bx bx-chevrons-right"></i></a>
 							
 						</c:when>
 						<c:otherwise>
 						
-						<li class="page-item">
+						<li class="page-item next">
 							<a class="page-link"
-								href="/board/removeAllfreeBoard?pageNo=${param.pageNo+1}&searchType=${param.searchType}&searchWord=${param.searchWord}">></a></li>
-								<li class="page-item">
+								href="/board/removeAllfreeBoard?pageNo=${param.pageNo+1}&searchType=${param.searchType}&searchWord=${param.searchWord}"><i
+							class="tf-icon bx bx-chevron-right"></i></a>
+								<li class="page-item next">
 							<a class="page-link"
-								href="/board/removeAllfreeBoard?pageNo=${paging.totalPage}&searchType=${param.searchType}&searchWord=${param.searchWord}">>></a></li>
+								href="/board/removeAllfreeBoard?pageNo=${paging.totalPage}&searchType=${param.searchType}&searchWord=${param.searchWord}"><i
+							class="tf-icon bx bx-chevrons-right"></i></a>
 						</c:otherwise>
 					</c:choose>
 				</c:if>
 			</ul>
+			
 		 </nav>
 		
 		

@@ -19,7 +19,7 @@ public interface FreeBoardService {
 
 	public Map<String, Object> readFreeBoard(int no, String ipAddr) throws Exception;
 
-	public Map<String, Object> listAllReportBoards(int pageNo, BoardSearch search) throws Exception;
+	public Map<String, Object> listAllReportBoards(int pageNo) throws Exception;
 
 	public boolean insertReportBoard(ReportBoard reportboard) throws Exception;
 
@@ -64,11 +64,17 @@ public interface FreeBoardService {
 
 	public ReportBoard readreportBoard(int reportNo)throws Exception;
 
-	public int updateFreeBoard(FreeBoard freeboard) throws Exception;
+	public boolean updateFreeBoard(FreeBoard freeboard, List<BoardUploadFile> upfileLst) throws Exception;
 
 	public boolean adminRemove(String boardno)throws Exception;
 
-	public boolean admindelAttach(String boardno)throws Exception;;
+	public boolean admindelAttach(String boardno)throws Exception;
+
+	public Map<String, Object> statusYesReportBoards(int pageNo) throws Exception;
+
+	public Map<String, Object> statusNoReportBoards(int pageNo) throws Exception;
+
+
 
 	
 

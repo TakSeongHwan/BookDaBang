@@ -75,7 +75,7 @@
 
 	function delFile(obj) {
 		let targetFile = ($(obj).attr("id"));
-		console.log(targetFile); // 
+		console.log(targetFile); 
 		let url = "/board/delFile";
 
 		$.ajax({
@@ -116,6 +116,14 @@
 
 		
 	}
+	
+	function formCheck() {
+		if($("#title").val()=="" || $("#content").val()==""){
+			alert("내용을 입력해주세요!");
+			return false;
+		}
+	}
+	
 </script>
 <style>
 .form-label {
@@ -153,7 +161,7 @@
 	clear: left;
 }
 </style>
-<title></title>
+<title>자유게시판 글 등록</title>
 </head>
 <body>
 	<jsp:include page="../userHeader.jsp"></jsp:include>
@@ -162,8 +170,8 @@
 
 		<div class="comment-form">
 			<h4 style="text-align: center;">자유게시판 글 등록</h4>
-			<form method="post" action="/board/createFreeBoard">
-				<div class="mb-3 mt-3">
+			<form method="post" action="/board/createFreeBoard" onsubmit="return formCheck();">
+				<div class="mb-3 mt-3"> 
 					<label for="title" class="form-label">글 제목 :</label> <input
 						type="text" class="form-control" id="title"
 						placeholder="제목을 입력하세요" name="title">
@@ -187,7 +195,7 @@
 
 				<div class="btns">
 					<button class="button button-postComment button--active"
-						type="submit">저장</button>
+						type="submit"  >저장</button>
 					<button class="button button-postComment button--active"
 						id="cancel" type="button" onclick="cancelFreeBoard();">취소</button>
 

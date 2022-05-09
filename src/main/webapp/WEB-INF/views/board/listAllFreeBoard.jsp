@@ -34,6 +34,14 @@ function login() {
 	}
 }
 	
+	
+function search() {
+	if($("#searchBar").val()==""){
+		alert("검색어를 입력해주세요!");
+		return false;
+
+	 } 
+ }	
 </script>
 <style>
 #listTable thead {
@@ -43,32 +51,33 @@ function login() {
 </head>
 <body>
 	<jsp:include page="../userHeader.jsp"></jsp:include>
-	
-	
-	
+
+
+
 	<div class="container">
 		<h2 style="margin: 30px; font-family: monospace;">자유게시판</h2>
-			
-			
-				<div style="margin-left: 72%;">
-					<div class="input-group filter-bar-search"  >
-					<form action="listAllFreeBoard" method="get">
-					<select name="searchType" >
+
+
+		<div style="margin-left: 72%;">
+			<div class="input-group filter-bar-search">
+				<form action="listAllFreeBoard" method="get" onsubmit="return search();">
+					<select name="searchType" class="input-group-append">
 						<option value="title">제목</option>
 						<option value="writer">작성자</option>
-						<option value="content">내용 </option>
-					</select> 
-					<span class="input-group-append" >
-				<input type="text" placeholder="검색어를 입력하세요" name="searchWord"> 
-				
-					<button type="submit" ><i class="ti-search"></i></button></span>
-					</form>
-					</div>
-				</div>
-				
-		
-				
-			
+						<option value="content">내용</option>
+					</select> <span class="input-group-append"> <input type="text"
+						placeholder="검색어를 입력하세요" name="searchWord" id="searchBar">
+
+						<button type="submit" >
+							<i class="ti-search"></i>
+						</button></span>
+				</form>
+			</div>
+		</div>
+
+
+
+
 		<table class="table table-hover" id=listTable>
 			<thead>
 				<tr>
@@ -78,11 +87,11 @@ function login() {
 					<th>날짜</th>
 					<th>조회수</th>
 					<th>추천수</th>
-				</tr> 
+				</tr>
 			</thead>
 			<tbody>
-			
-			      
+
+
 				<c:forEach var="board" items="${freeBoard }">
 					<tr onclick="readFreeBoard(${board.boardno});">
 						<td>${board.boardno }</td>
@@ -96,32 +105,30 @@ function login() {
 			</tbody>
 		</table>
 
-			<div style="float: right;">
-				<button class="button button-header" onclick="login();" style="margin: 10px;">글 작성</button>
-		</div>				
+		<div style="float: right;">
+			<button class="button button-header" onclick="login();"
+				style="margin: 10px;">글 작성</button>
+		</div>
 
-			 <nav class="blog-pagination justify-content-center d-flex">
+		<nav class="blog-pagination justify-content-center d-flex">
 			<ul class="pagination">
 				<c:if test="${param.pageNo>1 }">
 					<c:choose>
-						<c:when test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
-							<li class="page-item">
-							<a class="page-link"
+						<c:when
+							test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
+							<li class="page-item"><a class="page-link"
 								href="/board/listAllFreeBoard?pageNo=1"><<</a></li>
-							<li class="page-item">
-							<a class="page-link"
+							<li class="page-item"><a class="page-link"
 								href="/board/listAllFreeBoard?pageNo=${param.pageNo-1}"><</a></li>
-							
+
 						</c:when>
 						<c:otherwise>
-						<li class="page-item">
-							<a class="page-link"
+							<li class="page-item"><a class="page-link"
 								href="/board/listAllFreeBoard?pageNo=1&searchType=${param.searchType}&searchWord=${param.searchWord}"><<</a></li>
 							<li class="page-item">
-							<li class="page-item">
-							<a class="page-link"
+							<li class="page-item"><a class="page-link"
 								href="/board/listAllFreeBoard?pageNo=${param.pageNo-1}&searchType=${param.searchType}&searchWord=${param.searchWord}"><</a></li>
-								
+
 						</c:otherwise>
 					</c:choose>
 				</c:if>
@@ -160,29 +167,26 @@ function login() {
 					<c:choose>
 						<c:when
 							test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
-							
-							<li class="page-item">
-							<a class="page-link"
+
+							<li class="page-item"><a class="page-link"
 								href="/board/listAllFreeBoard?pageNo=${param.pageNo+1}">></a></li>
-								<li class="page-item">
-							<a class="page-link"
+							<li class="page-item"><a class="page-link"
 								href="/board/listAllFreeBoard?pageNo=${paging.totalPage}">>></a></li>
-							
+
 						</c:when>
 						<c:otherwise>
-						
-						<li class="page-item">
-							<a class="page-link"
+
+							<li class="page-item"><a class="page-link"
 								href="/board/listAllFreeBoard?pageNo=${param.pageNo+1}&searchType=${param.searchType}&searchWord=${param.searchWord}">></a></li>
-						<li class="page-item">
-							<a class="page-link"
+							<li class="page-item"><a class="page-link"
 								href="/board/listAllFreeBoard?pageNo=${paging.totalPage}&searchType=${param.searchType}&searchWord=${param.searchWord}">>></a></li>
 						</c:otherwise>
 					</c:choose>
 				</c:if>
 			</ul>
-		 </nav>
-									
+		</nav>
+		
+
 	</div>
 
 

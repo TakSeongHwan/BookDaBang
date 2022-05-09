@@ -13,6 +13,7 @@
 <script>
 let boardno = '${freeBoard.boardno}';
 
+
 $(function() {
    let notImgFiles = document.getElementsByClassName("notImgFile");
    
@@ -152,6 +153,13 @@ function removeFile(targetFile) {
    });
 }
 
+function update() {
+ 	if($("#title").val()== '${freeBoard.title}' && $("#content").val() == '${freeBoard.content}'){
+ 		alert("수정된 내용이 없습니다!");
+ 		return false;
+ 	}
+}
+
 </script>
 <style>
 .btns {
@@ -195,13 +203,13 @@ function removeFile(targetFile) {
    <div class="container">
 
       <div class="comment-form">
-         <h4 style="text-align: center;">자유게시판 글 수정 (${freeBoard.boardno}번)// ${attach.attachFileNo }</h4>
-         <form method="post" action="/board/updateFreeBoard">
+         <h4 style="text-align: center;">자유게시판 글 수정 (${freeBoard.boardno}번)</h4>
+         <form method="post" action="/board/updateFreeBoard" onsubmit="return update();">
          <input type="hidden" name="boardno" value="${freeBoard.boardno}" />
             <div class="mb-3 mt-3">
                <label for="title" class="form-label">글 제목 :</label> <input
                   type="text" class="form-control" id="title"
-                  placeholder="${freeBoard.title}" name="title">
+                  name="title" value="${freeBoard.title}">
             </div>
             <div class="mb-3">
                <label for="writer" class="form-label">작성자 :</label>
@@ -210,10 +218,10 @@ function removeFile(targetFile) {
             </div>
          <div class="mb-3">
             <label for="content" class="form-label">내 용 :</label>
-            <textarea class="form-control" rows="10" id="content" name="content" placeholder="${freeBoard.content}"></textarea>
-            <c:if test="${fileLst != null}">
+            <textarea class="form-control" rows="10" id="content" name="content" >${freeBoard.content}</textarea>
+            <!--<c:if test="${fileLst != null}">
             <div class="mb-3" style="float: left; margin-top: 20px;" id="fileaa">
-            <label for="content" class="form-label">파일 :</label>
+              <label for="content" class="form-label">파일 :</label>
                <c:forEach var="file" items="${fileLst }">
                   <c:if test="${file.thumbnailFile != null }">
                      <img src="/resources/boardUploads${file.thumbnailFile }" />
@@ -225,6 +233,9 @@ function removeFile(targetFile) {
 
                      <a href="/resources/boardUploads${file.notImageFile }"
                         class="notImgFile"></a>
+                        <span>
+                        <a href="#" onclick="removeFile('${file.notImageFile }')"><img alt="delFile" src="/resources/img/board/close.png"></a>
+                     </span>
                   </c:if>
                </c:forEach>
             </div>
@@ -232,19 +243,21 @@ function removeFile(targetFile) {
             
          </div>
       
+      
             <div class="mb-3">
                <button type="button" class="btn btn-default" onclick="openArea();" style="margin-top: 40px; margin-right: 15%;" >파일
                   업로드</button>
                <div class="fileDrop">
                   <div class="fileContent">이 영역에 업로드 할 파일을 드래그 드롭 해 주세요!</div>
                </div>
-               <div class="fDropList"></div>
+               <div class="fDropList"></div>-->
+
 
             </div>
 
             <div class="btns">
                <button class="button button-postComment button--active"
-                  type="submit">수정하기</button>
+                  type="submit" >수정하기</button>
                <button class="button button-postComment button--active"
                   id="cancel" type="button" onclick="cancelFreeBoard();">취소</button>
 

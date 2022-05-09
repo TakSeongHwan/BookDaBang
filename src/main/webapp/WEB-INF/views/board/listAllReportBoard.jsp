@@ -14,17 +14,18 @@
 
 
 
-
-
-
 function moreReport(reportno, boardno) {
 	location.href = '/board/moreReport?boardno=' + boardno + '&reportno='+reportno;
 	
 	
 }
 
+function status(yn) {
+	console.log(yn);
+	location.href="/board/listAllReportBoard?yn=" + yn;
 	
-	
+}
+
 
 
 </script>
@@ -41,13 +42,15 @@ function moreReport(reportno, boardno) {
 
 
 
-
-
-
-
-		<div>
-			<form action="listAllReportBoard" method="get"></form>
+		<div class="input-group filter-bar-search"  style="width: 10%; height: 5%; margin-bottom: 50px; margin-top:20px; float: right;">
+			<select name="status" class="form-select placement-dropdown" onchange="status(this.value);">
+				<option value="all">전체보기</option>
+				<option value="y">처리완료</option>
+				<option value="n">처리중</option>
+			</select>
 		</div>
+
+
 
 
 		<table class="table table-hover" id=listTable>
@@ -81,87 +84,54 @@ function moreReport(reportno, boardno) {
 								type="button"
 								onclick="moreReport(${board.reportno },${board.boardno});">자세히
 								보기</button></td>
+
 					</tr>
 				</c:forEach>
 			</tbody>
 		</table>
 
- <nav class="blog-pagination justify-content-center d-flex">
-		<ul class="pagination">
-			<c:if test="${param.pageNo>1 }">
-				<c:choose>
-					<c:when
-						test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
-						<li class="page-item"><a class="page-link"
-							href="/board/listAllReportBoard?pageNo=1"><<</a></li>
-						<li class="page-item"><a class="page-link"
-							href="/board/listAllReportBoard?pageNo=${param.pageNo-1}"><</a></li>
 
-					</c:when>
-					<c:otherwise>
-						<li class="page-item"><a class="page-link"
-							href="/board/listAllReportBoard?pageNo=1&searchType=${param.searchType}&searchWord=${param.searchWord}"><<</a></li>
-						<li class="page-item">
-						<li class="page-item"><a class="page-link"
-							href="/board/listAllReportBoard?pageNo=${param.pageNo-1}&searchType=${param.searchType}&searchWord=${param.searchWord}"><</a></li>
+		<nav aria-label="Page navigation">
+			<ul class="pagination" style="justify-content: center;">
+				<c:if test="${param.pageNo>1 }">
+					
+			
+					<li class="page-item first"><a class="page-link"
+						href="/board/listAllReportBoard?pageNo=1"><i
+							class="tf-icon bx bx-chevrons-left"></i></a>	
+							
+					<li class="page-item next"><a class="page-link"
+						href="/board/listAllReportBoard?pageNo=${param.pageNo-1}"><i
+							class="tf-icon bx bx-chevron-left"></i></a>
 
-					</c:otherwise>
-				</c:choose>
-			</c:if>
 
-			<c:forEach var="i" begin="${paging.startNoOfCurPagingBlock}"
-				end="${paging.endNoOfCurPagingBlock }" step="1">
-				<c:choose>
-					<c:when
-						test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
-						<c:choose>
-							<c:when test="${param.pageNo== i}">
-								<li class="page-item"><a class="page-link"
-									href="/board/listAllReportBoard?pageNo=${i}">${i}</a></li>
-							</c:when>
-							<c:otherwise>
-								<li class="page-item "><a class="page-link"
-									href="/board/listAllReportBoard?pageNo=${i}">${i}</a></li>
-							</c:otherwise>
-						</c:choose>
-					</c:when>
-					<c:otherwise>
-						<c:choose>
-							<c:when test="${param.pageNo== i}">
-								<li class="page-item"><a class="page-link"
-									href="/board/listAllReportBoard?pageNo=${i}&searchType=${param.searchType}&searchWord=${param.searchWord}">${i}</a></li>
-							</c:when>
-							<c:otherwise>
-								<li class="page-item "><a class="page-link"
-									href="/board/listAllReportBoard?pageNo=${i}&searchType=${param.searchType}&searchWord=${param.searchWord}">${i}</a></li>
-							</c:otherwise>
-						</c:choose>
-					</c:otherwise>
-				</c:choose>
-			</c:forEach>
-			<c:if test="${param.pageNo < paging.totalPage }">
-				<c:choose>
-					<c:when
-						test="${param.searchType == null || param.searchType =='' || param.searchWord == null || param.searchWord ==''}">
+				</c:if>
 
-						<li class="page-item"><a class="page-link"
-							href="/board/listAllReportBoard?pageNo=${param.pageNo+1}">></a></li>
-						<li class="page-item"><a class="page-link"
-							href="/board/listAllReportBoard?pageNo=${paging.totalPage}">>></a></li>
+				<c:forEach var="i" begin="${paging.startNoOfCurPagingBlock}"
+					end="${paging.endNoOfCurPagingBlock }" step="1">
+					<c:choose>
+						<c:when test="${param.pageNo== i}">
+							
+							<li class="page-item active"><a class="page-link"
+								href="/board/listAllReportBoard?pageNo=${i}">${i}</a></li>
+						</c:when>
+						<c:otherwise>
+							<li class="page-item "><a class="page-link"
+								href="/board/listAllReportBoard?pageNo=${i}">${i}</a></li>
+						</c:otherwise>
+					</c:choose>
 
-					</c:when>
-					<c:otherwise>
-
-						<li class="page-item"><a class="page-link"
-							href="/board/listAllReportBoard?pageNo=${param.pageNo+1}&searchType=${param.searchType}&searchWord=${param.searchWord}">></a></li>
-						<li class="page-item"><a class="page-link"
-							href="/board/listAllReportBoard?pageNo=${paging.totalPage}&searchType=${param.searchType}&searchWord=${param.searchWord}">>></a></li>
-					</c:otherwise>
-				</c:choose>
-			</c:if>
-		</ul>
+				</c:forEach>
+				<c:if test="${param.pageNo < paging.totalPage }">
+					<li class="page-item next"><a class="page-link"
+						href="/board/listAllReportBoard?pageNo=${param.pageNo+1}"><i
+							class="tf-icon bx bx-chevron-right"></i></a>
+					<li class="page-item next"><a class="page-link"
+						href="/board/listAllReportBoard?pageNo=${paging.totalPage}"><i
+							class="tf-icon bx bx-chevrons-right"></i></a>
+				</c:if>
+			</ul>
 		</nav>
-
 
 
 

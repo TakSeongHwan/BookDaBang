@@ -188,16 +188,7 @@
 	</select>
 
 
-	<select id="getSearchResultCntReport" resultType="int">
-		select count(*) from reportboard where
-		<if test="status=='처리중'">
-			reportstatus ='처리중'
-		</if>
-		<if test="status=='처리완료'">
-			reportstatus ='처리완료'
-		</if>
 	
-	</select>
 
 
 	<select id="getListAllRemoveBoards" resultType="FreeBoard">
@@ -293,6 +284,27 @@
 		delete from attachfile where freeboardNo = #{freeboardNo};
 	</delete>
 
+
+	<select id="statusNoReportBoards" resultType="ReportBoard">
+		
+		select * from reportboard where reportstatus='처리중' order by reportno desc limit #{startNum},
+		#{postPerPage};
+	</select>
+	
+	<select id="statusYesReportBoards" resultType="ReportBoard">
+		select * from reportboard where reportstatus='처리완료' order by reportno desc limit #{startNum},
+		#{postPerPage};
+	</select>
+
+	<select id="totalYes" resultType="int">
+		select count(*) as totalCnt
+		from reportboard where reportstatus='처리완료';
+	</select>
+	
+	<select id="totalNo" resultType="int">
+		select count(*) as totalCnt
+		from reportboard where reportstatus='처리중';
+	</select>
 	
 	<!-- 마이페이지 -->
 	<select id = "showMylike" resultType = "FreeBoard">
